@@ -34,7 +34,7 @@ public:
 	 * \param x The projection of the desired point on the X dimension.
 	 * \param y The projection of the desired point on the Y dimension.
 	 */
-	Point2(const coord_t x, const coord_t y) : x(x), y(y) {}
+	constexpr Point2(const coord_t x, const coord_t y) : x(x), y(y) {}
 
 	/*
 	 * Adds two points together element-wise.
@@ -44,7 +44,7 @@ public:
 	 * \param other The point to add to this point.
 	 * \return A new point with the coordinates of both points summed together.
 	 */
-	Point2 operator +(const Point2& other) const {
+	constexpr Point2 operator +(const Point2& other) const {
 		return Point2(x + other.x, y + other.y);
 	}
 };
