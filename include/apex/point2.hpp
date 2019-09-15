@@ -35,6 +35,18 @@ public:
 	 * \param y The projection of the desired point on the Y dimension.
 	 */
 	Point2(const coord_t x, const coord_t y) : x(x), y(y) {}
-}
+
+	/*
+	 * Adds two points together element-wise.
+	 *
+	 * This is equivalent to translating this point by the coordinates of the
+	 * other point (or vice versa).
+	 * \param other The point to add to this point.
+	 * \return A new point with the coordinates of both points summed together.
+	 */
+	Point2 operator +(const Point2& other) const {
+		return Point2(x + other.x, y + other.y);
+	}
+};
 
 }
