@@ -97,6 +97,16 @@ public:
 	constexpr bool operator ==(const Point2& other) const {
 		return x == other.x && y == other.y;
 	}
+
+	/*
+	 * Compares two points for whether they point to a different location in
+	 * space.
+	 * \param other The point to compare with.
+	 * \return ``true`` if the two points are different, or ``false`` otherwise.
+	 */
+	constexpr bool operator !=(const Point2& other) const {
+		return !((*this) == other);
+	}
 };
 
 }

@@ -67,15 +67,19 @@ TEST(Point, Equality) {
 
 	constexpr Point2 b(10, 20); //Indeed equal.
 	EXPECT_TRUE(a == b);
+	EXPECT_FALSE(a != b);
 
 	constexpr Point2 diagonal(15, 25); //Not equal in either dimension.
 	EXPECT_FALSE(a == diagonal);
+	EXPECT_TRUE(a != diagonal);
 
 	constexpr Point2 horizontal(15, 20); //Not equal in X dimension.
 	EXPECT_FALSE(a == horizontal);
+	EXPECT_TRUE(a != horizontal);
 
 	constexpr Point2 vertical(10, 25); //Not equal in Y dimension.
 	EXPECT_FALSE(a == vertical);
+	EXPECT_TRUE(a != vertical);
 }
 
 }
