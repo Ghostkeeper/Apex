@@ -21,7 +21,7 @@ area_t area_st() const noexcept {
 		area += static_cast<area_t>((*this)[previous].x) * (*this)[vertex].y - static_cast<area_t>((*this)[previous].y) * (*this)[vertex].x;
 		previous = vertex;
 	}
-	return area * 2;
+	return area / 2;
 }
 
 #endif //SIMPLE_POLYGON_AREA_HPP
