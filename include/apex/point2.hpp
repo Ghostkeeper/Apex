@@ -49,6 +49,20 @@ public:
 	}
 
 	/*
+	 * Adds another point to this point in-place.
+	 *
+	 * This is equivalent to translating this point by the coordinates of the
+	 * other point.
+	 * \param other The point to add to this point.
+	 * \return This point.
+	 */
+	Point2& operator +=(const Point2& other) {
+		x += other.x;
+		y += other.y;
+		return *this;
+	}
+
+	/*
 	 * Subtracts the specified point from this point element-wise.
 	 *
 	 * This is equivalent to translating this point by the inverted coordinates
@@ -59,6 +73,20 @@ public:
 	 */
 	constexpr Point2 operator -(const Point2& other) const {
 		return Point2(x - other.x, y - other.y);
+	}
+
+	/*
+	 * Subtracts the specified point from this point in-place.
+	 *
+	 * This is equivalent to translating this point by the inverted coordinates
+	 * of the other point.
+	 * \param other The point to subtract from this point.
+	 * \return This point.
+	 */
+	Point2& operator -=(const Point2& other) {
+		x -= other.x;
+		y -= other.y;
+		return *this;
 	}
 };
 

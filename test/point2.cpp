@@ -18,11 +18,15 @@ class Point2FourCoordinates : public testing::TestWithParam<std::tuple<coord_t, 
 
 TEST_P(Point2FourCoordinates, SumSimple) {
 	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
-	const Point2 a(std::get<0>(parameters), std::get<1>(parameters));
+	Point2 a(std::get<0>(parameters), std::get<1>(parameters));
 	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
 	const Point2 sum = a + b;
 	EXPECT_EQ(sum.x, std::get<0>(parameters) + std::get<2>(parameters));
 	EXPECT_EQ(sum.y, std::get<1>(parameters) + std::get<3>(parameters));
+
+	a += b;
+	EXPECT_EQ(a.x, sum.x);
+	EXPECT_EQ(a.y, sum.y);
 }
 
 INSTANTIATE_TEST_SUITE_P(SumSimpleInst, Point2FourCoordinates, testing::Values(
@@ -35,11 +39,15 @@ INSTANTIATE_TEST_SUITE_P(SumSimpleInst, Point2FourCoordinates, testing::Values(
 
 TEST_P(Point2FourCoordinates, SubtractSimple) {
 	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
-	const Point2 a(std::get<0>(parameters), std::get<1>(parameters));
+	Point2 a(std::get<0>(parameters), std::get<1>(parameters));
 	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
 	const Point2 difference = a - b;
 	EXPECT_EQ(difference.x, std::get<0>(parameters) - std::get<2>(parameters));
 	EXPECT_EQ(difference.y, std::get<1>(parameters) - std::get<3>(parameters));
+
+	a -= b;
+	EXPECT_EQ(a.x, difference.x);
+	EXPECT_EQ(a.y, difference.y);
 }
 
 INSTANTIATE_TEST_SUITE_P(SubtractSimpleInst, Point2FourCoordinates, testing::Values(
