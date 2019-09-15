@@ -37,7 +37,7 @@ public:
 	 * \param x The projection of the desired point on the X dimension.
 	 * \param y The projection of the desired point on the Y dimension.
 	 */
-	constexpr Point2(const coord_t x, const coord_t y) : x(x), y(y) {}
+	constexpr Point2(const coord_t x, const coord_t y) noexcept : x(x), y(y) {}
 
 	/*
 	 * Adds two points together element-wise.
@@ -47,7 +47,7 @@ public:
 	 * \param other The point to add to this point.
 	 * \return A new point with the coordinates of both points summed together.
 	 */
-	constexpr Point2 operator +(const Point2& other) const {
+	constexpr Point2 operator +(const Point2& other) const noexcept {
 		return Point2(x + other.x, y + other.y);
 	}
 
@@ -59,7 +59,7 @@ public:
 	 * \param other The point to add to this point.
 	 * \return This point.
 	 */
-	Point2& operator +=(const Point2& other) {
+	Point2& operator +=(const Point2& other) noexcept {
 		x += other.x;
 		y += other.y;
 		return *this;
@@ -74,7 +74,7 @@ public:
 	 * \return A new point with the coordinates of the other point subtracted
 	 * from this one.
 	 */
-	constexpr Point2 operator -(const Point2& other) const {
+	constexpr Point2 operator -(const Point2& other) const noexcept {
 		return Point2(x - other.x, y - other.y);
 	}
 
@@ -86,7 +86,7 @@ public:
 	 * \param other The point to subtract from this point.
 	 * \return This point.
 	 */
-	Point2& operator -=(const Point2& other) {
+	Point2& operator -=(const Point2& other) noexcept {
 		x -= other.x;
 		y -= other.y;
 		return *this;
@@ -97,7 +97,7 @@ public:
 	 * \param other The point to compare with.
 	 * \return ``true`` if the two points are equal, or ``false`` otherwise.
 	 */
-	constexpr bool operator ==(const Point2& other) const {
+	constexpr bool operator ==(const Point2& other) const noexcept {
 		return x == other.x && y == other.y;
 	}
 
@@ -107,7 +107,7 @@ public:
 	 * \param other The point to compare with.
 	 * \return ``true`` if the two points are different, or ``false`` otherwise.
 	 */
-	constexpr bool operator !=(const Point2& other) const {
+	constexpr bool operator !=(const Point2& other) const noexcept {
 		return !((*this) == other);
 	}
 };
