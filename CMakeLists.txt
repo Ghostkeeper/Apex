@@ -38,6 +38,7 @@ if(BUILD_TESTS)
 	set(test_names
 		coordinate
 		point2
+		simple_polygon_area
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
