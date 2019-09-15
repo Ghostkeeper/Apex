@@ -46,19 +46,19 @@ public:
 	 *
 	 * The polygon will have no vertices or edges and no area.
 	 */
-	SimplePolygon() noexcept {}
+	SimplePolygon() {}
 
 	/*
 	 * Copies a simple polygon.
 	 * \param original The polygon to create a copy of.
 	 */
-	SimplePolygon(const SimplePolygon& original) noexcept : std::vector<Point2>(original) {}
+	SimplePolygon(const SimplePolygon& original) : std::vector<Point2>(original) {}
 
 	/*
 	 * Moves a simple polygon.
 	 * \param original The polygon to move to a different instance.
 	 */
-	SimplePolygon(SimplePolygon&& original) noexcept : std::vector<Point2>(original) {}
+	SimplePolygon(SimplePolygon&& original) : std::vector<Point2>(original) {}
 
 	//Operations inheriting from std::vector.
 	using std::vector<Point2>::operator=;
@@ -104,7 +104,7 @@ public:
 	 * polygon, it will count to the total area multiple times as well.
 	 * \return The surface area of the simple polygon.
 	 */
-	area_t area() const noexcept {
+	area_t area() const {
 		return area_st();
 	}
 };

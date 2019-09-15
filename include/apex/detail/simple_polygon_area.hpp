@@ -15,7 +15,7 @@
  * This uses the shoelace formula to compute the area.
  * \return The surface area of the simple polygon.
  */
-area_t area_st() const noexcept {
+area_t area_st() const {
 	area_t area = 0;
 	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
 		area += static_cast<area_t>((*this)[previous].x) * (*this)[vertex].y - static_cast<area_t>((*this)[previous].y) * (*this)[vertex].x;
