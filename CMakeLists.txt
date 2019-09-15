@@ -14,6 +14,10 @@ set(APEX_VERSION_PATCH 1 CACHE STRING "Patch release version. This must be incre
 
 project(Apex VERSION ${APEX_VERSION_MAJOR}.${APEX_VERSION_MINOR}.${APEX_VERSION_PATCH} DESCRIPTION "Library for performing massively parallel computations on polygons.")
 
+#The main target.
+add_library(apex INTERFACE)
+target_include_directories(apex INTERFACE "${CMAKE_SOURCE_DIR}/include")
+
 #Tests.
 option(BUILD_TESTS "Build tests to verify correctness of the library." OFF)
 if(BUILD_TESTS)
