@@ -44,8 +44,7 @@ if(BUILD_TESTS)
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dirname})
 
 		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
-		target_include_directories(${test_case} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include") #Include Apex itself so that it can call the code under test.
-		target_link_libraries(${test_case} ${GOOGLETEST_BOTH_LIBRARIES}) #Link with GoogleTest.
+		target_link_libraries(${test_case} apex ${GOOGLETEST_BOTH_LIBRARIES})
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
