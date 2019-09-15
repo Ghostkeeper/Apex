@@ -36,13 +36,6 @@ TEST_P(Point2FourCoordinates, Sum) {
 	EXPECT_EQ(a.x, sum.x);
 	EXPECT_EQ(a.y, sum.y);
 }
-INSTANTIATE_TEST_SUITE_P(SumInst, Point2FourCoordinates, testing::Values(
-	std::make_tuple(0, 0, 0, 0),
-	std::make_tuple(5, 10, 8, 21),
-	std::make_tuple(1000, 1333, -1500, -6000),
-	std::make_tuple(-100, -200, 400, 750),
-	std::make_tuple(-2, -3, -10, -30)
-));
 
 /*
  * Tests subtracting coordinates.
@@ -61,6 +54,10 @@ TEST_P(Point2FourCoordinates, Subtract) {
 	EXPECT_EQ(a.x, difference.x);
 	EXPECT_EQ(a.y, difference.y);
 }
+
+/*
+ * Various combinations of points to test summing and subtracting with.
+ */
 INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(0, 0, 0, 0),
 	std::make_tuple(8, 21, 5, 10),
