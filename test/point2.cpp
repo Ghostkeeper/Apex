@@ -14,9 +14,17 @@
 
 namespace apex {
 
+/*
+ * Fixture for parametrised tests with two points (or four coordinates).
+ */
 class Point2FourCoordinates : public testing::TestWithParam<std::tuple<coord_t, coord_t, coord_t, coord_t>> {};
 
-TEST_P(Point2FourCoordinates, SumSimple) {
+/*
+ * Tests summing coordinates.
+ *
+ * The final coordinates must be element-wise summed.
+ */
+TEST_P(Point2FourCoordinates, Sum) {
 	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
 	Point2 a(std::get<0>(parameters), std::get<1>(parameters));
 	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
@@ -28,8 +36,7 @@ TEST_P(Point2FourCoordinates, SumSimple) {
 	EXPECT_EQ(a.x, sum.x);
 	EXPECT_EQ(a.y, sum.y);
 }
-
-INSTANTIATE_TEST_SUITE_P(SumSimpleInst, Point2FourCoordinates, testing::Values(
+INSTANTIATE_TEST_SUITE_P(SumInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(0, 0, 0, 0),
 	std::make_tuple(5, 10, 8, 21),
 	std::make_tuple(1000, 1333, -1500, -6000),
@@ -37,7 +44,12 @@ INSTANTIATE_TEST_SUITE_P(SumSimpleInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(-2, -3, -10, -30)
 ));
 
-TEST_P(Point2FourCoordinates, SubtractSimple) {
+/*
+ * Tests subtracting coordinates.
+ *
+ * The final coordinates must be element-wise subtracted.
+ */
+TEST_P(Point2FourCoordinates, Subtract) {
 	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
 	Point2 a(std::get<0>(parameters), std::get<1>(parameters));
 	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
@@ -49,8 +61,7 @@ TEST_P(Point2FourCoordinates, SubtractSimple) {
 	EXPECT_EQ(a.x, difference.x);
 	EXPECT_EQ(a.y, difference.y);
 }
-
-INSTANTIATE_TEST_SUITE_P(SubtractSimpleInst, Point2FourCoordinates, testing::Values(
+INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(0, 0, 0, 0),
 	std::make_tuple(8, 21, 5, 10),
 	std::make_tuple(5, 10, 8, 21),
@@ -62,6 +73,9 @@ INSTANTIATE_TEST_SUITE_P(SubtractSimpleInst, Point2FourCoordinates, testing::Val
 	std::make_tuple(-10, -30, -2, -3)
 ));
 
+/*
+ * Tests equality between points.
+ */
 TEST(Point, Equality) {
 	constexpr Point2 a(10, 20); //The point to compare to.
 
