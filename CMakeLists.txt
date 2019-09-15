@@ -18,6 +18,14 @@ project(Apex VERSION ${APEX_VERSION_MAJOR}.${APEX_VERSION_MINOR}.${APEX_VERSION_
 add_library(apex INTERFACE)
 target_include_directories(apex INTERFACE "${CMAKE_SOURCE_DIR}/include")
 
+#Make sure the compiler is up to the task.
+target_compile_features(apex INTERFACE cxx_std_14)
+target_compile_features(apex INTERFACE cxx_constexpr)
+target_compile_features(apex INTERFACE cxx_generalized_initializers)
+target_compile_features(apex INTERFACE cxx_noexcept)
+target_compile_features(apex INTERFACE cxx_relaxed_constexpr)
+target_compile_features(apex INTERFACE cxx_right_angle_brackets)
+
 #Tests.
 option(BUILD_TESTS "Build tests to verify correctness of the library." OFF)
 if(BUILD_TESTS)
