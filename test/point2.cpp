@@ -7,17 +7,30 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <tuple> //To parametrise tests with multiple parameters.
 
+#include "apex/coordinate.hpp" //To construct points.
 #include "apex/point2.hpp" //The code under test.
 
 namespace apex {
 
-TEST(Point2, SumSimple) {
-	Point2 a(0, 0);
-	Point2 b(0, 0);
-	Point2 sum = a + b;
-	EXPECT_EQ(sum.x, 0);
-	EXPECT_EQ(sum.y, 0);
+class Point2FourCoordinates : public testing::TestWithParam<std::tuple<coord_t, coord_t, coord_t, coord_t>> {};
+
+TEST_P(Point2FourCoordinates, SumSimple) {
+	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
+	const Point2 a(std::get<0>(parameters), std::get<1>(parameters));
+	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
+	const Point2 sum = a + b;
+	EXPECT_EQ(sum.x, std::get<0>(parameters) + std::get<2>(parameters));
+	EXPECT_EQ(sum.y, std::get<1>(parameters) + std::get<3>(parameters));
 }
+
+INSTANTIATE_TEST_SUITE_P(SumSimpleInst, Point2FourCoordinates, testing::Values(
+	std::make_tuple(0, 0, 0, 0),
+	std::make_tuple(5, 10, 8, 21),
+	std::make_tuple(1000, 1333, -1500, -6000),
+	std::make_tuple(-100, -200, 400, 750),
+	std::make_tuple(-2, -3, -10, -30)
+));
 
 }
