@@ -10,6 +10,13 @@
 
 namespace apex {
 
-typedef int32_t coord_t; //Must be exactly 32 bits to properly cast to cl_int.
+/*
+ * The type used to store coordinates in space.
+ *
+ * This type is an integer type rather than a floating point type, so no partial
+ * unit coordinates are possible. This is intended to prevent inaccuracies due
+ * to build-up of rounding errors.
+ */
+typedef int32_t coord_t; //Must be 32-bits to allow for single-width entries in OpenCL with cl_int. Anything else kills performance.
 
 }
