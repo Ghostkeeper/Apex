@@ -4,7 +4,7 @@ I'm mostly in this for learning how to use heterogenous computing and how to set
 
 Apex
 ====
-![Apex logo](apex.svg)
+![Apex logo](logo.svg)
 
 Apex is a geometric operations library aimed at heterogenous computing. It leverages different computational resources on your system (CPUs, GPUs and accelerators) to improve performance of your applications.
 
