@@ -88,6 +88,15 @@ public:
 		y -= other.y;
 		return *this;
 	}
+
+	/*
+	 * Compares two points for whether they point to the same location in space.
+	 * \param other The point to compare with.
+	 * \return ``true`` if the two points are equal, or ``false`` otherwise.
+	 */
+	constexpr bool operator ==(const Point2& other) const {
+		return x == other.x && y == other.y;
+	}
 };
 
 }

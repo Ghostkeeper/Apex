@@ -62,4 +62,20 @@ INSTANTIATE_TEST_SUITE_P(SubtractSimpleInst, Point2FourCoordinates, testing::Val
 	std::make_tuple(-10, -30, -2, -3)
 ));
 
+TEST(Point, Equality) {
+	constexpr Point2 a(10, 20); //The point to compare to.
+
+	constexpr Point2 b(10, 20); //Indeed equal.
+	EXPECT_TRUE(a == b);
+
+	constexpr Point2 diagonal(15, 25); //Not equal in either dimension.
+	EXPECT_FALSE(a == diagonal);
+
+	constexpr Point2 horizontal(15, 20); //Not equal in X dimension.
+	EXPECT_FALSE(a == horizontal);
+
+	constexpr Point2 vertical(10, 25); //Not equal in Y dimension.
+	EXPECT_FALSE(a == vertical);
+}
+
 }
