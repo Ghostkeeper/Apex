@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<svg width="300" height="255" xmlns="http://www.w3.org/2000/svg">
+	<!-- Golden ratio: 2 / (1 + sqrt(5)) * 300 ~= 185, so we put the main visual line at x=185 -->
+	<!-- For simplicity, diagonal lines have coordinates shifted by 1.5 times the thickness rather than sqrt(2), so diagonal lines will be slightly thicker. -->
+
+	<path d="
+		M185,0 l-185,185 h100 a40,40,0,0,0,40,-40 v-15 h-40 a20,20,0,0,0,-20,20 v60 h60 l5,-5 h60 l-40,40 v-30 l20,-20 h-75 l-5,5 h-15 v-45 a15,15,0,0,1,15,-15 h25 v5 a30,30,0,0,1,-30,30 h-60 l55,-55 h60 l10,-10 h-60 l60,-60 v70 h105 l-65,65 h15 l75,-75 h-110
+		M145,180 a5,5,0,0,0,5,5 h45 l10,-10 h-50 v-10 h50 v-15 a20,20,0,0,0,-20,-20 h-20 a20,20,0,0,0,-20,20
+		M155,155 v-5 a10,10,0,0,1,10,-10 h20 a10,10,0,0,1,10,10 v5
+		M205,130 h15 l55,55 h-15" />
+</svg>
