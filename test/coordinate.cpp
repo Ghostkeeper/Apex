@@ -30,6 +30,20 @@ TEST(Coordinate, CoordTRange) {
 	x = 0x8000000000000000;
 #pragma GCC diagnostic pop
 	EXPECT_EQ(x, 0) << "Coordinates must be 32-bits, so only the lower bits must have been interpreted here.";
+
+	x = -0x81;
+	EXPECT_EQ(x, -0x81);
+
+	x = -0x8001;
+	EXPECT_EQ(x, -0x8001);
+
+	x = -0x80000001;
+	EXPECT_EQ(x, 0x7FFFFFFF) << "Coordinates must be 32-bits, so integers must underflow here.";
+
+#pragma GCC diagnostic ignored "-Woverflow"
+	x = -0x8000000000000001;
+#pragma GCC diagnostic pop
+	EXPECT_EQ(x, -1) << "Coordinates must be 32-bits, so only the lower bits must have been interpreted here.";
 };
 
 }
