@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <limits> //To test compatibility between the coordinate types.
 
 #include "apex/coordinate.hpp" //The code under test.
 
@@ -45,5 +46,15 @@ TEST(Coordinate, CoordTRange) {
 #pragma GCC diagnostic pop
 	EXPECT_EQ(x, -1) << "Coordinates must be 32-bits, so only the lower bits must have been interpreted here.";
 };
+
+TEST(Coordinate, AreaTRange) {
+	//Test whether the coordinates that can be represented with areas in coord_t are represented with area_t.
+	uintmax_t max_distance = static_cast<uintmax_t>(std::numeric_limits<coord_t>::max()) * 2;
+	area_t max_area = max_distance / 2 * max_distance; //Sadly the limit of area_t is only up to half of the coordinate space of coord_t due to needing to represent negative areas too.
+	EXPECT_EQ(max_area, max_distance / 2 * max_distance) << "There was no integer overflow.";
+
+	area_t min_area = -max_distance / 2 * max_distance;
+	EXPECT_EQ(min_area, -max_distance / 2 * max_distance) << "There was no integer underflow.";
+}
 
 }

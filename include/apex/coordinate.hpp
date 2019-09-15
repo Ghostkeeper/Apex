@@ -9,7 +9,7 @@
 #ifndef APEX_COORDINATE
 #define APEX_COORDINATE
 
-#include <stdint.h> //To use fixed-precision integers so that we are guaranteed a certain range of accuracy.
+#include <cstdint> //To use fixed-precision integers so that we are guaranteed a certain range of accuracy.
 
 namespace apex {
 
@@ -20,7 +20,22 @@ namespace apex {
  * unit coordinates are possible. This is intended to prevent inaccuracies due
  * to build-up of rounding errors.
  */
-typedef int32_t coord_t; //Must be 32-bits to allow for single-width entries in OpenCL with cl_int. Anything else kills performance.
+typedef int32_t coord_t; //Must have 32 bits to allow for single-width entries in OpenCL with cl_int. Anything else kills performance.
+
+/*
+ * The type used to store the surface area of 2-dimensional shapes.
+ *
+ * Areas can be negative. This is used to indicate the surface area of parts of
+ * complex shapes and self-intersecting shapes.
+ *
+ * This type is meant to guarantee that every shape that can be represented by
+ * the coordinate system of coord_t can have its area properly calculated.
+ * However due to the limits of the available types and because it needs to hold
+ * negative areas, it'd need a 65-bit integer to be able to properly hold the
+ * maximum or minimum area. Instead, this area can properly hold up to half of
+ * the full coordinate space.
+ */
+typedef int64_t area_t; //Preferably 65 bits, but this is the practical limit of the coordinate system. Going quadruple width would kill performance.
 
 }
 
