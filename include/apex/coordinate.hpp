@@ -6,6 +6,9 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#ifndef APEX_COORDINATE
+#define APEX_COORDINATE
+
 #include <stdint.h> //To use fixed-precision integers so that we are guaranteed a certain range of accuracy.
 
 namespace apex {
@@ -20,3 +23,5 @@ namespace apex {
 typedef int32_t coord_t; //Must be 32-bits to allow for single-width entries in OpenCL with cl_int. Anything else kills performance.
 
 }
+
+#endif //APEX_COORDINATE

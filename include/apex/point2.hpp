@@ -6,6 +6,9 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#ifndef APEX_POINT2
+#define APEX_POINT2
+
 #include "coordinate.hpp" //Used to store the coordinates of this point.
 
 namespace apex {
@@ -110,3 +113,5 @@ public:
 };
 
 }
+
+#endif //APEX_POINT2
