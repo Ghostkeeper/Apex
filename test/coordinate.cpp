@@ -8,11 +8,11 @@
 
 #include <gtest/gtest.h> //To run the test.
 
-#include "coordinate.hpp" //The code under test.
+#include "apex/coordinate.hpp" //The code under test.
 
 namespace apex {
 
-TEST(Coordinate, CoordTRange)
+TEST(Coordinate, CoordTRange) {
 	//Test increasing bit depths to see where it should give an overflow.
 	coord_t x = 0;
 	EXPECT_EQ(x, 0);
@@ -28,4 +28,6 @@ TEST(Coordinate, CoordTRange)
 
 	x = 0x8000000000000000;
 	EXPECT_EQ(x, 0) << "Coordinates must be 32-bits, so only the lower bits must have been interpreted here.";
+};
+
 }
