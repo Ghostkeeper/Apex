@@ -12,6 +12,8 @@
 
 namespace apex {
 
+struct Point2;
+
 /*
  * Some fixtures for the SimplePolygonTranslate tests.
  */
@@ -37,9 +39,53 @@ protected:
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
 TEST_F(SimplePolygonTranslate, MoveZero) {
-	SimplePolygon square_1000_original(square_1000); //Make a copy of the original.
+	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
 	square_1000.translate(0, 0);
-	EXPECT_EQ(square_1000, square_1000_original);
+	EXPECT_EQ(square_1000, square_1000_original) << "The polygon may not have changed by moving 0,0.";
+}
+
+/*
+ * Tests moving a polygon along the X direction.
+ */
+TEST_F(SimplePolygonTranslate, MoveX) {
+	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
+	square_1000.translate(250, 0);
+
+	ASSERT_EQ(square_1000.size(), square_1000_original.size()) << "The polygon may not gain or lose any vertices by translating it.";
+
+	for(size_t i = 0; i < square_1000.size(); ++i) {
+		EXPECT_EQ(square_1000[i], square_1000_original[i] + Point2(250, 0));
+	}
+}
+
+/*
+ * Tests moving a polygon along the Y direction.
+ */
+TEST_F(SimplePolygonTranslate, MoveY) {
+	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
+	square_1000.translate(0, -300);
+
+	ASSERT_EQ(square_1000.size(), square_1000_original.size()) << "The polygon may not gain or lose any vertices by translating it.";
+
+	for(size_t i = 0; i < square_1000.size(); ++i) {
+		EXPECT_EQ(square_1000[i], square_1000_original[i] + Point2(0, -300));
+	}
+}
+
+/*
+ * Tests moving a polygon in both dimensions at the same time.
+ */
+TEST_F(SimplePolygonTranslate, MoveXY) {
+	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
+
+	const Point2 move_vector(-40, 70);
+	square_1000.translate(move_vector);
+
+	ASSERT_EQ(square_1000.size(), square_1000_original.size()) << "The polygon may not gain or lose any vertices by translating it.";
+
+	for(size_t i = 0; i < square_1000.size(); ++i) {
+		EXPECT_EQ(square_1000[i], square_1000_original[i] + move_vector);
+	}
 }
 
 }
