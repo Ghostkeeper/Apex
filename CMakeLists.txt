@@ -38,6 +38,7 @@ if(BUILD_TESTS)
 		coordinate
 		point2
 		simple_polygon_area
+		simple_polygon_translate
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.

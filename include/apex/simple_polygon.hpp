@@ -37,9 +37,6 @@ namespace apex {
  * positive. Otherwise it is negative.
  */
 class SimplePolygon : private std::vector<Point2> {
-//Private implementations.
-#include "detail/simple_polygon_area.hpp"
-
 public:
 	/*
 	 * Constructs an empty simple polygon.
@@ -142,6 +139,34 @@ public:
 	area_t area() const {
 		return area_st();
 	}
+
+	/*
+	 * Moves this polygon with a certain offset.
+	 *
+	 * The polygon is moved in-place.
+	 * \param dx How far to move the polygon in the X direction. This could be
+	 * negative.
+	 * \param dy How far to move the polygon in the Y direction. This could be
+	 * negative.
+	 */
+	void translate(const coord_t dx, const coord_t dy) {
+		return translate(Point2(dx, dy));
+	}
+
+	/*
+	 * Moves this polygon with a certain offset.
+	 *
+	 * The polygon is moved in-place.
+	 * \param delta The distance by which to move, representing both dimensions
+	 * to move through as a single 2D vector.
+	 */
+	void translate(const Point2& delta) {
+		return translate_st(delta);
+	}
+
+	//Private implementations, separated out for readability.
+	#include "detail/simple_polygon_area.hpp"
+	#include "detail/simple_polygon_translate.hpp"
 };
 
 }
