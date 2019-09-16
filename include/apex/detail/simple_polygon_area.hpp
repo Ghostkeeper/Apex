@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef SIMPLE_POLYGON_AREA_HPP
-#define SIMPLE_POLYGON_AREA_HPP
+#ifndef APEX_SIMPLE_POLYGON_AREA_HPP
+#define APEX_SIMPLE_POLYGON_AREA_HPP
 
 /*
  * Single-threaded implementation of ``area``.
@@ -24,4 +24,4 @@ area_t area_st() const {
 	return area / 2;
 }
 
-#endif //SIMPLE_POLYGON_AREA_HPP
+#endif //APEX_SIMPLE_POLYGON_AREA_HPP

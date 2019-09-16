@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef SIMPLE_POLYGON_TRANSLATE_HPP
-#define SIMPLE_POLYGON_TRANSLATE_HPP
+#ifndef APEX_SIMPLE_POLYGON_TRANSLATE_HPP
+#define APEX_SIMPLE_POLYGON_TRANSLATE_HPP
 
 /*
  * Single-threaded implementation of ``translate``.
@@ -18,4 +18,4 @@ void translate_st(const Point2& delta) {
 	}
 }
 
-#endif //SIMPLE_POLYGON_TRANSLATE_HPP
+#endif //APEX_SIMPLE_POLYGON_TRANSLATE_HPP
