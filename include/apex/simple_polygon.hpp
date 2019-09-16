@@ -92,12 +92,38 @@ public:
 	using std::vector<Point2>::swap;
 
 	/*
-	 * Tests whether this polygon is equal to another.
+	 * Tests whether this simple polygon is equal to another.
+	 *
+	 * Two polygons are the same if they share the same set of vertices in the
+	 * same order. However if they start at a different vertex around the
+	 * contour, they may still be the same.
 	 * \param other The polygon to test against.
+	 * \return ``true`` if this polygon is the same as the other polygon, or
+	 * ``false`` otherwise.
 	 */
 	bool operator ==(const SimplePolygon& other) const {
-		//TODO: Polygons are also equal if their vertices are rotated but otherwise the same.
-		return (*this) == other;
+		//TODO: Put implementation in separate file and allow multiple implementations.
+		if(size() != other.size()) {
+			return false;
+		}
+		//Find first vertex.
+		size_t vertex_offset = -1;
+		for(size_t i = 0; i < other.size(); ++i) {
+			if((*this)[0] == other[i]) {
+				vertex_offset = i;
+				break;
+			}
+		}
+		if(vertex_offset == static_cast<size_t>(-1)) {
+			return false; //First vertex is not in the other polygon.
+		}
+		//Now check if all vertices are the same, giving an offset for the check in the second polygon.
+		for(size_t i = 0; i < size(); ++i) {
+			if((*this)[i] != other[(i + vertex_offset) % other.size()]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/*
