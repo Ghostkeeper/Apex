@@ -92,6 +92,15 @@ public:
 	using std::vector<Point2>::swap;
 
 	/*
+	 * Tests whether this polygon is equal to another.
+	 * \param other The polygon to test against.
+	 */
+	bool operator ==(const SimplePolygon& other) const {
+		//TODO: Polygons are also equal if their vertices are rotated but otherwise the same.
+		return (*this) == other;
+	}
+
+	/*
 	 * Computes the surface area of the simple polygon.
 	 *
 	 * The sign of the area is linked to the polygon winding order. If the
