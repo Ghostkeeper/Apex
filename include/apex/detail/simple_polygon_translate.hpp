@@ -9,6 +9,8 @@
 #ifndef APEX_SIMPLE_POLYGON_TRANSLATE_HPP
 #define APEX_SIMPLE_POLYGON_TRANSLATE_HPP
 
+//This is an implementation detail of SimplePolygon. It must not be included outside of the SimplePolygon class!
+
 /*
  * Single-threaded implementation of ``translate``.
  */
