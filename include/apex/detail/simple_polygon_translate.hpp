@@ -9,15 +9,36 @@
 #ifndef APEX_SIMPLE_POLYGON_TRANSLATE_HPP
 #define APEX_SIMPLE_POLYGON_TRANSLATE_HPP
 
-//This is an implementation detail of SimplePolygon. It must not be included outside of the SimplePolygon class!
+namespace apex {
 
 /*
- * Single-threaded implementation of ``translate``.
+ * Implements the Curiously Recurring Template Pattern to separate out the
+ * private functions to translate a simple polygon.
+ * \tparam SimplePolygonBase An implementation of SimplePolygon's footprint,
+ * including private members.
  */
-void translate_st(const Point2& delta) {
-	for(Point2& vertex : *this) {
-		vertex += delta;
+template<typename SimplePolygonBase>
+class SimplePolygonTranslate {
+	/*
+	 * Gives the base SimplePolygon instance via the template pattern, which is
+	 * actually still this instance.
+	 * \return This instance, cast to SimplePolygonBase.
+	 */
+	SimplePolygonBase& base() {
+		return *static_cast<SimplePolygonBase*>(this);
 	}
+
+protected:
+	/*
+	 * Single-threaded implementation of ``translate``.
+	 */
+	void translate_st(const Point2& delta) {
+		for(Point2& vertex : base()) {
+			vertex += delta;
+		}
+	}
+};
+
 }
 
 #endif //APEX_SIMPLE_POLYGON_TRANSLATE_HPP

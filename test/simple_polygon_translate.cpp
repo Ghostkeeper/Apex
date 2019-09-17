@@ -17,7 +17,7 @@ struct Point2;
 /*
  * Some fixtures for the SimplePolygonTranslate tests.
  */
-class SimplePolygonTranslate : public testing::Test {
+class SimplePolygonTranslateTest : public testing::Test {
 protected:
 	/*
 	 * A square of 1000 by 1000.
@@ -38,7 +38,7 @@ protected:
 /*
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
-TEST_F(SimplePolygonTranslate, MoveZero) {
+TEST_F(SimplePolygonTranslateTest, MoveZero) {
 	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
 	square_1000.translate(0, 0);
 	EXPECT_EQ(square_1000, square_1000_original) << "The polygon may not have changed by moving 0,0.";
@@ -47,7 +47,7 @@ TEST_F(SimplePolygonTranslate, MoveZero) {
 /*
  * Tests moving a polygon along the X direction.
  */
-TEST_F(SimplePolygonTranslate, MoveX) {
+TEST_F(SimplePolygonTranslateTest, MoveX) {
 	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
 	square_1000.translate(250, 0);
 
@@ -61,7 +61,7 @@ TEST_F(SimplePolygonTranslate, MoveX) {
 /*
  * Tests moving a polygon along the Y direction.
  */
-TEST_F(SimplePolygonTranslate, MoveY) {
+TEST_F(SimplePolygonTranslateTest, MoveY) {
 	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
 	square_1000.translate(0, -300);
 
@@ -75,7 +75,7 @@ TEST_F(SimplePolygonTranslate, MoveY) {
 /*
  * Tests moving a polygon in both dimensions at the same time.
  */
-TEST_F(SimplePolygonTranslate, MoveXY) {
+TEST_F(SimplePolygonTranslateTest, MoveXY) {
 	SimplePolygon square_1000_original(square_1000); //Make a copy of the original to compare against.
 
 	const Point2 move_vector(-40, 70);

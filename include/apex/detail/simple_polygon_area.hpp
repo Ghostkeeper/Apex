@@ -9,21 +9,46 @@
 #ifndef APEX_SIMPLE_POLYGON_AREA_HPP
 #define APEX_SIMPLE_POLYGON_AREA_HPP
 
-//This is an implementation detail of SimplePolygon. It must not be included outside of the SimplePolygon class!
+#include "../coordinate.hpp" //To return area_t.
+
+namespace apex {
 
 /*
- * Single-threaded implementation of ``area``.
- *
- * This uses the shoelace formula to compute the area.
- * \return The surface area of the simple polygon.
+ * Implements the Curiously Recurring Template Pattern to separate out the
+ * private functions to compute the area of a simple polygon.
+ * \tparam SimplePolygonBase An implementation of SimplePolygon's footprint,
+ * including private members.
  */
-area_t area_st() const {
-	area_t area = 0;
-	for(size_t vertex = 0, previous = size() - 1; vertex < size(); vertex++) {
-		area += static_cast<area_t>((*this)[previous].x) * (*this)[vertex].y - static_cast<area_t>((*this)[previous].y) * (*this)[vertex].x;
-		previous = vertex;
+template <typename SimplePolygonBase>
+class SimplePolygonArea
+{
+	/*
+	 * Gives the base SimplePolygon instance via the template pattern, which is
+	 * actually still this instance.
+	 * \return This instance, cast to SimplePolygonBase.
+	 */
+	const SimplePolygonBase& base() const {
+		return *static_cast<const SimplePolygonBase*>(this);
 	}
-	return area / 2;
+
+protected:
+	/*
+	 * Single-threaded implementation of ``area``.
+	 *
+	 * This uses the shoelace formula to compute the area.
+	 * \return The surface area of the simple polygon.
+	 */
+	area_t area_st() const {
+		area_t area = 0;
+		for(size_t vertex = 0, previous = base().size() - 1; vertex < base().size(); vertex++) {
+			area += static_cast<area_t>(base()[previous].x) * base()[vertex].y - static_cast<area_t>(base()[previous].y) * base()[vertex].x;
+			previous = vertex;
+		}
+		return area / 2;
+	}
+
+};
+
 }
 
 #endif //APEX_SIMPLE_POLYGON_AREA_HPP

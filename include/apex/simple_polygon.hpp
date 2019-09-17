@@ -13,11 +13,14 @@
 
 #include "point2.hpp" //The vertices of the polygon are 2D points.
 
+//Implementations separated out for readability using the Curiously Recurring Template Pattern.
+#include "detail/simple_polygon_area.hpp"
+#include "detail/simple_polygon_translate.hpp"
+
 namespace apex {
 
 /*
  * A plane figure consisting of a single contour of straight line segments.
- *
  *
  * This is a closed shape, represented by a list of vertices in 2D. Between
  * every two adjacent vertices, as well as between the first and last vertices,
@@ -36,7 +39,10 @@ namespace apex {
  * If the vertices of the polygon are winding counter-clockwise, the polygon is
  * positive. Otherwise it is negative.
  */
-class SimplePolygon : private std::vector<Point2> {
+class SimplePolygon : private std::vector<Point2>,
+		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
+		public SimplePolygonArea<SimplePolygon>,
+		public SimplePolygonTranslate<SimplePolygon> {
 public:
 	/*
 	 * Constructs an empty simple polygon.
@@ -163,10 +169,6 @@ public:
 	void translate(const Point2& delta) {
 		return translate_st(delta);
 	}
-
-	//Private implementations, separated out for readability.
-	#include "detail/simple_polygon_area.hpp"
-	#include "detail/simple_polygon_translate.hpp"
 };
 
 }

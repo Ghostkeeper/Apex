@@ -15,7 +15,7 @@ namespace apex {
 /*
  * Some fixtures for the SimplePolygonArea tests.
  */
-class SimplePolygonArea : public testing::Test {
+class SimplePolygonAreaTest : public testing::Test {
 protected:
 	/*
 	 * A square of 1000 by 1000.
@@ -36,7 +36,7 @@ protected:
 /*
  * Tests whether the area of an empty polygon starts off at 0.
  */
-TEST_F(SimplePolygonArea, InitialAreaIsZero) {
+TEST_F(SimplePolygonAreaTest, InitialAreaIsZero) {
 	SimplePolygon empty_polygon;
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
@@ -44,7 +44,7 @@ TEST_F(SimplePolygonArea, InitialAreaIsZero) {
 /*
  * Tests the area of a basic 1000 by 1000 square.
  */
-TEST_F(SimplePolygonArea, Square1000) {
+TEST_F(SimplePolygonAreaTest, Square1000) {
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
 }
 
