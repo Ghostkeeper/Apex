@@ -22,13 +22,22 @@ namespace apex {
 template <typename SimplePolygonBase>
 class SimplePolygonArea
 {
+public:
 	/*
-	 * Gives the base SimplePolygon instance via the template pattern, which is
-	 * actually still this instance.
-	 * \return This instance, cast to SimplePolygonBase.
+	 * Computes the surface area of the simple polygon.
+	 *
+	 * The sign of the area is linked to the polygon winding order. If the
+	 * polygon is positive, the area will be positive too, and vice versa. If
+	 * the polygon intersects itself, parts of the polygon will be subtracting
+	 * from the area while other parts add up to the area.
+	 *
+	 * The area of the polygon is counted differently from the nonzero or
+	 * even-odd fill rules. If a zone is looped around multiple times by the
+	 * polygon, it will count to the total area multiple times as well.
+	 * \return The surface area of the simple polygon.
 	 */
-	const SimplePolygonBase& base() const {
-		return *static_cast<const SimplePolygonBase*>(this);
+	area_t area() const {
+		return area_st();
 	}
 
 protected:
@@ -45,6 +54,16 @@ protected:
 			previous = vertex;
 		}
 		return area / 2;
+	}
+
+private:
+	/*
+	 * Gives the base SimplePolygon instance via the template pattern, which is
+	 * actually still this instance.
+	 * \return This instance, cast to SimplePolygonBase.
+	 */
+	const SimplePolygonBase& base() const {
+		return *static_cast<const SimplePolygonBase*>(this);
 	}
 
 };
