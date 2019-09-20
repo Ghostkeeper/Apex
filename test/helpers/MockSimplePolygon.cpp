@@ -16,12 +16,39 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 		case EMPTY: {
 			break;
 		}
-		case SQUARE1000: {
+		case SQUARE_1000: {
 			vertices = {
 				Point2(0, 0),
 				Point2(1000, 0),
 				Point2(1000, 1000),
 				Point2(0, 1000)
+			};
+			break;
+		}
+		case SQUARE_1000_NEGATIVE_X: {
+			vertices = {
+				Point2(-1024, 0),
+				Point2(-24, 0),
+				Point2(-24, 1000),
+				Point2(-1024, 1000)
+			};
+			break;
+		}
+		case SQUARE_1000_NEGATIVE_Y: {
+			vertices = {
+				Point2(0, -1024),
+				Point2(1000, -1024),
+				Point2(1000, -24),
+				Point2(0, -24)
+			};
+			break;
+		}
+		case SQUARE_1000_NEGATIVE_XY: {
+			vertices = {
+				Point2(-1024, -1024),
+				Point2(-24, -1024),
+				Point2(-24, -24),
+				Point2(-1024, -24)
 			};
 			break;
 		}

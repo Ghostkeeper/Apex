@@ -24,7 +24,7 @@ TEST(SimplePolygonAreaTest, InitialAreaIsZero) {
  * Tests the area of a basic 1000 by 1000 square.
  */
 TEST(SimplePolygonAreaTest, Square1000) {
-	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE1000);
+	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
 }
 
