@@ -61,4 +61,12 @@ TEST(SimplePolygonArea, Square1000Centred) {
 	EXPECT_EQ(centred.area(), 1000 * 1000);
 }
 
+/*
+ * Tests the area of a triangle with a 1000-unit wide base.
+ */
+TEST(SimplePolygonArea, Triangle1000) {
+	MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
+	EXPECT_EQ(triangle.area(), 1000 * 1000 / 2);
+}
+
 }

@@ -61,6 +61,14 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case TRIANGLE_1000: {
+			vertices = {
+				Point2(24, 24),
+				Point2(1024, 24),
+				Point2(524, 1024)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }
