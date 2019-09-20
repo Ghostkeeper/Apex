@@ -28,7 +28,18 @@ namespace apex {
  */
 class MockSimplePolygon : public std::vector<Point2>,
 		public SimplePolygonArea<MockSimplePolygon> {
+public:
+	/*
+	 * Basic shapes to initialise the polygon as.
+	 *
+	 * These can be used in the constructor as a fixture of sorts.
+	 */
+	enum Shape {
+		EMPTY, //The polygon is left empty.
+		SQUARE1000, //The polygon is filled with a 1000x1000 square.
+	};
 
+	MockSimplePolygon(const Shape shape = Shape::EMPTY);
 };
 
 }

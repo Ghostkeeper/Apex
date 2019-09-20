@@ -14,30 +14,9 @@
 namespace apex {
 
 /*
- * Some fixtures for the SimplePolygonArea tests.
- */
-class SimplePolygonAreaTest : public testing::Test {
-protected:
-	/*
-	 * A square of 1000 by 1000.
-	 */
-	MockSimplePolygon square_1000;
-
-	/*
-	 * Prepares for running a test by constructing the fixtures we need.
-	 */
-	virtual void SetUp() {
-		square_1000.emplace_back(0, 0);
-		square_1000.emplace_back(1000, 0);
-		square_1000.emplace_back(1000, 1000);
-		square_1000.emplace_back(0, 1000);
-	}
-};
-
-/*
  * Tests whether the area of an empty polygon starts off at 0.
  */
-TEST_F(SimplePolygonAreaTest, InitialAreaIsZero) {
+TEST(SimplePolygonAreaTest, InitialAreaIsZero) {
 	MockSimplePolygon empty_polygon;
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
@@ -45,7 +24,8 @@ TEST_F(SimplePolygonAreaTest, InitialAreaIsZero) {
 /*
  * Tests the area of a basic 1000 by 1000 square.
  */
-TEST_F(SimplePolygonAreaTest, Square1000) {
+TEST(SimplePolygonAreaTest, Square1000) {
+	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE1000);
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
 }
 

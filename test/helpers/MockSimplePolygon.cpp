@@ -6,10 +6,27 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <vector>
-
 #include "MockSimplePolygon.hpp"
 
 namespace apex {
+
+MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
+	std::vector<Point2> vertices;
+	switch(shape) {
+		case EMPTY: {
+			break;
+		}
+		case SQUARE1000: {
+			vertices = {
+				Point2(0, 0),
+				Point2(1000, 0),
+				Point2(1000, 1000),
+				Point2(0, 1000)
+			};
+			break;
+		}
+	}
+	(*this).swap(vertices);
+}
 
 }
