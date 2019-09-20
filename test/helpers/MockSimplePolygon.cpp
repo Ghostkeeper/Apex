@@ -52,6 +52,15 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case SQUARE_1000_CENTRED: {
+			vertices = {
+				Point2(-500, -500),
+				Point2(500, -500),
+				Point2(500, 500),
+				Point2(-500, 500)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }

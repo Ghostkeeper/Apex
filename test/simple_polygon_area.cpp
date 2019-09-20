@@ -53,4 +53,12 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
 	EXPECT_EQ(negative_xy.area(), 1000 * 1000);
 }
 
+/*
+ * Tests the area of a 1000 by 1000 square around the origin.
+ */
+TEST(SimplePolygonArea, Square1000Centred) {
+	MockSimplePolygon centred(MockSimplePolygon::Shape::SQUARE_1000_CENTRED);
+	EXPECT_EQ(centred.area(), 1000 * 1000);
+}
+
 }
