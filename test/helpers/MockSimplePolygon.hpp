@@ -45,6 +45,7 @@ public:
 		SQUARE_1000_CENTRED, //1000x1000 square centred around the origin.
 		TRIANGLE_1000, //Triangle with a 1000-wide base. It's 1000 units high.
 		THIN_RECTANGLE, //1000x1 rectangle. Very thin in the Y direction.
+		ARROWHEAD, //Triangle pointing up with less tall triangle subtracted from it, forming an arrowhead.
 	};
 
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);

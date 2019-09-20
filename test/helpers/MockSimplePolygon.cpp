@@ -78,6 +78,15 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case ARROWHEAD: {
+			vertices = {
+				Point2(10, 10),
+				Point2(510, 510),
+				Point2(1010, 10),
+				Point2(510, 1010)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }

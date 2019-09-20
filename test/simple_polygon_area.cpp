@@ -79,4 +79,12 @@ TEST(SimplePolygonArea, ThinRectangle) {
 	EXPECT_EQ(thin_rectangle.area(), 1000 * 1);
 }
 
+/*
+ * Tests the area of a concave shape.
+ */
+TEST(SimplePolygonArea, Concave) {
+	const MockSimplePolygon arrowhead(MockSimplePolygon::Shape::ARROWHEAD);
+	EXPECT_EQ(arrowhead.area(), 1000 * 1000 / 2 - 1000 * 500 / 2) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+}
+
 }
