@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h> //To run the test.
 
+#include "helpers/MockSimplePolygon.hpp"
 #include "apex/simple_polygon.hpp" //The code under test.
 
 namespace apex {
@@ -20,7 +21,7 @@ protected:
 	/*
 	 * A square of 1000 by 1000.
 	 */
-	SimplePolygon square_1000;
+	MockSimplePolygon square_1000;
 
 	/*
 	 * Prepares for running a test by constructing the fixtures we need.
@@ -37,7 +38,7 @@ protected:
  * Tests whether the area of an empty polygon starts off at 0.
  */
 TEST_F(SimplePolygonAreaTest, InitialAreaIsZero) {
-	SimplePolygon empty_polygon;
+	MockSimplePolygon empty_polygon;
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
 

@@ -32,6 +32,17 @@ if(BUILD_TESTS)
 
 	find_package(GoogleTest REQUIRED)
 
+	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
+	set(test_helpers_sources
+		MockSimplePolygon.cpp
+	)
+	set(test_helpers_paths "")
+	foreach(test_helpers_source ${test_helpers_sources})
+		list(APPEND test_helpers_paths "${CMAKE_SOURCE_DIR}/test/helpers/${test_helpers_source}")
+	endforeach()
+	add_library(apex_test_helpers ${test_helpers_paths})
+	target_link_libraries(apex_test_helpers apex)
+
 	#The names of all tests. Each must have a file called "test/<name>.cpp" as the source file.
 	#Instead of slashes for the directories, use periods.
 	set(test_names
@@ -53,8 +64,9 @@ if(BUILD_TESTS)
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dirname})
 
 		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
-		target_link_libraries(${test_case} apex ${GOOGLETEST_BOTH_LIBRARIES})
+		target_link_libraries(${test_case} apex apex_test_helpers ${GOOGLETEST_BOTH_LIBRARIES})
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
+		add_dependencies(${test_case} apex_test_helpers)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
