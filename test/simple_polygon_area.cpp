@@ -8,8 +8,7 @@
 
 #include <gtest/gtest.h> //To run the test.
 
-#include "helpers/MockSimplePolygon.hpp"
-#include "apex/simple_polygon.hpp" //The code under test.
+#include "helpers/MockSimplePolygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
 
 namespace apex {
 
