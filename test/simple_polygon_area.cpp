@@ -87,4 +87,13 @@ TEST(SimplePolygonArea, Concave) {
 	EXPECT_EQ(arrowhead.area(), 1000 * 1000 / 2 - 1000 * 500 / 2) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 }
 
+/*
+ * Tests the area of a negative shape, where the winding order of the vertices
+ * is the other way around.
+ */
+TEST(SimplePolygonArea, Negative) {
+	const MockSimplePolygon negative(MockSimplePolygon::Shape::NEGATIVE_SQUARE);
+	EXPECT_EQ(negative.area(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+}
+
 }

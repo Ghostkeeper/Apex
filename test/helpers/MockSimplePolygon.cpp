@@ -87,6 +87,15 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case NEGATIVE_SQUARE: {
+			vertices = {
+				Point2(0, 0),
+				Point2(0, 1000),
+				Point2(1000, 1000),
+				Point2(1000, 0)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }
