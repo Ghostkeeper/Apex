@@ -9,15 +9,25 @@
 #ifndef MOCKSIMPLEPOLYGON_HPP
 #define MOCKSIMPLEPOLYGON_HPP
 
-#include <vector>
+#include <vector> //Provides the base mock implementation.
 
-#include "apex/point2.hpp"
-#include "apex/detail/simple_polygon_area.hpp"
+#include "apex/point2.hpp" //The coordinates of the polygon.
+#include "apex/detail/simple_polygon_area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
 
 namespace apex {
 
+/*
+ * This is a mock for the base SimplePolygon class.
+ *
+ * It replaces the complex behaviour of the SimplePolygon with a much simpler
+ * implementation based on a simple vector of coordinates.
+ *
+ * This class also provides easy constructors for some default shapes to test
+ * with. This way, it's much easier to construct a polygon with a simple shape
+ * by way of a fixture.
+ */
 class MockSimplePolygon : public std::vector<Point2>,
-	public SimplePolygonArea<MockSimplePolygon> {
+		public SimplePolygonArea<MockSimplePolygon> {
 
 };
 
