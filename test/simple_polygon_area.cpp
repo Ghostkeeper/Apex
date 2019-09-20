@@ -16,7 +16,7 @@ namespace apex {
  * Tests whether the area of an empty polygon starts off at 0.
  */
 TEST(SimplePolygonArea, InitialAreaIsZero) {
-	MockSimplePolygon empty_polygon;
+	const MockSimplePolygon empty_polygon;
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
 
@@ -24,7 +24,7 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
  * Tests the area of a basic 1000 by 1000 square.
  */
 TEST(SimplePolygonArea, Square1000) {
-	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
+	const MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
 }
 
@@ -32,7 +32,7 @@ TEST(SimplePolygonArea, Square1000) {
  * Tests the area of a 1000 by 1000 square moved into the negative X space.
  */
 TEST(SimplePolygonArea, Square1000NegativeX) {
-	MockSimplePolygon negative_x(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_X);
+	const MockSimplePolygon negative_x(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_X);
 	EXPECT_EQ(negative_x.area(), 1000 * 1000);
 }
 
@@ -40,7 +40,7 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
  * Tests the area of a 1000 by 1000 square moved into the negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeY) {
-	MockSimplePolygon negative_y(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_Y);
+	const MockSimplePolygon negative_y(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_Y);
 	EXPECT_EQ(negative_y.area(), 1000 * 1000);
 }
 
@@ -49,7 +49,7 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
  * negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeXY) {
-	MockSimplePolygon negative_xy(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_XY);
+	const MockSimplePolygon negative_xy(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_XY);
 	EXPECT_EQ(negative_xy.area(), 1000 * 1000);
 }
 
@@ -57,7 +57,7 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
  * Tests the area of a 1000 by 1000 square around the origin.
  */
 TEST(SimplePolygonArea, Square1000Centred) {
-	MockSimplePolygon centred(MockSimplePolygon::Shape::SQUARE_1000_CENTRED);
+	const MockSimplePolygon centred(MockSimplePolygon::Shape::SQUARE_1000_CENTRED);
 	EXPECT_EQ(centred.area(), 1000 * 1000);
 }
 
@@ -65,8 +65,18 @@ TEST(SimplePolygonArea, Square1000Centred) {
  * Tests the area of a triangle with a 1000-unit wide base.
  */
 TEST(SimplePolygonArea, Triangle1000) {
-	MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
+	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
 	EXPECT_EQ(triangle.area(), 1000 * 1000 / 2);
+}
+
+/*
+ * Tests the area of a very long and thin rectangle.
+ *
+ * This catches some of the edge cases involved with rounding errors very well.
+ */
+TEST(SimplePolygonArea, ThinRectangle) {
+	const MockSimplePolygon thin_rectangle(MockSimplePolygon::Shape::THIN_RECTANGLE);
+	EXPECT_EQ(thin_rectangle.area(), 1000 * 1);
 }
 
 }

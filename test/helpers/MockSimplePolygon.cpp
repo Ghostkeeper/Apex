@@ -69,6 +69,15 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case THIN_RECTANGLE: {
+			vertices = {
+				Point2(0, 0),
+				Point2(1000, 0),
+				Point2(1000, 1),
+				Point2(0, 1)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }

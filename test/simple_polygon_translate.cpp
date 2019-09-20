@@ -30,7 +30,7 @@ TEST(SimplePolygonTranslate, MoveX) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	square_1000.translate(250, 0);
 
-	MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
+	const MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 
 	for(size_t i = 0; i < square_1000.size(); ++i) {
@@ -45,7 +45,7 @@ TEST(SimplePolygonTranslate, MoveY) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	square_1000.translate(0, -300);
 
-	MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
+	const MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 
 	for(size_t i = 0; i < square_1000.size(); ++i) {
@@ -62,7 +62,7 @@ TEST(SimplePolygonTranslate, MoveXY) {
 	const Point2 move_vector(-40, 70);
 	square_1000.translate(move_vector);
 
-	MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
+	const MockSimplePolygon original(MockSimplePolygon::Shape::SQUARE_1000); //Compare to the polygon before it's moved.
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 
 	for(size_t i = 0; i < square_1000.size(); ++i) {

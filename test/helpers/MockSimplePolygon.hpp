@@ -44,6 +44,7 @@ public:
 		SQUARE_1000_NEGATIVE_XY, //1000x1000 square completely in the negative X and Y.
 		SQUARE_1000_CENTRED, //1000x1000 square centred around the origin.
 		TRIANGLE_1000, //Triangle with a 1000-wide base. It's 1000 units high.
+		THIN_RECTANGLE, //1000x1 rectangle. Very thin in the Y direction.
 	};
 
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);
