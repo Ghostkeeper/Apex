@@ -13,6 +13,7 @@
 
 #include "apex/point2.hpp" //The coordinates of the polygon.
 #include "apex/detail/simple_polygon_area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
+#include "apex/detail/simple_polygon_translate.hpp"
 
 namespace apex {
 
@@ -27,7 +28,8 @@ namespace apex {
  * by way of a fixture.
  */
 class MockSimplePolygon : public std::vector<Point2>,
-		public SimplePolygonArea<MockSimplePolygon> {
+		public SimplePolygonArea<MockSimplePolygon>,
+		public SimplePolygonTranslate<MockSimplePolygon> {
 public:
 	/*
 	 * Basic shapes to initialise the polygon as.
