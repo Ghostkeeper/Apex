@@ -17,7 +17,7 @@ struct Point2;
 /*
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
-TEST(SimplePolygonTranslateTest, MoveZero) {
+TEST(SimplePolygonTranslate, MoveZero) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	square_1000.translate(0, 0);
 	EXPECT_EQ(square_1000, MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000)) << "The polygon may not have changed by moving 0,0.";
@@ -26,7 +26,7 @@ TEST(SimplePolygonTranslateTest, MoveZero) {
 /*
  * Tests moving a polygon along the X direction.
  */
-TEST(SimplePolygonTranslateTest, MoveX) {
+TEST(SimplePolygonTranslate, MoveX) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	square_1000.translate(250, 0);
 
@@ -41,7 +41,7 @@ TEST(SimplePolygonTranslateTest, MoveX) {
 /*
  * Tests moving a polygon along the Y direction.
  */
-TEST(SimplePolygonTranslateTest, MoveY) {
+TEST(SimplePolygonTranslate, MoveY) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	square_1000.translate(0, -300);
 
@@ -56,7 +56,7 @@ TEST(SimplePolygonTranslateTest, MoveY) {
 /*
  * Tests moving a polygon in both dimensions at the same time.
  */
-TEST(SimplePolygonTranslateTest, MoveXY) {
+TEST(SimplePolygonTranslate, MoveXY) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 
 	const Point2 move_vector(-40, 70);

@@ -15,7 +15,7 @@ namespace apex {
 /*
  * Tests whether the area of an empty polygon starts off at 0.
  */
-TEST(SimplePolygonAreaTest, InitialAreaIsZero) {
+TEST(SimplePolygonArea, InitialAreaIsZero) {
 	MockSimplePolygon empty_polygon;
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
@@ -23,9 +23,34 @@ TEST(SimplePolygonAreaTest, InitialAreaIsZero) {
 /*
  * Tests the area of a basic 1000 by 1000 square.
  */
-TEST(SimplePolygonAreaTest, Square1000) {
+TEST(SimplePolygonArea, Square1000) {
 	MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
+}
+
+/*
+ * Tests the area of a 1000 by 1000 square moved into the negative X space.
+ */
+TEST(SimplePolygonArea, Square1000NegativeX) {
+	MockSimplePolygon negative_x(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_X);
+	EXPECT_EQ(negative_x.area(), 1000 * 1000);
+}
+
+/*
+ * Tests the area of a 1000 by 1000 square moved into the negative Y space.
+ */
+TEST(SimplePolygonArea, Square1000NegativeY) {
+	MockSimplePolygon negative_y(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_Y);
+	EXPECT_EQ(negative_y.area(), 1000 * 1000);
+}
+
+/*
+ * Tests the area of a 1000 by 1000 square moved into the negative X and
+ * negative Y space.
+ */
+TEST(SimplePolygonArea, Square1000NegativeXY) {
+	MockSimplePolygon negative_xy(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_XY);
+	EXPECT_EQ(negative_xy.area(), 1000 * 1000);
 }
 
 }
