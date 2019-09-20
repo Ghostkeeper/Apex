@@ -96,4 +96,12 @@ TEST(SimplePolygonArea, Negative) {
 	EXPECT_EQ(negative.area(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 }
 
+/*
+ * Tests the area of a self-intersecting polygon, where half of it is negative.
+ */
+TEST(SimplePolygonArea, SelfIntersecting) {
+	const MockSimplePolygon hourglass(MockSimplePolygon::Shape::HOURGLASS);
+	EXPECT_EQ(hourglass.area(), 1000 * 500 / 2 - 1000 * 500 / 2);
+}
+
 }

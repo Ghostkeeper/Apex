@@ -47,6 +47,7 @@ public:
 		THIN_RECTANGLE, //1000x1 rectangle. Very thin in the Y direction.
 		ARROWHEAD, //Triangle pointing up with less tall triangle subtracted from it, forming an arrowhead.
 		NEGATIVE_SQUARE, //1000x1000 square, but the winding order is wrong so it's a negative area.
+		HOURGLASS, //Self-intersecting shape, like a shape but with two vertices flipped. The bottom half is negative.
 	};
 
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);
