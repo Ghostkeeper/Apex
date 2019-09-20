@@ -19,13 +19,29 @@ namespace apex {
  */
 template<typename SimplePolygonBase>
 class SimplePolygonTranslate {
+public:
 	/*
-	 * Gives the base SimplePolygon instance via the template pattern, which is
-	 * actually still this instance.
-	 * \return This instance, cast to SimplePolygonBase.
+	 * Moves this polygon with a certain offset.
+	 *
+	 * The polygon is moved in-place.
+	 * \param dx How far to move the polygon in the X direction. This could be
+	 * negative.
+	 * \param dy How far to move the polygon in the Y direction. This could be
+	 * negative.
 	 */
-	SimplePolygonBase& base() {
-		return *static_cast<SimplePolygonBase*>(this);
+	void translate(const coord_t dx, const coord_t dy) {
+		return translate(Point2(dx, dy));
+	}
+
+	/*
+	 * Moves this polygon with a certain offset.
+	 *
+	 * The polygon is moved in-place.
+	 * \param delta The distance by which to move, representing both dimensions
+	 * to move through as a single 2D vector.
+	 */
+	void translate(const Point2& delta) {
+		return translate_st(delta);
 	}
 
 protected:
@@ -36,6 +52,16 @@ protected:
 		for(Point2& vertex : base()) {
 			vertex += delta;
 		}
+	}
+
+private:
+	/*
+	 * Gives the base SimplePolygon instance via the template pattern, which is
+	 * actually still this instance.
+	 * \return This instance, cast to SimplePolygonBase.
+	 */
+	SimplePolygonBase& base() {
+		return *static_cast<SimplePolygonBase*>(this);
 	}
 };
 
