@@ -16,6 +16,19 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 		case EMPTY: {
 			break;
 		}
+		case POINT: {
+			vertices = {
+				Point2(25, 25)
+			};
+			break;
+		}
+		case LINE: {
+			vertices = {
+				Point2(50, 100),
+				Point2(100, 200)
+			};
+			break;
+		}
 		case SQUARE_1000: {
 			vertices = {
 				Point2(0, 0),
@@ -102,12 +115,6 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 				Point2(1000, 1000),
 				Point2(0, 1000),
 				Point2(1000, 0)
-			};
-			break;
-		}
-		case POINT: {
-			vertices = {
-				Point2(25, 25)
 			};
 			break;
 		}

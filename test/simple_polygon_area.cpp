@@ -109,7 +109,15 @@ TEST(SimplePolygonArea, SelfIntersecting) {
  */
 TEST(SimplePolygonArea, Point) {
 	const MockSimplePolygon point(MockSimplePolygon::Shape::POINT);
-	EXPECT_EQ(point.area(), 0);
+	EXPECT_EQ(point.area(), 0) << "Points don't have any surface area.";
+}
+
+/*
+ * Tests the area of a line. It won't have any surface area.
+ */
+TEST(SimplePolygonArea, Line) {
+	const MockSimplePolygon line(MockSimplePolygon::Shape::LINE);
+	EXPECT_EQ(line.area(), 0) << "Lines don't have any surface area.";
 }
 
 }
