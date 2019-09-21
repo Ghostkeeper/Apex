@@ -9,6 +9,7 @@
 #ifndef APEX_SIMPLE_POLYGON
 #define APEX_SIMPLE_POLYGON
 
+#include <move> //For std::move.
 #include <vector> //To store the vertex data.
 
 #include "point2.hpp" //The vertices of the polygon are 2D points.
@@ -39,7 +40,7 @@ namespace apex {
  * If the vertices of the polygon are winding counter-clockwise, the polygon is
  * positive. Otherwise it is negative.
  */
-class SimplePolygon : private std::vector<Point2>,
+class SimplePolygon,
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
 		public SimplePolygonArea<SimplePolygon>,
 		public SimplePolygonTranslate<SimplePolygon> {
@@ -55,16 +56,23 @@ public:
 	 * Copies a simple polygon.
 	 * \param original The polygon to create a copy of.
 	 */
-	SimplePolygon(const SimplePolygon& original) : std::vector<Point2>(original) {}
+	SimplePolygon(const SimplePolygon& original) {
+		vertices(original.vertices);
+	}
 
 	/*
 	 * Moves a simple polygon.
+	 *
+	 * The original polygon will still exist, but accessing it is undefined
+	 * behaviour. Do not use it any more.
 	 * \param original The polygon to move to a different instance.
 	 */
-	SimplePolygon(SimplePolygon&& original) : std::vector<Point2>(original) {}
+	SimplePolygon(SimplePolygon&& original) {
+		vertices = std::move(original.vertices);
+	}
 
-	//Operations inheriting from std::vector.
-	using std::vector<Point2>::operator=;
+	//TODO: Implement these functions.
+	/*using std::vector<Point2>::operator=;
 	using std::vector<Point2>::operator[];
 	using std::vector<Point2>::assign;
 	using std::vector<Point2>::at;
@@ -92,7 +100,7 @@ public:
 	using std::vector<Point2>::reserve;
 	using std::vector<Point2>::shrink_to_fit;
 	using std::vector<Point2>::size;
-	using std::vector<Point2>::swap;
+	using std::vector<Point2>::swap;*/
 
 	/*
 	 * Tests whether this simple polygon is equal to another.
@@ -128,6 +136,17 @@ public:
 		}
 		return true;
 	}
+
+protected:
+	/*
+	 * The vertices contained in this simple polygon.
+	 *
+	 * This is a local copy. All local algorithms run on this data set. However,
+	 * if the polygon was modified remotely via OpenCL, this data set may be
+	 * outdated. Upon first accessing the data locally, this local data set will
+	 * be updated.
+	 */
+	std::vector<Point2> vertices;
 };
 
 }
