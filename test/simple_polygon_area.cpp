@@ -6,9 +6,12 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cmath> //To construct a circle.
 #include <gtest/gtest.h> //To run the test.
 
 #include "helpers/MockSimplePolygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
+
+#define PI 3.14159265358979 //To construct and calculate the area of a regular N-gon.
 
 namespace apex {
 
@@ -118,6 +121,31 @@ TEST(SimplePolygonArea, Point) {
 TEST(SimplePolygonArea, Line) {
 	const MockSimplePolygon line(MockSimplePolygon::Shape::LINE);
 	EXPECT_EQ(line.area(), 0) << "Lines don't have any surface area.";
+}
+
+/*
+ * Tests computing the area of a regular simple polygon that consists of many
+ * vertices.
+ *
+ * This is tested with a regular polygon that approaches a circle. The ground
+ * truth is caluclated with the formula for the area of a regular polygon:
+ * 1/2 * n * r^2 * sin(2*pi / n)
+ */
+TEST(SimplePolygonArea, Circle) {
+	constexpr size_t num_vertices = 1000000;
+	constexpr coord_t radius = 1000000;
+	MockSimplePolygon circle;
+	circle.reserve(num_vertices);
+	for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
+		const coord_t x = std::lround(std::cos(PI * 2 / num_vertices * vertex) * radius); //This rounding naturally introduces error, so we must allow some lenience in the output.
+		const coord_t y = std::lround(std::sin(PI * 2 / num_vertices * vertex) * radius);
+		circle.emplace_back(x, y);
+	}
+
+	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
+	constexpr area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
+
+	EXPECT_NEAR(circle.area(), ground_truth, error_margin);
 }
 
 }
