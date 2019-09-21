@@ -38,6 +38,7 @@ public:
 	 */
 	enum Shape {
 		EMPTY, //The polygon is left empty.
+		POINT, //Just a single vertex.
 		SQUARE_1000, //The polygon is filled with a 1000x1000 square.
 		SQUARE_1000_NEGATIVE_X, //1000x1000 square completely in the negative X.
 		SQUARE_1000_NEGATIVE_Y, //1000x1000 square completely in the negative Y.

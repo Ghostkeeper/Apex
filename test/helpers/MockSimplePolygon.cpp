@@ -105,6 +105,12 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 			};
 			break;
 		}
+		case POINT: {
+			vertices = {
+				Point2(25, 25)
+			};
+			break;
+		}
 	}
 	(*this).swap(vertices);
 }

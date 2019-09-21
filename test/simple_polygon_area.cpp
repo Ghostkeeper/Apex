@@ -104,4 +104,12 @@ TEST(SimplePolygonArea, SelfIntersecting) {
 	EXPECT_EQ(hourglass.area(), 1000 * 500 / 2 - 1000 * 500 / 2);
 }
 
+/*
+ * Tests the area of a single point.
+ */
+TEST(SimplePolygonArea, Point) {
+	const MockSimplePolygon point(MockSimplePolygon::Shape::POINT);
+	EXPECT_EQ(point.area(), 0);
+}
+
 }
