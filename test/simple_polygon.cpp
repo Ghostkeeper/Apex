@@ -200,6 +200,16 @@ TEST_F(SimplePolygonFixture, AtOutsideRangeConst) {
 }
 
 /*
+ * Tests getting the back vertex.
+ */
+TEST_F(SimplePolygonFixture, Back) {
+	EXPECT_EQ(triangle.back(), Point2(60, 60));
+
+	const SimplePolygon copy(triangle);
+	EXPECT_EQ(copy.back(), Point2(60, 60));
+}
+
+/*
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail

@@ -200,6 +200,26 @@ public:
 	}
 
 	/*
+	 * Returns the last vertex in the iteration of the polygon.
+	 *
+	 * No guarantees can be given if this vertex is consistent after
+	 * transforming the polygon.
+	 */
+	Point2& back() {
+		return vertices.back();
+	}
+
+	/*
+	 * Returns the last vertex in the iteration of the polygon.
+	 *
+	 * No guarantees can be given if this vertex is consistent after
+	 * transforming the polygon.
+	 */
+	const Point2& back() const {
+		return vertices.back();
+	}
+
+	/*
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
