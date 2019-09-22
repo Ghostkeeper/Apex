@@ -447,7 +447,7 @@ public:
 	 * Gives the number of vertices in the simple polygon.
 	 * \return The number of vertices in the simple polygon.
 	 */
-	size_t size() const {
+	size_t size() const noexcept {
 		return vertices.size();
 	}
 
