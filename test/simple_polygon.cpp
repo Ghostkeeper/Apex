@@ -62,6 +62,9 @@ TEST_F(SimplePolygonFixture, ConstructMove) {
 	EXPECT_EQ(triangle, target);
 }
 
+/*
+ * Tests making a copy via assignment.
+ */
 TEST_F(SimplePolygonFixture, Assignment) {
 	SimplePolygon copy = triangle; //Make a copy by assignment.
 
@@ -69,6 +72,15 @@ TEST_F(SimplePolygonFixture, Assignment) {
 
 	copy[0].x += 1; //Modify the copy so that we're sure this is not held by reference or anything.
 	EXPECT_NE(triangle, copy);
+}
+
+/*
+ * Tests accessing the vertices of the simple polygon by reference.
+ */
+TEST_F(SimplePolygonFixture, AccessReference) {
+	Point2& vertex = triangle[0];
+	vertex.x = 42; //Modify it.
+	EXPECT_EQ(triangle[0].x, 42) << "The modified coordinates should be modified by reference, so it should be stored in the simple polygon as well.";
 }
 
 }
