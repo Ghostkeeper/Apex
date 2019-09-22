@@ -145,6 +145,22 @@ public:
 	}
 
 	/*
+	 * Tests whether this simple polygon is inequal to another.
+	 *
+	 * Two polygons are different if they have different sets of vertices or if
+	 * the vertices appear in a different order. The starting point of the
+	 * iterations is irrelevant; two vertices are not different if they have the
+	 * same set of vertices in the same order but their iteration starts in a
+	 * different location along the contour.
+	 * \param other The polygon to test against.
+	 * \return ``true`` if this polygon is different from the other polygon, or
+	 * ``false`` otherwise.
+	 */
+	bool operator !=(const SimplePolygon& other) const {
+		return !((*this) == other); //Implemented in terms of ==.
+	}
+
+	/*
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
