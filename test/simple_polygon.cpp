@@ -46,10 +46,17 @@ TEST(SimplePolygon, ConstructEmpty) {
 TEST_F(SimplePolygonFixture, ConstructCopy) {
 	SimplePolygon copy(triangle); //Run the copy constructor.
 
-	ASSERT_EQ(triangle.size(), copy.size());
-	for(size_t i = 0; i < triangle.size(); ++i) {
-		EXPECT_EQ(triangle[i], copy[i]);
-	}
+	EXPECT_EQ(triangle, copy);
+}
+
+/*
+ * Tests move-constructing a simple polygon.
+ */
+TEST_F(SimplePolygonFixture, ConstructMove) {
+	SimplePolygon copy = triangle; //Make a copy to move so we keep the original fixture to compare against.
+	SimplePolygon target = std::move(copy);
+
+	EXPECT_EQ(triangle, target);
 }
 
 }
