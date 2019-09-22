@@ -170,12 +170,33 @@ TEST_F(SimplePolygonFixture, AtInRange) {
 }
 
 /*
+ * Tests accessing the vertices in a const simple polygon with the ``at``
+ * function.
+ *
+ * This test keeps the access within the range. There should be no exception.
+ */
+TEST_F(SimplePolygonFixture, AtInRangeConst) {
+	const SimplePolygon copy(triangle); //Make it const via a copy constructor.
+	EXPECT_EQ(triangle.at(1), Point2(100, 20));
+}
+
+/*
  * Tests accessing outside of the range of the simple polygon with the ``at``
  * function.
  */
 TEST_F(SimplePolygonFixture, AtOutsideRange) {
 	EXPECT_THROW(triangle.at(3), std::out_of_range);
 	EXPECT_THROW(triangle.at(-1), std::out_of_range); //Probably doesn't matter really since it's unsigned anyway.
+}
+
+/*
+ * Tests accessing outside of the range of a const simple polygon with the
+ * ``at`` function.
+ */
+TEST_F(SimplePolygonFixture, AtOutsideRangeConst) {
+	const SimplePolygon copy(triangle); //Make it const via a copy constructor.
+	EXPECT_THROW(copy.at(3), std::out_of_range);
+	EXPECT_THROW(copy.at(-1), std::out_of_range); //Probably doesn't matter really since it's unsigned anyway.
 }
 
 /*
