@@ -76,6 +76,42 @@ public:
 	using std::vector<Point2>::swap;*/
 
 	/*
+	 * Provides access to the individual vertices of the simple polygon.
+	 *
+	 * There is no real start or end to a simple polygon since it's a closed
+	 * loop. Which specific vertex becomes the first vertex is not defined and
+	 * cannot be relied upon after operations like clipping have been applied.
+	 *
+	 * If the simple plygon is modified within OpenCL, invoking this operator
+	 * may trigger the application to wait until those operations have been
+	 * completed and downloaded to the host.
+	 * \param index The index of the vertex to get. Only when the simple polygon
+	 * remains unmodified will this operator be consistent.
+	 * \return The vertex at the specified index.
+	 */
+	Point2 operator [](const size_t index) const {
+		return vertices[index];
+	}
+
+	/*
+	 * Provides access to the individual vertices of the simple polygon.
+	 *
+	 * There is no real start or end to a simple polygon since it's a closed
+	 * loop. Which specific vertex becomes the first vertex is not defined and
+	 * cannot be relied upon after operations like clipping have been applied.
+	 *
+	 * If the simple plygon is modified within OpenCL, invoking this operator
+	 * may trigger the application to wait until those operations have been
+	 * completed and downloaded to the host.
+	 * \param index The index of the vertex to get. Only when the simple polygon
+	 * remains unmodified will this operator be consistent.
+	 * \return The vertex at the specified index.
+	 */
+	Point2& operator [](const size_t index) {
+		return vertices[index];
+	}
+
+	/*
 	 * Tests whether this simple polygon is equal to another.
 	 *
 	 * Two polygons are the same if they share the same set of vertices in the
