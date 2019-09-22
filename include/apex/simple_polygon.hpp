@@ -170,6 +170,17 @@ public:
 	}
 
 	/*
+	 * Returns a vertex at the specified position along the contour of the
+	 * simple polygon, with bounds checking.
+	 *
+	 * If the position is not within the range of the container, an exception of
+	 * type ``std::out_of_range`` is thrown.
+	 */
+	const Point2& at(const size_t position) const {
+		return vertices.at(position);
+	}
+
+	/*
 	 * Replaces the contents of the simple polygon with the contents of the
 	 * range of elements between the specified two iterators.
 	 * \param first The start of the iterator range.
