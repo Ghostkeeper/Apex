@@ -6,8 +6,10 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cmath> //To construct an octagon.
 #include <gtest/gtest.h> //To run the test.
 
+#include "apex/coordinate.hpp" //To construct an octagon.
 #include "apex/simple_polygon.hpp" //The code under test.
 
 namespace apex {
@@ -23,12 +25,28 @@ public:
 	SimplePolygon triangle;
 
 	/*
+	 * A regular octagon.
+	 */
+	SimplePolygon octagon;
+
+	/*
 	 * Constructs the fixture simple polygons.
 	 */
 	void SetUp() {
 		triangle.emplace_back(20, 20);
 		triangle.emplace_back(100, 20);
 		triangle.emplace_back(60, 60);
+
+		constexpr coord_t width = 1000;
+		constexpr coord_t corner_size = width * (std::sqrt(2) - 1);
+		octagon.emplace_back(corner_size, 0);
+		octagon.emplace_back(width - corner_size, 0);
+		octagon.emplace_back(width, corner_size);
+		octagon.emplace_back(width, width - corner_size);
+		octagon.emplace_back(width - corner_size, width);
+		octagon.emplace_back(corner_size, width);
+		octagon.emplace_back(0, width - corner_size);
+		octagon.emplace_back(0, corner_size);
 	}
 };
 
@@ -93,6 +111,42 @@ TEST_F(SimplePolygonFixture, AccessCopy) {
 	const Point2 vertex = triangle[1];
 	EXPECT_EQ(vertex.x, 100);
 	EXPECT_EQ(vertex.y, 20);
+}
+
+/*
+ * Tests assigning an iterator range to the polygon that is smaller than the
+ * polygon's current size.
+ */
+TEST_F(SimplePolygonFixture, AssignIteratorSmallerRange) {
+	std::vector<Point2> source;
+	source.emplace_back(10, 10);
+	source.emplace_back(20, 10);
+	source.emplace_back(20, 20);
+
+	octagon.assign(source.begin(), source.end());
+
+	ASSERT_EQ(octagon.size(), source.size());
+	for(size_t i = 0; i < octagon.size(); ++i) {
+		EXPECT_EQ(octagon[i], source[i]);
+	}
+}
+
+/*
+ * Tests assigning an iterator range to the polygon that is larger than the
+ * polygon's current size.
+ */
+TEST_F(SimplePolygonFixture, AssignIteratorLargerRange) {
+	std::vector<Point2> source;
+	source.emplace_back(10, 10);
+	source.emplace_back(20, 10);
+	source.emplace_back(20, 20);
+	source.emplace_back(10, 20);
+
+	triangle.assign(source.begin(), source.end());
+	ASSERT_EQ(triangle.size(), source.size());
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle[i], source[i]);
+	}
 }
 
 /*
