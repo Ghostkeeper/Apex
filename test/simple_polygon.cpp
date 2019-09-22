@@ -59,4 +59,14 @@ TEST_F(SimplePolygonFixture, ConstructMove) {
 	EXPECT_EQ(triangle, target);
 }
 
+TEST_F(SimplePolygonFixture, Assignment) {
+	SimplePolygon copy = triangle; //Make a copy by assignment.
+
+	EXPECT_EQ(triangle, copy);
+
+	copy[0].x += 1; //Modify the copy so that we're sure this is not held by reference or anything.
+
+	EXPECT_NE(triangle, copy);
+}
+
 }
