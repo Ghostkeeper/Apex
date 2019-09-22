@@ -84,6 +84,22 @@ public:
 	typedef std::vector<Point2>::const_iterator const_iterator;
 
 	/*
+	 * Iterates one loop around the polygon in reverse.
+	 *
+	 * This implementation hides the actual iterator used for the underlying
+	 * data structures.
+	 */
+	typedef std::vector<Point2>::reverse_iterator reverse_iterator;
+
+	/*
+	 * Iterates one loop around the polygon in reverse.
+	 *
+	 * This implementation hides the actual iterator used for the underlying
+	 * data structures.
+	 */
+	typedef std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+
+	/*
 	 * Provides access to the individual vertices of the simple polygon.
 	 *
 	 * There is no real start or end to a simple polygon since it's a closed
@@ -260,7 +276,7 @@ public:
 	 *
 	 * There is no beginning to the closed loop around the simple polygon. The
 	 * vertex that this iterator will begin with is therefore arbitrary. The
-	 * iterator will hit the iterator returned by ``end()`` after one complete
+	 * iterator will hit the iterator returned by ``cend()`` after one complete
 	 * iteration around the contour.
 	 */
 	const_iterator cbegin() const noexcept {
@@ -268,13 +284,36 @@ public:
 	}
 
 	/*
-	 * Gives the end of the iteration as returned by ``begin()``.
+	 * Gives the end of the iteration as returned by ``cbegin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
 	 * been made.
 	 */
 	const_iterator cend() const noexcept {
 		return vertices.cend();
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon that
+	 * iterates in reverse order along the contour of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``crend()`` after one complete
+	 * iteration around the contour.
+	 */
+	const_reverse_iterator crbegin() const noexcept {
+		return vertices.crbegin();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``crbegin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	const_reverse_iterator crend() const noexcept {
+		return vertices.crend();
 	}
 
 	/*
@@ -349,6 +388,52 @@ public:
 	 */
 	const Point2& front() const {
 		return (*this)[0];
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon that
+	 * iterates in reverse order along the contour of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``rend()`` after one complete
+	 * iteration around the contour.
+	 */
+	reverse_iterator rbegin() noexcept {
+		return vertices.rbegin();
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon that
+	 * iterates in reverse order along the contour of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``rend()`` after one complete
+	 * iteration around the contour.
+	 */
+	const_reverse_iterator rbegin() const noexcept {
+		return vertices.rbegin();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``rbegin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	reverse_iterator rend() noexcept {
+		return vertices.rend();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``rbegin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	const_reverse_iterator rend() const noexcept {
+		return vertices.rend();
 	}
 
 	/*

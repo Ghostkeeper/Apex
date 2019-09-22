@@ -299,6 +299,61 @@ TEST_F(SimplePolygonFixture, IteratorModification) {
 }
 
 /*
+ * Tests iterating in reverse around the simple polygon while reading the data.
+ */
+TEST_F(SimplePolygonFixture, IteratorReverseConst) {
+	SimplePolygon::const_reverse_iterator it = triangle.rbegin();
+	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle[1], *it) << "After iterating once, it must represent the second-to-last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle[0], *it) << "After iterating twice, it must represent the third-to-last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle.rend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
+}
+
+/*
+ * Tests iterating in reverse around the simple polygon with the explicit const
+ * iterator.
+ */
+TEST_F(SimplePolygonFixture, IteratorReverseCBegin) {
+	SimplePolygon::const_reverse_iterator it = triangle.crbegin();
+	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle[1], *it) << "After iterating once, it must represent the second-to-last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle[0], *it) << "After iterating twice, it must represent the third-to-last vertex.";
+
+	it++;
+	EXPECT_EQ(triangle.crend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
+}
+
+/*
+ * Tests modifying the polygon by modifying the data in the reverse iterator.
+ */
+TEST_F(SimplePolygonFixture, IteratorReverseModification) {
+	SimplePolygon::reverse_iterator it = triangle.rbegin();
+	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
+	it->x = 42;
+	EXPECT_EQ(triangle[2].x, 42) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
+
+	it++;
+	EXPECT_EQ(triangle[1], *it) << "After iterating once, it must represent the second-to-last vertex.";
+	it->y = 69;
+	EXPECT_EQ(triangle[1].y, 69) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
+
+	it++;
+	EXPECT_EQ(triangle[0], *it) << "After iterating twice, it must represent the third-to-last vertex.";
+	it->x = 666;
+	EXPECT_EQ(triangle[0].x, 666) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
+}
+
+/*
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
