@@ -161,6 +161,17 @@ public:
 	}
 
 	/*
+	 * Replaces the contents of the simple polygon with the contents of the
+	 * range of elements between the specified two iterators.
+	 * \param first The start of the iterator range.
+	 * \param last The end of the iterator range.
+	 */
+	template<class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		vertices.assign(first, last);
+	}
+
+	/*
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
