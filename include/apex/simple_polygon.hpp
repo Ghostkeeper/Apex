@@ -74,8 +74,9 @@ public:
 	/*
 	 * Assigns a copy of the simple polygon to the left hand side polygon.
 	 * \param other The simple polygon to make a copy of.
+	 * \return This polygon, after modification. This can be used for chaining.
 	 */
-	operator =(const SimplePolygon& other) {
+	SimplePolygon& operator =(const SimplePolygon& other) {
 		vertices(original.vertices);
 		return *this;
 	}
