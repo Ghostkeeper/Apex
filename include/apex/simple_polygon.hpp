@@ -212,6 +212,16 @@ public:
 	}
 
 	/*
+	 * Returns the first vertex in the iteration of the polygon.
+	 *
+	 * No guarantees can be given if this vertex is consistent after
+	 * transforming the polygon.
+	 */
+	Point2& front() {
+		return vertices.front();
+	}
+
+	/*
 	 * Gives the number of vertices in the simple polygon.
 	 * \return The number of vertices in the simple polygon.
 	 */

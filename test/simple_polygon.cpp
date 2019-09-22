@@ -215,6 +215,13 @@ TEST_F(SimplePolygonFixture, EmplaceBack) {
 }
 
 /*
+ * Tests getting the front vertex.
+ */
+TEST_F(SimplePolygonFixture, Front) {
+	EXPECT_EQ(triangle.front(), Point2(20, 20));
+}
+
+/*
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
