@@ -13,11 +13,28 @@
 namespace apex {
 
 /*
- * Tests constructing an empty polygon.
+ * Tests constructing an empty simple polygon.
  */
 TEST(SimplePolygon, ConstructEmpty) {
 	SimplePolygon empty;
 	EXPECT_EQ(empty.size(), 0);
+}
+
+/*
+ * Tests copy-constructing a simple polygon.
+ */
+TEST(SimplePolygon, ConstructCopy) {
+	SimplePolygon original;
+	original.emplace_back(20, 20);
+	original.emplace_back(100, 20);
+	original.emplace_back(60, 60);
+
+	SimplePolygon copy(original); //Run the copy constructor.
+
+	ASSERT_EQ(original.size(), copy.size());
+	for(size_t i = 0; i < original.size(); ++i) {
+		EXPECT_EQ(original[i], copy[i]);
+	}
 }
 
 }
