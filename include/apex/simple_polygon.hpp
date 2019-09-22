@@ -85,7 +85,7 @@ public:
 	 * remains unmodified will this operator be consistent.
 	 * \return The vertex at the specified index.
 	 */
-	Point2 operator [](const size_t index) const {
+	const Point2& operator [](const size_t index) const {
 		return vertices[index];
 	}
 
@@ -206,7 +206,7 @@ public:
 	 * transforming the polygon.
 	 */
 	Point2& back() {
-		return vertices.back();
+		return vertices[size() - 1];
 	}
 
 	/*
@@ -216,7 +216,7 @@ public:
 	 * transforming the polygon.
 	 */
 	const Point2& back() const {
-		return vertices.back();
+		return vertices[size() - 1];
 	}
 
 	/*
@@ -238,7 +238,7 @@ public:
 	 * transforming the polygon.
 	 */
 	Point2& front() {
-		return vertices.front();
+		return (*this)[0];
 	}
 
 	/*
@@ -248,7 +248,7 @@ public:
 	 * transforming the polygon.
 	 */
 	const Point2& front() const {
-		return vertices.front();
+		return (*this)[0];
 	}
 
 	/*
