@@ -220,6 +220,28 @@ public:
 	}
 
 	/*
+	 * Returns a pointer to the underlying array serving as element storage.
+	 *
+	 * The pointer is such that the range ``[data(); data() + size()]`` is
+	 * always a valid range, even if the container is empty (``data()`` is not
+	 * dereferenceable in that case).
+	 */
+	Point2* data() noexcept {
+		return vertices.data();
+	}
+
+	/*
+	 * Returns a pointer to the underlying array serving as element storage.
+	 *
+	 * The pointer is such that the range ``[data(); data() + size()]`` is
+	 * always a valid range, even if the container is empty (``data()`` is not
+	 * dereferenceable in that case).
+	 */
+	const Point2* data() const noexcept {
+		return vertices.data();
+	}
+
+	/*
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *

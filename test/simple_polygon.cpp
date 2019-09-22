@@ -210,6 +210,16 @@ TEST_F(SimplePolygonFixture, Back) {
 }
 
 /*
+ * Tests accessing and modifying the polygon via the ``data()`` function.
+ */
+TEST_F(SimplePolygonFixture, Data) {
+	Point2* some_vertex = triangle.data();
+	EXPECT_EQ(some_vertex->x, 20);
+	some_vertex->x = 42;
+	EXPECT_EQ(triangle[0].x, 42);
+}
+
+/*
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
