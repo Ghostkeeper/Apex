@@ -47,7 +47,6 @@ class SimplePolygon :
 public:
 	//TODO: Implement these functions.
 	/*
-	using std::vector<Point2>::operator[];
 	using std::vector<Point2>::assign;
 	using std::vector<Point2>::at;
 	using std::vector<Point2>::back;
@@ -60,7 +59,6 @@ public:
 	using std::vector<Point2>::clear;
 	using std::vector<Point2>::data;
 	using std::vector<Point2>::emplace;
-	using std::vector<Point2>::emplace_back;
 	using std::vector<Point2>::empty;
 	using std::vector<Point2>::end;
 	using std::vector<Point2>::front;
@@ -144,6 +142,18 @@ public:
 			}
 		}
 		return true;
+	}
+
+	/*
+	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
+	 * constructor arguments.
+	 *
+	 * The constructor arguments are passed on to the constructor of ``Point2``.
+	 * It constructs a point with them, and adds it to this simple polygon.
+	 */
+	template<class... Args>
+	void emplace_back(Args&&... args) {
+		vertices.emplace_back(args...);
 	}
 
 	/*
