@@ -235,6 +235,18 @@ TEST_F(SimplePolygonFixture, EmplaceBack) {
 }
 
 /*
+ * Tests whether an empty polygon is marked as empty and a filled polygon is
+ * not.
+ */
+TEST(SimplePolygon, Empty) {
+	SimplePolygon polygon;
+	EXPECT_TRUE(polygon.empty()) << "The polygon must be empty at construction.";
+
+	polygon.emplace_back(10, 20);
+	EXPECT_FALSE(polygon.empty()) << "Once a vertex has been put in, the polygon is no longer empty.";
+}
+
+/*
  * Tests getting the front vertex.
  */
 TEST_F(SimplePolygonFixture, Front) {

@@ -371,6 +371,13 @@ public:
 	}
 
 	/*
+	 * Checks whether the container has no elements.
+	 */
+	bool empty() const {
+		return vertices.size() == 0; //Implemented in terms of size(), to prevent duplication of code.
+	}
+
+	/*
 	 * Returns the first vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
