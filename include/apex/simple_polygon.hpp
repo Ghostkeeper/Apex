@@ -71,8 +71,17 @@ public:
 		vertices = std::move(original.vertices);
 	}
 
+	/*
+	 * Assigns a copy of the simple polygon to the left hand side polygon.
+	 * \param other The simple polygon to make a copy of.
+	 */
+	operator =(const SimplePolygon& other) {
+		vertices(original.vertices);
+		return *this;
+	}
+
 	//TODO: Implement these functions.
-	/*using std::vector<Point2>::operator=;
+	/*
 	using std::vector<Point2>::operator[];
 	using std::vector<Point2>::assign;
 	using std::vector<Point2>::at;
