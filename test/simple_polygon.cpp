@@ -81,6 +81,9 @@ TEST_F(SimplePolygonFixture, AccessReference) {
 	Point2& vertex = triangle[0];
 	vertex.x = 42; //Modify it.
 	EXPECT_EQ(triangle[0].x, 42) << "The modified coordinates should be modified by reference, so it should be stored in the simple polygon as well.";
+
+	triangle[0].y = 69;
+	EXPECT_EQ(triangle[0].y, 69);
 }
 
 /*
