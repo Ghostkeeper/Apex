@@ -83,4 +83,13 @@ TEST_F(SimplePolygonFixture, AccessReference) {
 	EXPECT_EQ(triangle[0].x, 42) << "The modified coordinates should be modified by reference, so it should be stored in the simple polygon as well.";
 }
 
+/*
+ * Tests accessing individual vertices of the simple polygon by copy.
+ */
+TEST_F(SimplePolygonFixture, AccessCopy) {
+	const Point2 vertex = triangle[1];
+	EXPECT_EQ(vertex.x, 100);
+	EXPECT_EQ(vertex.y, 20);
+}
+
 }
