@@ -150,6 +150,17 @@ TEST_F(SimplePolygonFixture, AssignIteratorLargerRange) {
 }
 
 /*
+ * Tests assigning an initialiser list to the simple polygon.
+ */
+TEST_F(SimplePolygonFixture, AssignInitialiserList) {
+	octagon.assign({Point2(10, 10), Point2(20, 10), Point2(20, 20)});
+	ASSERT_EQ(octagon.size(), 3);
+	EXPECT_EQ(octagon[0], Point2(10, 10));
+	EXPECT_EQ(octagon[1], Point2(20, 10));
+	EXPECT_EQ(octagon[2], Point2(20, 20));
+}
+
+/*
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
