@@ -366,6 +366,16 @@ TEST_F(SimplePolygonFixture, IteratorReverseModification) {
 }
 
 /*
+ * Tests getting the maximum size of a simple polygon.
+ */
+TEST(SimplePolygon, MaxSize) {
+	//In order to keep the test simple, we check for a minimum given by the OpenCL spec.
+	//Otherwise we're just repeating the algorithm.
+	//TODO: Mock out the OpenCL calls to give this a fixed maximum. This can be done only after the implementation is made to depend on OpenCL.
+	EXPECT_GE(SimplePolygon().max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. This vector must be held in that global memory.";
+}
+
+/*
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail

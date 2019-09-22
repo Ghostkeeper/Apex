@@ -47,22 +47,12 @@ class SimplePolygon :
 public:
 	//TODO: Implement these functions.
 	/*
-	using std::vector<Point2>::begin;
 	using std::vector<Point2>::capacity;
-	using std::vector<Point2>::cbegin;
-	using std::vector<Point2>::cend;
-	using std::vector<Point2>::crbegin;
-	using std::vector<Point2>::crend;
 	using std::vector<Point2>::clear;
 	using std::vector<Point2>::emplace;
-	using std::vector<Point2>::empty;
-	using std::vector<Point2>::end;
 	using std::vector<Point2>::insert;
-	using std::vector<Point2>::max_size;
 	using std::vector<Point2>::pop_back;
 	using std::vector<Point2>::push_back;
-	using std::vector<Point2>::rbegin;
-	using std::vector<Point2>::rend;
 	using std::vector<Point2>::reserve;
 	using std::vector<Point2>::shrink_to_fit;
 	using std::vector<Point2>::swap;*/
@@ -395,6 +385,16 @@ public:
 	 */
 	const Point2& front() const {
 		return (*this)[0];
+	}
+
+	/*
+	 * Gives the maximum number of vertices that this simple polygon is able to
+	 * hold due to implementation limitations.
+	 *
+	 * This will depend on the OpenCL devices available.
+	 */
+	size_t max_size() const noexcept {
+		return vertices.max_size();
 	}
 
 	/*
