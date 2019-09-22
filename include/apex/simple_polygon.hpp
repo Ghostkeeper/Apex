@@ -9,7 +9,7 @@
 #ifndef APEX_SIMPLE_POLYGON
 #define APEX_SIMPLE_POLYGON
 
-#include <move> //For std::move.
+#include <utility> //For std::move.
 #include <vector> //To store the vertex data.
 
 #include "point2.hpp" //The vertices of the polygon are 2D points.
@@ -40,47 +40,11 @@ namespace apex {
  * If the vertices of the polygon are winding counter-clockwise, the polygon is
  * positive. Otherwise it is negative.
  */
-class SimplePolygon,
+class SimplePolygon :
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
 		public SimplePolygonArea<SimplePolygon>,
 		public SimplePolygonTranslate<SimplePolygon> {
 public:
-	/*
-	 * Constructs an empty simple polygon.
-	 *
-	 * The polygon will have no vertices or edges and no area.
-	 */
-	SimplePolygon() {}
-
-	/*
-	 * Copies a simple polygon.
-	 * \param original The polygon to create a copy of.
-	 */
-	SimplePolygon(const SimplePolygon& original) {
-		vertices(original.vertices);
-	}
-
-	/*
-	 * Moves a simple polygon.
-	 *
-	 * The original polygon will still exist, but accessing it is undefined
-	 * behaviour. Do not use it any more.
-	 * \param original The polygon to move to a different instance.
-	 */
-	SimplePolygon(SimplePolygon&& original) {
-		vertices = std::move(original.vertices);
-	}
-
-	/*
-	 * Assigns a copy of the simple polygon to the left hand side polygon.
-	 * \param other The simple polygon to make a copy of.
-	 * \return This polygon, after modification. This can be used for chaining.
-	 */
-	SimplePolygon& operator =(const SimplePolygon& other) {
-		vertices(original.vertices);
-		return *this;
-	}
-
 	//TODO: Implement these functions.
 	/*
 	using std::vector<Point2>::operator[];
