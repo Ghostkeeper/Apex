@@ -48,6 +48,7 @@ if(BUILD_TESTS)
 	set(test_names
 		coordinate
 		point2
+		simple_polygon
 		simple_polygon_area
 		simple_polygon_translate
 	)
