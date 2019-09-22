@@ -161,6 +161,24 @@ TEST_F(SimplePolygonFixture, AssignInitialiserList) {
 }
 
 /*
+ * Tests accessing the vertices in the simple polygon with the ``at`` function.
+ *
+ * This test keeps the access within the range. There should be no exception.
+ */
+TEST_F(SimplePolygonFixture, AtInRange) {
+	EXPECT_EQ(triangle.at(1), Point2(100, 20));
+}
+
+/*
+ * Tests accessing outside of the range of the simple polygon with the ``at``
+ * function.
+ */
+TEST_F(SimplePolygonFixture, AtOutsideRange) {
+	EXPECT_THROW(triangle.at(3), std::out_of_range);
+	EXPECT_THROW(triangle.at(-1), std::out_of_range); //Probably doesn't matter really since it's unsigned anyway.
+}
+
+/*
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
