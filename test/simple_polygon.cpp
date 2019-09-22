@@ -95,4 +95,30 @@ TEST_F(SimplePolygonFixture, AccessCopy) {
 	EXPECT_EQ(vertex.y, 20);
 }
 
+/*
+ * Tests adding new vertices by emplacing their constructor arguments.
+ *
+ * Numerous other tests also depend on this, so if this fails it'll also fail
+ * other tests. But if this one even fails, you can be sure there is something
+ * very wrong with emplacing or the internal data.
+ */
+TEST_F(SimplePolygonFixture, EmplaceBack) {
+	triangle.emplace_back(50, 50);
+
+	ASSERT_EQ(triangle.size(), 4) << "There should now be one more vertex.";
+	EXPECT_EQ(triangle[3].x, 50);
+	EXPECT_EQ(triangle[3].y, 50);
+}
+
+/*
+ * Tests getting the number of vertices.
+ *
+ * Numerous other tests also depend on this, so if this fails it'll also fail
+ * other tests. But if this one even fails, you can be sure there is something
+ * very wrong with the size or the internal data.
+ */
+TEST_F(SimplePolygonFixture, Size) {
+	EXPECT_EQ(triangle.size(), 3);
+}
+
 }
