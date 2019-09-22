@@ -172,6 +172,14 @@ public:
 	}
 
 	/*
+	 * Replaces the contents of the simple polygon with the initialiser list.
+	 * \param initialiser_list The list to replace the polygon with.
+	 */
+	void assign(std::initializer_list<Point2> initialiser_list) {
+		vertices.assign(initialiser_list);
+	}
+
+	/*
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
