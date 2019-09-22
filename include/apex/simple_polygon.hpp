@@ -47,8 +47,6 @@ class SimplePolygon :
 public:
 	//TODO: Implement these functions.
 	/*
-	using std::vector<Point2>::assign;
-	using std::vector<Point2>::at;
 	using std::vector<Point2>::back;
 	using std::vector<Point2>::begin;
 	using std::vector<Point2>::capacity;
@@ -158,6 +156,17 @@ public:
 	 */
 	bool operator !=(const SimplePolygon& other) const {
 		return !((*this) == other); //Implemented in terms of ==.
+	}
+
+	/*
+	 * Returns a vertex at the specified position along the contour of the
+	 * simple polygon, with bounds checking.
+	 *
+	 * If the position is not within the range of the container, an exception of
+	 * type ``std::out_of_range`` is thrown.
+	 */
+	Point2& at(const size_t position) {
+		return vertices.at(position);
 	}
 
 	/*
