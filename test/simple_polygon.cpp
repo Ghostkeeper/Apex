@@ -219,6 +219,9 @@ TEST_F(SimplePolygonFixture, EmplaceBack) {
  */
 TEST_F(SimplePolygonFixture, Front) {
 	EXPECT_EQ(triangle.front(), Point2(20, 20));
+
+	const SimplePolygon copy(triangle);
+	EXPECT_EQ(copy.front(), Point2(20, 20));
 }
 
 /*
