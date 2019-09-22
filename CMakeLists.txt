@@ -34,7 +34,7 @@ if(BUILD_TESTS)
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
-		MockSimplePolygon.cpp
+		mock_simple_polygon.cpp
 	)
 	set(test_helpers_paths "")
 	foreach(test_helpers_source ${test_helpers_sources})
