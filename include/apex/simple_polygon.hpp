@@ -73,7 +73,6 @@ public:
 	using std::vector<Point2>::rend;
 	using std::vector<Point2>::reserve;
 	using std::vector<Point2>::shrink_to_fit;
-	using std::vector<Point2>::size;
 	using std::vector<Point2>::swap;*/
 
 	/*
@@ -109,6 +108,14 @@ public:
 			}
 		}
 		return true;
+	}
+
+	/*
+	 * Gives the number of vertices in the simple polygon.
+	 * \return The number of vertices in the simple polygon.
+	 */
+	size_t size() const {
+		return vertices.size();
 	}
 
 protected:
