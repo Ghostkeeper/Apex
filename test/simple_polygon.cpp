@@ -13,6 +13,26 @@
 namespace apex {
 
 /*
+ * Fixture that contains a few pre-constructed simple polygons.
+ */
+class SimplePolygonFixture : public ::testing::Test {
+public:
+	/*
+	 * A simple shape with three vertices.
+	 */
+	SimplePolygon triangle;
+
+	/*
+	 * Constructs the fixture simple polygons.
+	 */
+	void SetUp() {
+		triangle.emplace_back(20, 20);
+		triangle.emplace_back(100, 20);
+		triangle.emplace_back(60, 60);
+	}
+};
+
+/*
  * Tests constructing an empty simple polygon.
  */
 TEST(SimplePolygon, ConstructEmpty) {
@@ -23,17 +43,12 @@ TEST(SimplePolygon, ConstructEmpty) {
 /*
  * Tests copy-constructing a simple polygon.
  */
-TEST(SimplePolygon, ConstructCopy) {
-	SimplePolygon original;
-	original.emplace_back(20, 20);
-	original.emplace_back(100, 20);
-	original.emplace_back(60, 60);
+TEST_F(SimplePolygonFixture, ConstructCopy) {
+	SimplePolygon copy(triangle); //Run the copy constructor.
 
-	SimplePolygon copy(original); //Run the copy constructor.
-
-	ASSERT_EQ(original.size(), copy.size());
-	for(size_t i = 0; i < original.size(); ++i) {
-		EXPECT_EQ(original[i], copy[i]);
+	ASSERT_EQ(triangle.size(), copy.size());
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle[i], copy[i]);
 	}
 }
 
