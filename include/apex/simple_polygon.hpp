@@ -47,7 +47,6 @@ class SimplePolygon :
 public:
 	//TODO: Implement these functions.
 	/*
-	using std::vector<Point2>::back;
 	using std::vector<Point2>::begin;
 	using std::vector<Point2>::capacity;
 	using std::vector<Point2>::cbegin;
@@ -55,12 +54,9 @@ public:
 	using std::vector<Point2>::crbegin;
 	using std::vector<Point2>::crend;
 	using std::vector<Point2>::clear;
-	using std::vector<Point2>::data;
 	using std::vector<Point2>::emplace;
 	using std::vector<Point2>::empty;
 	using std::vector<Point2>::end;
-	using std::vector<Point2>::front;
-	using std::vector<Point2>::get_allocator;
 	using std::vector<Point2>::insert;
 	using std::vector<Point2>::max_size;
 	using std::vector<Point2>::pop_back;
@@ -70,6 +66,22 @@ public:
 	using std::vector<Point2>::reserve;
 	using std::vector<Point2>::shrink_to_fit;
 	using std::vector<Point2>::swap;*/
+
+	/*
+	 * Iterates one loop around the polygon.
+	 *
+	 * This implementation hides the actual iterator used for the underlying
+	 * data structures.
+	 */
+	typedef std::vector<Point2>::iterator iterator;
+
+	/*
+	 * Iterates one loop around the polygon.
+	 *
+	 * This implementation hides the actual iterator used for the underlying
+	 * data structures.
+	 */
+	typedef std::vector<Point2>::const_iterator const_iterator;
 
 	/*
 	 * Provides access to the individual vertices of the simple polygon.
@@ -217,6 +229,72 @@ public:
 	 */
 	const Point2& back() const {
 		return vertices[size() - 1];
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``end()`` after one complete
+	 * iteration around the contour.
+	 */
+	iterator begin() noexcept {
+		return vertices.begin();
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``end()`` after one complete
+	 * iteration around the contour.
+	 */
+	const_iterator begin() const noexcept {
+		return vertices.begin();
+	}
+
+	/*
+	 * Gives an iterator to one of the vertices of the simple polygon.
+	 *
+	 * There is no beginning to the closed loop around the simple polygon. The
+	 * vertex that this iterator will begin with is therefore arbitrary. The
+	 * iterator will hit the iterator returned by ``end()`` after one complete
+	 * iteration around the contour.
+	 */
+	const_iterator cbegin() const noexcept {
+		return vertices.cbegin();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``begin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	const_iterator cend() const noexcept {
+		return vertices.cend();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``begin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	iterator end() noexcept {
+		return vertices.end();
+	}
+
+	/*
+	 * Gives the end of the iteration as returned by ``begin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	const_iterator end() const noexcept {
+		return vertices.end();
 	}
 
 	/*
