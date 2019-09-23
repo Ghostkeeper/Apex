@@ -376,6 +376,22 @@ TEST(SimplePolygon, MaxSize) {
 }
 
 /*
+ * Tests reserving memory for the polygon and the resulting capacity.
+ */
+TEST_F(SimplePolygonFixture, ReserveCapacity) {
+	EXPECT_GE(triangle.capacity(), triangle.size()) << "The capacity must at least be the number of elements currently contained.";
+
+	triangle.reserve(256);
+	EXPECT_GE(triangle.capacity(), 256) << "We reserved 256 elements, so there must now be at least room for 256.";
+
+	triangle.reserve(128);
+	EXPECT_GE(triangle.capacity(), 256) << "Reducing the reservation shouldn't have any effect as long as we don't shrink to size.";
+
+	triangle.reserve(257);
+	EXPECT_GE(triangle.capacity(), 257); //Try with a number that's not a nice multiple of 2 as well.
+}
+
+/*
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail

@@ -262,6 +262,14 @@ public:
 	}
 
 	/*
+	 * Returns the number of vertices this simple polygon could contain without
+	 * needing to resize its memory.
+	 */
+	size_t capacity() const noexcept {
+		return vertices.capacity();
+	}
+
+	/*
 	 * Gives an iterator to one of the vertices of the simple polygon.
 	 *
 	 * There is no beginning to the closed loop around the simple polygon. The
@@ -441,6 +449,18 @@ public:
 	 */
 	const_reverse_iterator rend() const noexcept {
 		return vertices.rend();
+	}
+
+	/*
+	 * Increase the capacity of the simple polygon such that at least
+	 * ``new_capacity`` number of vertices will vit in its memory without
+	 * allocating more memory.
+	 *
+	 * More memory may still be reserved in OpenCL should the need arise.
+	 * \param new_capacity The new minimum capacity for the simple polygon.
+	 */
+	void reserve(size_t new_capacity) {
+		vertices.reserve(new_capacity);
 	}
 
 	/*
