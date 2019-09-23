@@ -392,6 +392,20 @@ TEST_F(SimplePolygonFixture, ReserveCapacity) {
 }
 
 /*
+ * Tests whether shrink_to_fit doesn't destroy anything.
+ *
+ * The shrink_to_fit method doesn't give any guarantees that the capacity is
+ * actually reduced. That is up to the compiler. So we can't test that the
+ * capacity is reduced. But we can at least verify that the capacity doesn't cut
+ * off any data.
+ */
+TEST_F(SimplePolygonFixture, ShrinkToFit) {
+	triangle.reserve(256);
+	triangle.shrink_to_fit();
+	EXPECT_GE(triangle.capacity(), triangle.size());
+}
+
+/*
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail

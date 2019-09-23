@@ -464,6 +464,18 @@ public:
 	}
 
 	/*
+	 * Makes the simple polygon use as little memory as possible by removing any
+	 * unused capacity.
+	 *
+	 * It depends on the implementation whether this request is fulfilled. There
+	 * are no guarantees. A reallocation might occur, in which case any
+	 * iterators and pointers will be invalidated.
+	 */
+	void shrink_to_fit() {
+		vertices.shrink_to_fit();
+	}
+
+	/*
 	 * Gives the number of vertices in the simple polygon.
 	 * \return The number of vertices in the simple polygon.
 	 */
