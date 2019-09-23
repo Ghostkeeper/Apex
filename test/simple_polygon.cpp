@@ -301,13 +301,60 @@ TEST_F(SimplePolygonFixture, InsertCopyMiddle) {
 /*
  * Tests inserting vertices by copying a vertex at the end of the vertex list.
  */
-TEST_F(SimplePolygonFixture, InsertCopyEnd) {
+TEST_F(SimplePolygonFixture, InsertCopyBack) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
 	copy.insert(copy.end(), Point2(42, 69)); //Insert a new vertex at the very end.
 	ASSERT_EQ(copy.size(), triangle.size() + 1);
 	for(size_t i = 0; i < triangle.size(); ++i) {
 		EXPECT_EQ(copy[i], triangle[i]) << "All vertices are in front of the inserted vertex, so they shouldn't be shifted.";
 	}
+	EXPECT_EQ(copy[triangle.size()], Point2(42, 69)) << "The new vertex must now be at the end.";
+}
+
+/*
+ * Tests inserting vertices by moving a vertex in front of all other vertices.
+ */
+TEST_F(SimplePolygonFixture, InsertMoveFront) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	Point2&& rvalue = Point2(42, 69);
+	copy.insert(copy.begin(), rvalue); //Insert a new vertex before everything else.
+	ASSERT_EQ(copy.size(), triangle.size() + 1);
+	EXPECT_EQ(copy[0], Point2(42, 69)) << "The inserted vertex must have been the first vertex now.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 1], triangle[i]) << "All vertices must have shifted by inserting a vertex in front.";
+	}
+}
+
+/*
+ * Tests inserting vertices by copying a vertex in the middle between the other
+ * vertices.
+ */
+TEST_F(SimplePolygonFixture, InsertMoveMiddle) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_vertex = copy.begin();
+	second_vertex++;
+	Point2&& rvalue = Point2(42, 69);
+	copy.insert(second_vertex, rvalue); //Insert a new vertex in the second location.
+	ASSERT_EQ(copy.size(), triangle.size() + 1);
+	EXPECT_EQ(copy[0], triangle[0]) << "The first vertex must remain untouched since it was inserted after it.";
+	EXPECT_EQ(copy[1], Point2(42, 69)) << "The inserted vertex must be the new the second vertex.";
+	for(size_t i = 1; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 1], triangle[i]) << "All remaining vertices must have been shifted by inserting a vertex in front.";
+	}
+}
+
+/*
+ * Tests inserting vertices by copying a vertex at the end of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, InsertMoveBack) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	Point2&& rvalue = Point2(42, 69);
+	copy.insert(copy.end(), rvalue); //Insert a new vertex at the very end.
+	ASSERT_EQ(copy.size(), triangle.size() + 1);
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "All vertices are in front of the inserted vertex, so they shouldn't be shifted.";
+	}
+	EXPECT_EQ(copy[triangle.size()], Point2(42, 69)) << "The new vertex must now be at the end.";
 }
 
 /*

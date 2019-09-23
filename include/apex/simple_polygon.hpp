@@ -413,6 +413,18 @@ public:
 	}
 
 	/*
+	 * Inserts a new vertex at a specified position in the simple polygon.
+	 *
+	 * The vertex is moved in the polygon without copying it.
+	 * \param position. The vertex is inserted before this position in the loop.
+	 * \param vertex The coordinates of the new vertex.
+	 * \return An iterator pointing to the newly inserted vertex.
+	 */
+	iterator insert(const_iterator position, Point2&& vertex) {
+		return vertices.insert(position, vertex);
+	}
+
+	/*
 	 * Gives the maximum number of vertices that this simple polygon is able to
 	 * hold due to implementation limitations.
 	 *
