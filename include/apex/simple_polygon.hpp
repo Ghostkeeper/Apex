@@ -425,6 +425,20 @@ public:
 	}
 
 	/*
+	 * Inserts a range of vertices between ``first`` and ``last`` at a speciied
+	 * position in the simple polygon.
+	 * \param position The vertices are inserted before this position in the
+	 * loop.
+	 * \param first The first vertex to insert in the simple polygon.
+	 * \param last The vertex after the last vertex to insert in the simple
+	 * polygon.
+	 */
+	template<class InputIterator>
+	void insert(const_iterator position, InputIterator first, InputIterator last) {
+		vertices.insert(position, first, last);
+	}
+
+	/*
 	 * Gives the maximum number of vertices that this simple polygon is able to
 	 * hold due to implementation limitations.
 	 *

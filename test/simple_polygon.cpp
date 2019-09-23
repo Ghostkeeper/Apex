@@ -326,7 +326,7 @@ TEST_F(SimplePolygonFixture, InsertMoveFront) {
 }
 
 /*
- * Tests inserting vertices by copying a vertex in the middle between the other
+ * Tests inserting vertices by moving a vertex in the middle between the other
  * vertices.
  */
 TEST_F(SimplePolygonFixture, InsertMoveMiddle) {
@@ -344,7 +344,7 @@ TEST_F(SimplePolygonFixture, InsertMoveMiddle) {
 }
 
 /*
- * Tests inserting vertices by copying a vertex at the end of the vertex list.
+ * Tests inserting vertices by moving a vertex to the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, InsertMoveBack) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
@@ -355,6 +355,57 @@ TEST_F(SimplePolygonFixture, InsertMoveBack) {
 		EXPECT_EQ(copy[i], triangle[i]) << "All vertices are in front of the inserted vertex, so they shouldn't be shifted.";
 	}
 	EXPECT_EQ(copy[triangle.size()], Point2(42, 69)) << "The new vertex must now be at the end.";
+}
+
+/*
+ * Tests inserting a range of vertices indicated by two iterators in the front
+ * of the list of vertices.
+ */
+TEST_F(SimplePolygonFixture, InsertIteratorsFront) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.begin(), octagon.begin(), octagon.end());
+	ASSERT_EQ(copy.size(), triangle.size() + octagon.size());
+	for(size_t i = 0; i < octagon.size(); ++i) {
+		EXPECT_EQ(copy[i], octagon[i]) << "The octagon must appear at the beginning of the combined shape.";
+	}
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[octagon.size() + i], triangle[i]) << "The triangle must appear at the end of the combined shape.";
+	}
+}
+
+/*
+ * Tests inserting a range of vertices indicated by two iterators in the middle
+ * between the other vertices.
+ */
+TEST_F(SimplePolygonFixture, InsertIteratorsMiddle) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_vertex = copy.begin();
+	second_vertex++;
+	copy.insert(second_vertex, octagon.begin(), octagon.end());
+	ASSERT_EQ(copy.size(), triangle.size() + octagon.size());
+	EXPECT_EQ(copy[0], triangle[0]) << "The octagon must have been inserted after the first vertex of the triangle.";
+	for(size_t i = 0; i < octagon.size(); ++i) {
+		EXPECT_EQ(copy[i + 1], octagon[i]) << "The octagon must appear in the middle of the combined shape.";
+	}
+	for(size_t i = 1; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + octagon.size()], triangle[i]) << "The rest of the triangle must appear at the end of the combined shape.";
+	}
+}
+
+/*
+ * Tests inserting a range of vertices indicated by two iterators at the end of
+ * the vertex list.
+ */
+TEST_F(SimplePolygonFixture, InsertIteratorsEnd) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.end(), octagon.begin(), octagon.end());
+	ASSERT_EQ(copy.size(), triangle.size() + octagon.size());
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "The octagon was inserted after the triangle vertices, so these vertices are still intact.";
+	}
+	for(size_t i = 0; i < octagon.size(); ++i) {
+		EXPECT_EQ(copy[i + triangle.size()], octagon[i]) << "The octagon was inserted at the end, so it must be shifted by the length of the triangle.";
+	}
 }
 
 /*
