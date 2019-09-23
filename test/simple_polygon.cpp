@@ -396,7 +396,7 @@ TEST_F(SimplePolygonFixture, InsertIteratorsMiddle) {
  * Tests inserting a range of vertices indicated by two iterators at the end of
  * the vertex list.
  */
-TEST_F(SimplePolygonFixture, InsertIteratorsEnd) {
+TEST_F(SimplePolygonFixture, InsertIteratorsBack) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
 	copy.insert(copy.end(), octagon.begin(), octagon.end());
 	ASSERT_EQ(copy.size(), triangle.size() + octagon.size());
@@ -405,6 +405,39 @@ TEST_F(SimplePolygonFixture, InsertIteratorsEnd) {
 	}
 	for(size_t i = 0; i < octagon.size(); ++i) {
 		EXPECT_EQ(copy[i + triangle.size()], octagon[i]) << "The octagon was inserted at the end, so it must be shifted by the length of the triangle.";
+	}
+}
+
+/*
+ * Tests inserting an initialiser list of vertices at the start of a simple
+ * polygon.
+ */
+TEST_F(SimplePolygonFixture, InsertInitialiserListFront) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.begin(), {Point2(99, 88), Point2(42, 69)});
+	ASSERT_EQ(copy.size(), triangle.size() + 2);
+	EXPECT_EQ(copy[0], Point2(99, 88));
+	EXPECT_EQ(copy[1], Point2(42, 69));
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 2], triangle[i]) << "The triangle's vertices were shifted by inserting two vertices before them.";
+	}
+}
+
+/*
+ * Tests inserting an initialiser list of vertices in the middle of a simple
+ * polygon.
+ */
+TEST_F(SimplePolygonFixture, InsertInitialiserListMiddle) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_vertex = copy.begin();
+	second_vertex++;
+	copy.insert(second_vertex, {Point2(99, 88), Point2(42, 69)});
+	ASSERT_EQ(copy.size(), triangle.size() + 2);
+	EXPECT_EQ(copy[0], triangle[0]) << "The first vertex is still in front since the new vertices were inserted after it.";
+	EXPECT_EQ(copy[1], Point2(99, 88));
+	EXPECT_EQ(copy[2], Point2(42, 69));
+	for(size_t i = 1; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 2], triangle[i]) << "The rest of the vertices were shifted by inserting two vertices before them.";
 	}
 }
 

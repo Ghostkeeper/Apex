@@ -439,6 +439,19 @@ public:
 	}
 
 	/*
+	 * Inserts a range of vertices at a specified position in the simple
+	 * polygon.
+	 * \param position The vertices are inserted before this position in the
+	 * loop.
+	 * \param initialiser_list A list of vertices to insert.
+	 * \return An iterator pointing to the first element inserted, or the
+	 * ``position`` parameter if the list was empty.
+	 */
+	iterator insert(const_iterator position, std::initializer_list<Point2> initialiser_list) {
+		return vertices.insert(position, initialiser_list);
+	}
+
+	/*
 	 * Gives the maximum number of vertices that this simple polygon is able to
 	 * hold due to implementation limitations.
 	 *
