@@ -292,6 +292,13 @@ public:
 	}
 
 	/*
+	 * Removes all vertices from the simple polygon.
+	 */
+	void clear() noexcept {
+		vertices.clear();
+	}
+
+	/*
 	 * Gives an iterator to one of the vertices of the simple polygon that
 	 * iterates in reverse order along the contour of the simple polygon.
 	 *

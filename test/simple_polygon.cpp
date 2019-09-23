@@ -210,6 +210,18 @@ TEST_F(SimplePolygonFixture, Back) {
 }
 
 /*
+ * Tests clearing a polygon.
+ */
+TEST_F(SimplePolygonFixture, Clear) {
+	SimplePolygon empty;
+	empty.clear();
+	EXPECT_EQ(empty.size(), 0) << "Size should still be 0.";
+
+	triangle.clear();
+	EXPECT_EQ(triangle.size(), 0) << "Clearing it should've removed all vertices.";
+}
+
+/*
  * Tests accessing and modifying the polygon via the ``data()`` function.
  */
 TEST_F(SimplePolygonFixture, Data) {
