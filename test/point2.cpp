@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <sstream> //To test printing to a stream.
 #include <tuple> //To parametrise tests with multiple parameters.
 
 #include "apex/coordinate.hpp" //To construct points.
@@ -91,6 +92,16 @@ TEST(Point, Equality) {
 	constexpr Point2 vertical(10, 25); //Not equal in Y dimension.
 	EXPECT_FALSE(a == vertical);
 	EXPECT_TRUE(a != vertical);
+}
+
+/*
+ * Tests outputting this point to a stream.
+ */
+TEST(Point, Stream) {
+	const Point2 point(42, 69);
+	std::stringstream stream;
+	stream << point;
+	EXPECT_EQ(stream.str(), "[42,69]");
 }
 
 }

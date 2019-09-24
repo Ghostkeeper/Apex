@@ -9,6 +9,8 @@
 #ifndef APEX_POINT2
 #define APEX_POINT2
 
+#include <ostream> //To overload printing the point to a stream.
+
 #include "coordinate.hpp" //Used to store the coordinates of this point.
 
 namespace apex {
@@ -109,6 +111,16 @@ public:
 	 */
 	constexpr bool operator !=(const Point2& other) const {
 		return !((*this) == other);
+	}
+
+	/*
+	 * Overloads streaming this point.
+	 *
+	 * This is useful for debugging, since it allows printing the point to a stream
+	 * directly, giving you a reasonably readable output.
+	 */
+	friend std::ostream& operator <<(std::ostream& output_stream, const Point2& point) {
+		return output_stream << "[" << point.x << "," << point.y << "]";
 	}
 };
 
