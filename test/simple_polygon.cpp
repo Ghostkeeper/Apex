@@ -6,6 +6,7 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <algorithm> //To test the specialisation of std::swap.
 #include <cmath> //To construct an octagon.
 #include <gtest/gtest.h> //To run the test.
 
@@ -784,6 +785,18 @@ TEST_F(SimplePolygonFixture, Swap) {
 	SimplePolygon copy_triangle = triangle; //Make copies so that we can compare to the original triangle and octagon.
 	SimplePolygon copy_octagon = octagon;
 	copy_triangle.swap(copy_octagon);
+	EXPECT_EQ(copy_triangle, octagon) << "Since the triangle was swapped with the octagon, it must now contain the octagon.";
+	EXPECT_EQ(copy_octagon, triangle) << "Since the octagon was swapped with the triangle, it must now contain the triangle.";
+}
+
+/*
+ * Tests swapping the contents of two simple polygons via the std::swap
+ * function.
+ */
+TEST_F(SimplePolygonFixture, SwapStd) {
+	SimplePolygon copy_triangle = triangle; //Make copies so that we can compare to the original triangle and octagon.
+	SimplePolygon copy_octagon = octagon;
+	std::swap(copy_triangle, copy_octagon);
 	EXPECT_EQ(copy_triangle, octagon) << "Since the triangle was swapped with the octagon, it must now contain the octagon.";
 	EXPECT_EQ(copy_octagon, triangle) << "Since the octagon was swapped with the triangle, it must now contain the triangle.";
 }

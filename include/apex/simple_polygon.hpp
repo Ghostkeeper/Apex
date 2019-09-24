@@ -611,4 +611,20 @@ protected:
 
 }
 
+namespace std {
+
+/*
+ * Swaps the contents of two simple polygons.
+ *
+ * This specialises the std::swap algorithm for simple polygons. The contents of
+ * the two simple polygons gets swapped in constant time.
+ * \param lhs One of the containers to swap.
+ * \param rhs The other container to swap.
+ */
+void swap(apex::SimplePolygon& lhs, apex::SimplePolygon& rhs) {
+	lhs.swap(rhs);
+}
+
+}
+
 #endif //APEX_SIMPLE_POLYGON
