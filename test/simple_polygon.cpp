@@ -706,6 +706,25 @@ TEST(SimplePolygon, MaxSize) {
 }
 
 /*
+ * Tests push_back by letting it copy the vertex.
+ */
+TEST_F(SimplePolygonFixture, PushBackCopy) {
+	triangle.push_back(Point2(42, 42));
+	ASSERT_EQ(triangle.size(), 4) << "One vertex was added.";
+	EXPECT_EQ(triangle[3], Point2(42, 42)) << "The new vertex was appended at the end.";
+}
+
+/*
+ * Tests push_back by moving the vertex into the memory of the simple polygon.
+ */
+TEST_F(SimplePolygonFixture, PushBackMove) {
+	Point2&& rvalue = Point2(42, 42);
+	triangle.push_back(rvalue);
+	ASSERT_EQ(triangle.size(), 4) << "One vertex was added.";
+	EXPECT_EQ(triangle[3], Point2(42, 42)) << "The new vertex was appended at the end.";
+}
+
+/*
  * Tests reserving memory for the polygon and the resulting capacity.
  */
 TEST_F(SimplePolygonFixture, ReserveCapacity) {

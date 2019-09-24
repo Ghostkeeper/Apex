@@ -492,9 +492,29 @@ public:
 	 * hold due to implementation limitations.
 	 *
 	 * This will depend on the OpenCL devices available.
+	 * \return The maximum number of vertices that this simple polygon is able
+	 * to hold.
 	 */
 	size_t max_size() const noexcept {
 		return vertices.max_size();
+	}
+
+	/*
+	 * Adds a vertex at the end of the iteration of the vertices of this simple
+	 * polygon.
+	 * \param vertex The new vertex to add.
+	 */
+	void push_back(const Point2& vertex) {
+		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
+	}
+
+	/*
+	 * Adds a vertex at the end of the iteration of the vertices of this simple
+	 * polygon.
+	 * \param vertex The new vertex to move into the simple polygon.
+	 */
+	void push_back(const Point2&& vertex) {
+		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
 	}
 
 	/*
