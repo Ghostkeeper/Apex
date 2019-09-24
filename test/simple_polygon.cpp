@@ -777,4 +777,15 @@ TEST_F(SimplePolygonFixture, Size) {
 	EXPECT_EQ(triangle.size(), 3);
 }
 
+/*
+ * Tests swapping the contents of two simple polygons.
+ */
+TEST_F(SimplePolygonFixture, Swap) {
+	SimplePolygon copy_triangle = triangle; //Make copies so that we can compare to the original triangle and octagon.
+	SimplePolygon copy_octagon = octagon;
+	copy_triangle.swap(copy_octagon);
+	EXPECT_EQ(copy_triangle, octagon) << "Since the triangle was swapped with the octagon, it must now contain the octagon.";
+	EXPECT_EQ(copy_octagon, triangle) << "Since the octagon was swapped with the triangle, it must now contain the triangle.";
+}
+
 }

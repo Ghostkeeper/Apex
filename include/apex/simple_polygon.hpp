@@ -45,18 +45,6 @@ class SimplePolygon :
 		public SimplePolygonArea<SimplePolygon>,
 		public SimplePolygonTranslate<SimplePolygon> {
 public:
-	//TODO: Implement these functions.
-	/*
-	using std::vector<Point2>::capacity;
-	using std::vector<Point2>::clear;
-	using std::vector<Point2>::emplace;
-	using std::vector<Point2>::insert;
-	using std::vector<Point2>::pop_back;
-	using std::vector<Point2>::push_back;
-	using std::vector<Point2>::reserve;
-	using std::vector<Point2>::shrink_to_fit;
-	using std::vector<Point2>::swap;*/
-
 	/*
 	 * Iterates one loop around the polygon.
 	 *
@@ -600,6 +588,13 @@ public:
 	 */
 	size_t size() const noexcept {
 		return vertices.size();
+	}
+
+	/*
+	 * Swaps the contents of this simple polygon instance with that of another.
+	 */
+	void swap(SimplePolygon& other) {
+		vertices.swap(other.vertices);
 	}
 
 protected:
