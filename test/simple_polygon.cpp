@@ -232,6 +232,51 @@ TEST_F(SimplePolygonFixture, Data) {
 }
 
 /*
+ * Tests emplacing a vertex at the beginning of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EmplaceStart) {
+	SimplePolygon copy = triangle; //Modify a copy so that we can compare against the original triangle.
+	copy.emplace(copy.begin(), 42, 42);
+
+	ASSERT_EQ(copy.size(), triangle.size() + 1) << "There should now be one more vertex.";
+	EXPECT_EQ(copy[0], Point2(42, 42));
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 1], triangle[i]) << "The original triangle's elements have been shifted.";
+	}
+}
+
+/*
+ * Tests emplacing a vertex in the middle of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EmplaceMiddle) {
+	SimplePolygon copy = triangle; //Modify a copy so that we can compare against the original triangle.
+	SimplePolygon::const_iterator position = copy.begin();
+	position++;
+	copy.emplace(position, 42, 42);
+
+	ASSERT_EQ(copy.size(), triangle.size() + 1) << "There should now be one more vertex.";
+	EXPECT_EQ(copy[0], triangle[0]) << "The first vertex of the triangle was skipped.";
+	EXPECT_EQ(copy[1], Point2(42, 42)) << "The new vertex was placed in the second place.";
+	for(size_t i = 1; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 1], triangle[i]) << "The rest of the triangle's elements have been shifted.";
+	}
+}
+
+/*
+ * Tests emplacing a vertex at the end of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EmplaceEnd) {
+	SimplePolygon copy = triangle; //Modify a copy so that we can compare against the original triangle.
+	copy.emplace(copy.end(), 42, 42);
+
+	ASSERT_EQ(copy.size(), triangle.size() + 1) << "There should now be one more vertex.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "The original triangle's elements didn't move.";
+	}
+	EXPECT_EQ(copy[triangle.size()], Point2(42, 42)) << "The new vertex is at the end.";
+}
+
+/*
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
@@ -239,11 +284,14 @@ TEST_F(SimplePolygonFixture, Data) {
  * very wrong with emplacing or the internal data.
  */
 TEST_F(SimplePolygonFixture, EmplaceBack) {
-	triangle.emplace_back(50, 50);
+	SimplePolygon copy = triangle;
+	copy.emplace_back(50, 50);
 
-	ASSERT_EQ(triangle.size(), 4) << "There should now be one more vertex.";
-	EXPECT_EQ(triangle[3].x, 50);
-	EXPECT_EQ(triangle[3].y, 50);
+	ASSERT_EQ(copy.size(), triangle.size() + 1) << "There should now be one more vertex.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]);
+	}
+	EXPECT_EQ(copy[triangle.size()], Point2(50, 50));
 }
 
 /*

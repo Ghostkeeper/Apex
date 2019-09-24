@@ -322,6 +322,20 @@ public:
 	}
 
 	/*
+	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
+	 * constructor arguments and a position to insert it at.
+	 *
+	 * The constructor arguments are passed on to the constructor of ``Point2``.
+	 * It constructs a point with them, and adds it to this simple polygon.
+	 * \param position The position in the polygon to insert the vertex at.
+	 * \param arguments The arguments used to construct the vertices.
+	 */
+	template<class... Args>
+	void emplace(const_iterator position, Args&&... arguments) {
+		vertices.emplace(position, arguments...);
+	}
+
+	/*
 	 * Gives the end of the iteration as returned by ``begin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -369,10 +383,11 @@ public:
 	 *
 	 * The constructor arguments are passed on to the constructor of ``Point2``.
 	 * It constructs a point with them, and adds it to this simple polygon.
+	 * \param arguments The arguments used to construct the vertices.
 	 */
 	template<class... Args>
-	void emplace_back(Args&&... args) {
-		vertices.emplace_back(args...);
+	void emplace_back(Args&&... arguments) {
+		vertices.emplace(vertices.end(), arguments...); //Implemented in terms of emplace() to reduce duplication of code.
 	}
 
 	/*
