@@ -408,6 +408,17 @@ public:
 	}
 
 	/*
+	 * Removes a range of vertices from the simple polygon at the specified
+	 * position.
+	 * \param first The start of the range to remove.
+	 * \param last The vertex past the end of the range to remove.
+	 * \return The ``last`` iterator provided.
+	 */
+	iterator erase(const_iterator first, const_iterator last) {
+		return vertices.erase(first, last);
+	}
+
+	/*
 	 * Returns the first vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after

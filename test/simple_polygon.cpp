@@ -348,6 +348,62 @@ TEST_F(SimplePolygonFixture, EraseSingleEnd) {
 }
 
 /*
+ * Tests erasing a range of vertices from the beginning of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseRangeBegin) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator third_vertex = copy.begin(); //From the beginning to the third vertex is a range of 2 vertices (because the 3rd one is not erased along).
+	third_vertex++;
+	third_vertex++;
+	copy.erase(copy.begin(), third_vertex);
+	ASSERT_EQ(copy.size(), octagon.size() - 2) << "Two vertices have been removed.";
+	for(size_t i = 0; i < octagon.size() - 3; ++i) {
+		EXPECT_EQ(copy[i], octagon[i + 2]) << "All of the vertices shift by 2.";
+	}
+}
+
+/*
+ * Tests erasing a range of vertices from the middle of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseRangeMiddle) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_vertex = copy.begin(); //From the second to the fourth vertex is a range of 2 vertices (because the 3rd one is not erased along).
+	second_vertex++;
+	SimplePolygon::const_iterator fourth_vertex = second_vertex;
+	fourth_vertex++;
+	fourth_vertex++;
+	copy.erase(second_vertex, fourth_vertex);
+	ASSERT_EQ(copy.size(), octagon.size() - 2) << "Two vertices have been removed.";
+	EXPECT_EQ(copy[0], octagon[0]) << "The first vertex was not erased and hasn't shifted.";
+	for(size_t i = 1; i < octagon.size() - 3; ++i) {
+		EXPECT_EQ(copy[i], octagon[i + 2]) << "The rest of the vertices shift by 2.";
+	}
+}
+
+/*
+ * Tests erasing a range of vertices from the end of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseRangeEnd) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_to_last = copy.end(); //From second-to-last until the end is 2 vertices.
+	second_to_last--;
+	second_to_last--;
+	copy.erase(second_to_last, copy.end());
+	ASSERT_EQ(copy.size(), octagon.size() - 2) << "Two vertices have been removed.";
+	for(size_t i = 0; i < octagon.size() - 3; ++i) {
+		EXPECT_EQ(copy[i], octagon[i]) << "None of the vertices have shifted any.";
+	}
+}
+
+/*
+ * Tests erasing all vertices as a range.
+ */
+TEST_F(SimplePolygonFixture, EraseRangeAll) {
+	octagon.erase(octagon.begin(), octagon.end());
+	EXPECT_EQ(octagon.size(), 0) << "All vertices have been erased.";
+}
+
+/*
  * Tests getting the front vertex.
  */
 TEST_F(SimplePolygonFixture, Front) {
