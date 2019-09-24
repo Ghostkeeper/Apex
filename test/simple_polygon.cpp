@@ -706,6 +706,18 @@ TEST(SimplePolygon, MaxSize) {
 }
 
 /*
+ * Tests removing the last vertex of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, PopBack) {
+	SimplePolygon copy = triangle; //Modify a copy so that we can compare against the original.
+	copy.pop_back();
+	ASSERT_EQ(copy.size(), triangle.size() - 1);
+	for(size_t i = 0; i < copy.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "All other vertices are still intact.";
+	}
+}
+
+/*
  * Tests push_back by letting it copy the vertex.
  */
 TEST_F(SimplePolygonFixture, PushBackCopy) {

@@ -500,6 +500,13 @@ public:
 	}
 
 	/*
+	 * Removes the last vertex from the simple polygon.
+	 */
+	void pop_back() {
+		vertices.pop_back();
+	}
+
+	/*
 	 * Adds a vertex at the end of the iteration of the vertices of this simple
 	 * polygon.
 	 * \param vertex The new vertex to add.
