@@ -307,6 +307,47 @@ TEST(SimplePolygon, Empty) {
 }
 
 /*
+ * Tests erasing a single vertex from the beginning of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseSingleBegin) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	copy.erase(copy.begin());
+	ASSERT_EQ(copy.size(), octagon.size() - 1) << "One vertex has been removed.";
+	for(size_t i = 0; i < octagon.size() - 1; ++i) {
+		EXPECT_EQ(copy[i], octagon[i + 1]) << "All of the vertices have been shifted.";
+	}
+}
+
+/*
+ * Tests erasing a single vertex from the middle of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseSingleMiddle) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator second_vertex = copy.begin();
+	second_vertex++;
+	copy.erase(second_vertex);
+	ASSERT_EQ(copy.size(), octagon.size() - 1) << "One vertex has been removed.";
+	EXPECT_EQ(copy[0], octagon[0]) << "The first vertex is still in its place.";
+	for(size_t i = 1; i < octagon.size() - 1; ++i) {
+		EXPECT_EQ(copy[i], octagon[i + 1]) << "The rest of the vertices have been shifted.";
+	}
+}
+
+/*
+ * Tests erasing a single vertex from the end of the vertex list.
+ */
+TEST_F(SimplePolygonFixture, EraseSingleEnd) {
+	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
+	SimplePolygon::const_iterator last_vertex = copy.end();
+	last_vertex--; //Does this work? Good test!
+	copy.erase(last_vertex);
+	ASSERT_EQ(copy.size(), octagon.size() - 1) << "One vertex has been removed.";
+	for(size_t i = 0; i < octagon.size() - 2; ++i) {
+		EXPECT_EQ(copy[i], octagon[i]) << "None of the vertices have been shifted.";
+	}
+}
+
+/*
  * Tests getting the front vertex.
  */
 TEST_F(SimplePolygonFixture, Front) {

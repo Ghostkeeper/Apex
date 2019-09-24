@@ -398,6 +398,16 @@ public:
 	}
 
 	/*
+	 * Removes one vertex from the simple polygon at the specified position.
+	 * \param position An iterator referencing the position of the vertex to
+	 * remove.
+	 * \return An iterator of the vertex after the one removed.
+	 */
+	iterator erase(const_iterator position) {
+		return vertices.erase(position);
+	}
+
+	/*
 	 * Returns the first vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
