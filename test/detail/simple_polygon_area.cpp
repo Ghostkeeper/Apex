@@ -9,7 +9,7 @@
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h> //To run the test.
 
-#include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
+#include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
 
 #define PI 3.14159265358979 //To construct and calculate the area of a regular N-gon.
 

@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h> //To run the test.
 
-#include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the translate function under test.
+#include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the translate function under test.
 
 namespace apex {
 
