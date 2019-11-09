@@ -30,7 +30,7 @@ namespace apex {
  * circular dependencies). Some jobs may be executed in parallel, if this is
  * conducive to better performance.
  */
-template<typename Scheduler>
+template<typename Scheduler> //TODO: Default-initialise with the scheduler class.
 class Job {
 public:
 	/*
@@ -55,7 +55,8 @@ public:
 	 * should not be a return type. Instead, use an output parameter to return a
 	 * value. This output parameter can then be used as input for subsequent
 	 * jobs.
-	 * \param dependencies Other jobs that must be completed before this job.
+	 * \param dependencies Other jobs that must be completed before this job is
+	 * started.
 	 */
 	Job(int task, const std::vector<Job<Scheduler>> dependencies) : task(task), dependencies(dependencies) {};
 };
