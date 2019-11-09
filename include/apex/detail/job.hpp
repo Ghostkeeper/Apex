@@ -29,6 +29,9 @@ namespace apex {
  * as well, which can be constructed before starting the job and passed on to
  * future jobs before the job is executed.
  *
+ * Keep in mind that ``std::bind`` will copy all of its parameters, even if they
+ * are references. Instead, you can use ``std::ref`` to enforce a reference.
+ *
  * The job can also have dependencies, which are other jobs which must be
  * completed before this job is started. The scheduler will make sure that all
  * of these jobs are executed in sequence (as long as they don't contain

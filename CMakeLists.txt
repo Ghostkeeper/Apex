@@ -49,6 +49,7 @@ if(BUILD_TESTS)
 		coordinate
 		point2
 		simple_polygon
+		detail.job
 		detail.simple_polygon_area
 		detail.simple_polygon_translate
 	)
