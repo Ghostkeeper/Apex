@@ -29,7 +29,7 @@ static void sum(const int a, const int b, int& result) {
  * serves as a test for the compiler...
  */
 TEST(Job, Execution) {
-	int result;
+	int result = 0; //Initialise it to a wrong value so we can be sure that the function gets executed.
 	Job job(std::bind(sum, 3, 4, std::ref(result)), std::vector<Job>());
 	job.task();
 	EXPECT_EQ(result, 7);
