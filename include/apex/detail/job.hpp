@@ -9,6 +9,11 @@
 #ifndef APEX_JOB
 #define APEX_JOB
 
+#include <functional>
+#include <vector> //To track our dependencies.
+
+#include "apex/detail/scheduler.hpp" //The scheduler that makes sure that jobs get executed.
+
 namespace apex {
 
 /*
@@ -36,7 +41,7 @@ public:
 	 * The task to execute. All of its parameters must be bound into this
 	 * function.
 	 */
-	int task; //TODO: Type is temporary.
+	std::function<void()> task; //TODO: Type is temporary.
 
 	/*
 	 * Jobs that must be executed before this job is executed. The scheduler
@@ -57,7 +62,7 @@ public:
 	 * \param dependencies Other jobs that must be completed before this job is
 	 * started.
 	 */
-	Job(int task, const std::vector<Job> dependencies) : task(task), dependencies(dependencies) {};
+	Job(std::function<void()> task, const std::vector<Job> dependencies) : task(task), dependencies(dependencies) {};
 };
 
 }
