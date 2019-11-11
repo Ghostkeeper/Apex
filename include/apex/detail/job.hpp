@@ -9,10 +9,8 @@
 #ifndef APEX_JOB
 #define APEX_JOB
 
-#include <functional>
+#include <future> //To keep track of packaged tasks and their results as futures.
 #include <vector> //To track our dependencies.
-
-#include "apex/detail/scheduler.hpp" //The scheduler that makes sure that jobs get executed.
 
 namespace apex {
 
@@ -44,7 +42,7 @@ public:
 	 * The task to execute. All of its parameters must be bound into this
 	 * function.
 	 */
-	std::function<void()> task; //TODO: Type is temporary.
+	std::packaged_task<void()>& task;
 
 	/*
 	 * Jobs that must be executed before this job is executed. The scheduler
@@ -65,7 +63,7 @@ public:
 	 * \param dependencies Other jobs that must be completed before this job is
 	 * started.
 	 */
-	Job(std::function<void()> task, const std::vector<Job> dependencies) : task(task), dependencies(dependencies) {};
+	Job(std::packaged_task<void()>& task, const std::vector<Job> dependencies) : task(task), dependencies(dependencies) {};
 };
 
 }

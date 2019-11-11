@@ -7,6 +7,7 @@
  */
 
 #include <functional> //To bind a function inside the job.
+#include <future> //To create the future task to execute once planned in.
 #include <gtest/gtest.h> //To run the tests.
 #include "apex/detail/job.hpp" //The code under test.
 
@@ -30,7 +31,10 @@ static void sum(const int a, const int b, int& result) {
  */
 TEST(Job, Execution) {
 	int result = 0; //Initialise it to a wrong value so we can be sure that the function gets executed.
-	Job job(std::bind(sum, 3, 4, std::ref(result)), std::vector<Job>());
+	std::packaged_task<void()> task([result = std::ref(result)]() {
+		sum(3, 4, result);
+	});
+	Job job(task, std::vector<Job>());
 	job.task();
 	EXPECT_EQ(result, 7);
 }
