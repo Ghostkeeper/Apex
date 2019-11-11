@@ -50,6 +50,7 @@ if(BUILD_TESTS)
 		point2
 		simple_polygon
 		detail.job
+		detail.scheduler
 		detail.simple_polygon_area
 		detail.simple_polygon_translate
 	)
