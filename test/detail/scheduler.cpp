@@ -48,9 +48,9 @@ TEST(Scheduler, AllExecuted) {
 	std::packaged_task<void()> task3([called = &called]() {
 		called->func3();
 	});
-	scheduler.schedule(Job(task1, std::vector<Job>()));
-	scheduler.schedule(Job(task2, std::vector<Job>()));
-	scheduler.schedule(Job(task3, std::vector<Job>()));
+	scheduler.schedule(Job(task1, std::vector<const Job*>()));
+	scheduler.schedule(Job(task2, std::vector<const Job*>()));
+	scheduler.schedule(Job(task3, std::vector<const Job*>()));
 	scheduler.run();
 	EXPECT_EQ(called.func1_called, 1);
 	EXPECT_EQ(called.func2_called, 1);
