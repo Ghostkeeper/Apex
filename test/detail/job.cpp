@@ -34,7 +34,7 @@ TEST(Job, Execution) {
 	std::packaged_task<void()> task([result = std::ref(result)]() {
 		sum(3, 4, result);
 	});
-	Job job(task, std::vector<const Job*>());
+	Job job(task);
 	job.task();
 	EXPECT_EQ(result, 7);
 }

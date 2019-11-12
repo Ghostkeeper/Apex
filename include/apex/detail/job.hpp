@@ -64,7 +64,7 @@ public:
 	 * Jobs that must be executed before this job is executed. The scheduler
 	 * will ensure that these dependencies are met before executing this task.
 	 */
-	const std::vector<const Job*> dependencies;
+	std::vector<const Job*> dependencies;
 
 	/*
 	 * Constructs a new job.
@@ -79,7 +79,14 @@ public:
 	 * \param dependencies Other jobs that must be completed before this job is
 	 * started.
 	 */
-	Job(std::packaged_task<void()>& task, const std::vector<const Job*> dependencies) : task(task), dependencies(dependencies) {};
+	Job(std::packaged_task<void()>& task) : task(task) {};
+
+	/*
+	 * Enforces that this job is executed after the selected job.
+	 */
+	void add_dependency(const Job* dependency) {
+		dependencies.push_back(dependency);
+	}
 };
 
 }
