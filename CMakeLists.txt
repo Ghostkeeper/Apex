@@ -4,7 +4,7 @@
 #This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.12) #Oldest version it was tested with.
+cmake_minimum_required(VERSION 3.10) #Oldest version it was tested with.
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules") #Finding dependencies.
 
 #Release configuration.
