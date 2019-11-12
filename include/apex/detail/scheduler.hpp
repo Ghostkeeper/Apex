@@ -9,6 +9,8 @@
 #ifndef APEX_SCHEDULER
 #define APEX_SCHEDULER
 
+#include <unordered_set> //To track scheduled jobs.
+
 #include "apex/detail/job.hpp" //The jobs scheduled by the scheduler.
 
 namespace apex {
@@ -38,8 +40,28 @@ public:
 	 * before executing a job.
 	 */
 	void run() {
-		//TODO: Test for dependencies.
-		for(const Job* job : jobs) {
+		std::vector<const Job*> job_order; //After sorting them in dependency order.
+		job_order.reserve(jobs.size());
+		std::unordered_set<const Job*> planned_jobs(jobs.size());
+		while(job_order.size() < jobs.size()) {
+			for(const Job* job : jobs) {
+				if(planned_jobs.find(job) != planned_jobs.end()) {
+					continue;
+				}
+				bool requirements_met = true;
+				for(const Job* dependency : job->dependencies) {
+					if(planned_jobs.find(dependency) == planned_jobs.end()) {
+						requirements_met = false;
+						break;
+					}
+				}
+				if(requirements_met) {
+					job_order.push_back(job);
+					planned_jobs.insert(job);
+				}
+			}
+		}
+		for(const Job* job : job_order) {
 			job->task();
 		}
 	}
