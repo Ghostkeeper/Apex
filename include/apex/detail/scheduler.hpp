@@ -21,13 +21,13 @@ class Scheduler {
 	/*
 	 * The jobs that still need to be executed.
 	 */
-	std::vector<Job> jobs;
+	std::vector<const Job*> jobs;
 
 public:
 	/*
 	 * Schedule a new job to be run.
 	 */
-	void schedule(const Job& job) {
+	void schedule(const Job* job) {
 		jobs.push_back(job);
 	}
 
@@ -39,8 +39,8 @@ public:
 	 */
 	void run() {
 		//TODO: Test for dependencies.
-		for(Job& job : jobs) {
-			job.task();
+		for(const Job* job : jobs) {
+			job->task();
 		}
 	}
 };

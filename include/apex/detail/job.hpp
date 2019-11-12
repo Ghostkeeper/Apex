@@ -37,6 +37,22 @@ namespace apex {
  * conducive to better performance.
  */
 class Job {
+	/*
+	 * Jobs are not allowed to be copied.
+	 *
+	 * Doing so would copy the data that the packaged tasks held. This will make
+	 * the compiler enforce that this is never allowed.
+	 */
+	Job(const Job& original) = delete;
+
+	/*
+	 * Disallow moving job instances.
+	 *
+	 * Moving a job would invalidate the pointers to it. This means that the
+	 * scheduler can't execute the jobs any more. So don't do it. This will make
+	 * the compiler enforce that this is never allowed.
+	 */
+	Job(const Job&& original) = delete;
 public:
 	/*
 	 * The task to execute. All of its parameters must be bound into this
