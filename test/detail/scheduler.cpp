@@ -20,14 +20,18 @@ public:
 	unsigned int func1_called = 0;
 	unsigned int func2_called = 0;
 	unsigned int func3_called = 0;
+	unsigned int call_count = 0;
 	void func1() {
-		func1_called++;
+		call_count++;
+		func1_called = call_count;
 	}
 	void func2() {
-		func2_called++;
+		call_count++;
+		func2_called = call_count;
 	}
 	void func3() {
-		func3_called++;
+		call_count++;
+		func3_called = call_count;
 	}
 };
 
@@ -110,9 +114,24 @@ TEST_F(SchedulerFixture, AllExecuted) {
 	scheduler.schedule(&job2);
 	scheduler.schedule(&job3);
 	scheduler.run();
+	EXPECT_GE(tracker.func1_called, 1);
+	EXPECT_GE(tracker.func2_called, 1);
+	EXPECT_GE(tracker.func3_called, 1);
+}
+
+/*
+ * Tests whether the dependencies of jobs are executed first.
+ */
+TEST_F(SchedulerFixture, DependenciesBasic) {
+	job3.add_dependency(&job2);
+	job2.add_dependency(&job1);
+	scheduler.schedule(&job3);
+	scheduler.schedule(&job2);
+	scheduler.schedule(&job1);
+	scheduler.run();
 	EXPECT_EQ(tracker.func1_called, 1);
-	EXPECT_EQ(tracker.func2_called, 1);
-	EXPECT_EQ(tracker.func3_called, 1);
+	EXPECT_EQ(tracker.func2_called, 2);
+	EXPECT_EQ(tracker.func3_called, 3);
 }
 
 }
