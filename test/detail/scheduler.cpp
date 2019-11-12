@@ -13,11 +13,9 @@
 namespace apex {
 
 /*
- * A container for a function that's being called.
- *
- * This container also tracks which functions get called and how often.
+ * A simple class that tracks how often each of its functions have been called.
  */
-class MockClass {
+class Tracker {
 public:
 	unsigned int func1_called = 0;
 	unsigned int func2_called = 0;
@@ -34,30 +32,87 @@ public:
 };
 
 /*
+ * Fixture with a few pre-defined jobs and a scheduler you can use.
+ */
+class SchedulerFixture : public testing::Test {
+public:
+	/*
+	 * Task that, when executed, increments ``tracker.func1_called``.
+	 */
+	std::packaged_task<void()> task1;
+
+	/*
+	 * Task that, when executed, increments ``tracker.func2_called``.
+	 */
+	std::packaged_task<void()> task2;
+
+	/*
+	 * Task that, when executed, increments ``tracker.func3_called``.
+	 */
+	std::packaged_task<void()> task3;
+
+	/*
+	 * Job that, when executed, increments ``tracker.func1_called``.
+	 */
+	Job job1;
+
+	/*
+	 * Job that, when executed, increments ``tracker.func2_called``.
+	 */
+	Job job2;
+
+	/*
+	 * Job that, when executed, increments ``tracker.func3_called``.
+	 */
+	Job job3;
+
+	/*
+	 * Tracks how often each job is executed.
+	 */
+	Tracker tracker;
+
+	/*
+	 * Does the work of scheduling.
+	 *
+	 * Here in a convenient field so that we don't have to construct it each
+	 * time.
+	 */
+	Scheduler scheduler;
+
+	SchedulerFixture() :
+		task1([tracker = &tracker]() {
+			tracker->func1();
+		}),
+		task2([tracker = &tracker]() {
+			tracker->func2();
+		}),
+		task3([tracker = &tracker]() {
+			tracker->func3();
+		}),
+		job1(task1),
+		job2(task2),
+		job3(task3) {}
+
+	/*
+	 * Creates all of the basic fixtures for the next test.
+	 */
+	void SetUp() {
+		tracker = Tracker(); //Reset state.
+		scheduler = Scheduler();
+	}
+};
+
+/*
  * Tests whether all scheduled jobs are actually executed.
  */
-TEST(Scheduler, AllExecuted) {
-	MockClass called;
-	Scheduler scheduler;
-	std::packaged_task<void()> task1([called = &called]() {
-		called->func1();
-	});
-	Job job1(task1);
-	std::packaged_task<void()> task2([called = &called]() {
-		called->func2();
-	});
-	Job job2(task2);
-	std::packaged_task<void()> task3([called = &called]() {
-		called->func3();
-	});
-	Job job3(task3);
+TEST_F(SchedulerFixture, AllExecuted) {
 	scheduler.schedule(&job1);
 	scheduler.schedule(&job2);
 	scheduler.schedule(&job3);
 	scheduler.run();
-	EXPECT_EQ(called.func1_called, 1);
-	EXPECT_EQ(called.func2_called, 1);
-	EXPECT_EQ(called.func3_called, 1);
+	EXPECT_EQ(tracker.func1_called, 1);
+	EXPECT_EQ(tracker.func2_called, 1);
+	EXPECT_EQ(tracker.func3_called, 1);
 }
 
 }
