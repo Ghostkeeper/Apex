@@ -19,7 +19,8 @@ add_library(apex INTERFACE)
 target_include_directories(apex INTERFACE "${CMAKE_SOURCE_DIR}/include")
 
 #Make sure the compiler is up to the task.
-target_compile_features(apex INTERFACE cxx_std_14)
+set(CMAKE_CXX_STANDARD 17)
+target_compile_features(apex INTERFACE cxx_std_17)
 target_compile_features(apex INTERFACE cxx_constexpr)
 target_compile_features(apex INTERFACE cxx_generalized_initializers)
 target_compile_features(apex INTERFACE cxx_relaxed_constexpr)
