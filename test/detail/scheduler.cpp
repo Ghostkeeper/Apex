@@ -134,4 +134,21 @@ TEST_F(SchedulerFixture, DependenciesBasic) {
 	EXPECT_EQ(tracker.func3_called, 3);
 }
 
+/*
+ * Tests a set of jobs with circular dependencies.
+ */
+TEST_F(SchedulerFixture, DependenciesCircular) {
+	job2.add_dependency(&job1);
+	job3.add_dependency(&job1);
+	job2.add_dependency(&job3);
+	job3.add_dependency(&job2);
+	scheduler.schedule(&job1);
+	scheduler.schedule(&job2);
+	scheduler.schedule(&job3);
+	scheduler.run();
+	EXPECT_EQ(tracker.func1_called, 1);
+	EXPECT_EQ(tracker.func2_called, 0) << "Func2 didn't get called since its dependencies couldn't be met.";
+	EXPECT_EQ(tracker.func3_called, 0) << "Func3 didn't get called since its dependencies couldn't be met.";
+}
+
 }

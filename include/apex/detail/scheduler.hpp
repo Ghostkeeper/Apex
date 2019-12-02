@@ -44,6 +44,7 @@ public:
 		job_order.reserve(jobs.size());
 		std::unordered_set<const Job*> planned_jobs(jobs.size());
 		while(job_order.size() < jobs.size()) {
+			const size_t start_planned_jobs = job_order.size();
 			for(const Job* job : jobs) {
 				if(planned_jobs.find(job) != planned_jobs.end()) {
 					continue;
@@ -59,6 +60,9 @@ public:
 					job_order.push_back(job);
 					planned_jobs.insert(job);
 				}
+			}
+			if(job_order.size() <= start_planned_jobs) { //No jobs got planned, meaning they have circular dependencies.
+				break;
 			}
 		}
 		for(const Job* job : job_order) {
