@@ -50,8 +50,6 @@ if(BUILD_TESTS)
 		coordinate
 		point2
 		simple_polygon
-		detail.job
-		detail.scheduler
 		detail.simple_polygon_area
 		detail.simple_polygon_translate
 		detail.vector_2d
