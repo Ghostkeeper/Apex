@@ -54,6 +54,7 @@ if(BUILD_TESTS)
 		detail.scheduler
 		detail.simple_polygon_area
 		detail.simple_polygon_translate
+		detail.vector_2d
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
