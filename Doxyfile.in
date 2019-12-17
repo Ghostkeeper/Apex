@@ -1,0 +1,21 @@
+#Library for performing massively parallel computations on polygons.
+#Copyright (C) 2019 Ghostkeeper
+#This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
+#You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
+
+#Metadata.
+DOXYFILE_ENCODING = UTF-8
+
+#Project details.
+PROJECT_NAME = "${CMAKE_PROJECT_NAME}"
+PROJECT_NUMBER = ${APEX_VERSION_MAJOR}.${APEX_VERSION_MINOR}.${APEX_VERSION_PATCH}
+
+#Finding files.
+INPUT = "${CMAKE_CURRENT_SOURCE_DIR}/include"
+FILE_PATTERNS = *.hpp
+RECURSIVE = YES
+
+#Output.
+GENERATE_LATEX = NO
+IMAGE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/doc"

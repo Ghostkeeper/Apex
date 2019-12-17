@@ -75,3 +75,16 @@ if(BUILD_TESTS)
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
 	endforeach()
 endif()
+
+#Generating documentation.
+option(BUILD_DOCUMENTATION "Construct HTML-based API documentation pages." OFF)
+if(BUILD_DOCUMENTATION)
+	find_package(Doxygen REQUIRED)
+
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in" "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile")
+	add_custom_target(doc ALL
+		COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/Doxyfile"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+		COMMENT "Generating API documentation."
+	)
+endif()
