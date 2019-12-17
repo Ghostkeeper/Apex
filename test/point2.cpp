@@ -15,12 +15,12 @@
 
 namespace apex {
 
-/*
+/*!
  * Fixture for parametrised tests with two points (or four coordinates).
  */
 class Point2FourCoordinates : public testing::TestWithParam<std::tuple<coord_t, coord_t, coord_t, coord_t>> {};
 
-/*
+/*!
  * Tests summing coordinates.
  *
  * The final coordinates must be element-wise summed.
@@ -38,7 +38,7 @@ TEST_P(Point2FourCoordinates, Sum) {
 	EXPECT_EQ(a.y, sum.y);
 }
 
-/*
+/*!
  * Tests subtracting coordinates.
  *
  * The final coordinates must be element-wise subtracted.
@@ -56,7 +56,7 @@ TEST_P(Point2FourCoordinates, Subtract) {
 	EXPECT_EQ(a.y, difference.y);
 }
 
-/*
+/*!
  * Various combinations of points to test summing and subtracting with.
  */
 INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
@@ -71,7 +71,7 @@ INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(-10, -30, -2, -3)
 ));
 
-/*
+/*!
  * Tests equality between points.
  */
 TEST(Point, Equality) {
@@ -94,7 +94,7 @@ TEST(Point, Equality) {
 	EXPECT_TRUE(a != vertical);
 }
 
-/*
+/*!
  * Tests outputting this point to a stream.
  */
 TEST(Point, Stream) {

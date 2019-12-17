@@ -20,7 +20,7 @@
 
 namespace apex {
 
-/*
+/*!
  * A plane figure consisting of a single contour of straight line segments.
  *
  * This is a closed shape, represented by a list of vertices in 2D. Between
@@ -45,7 +45,7 @@ class SimplePolygon :
 		public SimplePolygonArea<SimplePolygon>,
 		public SimplePolygonTranslate<SimplePolygon> {
 public:
-	/*
+	/*!
 	 * Iterates one loop around the polygon.
 	 *
 	 * This implementation hides the actual iterator used for the underlying
@@ -53,7 +53,7 @@ public:
 	 */
 	typedef std::vector<Point2>::iterator iterator;
 
-	/*
+	/*!
 	 * Iterates one loop around the polygon.
 	 *
 	 * This implementation hides the actual iterator used for the underlying
@@ -61,7 +61,7 @@ public:
 	 */
 	typedef std::vector<Point2>::const_iterator const_iterator;
 
-	/*
+	/*!
 	 * Iterates one loop around the polygon in reverse.
 	 *
 	 * This implementation hides the actual iterator used for the underlying
@@ -69,7 +69,7 @@ public:
 	 */
 	typedef std::vector<Point2>::reverse_iterator reverse_iterator;
 
-	/*
+	/*!
 	 * Iterates one loop around the polygon in reverse.
 	 *
 	 * This implementation hides the actual iterator used for the underlying
@@ -77,7 +77,7 @@ public:
 	 */
 	typedef std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
 
-	/*
+	/*!
 	 * Provides access to the individual vertices of the simple polygon.
 	 *
 	 * There is no real start or end to a simple polygon since it's a closed
@@ -95,7 +95,7 @@ public:
 		return vertices[index];
 	}
 
-	/*
+	/*!
 	 * Provides access to the individual vertices of the simple polygon.
 	 *
 	 * There is no real start or end to a simple polygon since it's a closed
@@ -113,7 +113,7 @@ public:
 		return vertices[index];
 	}
 
-	/*
+	/*!
 	 * Tests whether this simple polygon is equal to another.
 	 *
 	 * Two polygons are the same if they share the same set of vertices in the
@@ -148,7 +148,7 @@ public:
 		return true;
 	}
 
-	/*
+	/*!
 	 * Tests whether this simple polygon is inequal to another.
 	 *
 	 * Two polygons are different if they have different sets of vertices or if
@@ -164,7 +164,7 @@ public:
 		return !((*this) == other); //Implemented in terms of ==.
 	}
 
-	/*
+	/*!
 	 * Returns a vertex at the specified position along the contour of the
 	 * simple polygon, with bounds checking.
 	 *
@@ -175,7 +175,7 @@ public:
 		return vertices.at(position);
 	}
 
-	/*
+	/*!
 	 * Returns a vertex at the specified position along the contour of the
 	 * simple polygon, with bounds checking.
 	 *
@@ -186,7 +186,7 @@ public:
 		return vertices.at(position);
 	}
 
-	/*
+	/*!
 	 * Replaces the contents of the simple polygon with the contents of the
 	 * range of elements between the specified two iterators.
 	 * \param first The start of the iterator range.
@@ -197,7 +197,7 @@ public:
 		vertices.assign(first, last);
 	}
 
-	/*
+	/*!
 	 * Replaces the contents of the simple polygon with the initialiser list.
 	 * \param initialiser_list The list to replace the polygon with.
 	 */
@@ -205,7 +205,7 @@ public:
 		vertices.assign(initialiser_list);
 	}
 
-	/*
+	/*!
 	 * Returns the last vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
@@ -215,7 +215,7 @@ public:
 		return vertices[size() - 1];
 	}
 
-	/*
+	/*!
 	 * Returns the last vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
@@ -225,7 +225,7 @@ public:
 		return vertices[size() - 1];
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon.
 	 *
 	 * There is no beginning to the closed loop around the simple polygon. The
@@ -237,7 +237,7 @@ public:
 		return vertices.begin();
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon.
 	 *
 	 * There is no beginning to the closed loop around the simple polygon. The
@@ -249,7 +249,7 @@ public:
 		return vertices.begin();
 	}
 
-	/*
+	/*!
 	 * Returns the number of vertices this simple polygon could contain without
 	 * needing to resize its memory.
 	 */
@@ -257,7 +257,7 @@ public:
 		return vertices.capacity();
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon.
 	 *
 	 * There is no beginning to the closed loop around the simple polygon. The
@@ -269,7 +269,7 @@ public:
 		return vertices.cbegin();
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``cbegin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -279,14 +279,14 @@ public:
 		return vertices.cend();
 	}
 
-	/*
+	/*!
 	 * Removes all vertices from the simple polygon.
 	 */
 	void clear() noexcept {
 		vertices.clear();
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon that
 	 * iterates in reverse order along the contour of the simple polygon.
 	 *
@@ -299,7 +299,7 @@ public:
 		return vertices.crbegin();
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``crbegin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -309,7 +309,7 @@ public:
 		return vertices.crend();
 	}
 
-	/*
+	/*!
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments and a position to insert it at.
 	 *
@@ -323,7 +323,7 @@ public:
 		vertices.emplace(position, arguments...);
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``begin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -333,7 +333,7 @@ public:
 		return vertices.end();
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``begin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -343,7 +343,7 @@ public:
 		return vertices.end();
 	}
 
-	/*
+	/*!
 	 * Returns a pointer to the underlying array serving as element storage.
 	 *
 	 * The pointer is such that the range ``[data(); data() + size()]`` is
@@ -354,7 +354,7 @@ public:
 		return vertices.data();
 	}
 
-	/*
+	/*!
 	 * Returns a pointer to the underlying array serving as element storage.
 	 *
 	 * The pointer is such that the range ``[data(); data() + size()]`` is
@@ -365,7 +365,7 @@ public:
 		return vertices.data();
 	}
 
-	/*
+	/*!
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
@@ -378,14 +378,14 @@ public:
 		vertices.emplace(vertices.end(), arguments...); //Implemented in terms of emplace() to reduce duplication of code.
 	}
 
-	/*
+	/*!
 	 * Checks whether the container has no elements.
 	 */
 	bool empty() const {
 		return vertices.size() == 0; //Implemented in terms of size(), to prevent duplication of code.
 	}
 
-	/*
+	/*!
 	 * Removes one vertex from the simple polygon at the specified position.
 	 * \param position An iterator referencing the position of the vertex to
 	 * remove.
@@ -395,7 +395,7 @@ public:
 		return vertices.erase(position);
 	}
 
-	/*
+	/*!
 	 * Removes a range of vertices from the simple polygon at the specified
 	 * position.
 	 * \param first The start of the range to remove.
@@ -406,7 +406,7 @@ public:
 		return vertices.erase(first, last);
 	}
 
-	/*
+	/*!
 	 * Returns the first vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
@@ -416,7 +416,7 @@ public:
 		return (*this)[0];
 	}
 
-	/*
+	/*!
 	 * Returns the first vertex in the iteration of the polygon.
 	 *
 	 * No guarantees can be given if this vertex is consistent after
@@ -426,7 +426,7 @@ public:
 		return (*this)[0];
 	}
 
-	/*
+	/*!
 	 * Inserts a new vertex at a specified position in the simple polygon.
 	 * \param position The vertex is inserted before this position in the loop.
 	 * \param vertex The coordinates of the new vertex.
@@ -436,7 +436,7 @@ public:
 		return vertices.insert(position, vertex);
 	}
 
-	/*
+	/*!
 	 * Inserts a new vertex at a specified position in the simple polygon.
 	 *
 	 * The vertex is moved in the polygon without copying it.
@@ -448,7 +448,7 @@ public:
 		return vertices.insert(position, vertex);
 	}
 
-	/*
+	/*!
 	 * Inserts a range of vertices between ``first`` and ``last`` at a speciied
 	 * position in the simple polygon.
 	 * \param position The vertices are inserted before this position in the
@@ -462,7 +462,7 @@ public:
 		vertices.insert(position, first, last);
 	}
 
-	/*
+	/*!
 	 * Inserts a range of vertices at a specified position in the simple
 	 * polygon.
 	 * \param position The vertices are inserted before this position in the
@@ -475,7 +475,7 @@ public:
 		return vertices.insert(position, initialiser_list);
 	}
 
-	/*
+	/*!
 	 * Gives the maximum number of vertices that this simple polygon is able to
 	 * hold due to implementation limitations.
 	 *
@@ -487,14 +487,14 @@ public:
 		return vertices.max_size();
 	}
 
-	/*
+	/*!
 	 * Removes the last vertex from the simple polygon.
 	 */
 	void pop_back() {
 		vertices.pop_back();
 	}
 
-	/*
+	/*!
 	 * Adds a vertex at the end of the iteration of the vertices of this simple
 	 * polygon.
 	 * \param vertex The new vertex to add.
@@ -503,7 +503,7 @@ public:
 		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
 	}
 
-	/*
+	/*!
 	 * Adds a vertex at the end of the iteration of the vertices of this simple
 	 * polygon.
 	 * \param vertex The new vertex to move into the simple polygon.
@@ -512,7 +512,7 @@ public:
 		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon that
 	 * iterates in reverse order along the contour of the simple polygon.
 	 *
@@ -525,7 +525,7 @@ public:
 		return vertices.rbegin();
 	}
 
-	/*
+	/*!
 	 * Gives an iterator to one of the vertices of the simple polygon that
 	 * iterates in reverse order along the contour of the simple polygon.
 	 *
@@ -538,7 +538,7 @@ public:
 		return vertices.rbegin();
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``rbegin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -548,7 +548,7 @@ public:
 		return vertices.rend();
 	}
 
-	/*
+	/*!
 	 * Gives the end of the iteration as returned by ``rbegin()``.
 	 *
 	 * If this iterator is hit, one complete loop around the simple polygon has
@@ -558,7 +558,7 @@ public:
 		return vertices.rend();
 	}
 
-	/*
+	/*!
 	 * Increase the capacity of the simple polygon such that at least
 	 * ``new_capacity`` number of vertices will vit in its memory without
 	 * allocating more memory.
@@ -570,7 +570,7 @@ public:
 		vertices.reserve(new_capacity);
 	}
 
-	/*
+	/*!
 	 * Makes the simple polygon use as little memory as possible by removing any
 	 * unused capacity.
 	 *
@@ -582,7 +582,7 @@ public:
 		vertices.shrink_to_fit();
 	}
 
-	/*
+	/*!
 	 * Gives the number of vertices in the simple polygon.
 	 * \return The number of vertices in the simple polygon.
 	 */
@@ -590,7 +590,7 @@ public:
 		return vertices.size();
 	}
 
-	/*
+	/*!
 	 * Swaps the contents of this simple polygon instance with that of another.
 	 */
 	void swap(SimplePolygon& other) {
@@ -598,7 +598,7 @@ public:
 	}
 
 protected:
-	/*
+	/*!
 	 * The vertices contained in this simple polygon.
 	 *
 	 * This is a local copy. All local algorithms run on this data set. However,
@@ -613,7 +613,7 @@ protected:
 
 namespace std {
 
-/*
+/*!
  * Swaps the contents of two simple polygons.
  *
  * This specialises the std::swap algorithm for simple polygons. The contents of

@@ -11,6 +11,9 @@
 
 namespace apex {
 
+/*!
+ * Tests that the default constructor creates an empty batch.
+ */
 TEST(SimplePolygonBatch, Empty) {
 	SimplePolygonBatch batch;
 	EXPECT_EQ(batch.size(), 0) << "The batch is constructed empty.";

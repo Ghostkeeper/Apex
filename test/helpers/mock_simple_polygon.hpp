@@ -17,7 +17,7 @@
 
 namespace apex {
 
-/*
+/*!
  * This is a mock for the base SimplePolygon class.
  *
  * It replaces the complex behaviour of the SimplePolygon with a much simpler
@@ -31,7 +31,7 @@ class MockSimplePolygon : public std::vector<Point2>,
 		public SimplePolygonArea<MockSimplePolygon>,
 		public SimplePolygonTranslate<MockSimplePolygon> {
 public:
-	/*
+	/*!
 	 * Basic shapes to initialise the polygon as.
 	 *
 	 * These can be used in the constructor as a fixture of sorts.
@@ -52,6 +52,9 @@ public:
 		HOURGLASS, //Self-intersecting shape, like a shape but with two vertices flipped. The bottom half is negative.
 	};
 
+	/*!
+	 * Construct a mock simple polygon with the specified predefined shape.
+	 */
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);
 };
 

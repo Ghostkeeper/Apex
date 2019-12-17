@@ -13,7 +13,7 @@
 
 namespace apex {
 
-/*
+/*!
  * The type used to store coordinates in space.
  *
  * This type is an integer type rather than a floating point type, so no partial
@@ -22,7 +22,7 @@ namespace apex {
  */
 typedef int32_t coord_t; //Must have 32 bits to allow for single-width entries in OpenCL with cl_int. Anything else kills performance.
 
-/*
+/*!
  * The type used to store the surface area of 2-dimensional shapes.
  *
  * Areas can be negative. This is used to indicate the surface area of parts of

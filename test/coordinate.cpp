@@ -13,7 +13,7 @@
 
 namespace apex {
 
-/*
+/*!
  * Tests whether the range of coord_t is as expected.
  */
 TEST(Coordinate, CoordTRange) {
@@ -50,7 +50,7 @@ TEST(Coordinate, CoordTRange) {
 	EXPECT_EQ(x, -1) << "Coordinates must be 32-bits, so only the lower bits must have been interpreted here.";
 };
 
-/*
+/*!
  * Tests whether the range of areas that can be expressed with area_t matches
  * the range of coordinates expressed by coord_t.
  *

@@ -15,7 +15,7 @@
 
 namespace apex {
 
-/*
+/*!
  * Tests whether the area of an empty polygon starts off at 0.
  */
 TEST(SimplePolygonArea, InitialAreaIsZero) {
@@ -23,7 +23,7 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
 	EXPECT_EQ(empty_polygon.area(), 0);
 }
 
-/*
+/*!
  * Tests the area of a basic 1000 by 1000 square.
  */
 TEST(SimplePolygonArea, Square1000) {
@@ -31,7 +31,7 @@ TEST(SimplePolygonArea, Square1000) {
 	EXPECT_EQ(square_1000.area(), 1000 * 1000);
 }
 
-/*
+/*!
  * Tests the area of a 1000 by 1000 square moved into the negative X space.
  */
 TEST(SimplePolygonArea, Square1000NegativeX) {
@@ -39,7 +39,7 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
 	EXPECT_EQ(negative_x.area(), 1000 * 1000);
 }
 
-/*
+/*!
  * Tests the area of a 1000 by 1000 square moved into the negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeY) {
@@ -47,7 +47,7 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
 	EXPECT_EQ(negative_y.area(), 1000 * 1000);
 }
 
-/*
+/*!
  * Tests the area of a 1000 by 1000 square moved into the negative X and
  * negative Y space.
  */
@@ -56,7 +56,7 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
 	EXPECT_EQ(negative_xy.area(), 1000 * 1000);
 }
 
-/*
+/*!
  * Tests the area of a 1000 by 1000 square around the origin.
  */
 TEST(SimplePolygonArea, Square1000Centred) {
@@ -64,7 +64,7 @@ TEST(SimplePolygonArea, Square1000Centred) {
 	EXPECT_EQ(centred.area(), 1000 * 1000);
 }
 
-/*
+/*!
  * Tests the area of a triangle with a 1000-unit wide base.
  */
 TEST(SimplePolygonArea, Triangle1000) {
@@ -72,7 +72,7 @@ TEST(SimplePolygonArea, Triangle1000) {
 	EXPECT_EQ(triangle.area(), 1000 * 1000 / 2);
 }
 
-/*
+/*!
  * Tests the area of a very long and thin rectangle.
  *
  * This catches some of the edge cases involved with rounding errors very well.
@@ -82,7 +82,7 @@ TEST(SimplePolygonArea, ThinRectangle) {
 	EXPECT_EQ(thin_rectangle.area(), 1000 * 1);
 }
 
-/*
+/*!
  * Tests the area of a concave shape.
  */
 TEST(SimplePolygonArea, Concave) {
@@ -90,7 +90,7 @@ TEST(SimplePolygonArea, Concave) {
 	EXPECT_EQ(arrowhead.area(), 1000 * 1000 / 2 - 1000 * 500 / 2) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 }
 
-/*
+/*!
  * Tests the area of a negative shape, where the winding order of the vertices
  * is the other way around.
  */
@@ -99,7 +99,7 @@ TEST(SimplePolygonArea, Negative) {
 	EXPECT_EQ(negative.area(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 }
 
-/*
+/*!
  * Tests the area of a self-intersecting polygon, where half of it is negative.
  */
 TEST(SimplePolygonArea, SelfIntersecting) {
@@ -107,7 +107,7 @@ TEST(SimplePolygonArea, SelfIntersecting) {
 	EXPECT_EQ(hourglass.area(), 1000 * 500 / 2 - 1000 * 500 / 2);
 }
 
-/*
+/*!
  * Tests the area of a single point.
  */
 TEST(SimplePolygonArea, Point) {
@@ -115,7 +115,7 @@ TEST(SimplePolygonArea, Point) {
 	EXPECT_EQ(point.area(), 0) << "Points don't have any surface area.";
 }
 
-/*
+/*!
  * Tests the area of a line. It won't have any surface area.
  */
 TEST(SimplePolygonArea, Line) {
@@ -123,7 +123,7 @@ TEST(SimplePolygonArea, Line) {
 	EXPECT_EQ(line.area(), 0) << "Lines don't have any surface area.";
 }
 
-/*
+/*!
  * Tests computing the area of a regular simple polygon that consists of many
  * vertices.
  *

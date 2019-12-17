@@ -11,7 +11,7 @@
 
 namespace apex {
 
-/*
+/*!
  * Implements the Curiously Recurring Template Pattern to separate out the
  * private functions to translate a simple polygon.
  * \tparam SimplePolygonBase An implementation of SimplePolygon's footprint,
@@ -20,7 +20,7 @@ namespace apex {
 template<typename SimplePolygonBase>
 class SimplePolygonTranslate {
 public:
-	/*
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
@@ -33,7 +33,7 @@ public:
 		return translate(Point2(dx, dy));
 	}
 
-	/*
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
@@ -45,7 +45,7 @@ public:
 	}
 
 protected:
-	/*
+	/*!
 	 * Single-threaded implementation of ``translate``.
 	 */
 	void translate_st(const Point2& delta) {
@@ -55,7 +55,7 @@ protected:
 	}
 
 private:
-	/*
+	/*!
 	 * Gives the base SimplePolygon instance via the template pattern, which is
 	 * actually still this instance.
 	 * \return This instance, cast to SimplePolygonBase.

@@ -13,7 +13,7 @@
 
 namespace apex {
 
-/*
+/*!
  * Implements the Curiously Recurring Template Pattern to separate out the
  * private functions to compute the area of a simple polygon.
  * \tparam SimplePolygonBase An implementation of SimplePolygon's footprint,
@@ -23,7 +23,7 @@ template <typename SimplePolygonBase>
 class SimplePolygonArea
 {
 public:
-	/*
+	/*!
 	 * Computes the surface area of the simple polygon.
 	 *
 	 * The sign of the area is linked to the polygon winding order. If the
@@ -41,7 +41,7 @@ public:
 	}
 
 protected:
-	/*
+	/*!
 	 * Single-threaded implementation of ``area``.
 	 *
 	 * This uses the shoelace formula to compute the area. The shoelace formula
@@ -92,7 +92,7 @@ protected:
 	}
 
 private:
-	/*
+	/*!
 	 * Gives the base SimplePolygon instance via the template pattern, which is
 	 * actually still this instance.
 	 * \return This instance, cast to SimplePolygonBase.

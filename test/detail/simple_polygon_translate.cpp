@@ -14,7 +14,7 @@ namespace apex {
 
 struct Point2;
 
-/*
+/*!
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
 TEST(SimplePolygonTranslate, MoveZero) {
@@ -23,7 +23,7 @@ TEST(SimplePolygonTranslate, MoveZero) {
 	EXPECT_EQ(square_1000, MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000)) << "The polygon may not have changed by moving 0,0.";
 }
 
-/*
+/*!
  * Tests moving a polygon along the X direction.
  */
 TEST(SimplePolygonTranslate, MoveX) {
@@ -38,7 +38,7 @@ TEST(SimplePolygonTranslate, MoveX) {
 	}
 }
 
-/*
+/*!
  * Tests moving a polygon along the Y direction.
  */
 TEST(SimplePolygonTranslate, MoveY) {
@@ -53,7 +53,7 @@ TEST(SimplePolygonTranslate, MoveY) {
 	}
 }
 
-/*
+/*!
  * Tests moving a polygon in both dimensions at the same time.
  */
 TEST(SimplePolygonTranslate, MoveXY) {

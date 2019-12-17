@@ -15,22 +15,22 @@
 
 namespace apex {
 
-/*
+/*!
  * Fixture that contains a few pre-constructed simple polygons.
  */
 class SimplePolygonFixture : public ::testing::Test {
 public:
-	/*
+	/*!
 	 * A simple shape with three vertices.
 	 */
 	SimplePolygon triangle;
 
-	/*
+	/*!
 	 * A regular octagon.
 	 */
 	SimplePolygon octagon;
 
-	/*
+	/*!
 	 * Constructs the fixture simple polygons.
 	 */
 	void SetUp() {
@@ -51,7 +51,7 @@ public:
 	}
 };
 
-/*
+/*!
  * Tests constructing an empty simple polygon.
  */
 TEST(SimplePolygon, ConstructEmpty) {
@@ -59,7 +59,7 @@ TEST(SimplePolygon, ConstructEmpty) {
 	EXPECT_EQ(empty.size(), 0);
 }
 
-/*
+/*!
  * Tests copy-constructing a simple polygon.
  */
 TEST_F(SimplePolygonFixture, ConstructCopy) {
@@ -71,7 +71,7 @@ TEST_F(SimplePolygonFixture, ConstructCopy) {
 	EXPECT_NE(triangle, copy);
 }
 
-/*
+/*!
  * Tests move-constructing a simple polygon.
  */
 TEST_F(SimplePolygonFixture, ConstructMove) {
@@ -81,7 +81,7 @@ TEST_F(SimplePolygonFixture, ConstructMove) {
 	EXPECT_EQ(triangle, target);
 }
 
-/*
+/*!
  * Tests making a copy via assignment.
  */
 TEST_F(SimplePolygonFixture, Assignment) {
@@ -93,7 +93,7 @@ TEST_F(SimplePolygonFixture, Assignment) {
 	EXPECT_NE(triangle, copy);
 }
 
-/*
+/*!
  * Tests accessing the vertices of the simple polygon by reference.
  */
 TEST_F(SimplePolygonFixture, AccessReference) {
@@ -105,7 +105,7 @@ TEST_F(SimplePolygonFixture, AccessReference) {
 	EXPECT_EQ(triangle[0].y, 69);
 }
 
-/*
+/*!
  * Tests accessing individual vertices of the simple polygon by copy.
  */
 TEST_F(SimplePolygonFixture, AccessCopy) {
@@ -114,7 +114,7 @@ TEST_F(SimplePolygonFixture, AccessCopy) {
 	EXPECT_EQ(vertex.y, 20);
 }
 
-/*
+/*!
  * Tests assigning an iterator range to the polygon that is smaller than the
  * polygon's current size.
  */
@@ -132,7 +132,7 @@ TEST_F(SimplePolygonFixture, AssignIteratorSmallerRange) {
 	}
 }
 
-/*
+/*!
  * Tests assigning an iterator range to the polygon that is larger than the
  * polygon's current size.
  */
@@ -150,7 +150,7 @@ TEST_F(SimplePolygonFixture, AssignIteratorLargerRange) {
 	}
 }
 
-/*
+/*!
  * Tests assigning an initialiser list to the simple polygon.
  */
 TEST_F(SimplePolygonFixture, AssignInitialiserList) {
@@ -161,7 +161,7 @@ TEST_F(SimplePolygonFixture, AssignInitialiserList) {
 	EXPECT_EQ(octagon[2], Point2(20, 20));
 }
 
-/*
+/*!
  * Tests accessing the vertices in the simple polygon with the ``at`` function.
  *
  * This test keeps the access within the range. There should be no exception.
@@ -170,7 +170,7 @@ TEST_F(SimplePolygonFixture, AtInRange) {
 	EXPECT_EQ(triangle.at(1), Point2(100, 20));
 }
 
-/*
+/*!
  * Tests accessing the vertices in a const simple polygon with the ``at``
  * function.
  *
@@ -181,7 +181,7 @@ TEST_F(SimplePolygonFixture, AtInRangeConst) {
 	EXPECT_EQ(triangle.at(1), Point2(100, 20));
 }
 
-/*
+/*!
  * Tests accessing outside of the range of the simple polygon with the ``at``
  * function.
  */
@@ -190,7 +190,7 @@ TEST_F(SimplePolygonFixture, AtOutsideRange) {
 	EXPECT_THROW(triangle.at(-1), std::out_of_range); //Probably doesn't matter really since it's unsigned anyway.
 }
 
-/*
+/*!
  * Tests accessing outside of the range of a const simple polygon with the
  * ``at`` function.
  */
@@ -200,7 +200,7 @@ TEST_F(SimplePolygonFixture, AtOutsideRangeConst) {
 	EXPECT_THROW(copy.at(-1), std::out_of_range); //Probably doesn't matter really since it's unsigned anyway.
 }
 
-/*
+/*!
  * Tests getting the back vertex.
  */
 TEST_F(SimplePolygonFixture, Back) {
@@ -210,7 +210,7 @@ TEST_F(SimplePolygonFixture, Back) {
 	EXPECT_EQ(copy.back(), Point2(60, 60));
 }
 
-/*
+/*!
  * Tests clearing a polygon.
  */
 TEST_F(SimplePolygonFixture, Clear) {
@@ -222,7 +222,7 @@ TEST_F(SimplePolygonFixture, Clear) {
 	EXPECT_EQ(triangle.size(), 0) << "Clearing it should've removed all vertices.";
 }
 
-/*
+/*!
  * Tests accessing and modifying the polygon via the ``data()`` function.
  */
 TEST_F(SimplePolygonFixture, Data) {
@@ -232,7 +232,7 @@ TEST_F(SimplePolygonFixture, Data) {
 	EXPECT_EQ(triangle[0].x, 42);
 }
 
-/*
+/*!
  * Tests emplacing a vertex at the beginning of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EmplaceStart) {
@@ -246,7 +246,7 @@ TEST_F(SimplePolygonFixture, EmplaceStart) {
 	}
 }
 
-/*
+/*!
  * Tests emplacing a vertex in the middle of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EmplaceMiddle) {
@@ -263,7 +263,7 @@ TEST_F(SimplePolygonFixture, EmplaceMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests emplacing a vertex at the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EmplaceEnd) {
@@ -277,7 +277,7 @@ TEST_F(SimplePolygonFixture, EmplaceEnd) {
 	EXPECT_EQ(copy[triangle.size()], Point2(42, 42)) << "The new vertex is at the end.";
 }
 
-/*
+/*!
  * Tests adding new vertices by emplacing their constructor arguments.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
@@ -295,7 +295,7 @@ TEST_F(SimplePolygonFixture, EmplaceBack) {
 	EXPECT_EQ(copy[triangle.size()], Point2(50, 50));
 }
 
-/*
+/*!
  * Tests whether an empty polygon is marked as empty and a filled polygon is
  * not.
  */
@@ -307,7 +307,7 @@ TEST(SimplePolygon, Empty) {
 	EXPECT_FALSE(polygon.empty()) << "Once a vertex has been put in, the polygon is no longer empty.";
 }
 
-/*
+/*!
  * Tests erasing a single vertex from the beginning of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseSingleBegin) {
@@ -319,7 +319,7 @@ TEST_F(SimplePolygonFixture, EraseSingleBegin) {
 	}
 }
 
-/*
+/*!
  * Tests erasing a single vertex from the middle of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseSingleMiddle) {
@@ -334,7 +334,7 @@ TEST_F(SimplePolygonFixture, EraseSingleMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests erasing a single vertex from the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseSingleEnd) {
@@ -348,7 +348,7 @@ TEST_F(SimplePolygonFixture, EraseSingleEnd) {
 	}
 }
 
-/*
+/*!
  * Tests erasing a range of vertices from the beginning of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseRangeBegin) {
@@ -363,7 +363,7 @@ TEST_F(SimplePolygonFixture, EraseRangeBegin) {
 	}
 }
 
-/*
+/*!
  * Tests erasing a range of vertices from the middle of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseRangeMiddle) {
@@ -381,7 +381,7 @@ TEST_F(SimplePolygonFixture, EraseRangeMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests erasing a range of vertices from the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, EraseRangeEnd) {
@@ -396,7 +396,7 @@ TEST_F(SimplePolygonFixture, EraseRangeEnd) {
 	}
 }
 
-/*
+/*!
  * Tests erasing all vertices as a range.
  */
 TEST_F(SimplePolygonFixture, EraseRangeAll) {
@@ -404,7 +404,7 @@ TEST_F(SimplePolygonFixture, EraseRangeAll) {
 	EXPECT_EQ(octagon.size(), 0) << "All vertices have been erased.";
 }
 
-/*
+/*!
  * Tests getting the front vertex.
  */
 TEST_F(SimplePolygonFixture, Front) {
@@ -414,7 +414,7 @@ TEST_F(SimplePolygonFixture, Front) {
 	EXPECT_EQ(copy.front(), Point2(20, 20));
 }
 
-/*
+/*!
  * Tests inserting vertices by copying a vertex in front of all other vertices.
  */
 TEST_F(SimplePolygonFixture, InsertCopyFront) {
@@ -427,7 +427,7 @@ TEST_F(SimplePolygonFixture, InsertCopyFront) {
 	}
 }
 
-/*
+/*!
  * Tests inserting vertices by copying a vertex in the middle between the other
  * vertices.
  */
@@ -444,7 +444,7 @@ TEST_F(SimplePolygonFixture, InsertCopyMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests inserting vertices by copying a vertex at the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, InsertCopyBack) {
@@ -457,7 +457,7 @@ TEST_F(SimplePolygonFixture, InsertCopyBack) {
 	EXPECT_EQ(copy[triangle.size()], Point2(42, 69)) << "The new vertex must now be at the end.";
 }
 
-/*
+/*!
  * Tests inserting vertices by moving a vertex in front of all other vertices.
  */
 TEST_F(SimplePolygonFixture, InsertMoveFront) {
@@ -471,7 +471,7 @@ TEST_F(SimplePolygonFixture, InsertMoveFront) {
 	}
 }
 
-/*
+/*!
  * Tests inserting vertices by moving a vertex in the middle between the other
  * vertices.
  */
@@ -489,7 +489,7 @@ TEST_F(SimplePolygonFixture, InsertMoveMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests inserting vertices by moving a vertex to the end of the vertex list.
  */
 TEST_F(SimplePolygonFixture, InsertMoveBack) {
@@ -503,7 +503,7 @@ TEST_F(SimplePolygonFixture, InsertMoveBack) {
 	EXPECT_EQ(copy[triangle.size()], Point2(42, 69)) << "The new vertex must now be at the end.";
 }
 
-/*
+/*!
  * Tests inserting a range of vertices indicated by two iterators in the front
  * of the list of vertices.
  */
@@ -519,7 +519,7 @@ TEST_F(SimplePolygonFixture, InsertIteratorsFront) {
 	}
 }
 
-/*
+/*!
  * Tests inserting a range of vertices indicated by two iterators in the middle
  * between the other vertices.
  */
@@ -538,7 +538,7 @@ TEST_F(SimplePolygonFixture, InsertIteratorsMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests inserting a range of vertices indicated by two iterators at the end of
  * the vertex list.
  */
@@ -554,7 +554,7 @@ TEST_F(SimplePolygonFixture, InsertIteratorsBack) {
 	}
 }
 
-/*
+/*!
  * Tests inserting an initialiser list of vertices at the start of a simple
  * polygon.
  */
@@ -569,7 +569,7 @@ TEST_F(SimplePolygonFixture, InsertInitialiserListFront) {
 	}
 }
 
-/*
+/*!
  * Tests inserting an initialiser list of vertices in the middle of a simple
  * polygon.
  */
@@ -587,7 +587,7 @@ TEST_F(SimplePolygonFixture, InsertInitialiserListMiddle) {
 	}
 }
 
-/*
+/*!
  * Tests iterating around the simple polygon while reading the data.
  */
 TEST_F(SimplePolygonFixture, IteratorConst) {
@@ -604,7 +604,7 @@ TEST_F(SimplePolygonFixture, IteratorConst) {
 	EXPECT_EQ(triangle.end(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 }
 
-/*
+/*!
  * Tests iterating around the simple polygon with the explicit const iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorCBegin) {
@@ -621,7 +621,7 @@ TEST_F(SimplePolygonFixture, IteratorCBegin) {
 	EXPECT_EQ(triangle.end(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 }
 
-/*
+/*!
  * Tests modifying the polygon by modifying the data in the iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorModification) {
@@ -641,7 +641,7 @@ TEST_F(SimplePolygonFixture, IteratorModification) {
 	EXPECT_EQ(triangle[2].x, 666) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
 }
 
-/*
+/*!
  * Tests iterating in reverse around the simple polygon while reading the data.
  */
 TEST_F(SimplePolygonFixture, IteratorReverseConst) {
@@ -658,7 +658,7 @@ TEST_F(SimplePolygonFixture, IteratorReverseConst) {
 	EXPECT_EQ(triangle.rend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 }
 
-/*
+/*!
  * Tests iterating in reverse around the simple polygon with the explicit const
  * iterator.
  */
@@ -676,7 +676,7 @@ TEST_F(SimplePolygonFixture, IteratorReverseCBegin) {
 	EXPECT_EQ(triangle.crend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 }
 
-/*
+/*!
  * Tests modifying the polygon by modifying the data in the reverse iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorReverseModification) {
@@ -696,7 +696,7 @@ TEST_F(SimplePolygonFixture, IteratorReverseModification) {
 	EXPECT_EQ(triangle[0].x, 666) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
 }
 
-/*
+/*!
  * Tests getting the maximum size of a simple polygon.
  */
 TEST(SimplePolygon, MaxSize) {
@@ -706,7 +706,7 @@ TEST(SimplePolygon, MaxSize) {
 	EXPECT_GE(SimplePolygon().max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. This vector must be held in that global memory.";
 }
 
-/*
+/*!
  * Tests removing the last vertex of the vertex list.
  */
 TEST_F(SimplePolygonFixture, PopBack) {
@@ -718,7 +718,7 @@ TEST_F(SimplePolygonFixture, PopBack) {
 	}
 }
 
-/*
+/*!
  * Tests push_back by letting it copy the vertex.
  */
 TEST_F(SimplePolygonFixture, PushBackCopy) {
@@ -727,7 +727,7 @@ TEST_F(SimplePolygonFixture, PushBackCopy) {
 	EXPECT_EQ(triangle[3], Point2(42, 42)) << "The new vertex was appended at the end.";
 }
 
-/*
+/*!
  * Tests push_back by moving the vertex into the memory of the simple polygon.
  */
 TEST_F(SimplePolygonFixture, PushBackMove) {
@@ -737,7 +737,7 @@ TEST_F(SimplePolygonFixture, PushBackMove) {
 	EXPECT_EQ(triangle[3], Point2(42, 42)) << "The new vertex was appended at the end.";
 }
 
-/*
+/*!
  * Tests reserving memory for the polygon and the resulting capacity.
  */
 TEST_F(SimplePolygonFixture, ReserveCapacity) {
@@ -753,7 +753,7 @@ TEST_F(SimplePolygonFixture, ReserveCapacity) {
 	EXPECT_GE(triangle.capacity(), 257); //Try with a number that's not a nice multiple of 2 as well.
 }
 
-/*
+/*!
  * Tests whether shrink_to_fit doesn't destroy anything.
  *
  * The shrink_to_fit method doesn't give any guarantees that the capacity is
@@ -767,7 +767,7 @@ TEST_F(SimplePolygonFixture, ShrinkToFit) {
 	EXPECT_GE(triangle.capacity(), triangle.size());
 }
 
-/*
+/*!
  * Tests getting the number of vertices.
  *
  * Numerous other tests also depend on this, so if this fails it'll also fail
@@ -778,7 +778,7 @@ TEST_F(SimplePolygonFixture, Size) {
 	EXPECT_EQ(triangle.size(), 3);
 }
 
-/*
+/*!
  * Tests swapping the contents of two simple polygons.
  */
 TEST_F(SimplePolygonFixture, Swap) {
@@ -789,7 +789,7 @@ TEST_F(SimplePolygonFixture, Swap) {
 	EXPECT_EQ(copy_octagon, triangle) << "Since the octagon was swapped with the triangle, it must now contain the triangle.";
 }
 
-/*
+/*!
  * Tests swapping the contents of two simple polygons via the std::swap
  * function.
  */

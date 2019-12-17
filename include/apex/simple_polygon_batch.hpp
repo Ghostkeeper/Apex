@@ -15,7 +15,7 @@
 
 namespace apex {
 
-/*
+/*!
  * This class represents a set of simple polygons that are grouped together.
  *
  * The purpose of this batching is to improve performance. If some algorithm
@@ -47,14 +47,14 @@ namespace apex {
  */
 class SimplePolygonBatch {
 public:
-	/*
+	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
 	SimplePolygonBatch() {
 		index_buffer.push_back(0); //Start off with 0 simple polygons.
 	}
 
-	/*
+	/*!
 	 * Returns the number of simple polygons in this batch..
 	 */
 	size_t size() const {
@@ -62,7 +62,7 @@ public:
 	}
 
 private:
-	/*
+	/*!
 	 * The main buffer that contains the vertex data.
 	 *
 	 * This \e only concerns the actual bytes of data to store the actual
@@ -71,7 +71,7 @@ private:
 	 */
 	std::vector<Point2> vertex_buffer;
 
-	/*
+	/*!
 	 * A separate buffer that contains the positions in the
 	 * \ref SimplePolygonBatch.vertex_buffer where each simple polygon starts
 	 * and ends, as well as the total number of simple polygons.

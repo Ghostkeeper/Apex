@@ -15,7 +15,7 @@
 
 namespace apex {
 
-/*
+/*!
  * Defines a point in 2D space.
  *
  * We call the two dimensions X and Y, by convention.
@@ -24,24 +24,24 @@ namespace apex {
  */
 struct Point2 {
 public:
-	/*
+	/*!
 	 * The projection of this point on the X dimension.
 	 */
 	coord_t x;
 
-	/*
+	/*!
 	 * The projection of this point on the Y dimension.
 	 */
 	coord_t y;
 
-	/*
+	/*!
 	 * Create a new point.
 	 * \param x The projection of the desired point on the X dimension.
 	 * \param y The projection of the desired point on the Y dimension.
 	 */
 	constexpr Point2(const coord_t x, const coord_t y) : x(x), y(y) {}
 
-	/*
+	/*!
 	 * Adds two points together element-wise.
 	 *
 	 * This is equivalent to translating this point by the coordinates of the
@@ -53,7 +53,7 @@ public:
 		return Point2(x + other.x, y + other.y);
 	}
 
-	/*
+	/*!
 	 * Adds another point to this point in-place.
 	 *
 	 * This is equivalent to translating this point by the coordinates of the
@@ -67,7 +67,7 @@ public:
 		return *this;
 	}
 
-	/*
+	/*!
 	 * Subtracts the specified point from this point element-wise.
 	 *
 	 * This is equivalent to translating this point by the inverted coordinates
@@ -80,7 +80,7 @@ public:
 		return Point2(x - other.x, y - other.y);
 	}
 
-	/*
+	/*!
 	 * Subtracts the specified point from this point in-place.
 	 *
 	 * This is equivalent to translating this point by the inverted coordinates
@@ -94,7 +94,7 @@ public:
 		return *this;
 	}
 
-	/*
+	/*!
 	 * Compares two points for whether they point to the same location in space.
 	 * \param other The point to compare with.
 	 * \return ``true`` if the two points are equal, or ``false`` otherwise.
@@ -103,7 +103,7 @@ public:
 		return x == other.x && y == other.y;
 	}
 
-	/*
+	/*!
 	 * Compares two points for whether they point to a different location in
 	 * space.
 	 * \param other The point to compare with.
@@ -113,7 +113,7 @@ public:
 		return !((*this) == other);
 	}
 
-	/*
+	/*!
 	 * Overloads streaming this point.
 	 *
 	 * This is useful for debugging, since it allows printing the point to a stream
