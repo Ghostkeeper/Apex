@@ -9,7 +9,6 @@
 #ifndef SIMPLE_POLYGON_BATCH_HPP
 #define SIMPLE_POLYGON_BATCH_HPP
 
-#include <memory> //To use the default allocator by default, but provide the option to use your own.
 #include <vector> //A dynamic data structure to model the two buffers that this batch maintains.
 
 #include <apex/point2.hpp> //To store the vertex data.
@@ -45,9 +44,7 @@ namespace apex {
  * start and end of each of them. This way, the two buffers contain the complete
  * state of the batch, and copying them both to a compute device allows all of
  * the same computations there.
- * \tparam Allocator The allocator to use to reserve memory for this data.
  */
-template<typename Allocator = std::allocator<Point2>>
 class SimplePolygonBatch {
 public:
 	/*
