@@ -7,13 +7,13 @@
  */
 
 #include <gtest/gtest.h> //To run the tests.
-#include "apex/detail/vector_2d.hpp" //The code under test.
+#include "apex/simple_polygon_batch.hpp" //The code under test.
 
 namespace apex {
 
-TEST(Vector2D, Empty) {
-	Vector2D<int> vector;
-	EXPECT_EQ(vector.size(), 0) << "The vector is constructed empty.";
+TEST(SimplePolygonBatch, Empty) {
+	SimplePolygonBatch batch;
+	EXPECT_EQ(batch.size(), 0) << "The batch is constructed empty.";
 }
 
 }
