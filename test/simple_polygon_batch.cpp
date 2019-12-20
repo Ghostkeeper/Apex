@@ -19,4 +19,14 @@ TEST(SimplePolygonBatch, Empty) {
 	EXPECT_EQ(batch.size(), 0) << "The batch is constructed empty.";
 }
 
+/*!
+ * Tests constructing a batch with 0 entries using the default constructor.
+ */
+TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
+	SimplePolygonBatch batch(0, 0);
+	EXPECT_EQ(batch.size(), 0) << "The batch was constructed with 0 polygons.";
+	batch = SimplePolygonBatch(0, 4);
+	EXPECT_EQ(batch.size(), 0) << "Though each polygon had a certain size, the batch was still constructed with 0 polygons.";
+}
+
 }
