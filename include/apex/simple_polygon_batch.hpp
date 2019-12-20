@@ -41,9 +41,9 @@ namespace apex {
  * unless it is optimised.
  *
  * The index buffer contains both the total number of simple polygons and the
- * start and end of each of them. This way, the two buffers contain the complete
- * state of the batch, and copying them both to a compute device allows all of
- * the same computations there.
+ * start, size and end of each of them. This way, the two buffers contain the
+ * complete state of the batch, and copying them both to a compute device allows
+ * all of the same computations there.
  */
 class SimplePolygonBatch {
 public:
@@ -52,6 +52,37 @@ public:
 	 */
 	SimplePolygonBatch() {
 		index_buffer.push_back(0); //Start off with 0 simple polygons.
+	}
+
+	/*!
+	 * Constructs a new batch of simple polygons, reserving space for a certain
+	 * amount of vertices for each polygon.
+	 *
+	 * The simple polygons are still actually left unassigned, but space will be
+	 * reserved in memory to allow growing each polygon up to
+	 * ``vertices_per_polygon`` without needing to reserve more memory or move
+	 * the vertex data around within the buffer.
+	 *
+	 * The range of memory for each simple polygon is fixed. The number of
+	 * vertices per polygon is a maximum for each polygon. If one polygon ends
+	 * up using less memory, that does \e not mean that another polygon can use
+	 * more without reserving more memory.
+	 * \param num_simple_polygons The amount of polygons to add to the batch.
+	 * \param vertices_per_polygon How much memory to reserve for each polygon.
+	 * The memory reserved will be such that each polygon can grow to this
+	 * number of vertices.
+	 */
+	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) {
+		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
+		index_buffer.reserve(num_simple_polygons * 3 + 1);
+		index_buffer.push_back(num_simple_polygons);
+
+		//Store ranges for each simple polygon in the index buffer.
+		for(size_t i = 0; i < num_simple_polygons; i++) {
+			index_buffer.push_back(i * 3); //Start of the range.
+			index_buffer.push_back(0); //Size of this simple polygon.
+			index_buffer.push_back(vertices_per_polygon); //Reserved memory of this simple polygon.
+		}
 	}
 
 	/*!
