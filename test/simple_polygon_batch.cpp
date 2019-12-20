@@ -29,4 +29,14 @@ TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
 	EXPECT_EQ(batch.size(), 0) << "Though each polygon had a certain size, the batch was still constructed with 0 polygons.";
 }
 
+/*!
+ * Tests constructing a batch with some default entries.
+ */
+TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
+	SimplePolygonBatch batch(4, 0);
+	EXPECT_EQ(batch.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
+	batch = SimplePolygonBatch(5, 6);
+	EXPECT_EQ(batch.size(), 5) << "There should be 5 polygons pre-filled.";
+}
+
 }
