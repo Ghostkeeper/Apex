@@ -39,4 +39,16 @@ TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
 	EXPECT_EQ(batch.size(), 5) << "There should be 5 polygons pre-filled.";
 }
 
+/*!
+ * Tests accessing an individual simple polygon within the batch.
+ *
+ * This also tests the back link to the original batch by looking at the number
+ * of vertices in the simple polygon.
+ */
+TEST(SimplePolygonBatch, AccessView) {
+	SimplePolygonBatch batch(4, 2);
+	SimplePolygonBatch::View first = batch[0];
+	EXPECT_EQ(first.size(), 0) << "While space for 2 vertices was reserved, no vertices were added.";
+}
+
 }
