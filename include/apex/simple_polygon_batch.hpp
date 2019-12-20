@@ -48,6 +48,52 @@ namespace apex {
 class SimplePolygonBatch {
 public:
 	/*!
+	 * Provides a view on the data of one simple polygon inside a
+	 * `SimplePolygonBatch`.
+	 *
+	 * This view behaves as a vector. It contains all of the same methods. As such,
+	 * it can be used as duck type of the vector, allowing a simple polygon to be
+	 * constructed using either a real vector or this view on a part of the data of
+	 * a `SimplePolygonBatch`.
+	 *
+	 * Internally, this view refers to a certain batch by reference. The reference
+	 * is invalidated if the batch is ever moved. This class is intended to be used
+	 * as a short-lived view on the batch, and moving a batch is bad practice anyway
+	 * since the batch data is typically very heavy. Moving a simple polygon inside
+	 * the batch (e.g. when reserving more memory for it) does not invalidate the
+	 * view.
+	 */
+	class View {
+	public:
+		/*!
+		 * Constructs a new view on a simple polygon batch.
+		 * \param batch The batch to view on.
+		 * \param polygon_index The simple polygon within that batch that this view
+		 * is viewing on.
+		 */
+		View(SimplePolygonBatch& batch, size_t polygon_index) : batch(batch), polygon_index(polygon_index) { };
+
+		/*!
+		 * Get the size of this simple polygon.
+		 * \return The number of vertices in this simple polygon.
+		 */
+		size_t size() const {
+			return batch.index_buffer[2 + polygon_index * 3];
+		}
+
+	private:
+		/*!
+		 * The batch of simple polygons that this view is referring to.
+		 */
+		SimplePolygonBatch& batch;
+
+		/*!
+		 * The simple polygon within the batch that this view is viewing on.
+		 */
+		size_t polygon_index;
+	};
+
+	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
 	SimplePolygonBatch() {
@@ -83,6 +129,22 @@ public:
 			index_buffer.push_back(0); //Size of this simple polygon.
 			index_buffer.push_back(vertices_per_polygon); //Reserved memory of this simple polygon.
 		}
+	}
+
+	/*!
+	 * Access a single simple polygon within this batch.
+	 *
+	 * Accessing this creates a view on the batch. This is not the most
+	 * efficient way of accessing the vertex data, since it involves two extra
+	 * referrals to get at the actual vertex data. However this way the data in
+	 * the batch can be used directly and transparently as if this view is the
+	 * actual data of a simple polygon.
+	 *
+	 * Rather than using this accessor, try to use batch processing operations
+	 * as much as possible.
+	 */
+	View operator [](size_t position) {
+		return View(*this, position);
 	}
 
 	/*!
