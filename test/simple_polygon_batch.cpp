@@ -35,8 +35,14 @@ TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
 TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
 	SimplePolygonBatch batch(4, 0);
 	EXPECT_EQ(batch.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
+	for(size_t i = 0; i < batch.size(); ++i) {
+		EXPECT_EQ(batch[i].size(), 0) << "The individual simple polygons must be empty.";
+	}
 	batch = SimplePolygonBatch(5, 6);
 	EXPECT_EQ(batch.size(), 5) << "There should be 5 polygons pre-filled.";
+	for(size_t i = 0; i < batch.size(); ++i) {
+		EXPECT_EQ(batch[i].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
+	}
 }
 
 /*!
