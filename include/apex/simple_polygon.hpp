@@ -440,7 +440,7 @@ public:
 	 * Inserts a new vertex at a specified position in the simple polygon.
 	 *
 	 * The vertex is moved in the polygon without copying it.
-	 * \param position. The vertex is inserted before this position in the loop.
+	 * \param position The vertex is inserted before this position in the loop.
 	 * \param vertex The coordinates of the new vertex.
 	 * \return An iterator pointing to the newly inserted vertex.
 	 */
