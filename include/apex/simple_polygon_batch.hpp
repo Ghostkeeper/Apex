@@ -89,7 +89,17 @@ public:
 		 * \return The number of vertices in this simple polygon.
 		 */
 		size_t size() const {
-			return batch.index_buffer[3 + polygon_index * 3];
+			return batch.index_buffer[polygon_index * 3 + 3]; //+2 due to the two starting indices, then +1 because we're getting the size.
+		}
+
+		/*!
+		 * Gives the vertex at the specified index in this simple polygon.
+		 * \param index The index of the vertex to get.
+		 * \return The vertex at the specified index.
+		 */
+		const Point2& operator [](const size_t index) const {
+			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
+			return batch.vertex_buffer[start_index + index];
 		}
 
 	protected:
@@ -135,6 +145,16 @@ public:
 		View(SimplePolygonBatch<SimplePolygon>& batch, const size_t polygon_index) :
 			batch(batch),
 			ConstView(batch, polygon_index) {};
+
+			/*!
+			 * Gives the vertex at the specified index in this simple polygon.
+			 * \param index The index of the vertex to get.
+			 * \return The vertex at the specified index.
+			 */
+			Point2& operator [](const size_t index) {
+				const size_t start_index = batch.index_buffer[ConstView::polygon_index * 3 + 2]; //+2 due to the two starting indices.
+				return batch.vertex_buffer[start_index + index];
+			}
 
 	protected:
 		/*!
