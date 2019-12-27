@@ -241,7 +241,8 @@ public:
 	}
 
 	/*!
-	 * Returns the number of simple polygons in this batch..
+	 * Returns the number of simple polygons in this batch.
+	 * \return The number of simple polygons in this batch.
 	 */
 	size_t size() const {
 		return index_buffer[0];
