@@ -46,7 +46,10 @@ namespace apex {
  * them. This way, the two buffers contain the complete state of the batch, and
  * copying them both to a compute device allows all of the same computations
  * there.
+ * \tparam SimplePolygon An implementation of simple polygons to use. Used to
+ * swap out dependencies in automated tests.
  */
+template<typename SimplePolygon = SimplePolygon>
 class SimplePolygonBatch {
 public:
 	/*!
@@ -77,7 +80,7 @@ public:
 		 * \param polygon_index The simple polygon within that batch that this view
 		 * is viewing on.
 		 */
-		ConstView(const SimplePolygonBatch& batch, const size_t polygon_index) :
+		ConstView(const SimplePolygonBatch<SimplePolygon>& batch, const size_t polygon_index) :
 			batch(batch),
 			polygon_index(polygon_index) {};
 
@@ -93,7 +96,7 @@ public:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
 		 */
-		const SimplePolygonBatch& batch;
+		const SimplePolygonBatch<SimplePolygon>& batch;
 
 		/*!
 		 * The simple polygon within the batch that this view is viewing on.
@@ -129,7 +132,7 @@ public:
 		 * \param polygon_index The simple polygon within that batch that this view
 		 * is viewing on.
 		 */
-		View(SimplePolygonBatch& batch, const size_t polygon_index) :
+		View(SimplePolygonBatch<SimplePolygon>& batch, const size_t polygon_index) :
 			batch(batch),
 			ConstView(batch, polygon_index) {};
 
@@ -137,7 +140,7 @@ public:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
 		 */
-		SimplePolygonBatch& batch;
+		SimplePolygonBatch<SimplePolygon>& batch;
 	};
 
 	/*!

@@ -7,7 +7,10 @@
  */
 
 #include <gtest/gtest.h> //To run the tests.
+
 #include "apex/simple_polygon_batch.hpp" //The code under test.
+
+#include "helpers/mock_simple_polygon.hpp" //To mock out the simple polygon dependency.
 
 namespace apex {
 
@@ -54,8 +57,8 @@ TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
  * This version tests accessing members of a const batch.
  */
 TEST(SimplePolygonBatch, AccessViewConst) {
-	const SimplePolygonBatch batch(4, 2);
-	SimplePolygonBatch::ConstView first = batch[0];
+	const SimplePolygonBatch<MockSimplePolygon> batch(4, 2);
+	SimplePolygonBatch<MockSimplePolygon>::ConstView first = batch[0];
 	EXPECT_EQ(first.size(), 0) << "While space for 2 vertices was reserved, no vertices were added.";
 }
 
@@ -68,8 +71,8 @@ TEST(SimplePolygonBatch, AccessViewConst) {
  * This version tests accessing members of a non-const batch.
  */
 TEST(SimplePolygonBatch, AccessViewNonConst) {
-	SimplePolygonBatch batch(5, 3);
-	SimplePolygonBatch::View second = batch[1];
+	SimplePolygonBatch<MockSimplePolygon> batch(5, 3);
+	SimplePolygonBatch<MockSimplePolygon>::View second = batch[1];
 	EXPECT_EQ(second.size(), 0) << "While space for 3 vertices was reserved, no vertices were added.";
 }
 
