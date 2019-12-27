@@ -12,6 +12,7 @@
 #include <vector> //A dynamic data structure to model the two buffers that this batch maintains.
 
 #include <apex/point2.hpp> //To store the vertex data.
+#include <apex/simple_polygon.hpp> //To add simple polygons to this batch.
 
 namespace apex {
 
@@ -217,6 +218,26 @@ public:
 	 */
 	View operator [](const size_t position) {
 		return View(*this, position);
+	}
+
+	/*!
+	 * Copies a simple polygon into the batch.
+	 *
+	 * The data of the simple polygon is copied completely, making this
+	 * operation linear in the size of the provided simple polygon.
+	 * \param simple_polygon The polygon to add to the batch.
+	 */
+	void push_back(const SimplePolygon& simple_polygon) {
+		const size_t next_position = index_buffer[1];
+		if(vertex_buffer.capacity() < next_position + simple_polygon.size()) {
+			vertex_buffer.reserve(vertex_buffer.capacity() * 2);
+		}
+		index_buffer.push_back(next_position); //Position of this polygon.
+		index_buffer.push_back(simple_polygon.size()); //Size of the polygon.
+		index_buffer.push_back(simple_polygon.size()); //Reserved memory.
+		for(size_t i = 0; i < simple_polygon.size(); ++i) { //Copy the actual data into the batch.
+			vertex_buffer[next_position + i] = simple_polygon[i];
+		}
 	}
 
 	/*!
