@@ -76,4 +76,21 @@ TEST(SimplePolygonBatch, AccessViewNonConst) {
 	EXPECT_EQ(second.size(), 0) << "While space for 3 vertices was reserved, no vertices were added.";
 }
 
+/*!
+ * Tests the push_back operation that copies a simple polygon into the batch.
+ */
+TEST(SimplePolygonBatch, PushBackCopy) {
+	const MockSimplePolygon square(MockSimplePolygon::Shape::SQUARE_1000);
+	SimplePolygonBatch<MockSimplePolygon> batch;
+	EXPECT_EQ(batch.size(), 0);
+	batch.push_back(square);
+	EXPECT_EQ(batch.size(), 1) << "We now put 1 simple polygon in the batch.";
+	EXPECT_EQ(batch[0].size(), square.size()) << "The polygon in the batch must be the same as the original.";
+
+	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
+	batch.push_back(triangle); //Add another one to the batch.
+	EXPECT_EQ(batch.size(), 2) << "There is now a second polygon in the batch.";
+	EXPECT_EQ(batch[1].size(), triangle.size()) << "The polygon in the batch must be the same as the original.";
+}
+
 }
