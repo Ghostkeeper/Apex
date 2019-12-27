@@ -40,10 +40,11 @@ namespace apex {
  * gaps halfway in the buffer to move them to, so the buffer will only grow
  * unless it is optimised.
  *
- * The index buffer contains both the total number of simple polygons and the
- * start, size and end of each of them. This way, the two buffers contain the
- * complete state of the batch, and copying them both to a compute device allows
- * all of the same computations there.
+ * The index buffer contains the total number of simple polygons, the location
+ * of the next polygon in the buffer, and the start, size and end of each of
+ * them. This way, the two buffers contain the complete state of the batch, and
+ * copying them both to a compute device allows all of the same computations
+ * there.
  */
 class SimplePolygonBatch {
 public:
@@ -143,6 +144,7 @@ public:
 	 */
 	SimplePolygonBatch() {
 		index_buffer.push_back(0); //Start off with 0 simple polygons.
+		index_buffer.push_back(0); //And the first polygon would get allocated to the 0th position.
 	}
 
 	/*!
@@ -154,25 +156,24 @@ public:
 	 * ``vertices_per_polygon`` without needing to reserve more memory or move
 	 * the vertex data around within the buffer.
 	 *
-	 * The range of memory for each simple polygon is fixed. The number of
-	 * vertices per polygon is a maximum for each polygon. If one polygon ends
-	 * up using less memory, that does \e not mean that another polygon can use
-	 * more without reserving more memory.
+	 * The memory for each individual simple polygon does not get assigned yet.
+	 * If one simple polygon ends up using less memory, others can use more
+	 * without the need to reserve new memory.
 	 * \param num_simple_polygons The amount of polygons to add to the batch.
-	 * \param vertices_per_polygon How much memory to reserve for each polygon.
-	 * The memory reserved will be such that each polygon can grow to this
-	 * number of vertices.
+	 * \param vertices_per_polygon How much memory to reserve for each polygon
+	 * on average.
 	 */
 	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) {
 		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
-		index_buffer.reserve(num_simple_polygons * 3 + 1);
-		index_buffer.push_back(num_simple_polygons);
+		index_buffer.reserve(num_simple_polygons * 3 + 2);
+		index_buffer.push_back(num_simple_polygons); //Number of polygons.
+		index_buffer.push_back(0); //Position of next polygon.
 
 		//Store ranges for each simple polygon in the index buffer.
 		for(size_t i = 0; i < num_simple_polygons; i++) {
-			index_buffer.push_back(i * 3); //Start of the range.
+			index_buffer.push_back(0); //Start of the range.
 			index_buffer.push_back(0); //Size of this simple polygon.
-			index_buffer.push_back(vertices_per_polygon); //Reserved memory of this simple polygon.
+			index_buffer.push_back(0); //Reserved memory of this simple polygon.
 		}
 	}
 
