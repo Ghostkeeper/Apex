@@ -15,7 +15,7 @@ namespace apex {
  * Tests that the default constructor creates an empty batch.
  */
 TEST(SimplePolygonBatch, Empty) {
-	SimplePolygonBatch batch;
+	const SimplePolygonBatch batch;
 	EXPECT_EQ(batch.size(), 0) << "The batch is constructed empty.";
 }
 
@@ -23,25 +23,25 @@ TEST(SimplePolygonBatch, Empty) {
  * Tests constructing a batch with 0 entries using the default constructor.
  */
 TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
-	SimplePolygonBatch batch(0, 0);
-	EXPECT_EQ(batch.size(), 0) << "The batch was constructed with 0 polygons.";
-	batch = SimplePolygonBatch(0, 4);
-	EXPECT_EQ(batch.size(), 0) << "Though each polygon had a certain size, the batch was still constructed with 0 polygons.";
+	const SimplePolygonBatch batch1(0, 0);
+	EXPECT_EQ(batch1.size(), 0) << "The batch was constructed with 0 polygons.";
+	const SimplePolygonBatch batch2(0, 4);
+	EXPECT_EQ(batch2.size(), 0) << "Though each polygon had a certain size, the batch was still constructed with 0 polygons.";
 }
 
 /*!
  * Tests constructing a batch with some default entries.
  */
 TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
-	SimplePolygonBatch batch(4, 0);
-	EXPECT_EQ(batch.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
-	for(size_t i = 0; i < batch.size(); ++i) {
-		EXPECT_EQ(batch[i].size(), 0) << "The individual simple polygons must be empty.";
+	const SimplePolygonBatch batch1(4, 0);
+	EXPECT_EQ(batch1.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
+	for(size_t i = 0; i < batch1.size(); ++i) {
+		EXPECT_EQ(batch1[i].size(), 0) << "The individual simple polygons must be empty.";
 	}
-	batch = SimplePolygonBatch(5, 6);
-	EXPECT_EQ(batch.size(), 5) << "There should be 5 polygons pre-filled.";
-	for(size_t i = 0; i < batch.size(); ++i) {
-		EXPECT_EQ(batch[i].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
+	const SimplePolygonBatch batch2(5, 6);
+	EXPECT_EQ(batch2.size(), 5) << "There should be 5 polygons pre-filled.";
+	for(size_t i = 0; i < batch2.size(); ++i) {
+		EXPECT_EQ(batch2[i].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
 	}
 }
 
@@ -52,8 +52,8 @@ TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
  * of vertices in the simple polygon.
  */
 TEST(SimplePolygonBatch, AccessView) {
-	SimplePolygonBatch batch(4, 2);
-	SimplePolygonBatch::View first = batch[0];
+	const SimplePolygonBatch batch(4, 2);
+	SimplePolygonBatch::ConstView first = batch[0];
 	EXPECT_EQ(first.size(), 0) << "While space for 2 vertices was reserved, no vertices were added.";
 }
 
