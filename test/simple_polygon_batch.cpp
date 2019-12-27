@@ -50,11 +50,27 @@ TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
  *
  * This also tests the back link to the original batch by looking at the number
  * of vertices in the simple polygon.
+ *
+ * This version tests accessing members of a const batch.
  */
-TEST(SimplePolygonBatch, AccessView) {
+TEST(SimplePolygonBatch, AccessViewConst) {
 	const SimplePolygonBatch batch(4, 2);
 	SimplePolygonBatch::ConstView first = batch[0];
 	EXPECT_EQ(first.size(), 0) << "While space for 2 vertices was reserved, no vertices were added.";
+}
+
+/*!
+ * Tests accessing an idividual simple polygon within the batch.
+ *
+ * This also tests the back link to the original batch by looking at the number
+ * of vertices in the simple polygon.
+ *
+ * This version tests accessing members of a non-const batch.
+ */
+TEST(SimplePolygonBatch, AccessViewNonConst) {
+	SimplePolygonBatch batch(5, 3);
+	SimplePolygonBatch::View second = batch[1];
+	EXPECT_EQ(second.size(), 0) << "While space for 3 vertices was reserved, no vertices were added.";
 }
 
 }
