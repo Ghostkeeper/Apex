@@ -229,7 +229,7 @@ public:
 		return index_buffer[0];
 	}
 
-private:
+protected:
 	/*!
 	 * The main buffer that contains the vertex data.
 	 *
