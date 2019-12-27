@@ -131,10 +131,6 @@ public:
 			batch(batch),
 			ConstView(batch, polygon_index) {};
 
-		void do_something() {
-			batch.vertex_buffer.clear();
-		}
-
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
