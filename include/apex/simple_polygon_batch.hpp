@@ -239,7 +239,7 @@ public:
 		index_buffer.push_back(simple_polygon.size()); //Size of the polygon.
 		index_buffer.push_back(simple_polygon.size()); //Reserved memory.
 		for(size_t i = 0; i < simple_polygon.size(); ++i) { //Copy the actual data into the batch.
-			vertex_buffer[next_position + i] = simple_polygon[i];
+			vertex_buffer.push_back(simple_polygon[i]);
 		}
 		index_buffer[0]++; //There is now one more simple polygon.
 		index_buffer[1] += simple_polygon.size();
