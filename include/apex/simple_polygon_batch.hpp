@@ -86,7 +86,7 @@ public:
 		 * \return The number of vertices in this simple polygon.
 		 */
 		size_t size() const {
-			return batch.index_buffer[2 + polygon_index * 3];
+			return batch.index_buffer[3 + polygon_index * 3];
 		}
 
 	protected:
