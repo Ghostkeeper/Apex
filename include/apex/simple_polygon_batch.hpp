@@ -181,6 +181,16 @@ public:
 	}
 
 	/*!
+	 * Copies this batch.
+	 *
+	 * All of the data is actually copied. This is linear in the total amount of
+	 * vertices in the batch.
+	 */
+	SimplePolygonBatch(const SimplePolygonBatch& other) :
+		vertex_buffer(other.vertex_buffer),
+		index_buffer(other.index_buffer) {}
+
+	/*!
 	 * Access a single simple polygon within this batch.
 	 *
 	 * Accessing this creates a view on the batch. This is not the most
