@@ -212,6 +212,18 @@ public:
 		index_buffer(other.index_buffer) {}
 
 	/*!
+	 * Copy assignment operator to copy one batch into another variable.
+	 *
+	 * All of the data is actually copied. This is linear in the total amount of
+	 * vertices in the batch.
+	 */
+	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+		vertex_buffer = other.vertex_buffer;
+		index_buffer = other.index_buffer;
+		return *this;
+	}
+
+	/*!
 	 * Access a single simple polygon within this batch.
 	 *
 	 * Accessing this creates a view on the batch. This is not the most
