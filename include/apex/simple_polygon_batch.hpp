@@ -216,10 +216,28 @@ public:
 	 *
 	 * All of the data is actually copied. This is linear in the total amount of
 	 * vertices in the batch.
+	 * \param other The batch to copy into this one.
+	 * \return A reference to this batch for chaining.
 	 */
 	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
 		vertex_buffer = other.vertex_buffer;
 		index_buffer = other.index_buffer;
+		return *this;
+	}
+
+	/*!
+	 * Move assignment operator to move one batch into another variable.
+	 *
+	 * Sometimes all of the data will be copied, sometimes not. This is up to
+	 * the compiler and the specific situation. The batch supplied here as
+	 * parameter will be in an indeterminate state and should no longer be used
+	 * after this method completes.
+	 * \param other The batch to move into this one.
+	 * \return A reference to this batch for chaining.
+	 */
+	SimplePolygonBatch& operator =(SimplePolygonBatch&& other) {
+		vertex_buffer = std::move(other.vertex_buffer);
+		index_buffer = std::move(other.index_buffer);
 		return *this;
 	}
 
