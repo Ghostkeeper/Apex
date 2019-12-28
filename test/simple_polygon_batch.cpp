@@ -49,6 +49,23 @@ TEST(SimplePolygonBatch, ConstructorReservingSeveral) {
 }
 
 /*!
+ * Tests the copy constructor.
+ */
+TEST(SimplePolygonBatch, ConstructorCopy) {
+	SimplePolygonBatch<MockSimplePolygon> original(2, 4);
+
+	const SimplePolygonBatch<MockSimplePolygon> copy_empty(original); //Copy before there is any actual vertex data.
+	EXPECT_EQ(copy_empty, original);
+
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000));
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::TRIANGLE_1000));
+
+	const SimplePolygonBatch<MockSimplePolygon> copy_filled(original); //Try another copy after filling in some data.
+
+	EXPECT_EQ(copy_filled, original);
+}
+
+/*!
  * Tests the copy assignment operator.
  */
 TEST(SimplePolygonBatch, AssignmentOperatorCopy) {
