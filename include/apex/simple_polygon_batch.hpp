@@ -236,10 +236,25 @@ public:
 	 *
 	 * All of the data is actually copied. This is linear in the total amount of
 	 * vertices in the batch.
+	 * \param other The batch to copy into this one.
 	 */
-	SimplePolygonBatch(const SimplePolygonBatch& other) :
+	SimplePolygonBatch(const SimplePolygonBatch<SimplePolygon>& other) :
 		vertex_buffer(other.vertex_buffer),
 		index_buffer(other.index_buffer) {}
+
+	/*!
+	 * Moves a batch into this batch.
+	 *
+	 * Depending on the situation and the compiler, the data might actually get
+	 * moved to a new location or it might not. If it is moved, this constructor
+	 * is linear in the size of the vertex data. If it's not, it's a constant.
+	 * After the constructor has completed, the batch provided in the parameter
+	 * is in an indeterminate state and should no longer be used.
+	 * \param other The batch to move into this one.
+	 */
+	SimplePolygonBatch(SimplePolygonBatch<SimplePolygon>&& other) :
+		vertex_buffer(std::move(other.vertex_buffer)),
+		index_buffer(std::move(other.index_buffer)) {}
 
 	/*!
 	 * Copy assignment operator to copy one batch into another variable.
@@ -249,7 +264,7 @@ public:
 	 * \param other The batch to copy into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+	SimplePolygonBatch& operator =(const SimplePolygonBatch<SimplePolygon>& other) {
 		vertex_buffer = other.vertex_buffer;
 		index_buffer = other.index_buffer;
 		return *this;
@@ -265,7 +280,7 @@ public:
 	 * \param other The batch to move into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(SimplePolygonBatch&& other) {
+	SimplePolygonBatch& operator =(SimplePolygonBatch<SimplePolygon>&& other) {
 		vertex_buffer = std::move(other.vertex_buffer);
 		index_buffer = std::move(other.index_buffer);
 		return *this;
