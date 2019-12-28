@@ -25,6 +25,7 @@ target_compile_features(apex INTERFACE cxx_constexpr)
 target_compile_features(apex INTERFACE cxx_generalized_initializers)
 target_compile_features(apex INTERFACE cxx_noexcept)
 target_compile_features(apex INTERFACE cxx_relaxed_constexpr)
+target_compile_features(apex INTERFACE cxx_rvalue_references)
 target_compile_features(apex INTERFACE cxx_right_angle_brackets)
 
 #Tests.
