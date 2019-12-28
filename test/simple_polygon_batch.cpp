@@ -49,6 +49,26 @@ TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
 }
 
 /*!
+ * Tests the copy assignment operator.
+ */
+TEST(SimplePolygonBatch, AssignmentOperatorCopy) {
+	SimplePolygonBatch<MockSimplePolygon> original(2, 4);
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000));
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::TRIANGLE_1000));
+
+	SimplePolygonBatch<MockSimplePolygon> copy;
+	copy = original; //Should copy all of the data.
+
+	ASSERT_EQ(copy.size(), original.size()) << "The copy must have an equal number of polygons.";
+	for(size_t polygon = 0; polygon < original.size(); ++polygon) {
+		ASSERT_EQ(copy[polygon].size(), original[polygon].size()) << "Each polygon must have an equal number of vertices.";
+		for(size_t vertex = 0; vertex < original[polygon].size(); ++vertex) {
+			EXPECT_EQ(copy[polygon][vertex], original[polygon][vertex]) << "Each vertex must be equal.";
+		}
+	}
+}
+
+/*!
  * Tests accessing an individual simple polygon within the batch.
  *
  * This also tests the back link to the original batch by looking at the number
