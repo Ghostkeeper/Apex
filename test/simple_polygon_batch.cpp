@@ -112,7 +112,7 @@ TEST(SimplePolygonBatch, PushBackCopy) {
 	const MockSimplePolygon square(MockSimplePolygon::Shape::SQUARE_1000);
 	SimplePolygonBatch<MockSimplePolygon> batch;
 	batch.push_back(square);
-	EXPECT_EQ(batch.size(), 1) << "We now put 1 simple polygon in the batch.";
+	ASSERT_EQ(batch.size(), 1) << "We now put 1 simple polygon in the batch.";
 	EXPECT_EQ(batch[0].size(), square.size()) << "The polygon in the batch must be the same as the original.";
 	for(size_t vertex = 0; vertex < square.size(); ++vertex) {
 		EXPECT_EQ(batch[0][vertex], square[vertex]) << "The vertices in the batch must be the same as the original.";
@@ -120,7 +120,7 @@ TEST(SimplePolygonBatch, PushBackCopy) {
 
 	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
 	batch.push_back(triangle); //Add another one to the batch.
-	EXPECT_EQ(batch.size(), 2) << "There is now a second polygon in the batch.";
+	ASSERT_EQ(batch.size(), 2) << "There is now a second polygon in the batch.";
 	EXPECT_EQ(batch[1].size(), triangle.size()) << "The polygon in the batch must be the same as the original.";
 	for(size_t vertex = 0; vertex < triangle.size(); ++vertex) {
 		EXPECT_EQ(batch[1][vertex], triangle[vertex]) << "The vertices in the batch must be the same as the original.";
