@@ -69,6 +69,27 @@ TEST(SimplePolygonBatch, AssignmentOperatorCopy) {
 }
 
 /*!
+ * Tests the move assignment operator.
+ */
+TEST(SimplePolygonBatch, AssignmentOperatorMove) {
+	SimplePolygonBatch<MockSimplePolygon> original(2, 4);
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000));
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::TRIANGLE_1000));
+	SimplePolygonBatch<MockSimplePolygon> copy(original); //A copy that we can move into the new batch while still being able to compare it to the original.
+
+	SimplePolygonBatch<MockSimplePolygon> target; //The polygon we're going to move it into.
+	target = std::move(copy);
+
+	ASSERT_EQ(target.size(), original.size()) << "The target must have an equal number of polygons.";
+	for(size_t polygon = 0; polygon < original.size(); ++polygon) {
+		ASSERT_EQ(target[polygon].size(), original[polygon].size()) << "Each polygon must have an equal number of vertices.";
+		for(size_t vertex = 0; vertex < original[polygon].size(); ++vertex) {
+			EXPECT_EQ(target[polygon][vertex], original[polygon][vertex]) << "Each vertex must be equal.";
+		}
+	}
+}
+
+/*!
  * Tests accessing an individual simple polygon within the batch.
  *
  * This also tests the back link to the original batch by looking at the number
