@@ -61,8 +61,25 @@ TEST(SimplePolygonBatch, ConstructorCopy) {
 	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::TRIANGLE_1000));
 
 	const SimplePolygonBatch<MockSimplePolygon> copy_filled(original); //Try another copy after filling in some data.
-
 	EXPECT_EQ(copy_filled, original);
+}
+
+/*!
+ * Tests the move constructor.
+ */
+TEST(SimplePolygonBatch, ConstructorMove) {
+	SimplePolygonBatch<MockSimplePolygon> original(2, 4);
+	SimplePolygonBatch<MockSimplePolygon> copy_empty(original); //Make a copy that we can move while still being able to compare to the original.
+
+	const SimplePolygonBatch<MockSimplePolygon> target_empty(copy_empty);
+	EXPECT_EQ(target_empty, original);
+
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::SQUARE_1000));
+	original.push_back(MockSimplePolygon(MockSimplePolygon::Shape::TRIANGLE_1000));
+	SimplePolygonBatch<MockSimplePolygon> copy_filled(original); //Another copy to move into the target.
+
+	const SimplePolygonBatch<MockSimplePolygon> target_filled(copy_filled); //Try another move after filling in some data.
+	EXPECT_EQ(target_filled, original);
 }
 
 /*!
