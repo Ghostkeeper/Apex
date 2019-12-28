@@ -103,6 +103,35 @@ public:
 			return batch.vertex_buffer[start_index + index];
 		}
 
+		/*!
+		 * Compares two simple polygons for equality.
+		 * \param other The simple polygon to compare this with.
+		 * \return ``true`` if the two simple polygons are equal, or ``false``
+		 * if they are different.
+		 */
+		bool operator ==(const ConstView& other) const {
+			//TODO: Implement this via CRTP using the implementation of SimplePolygonArea.
+			if(size() != other.size()) {
+				return false;
+			}
+			for(size_t vertex = 0; vertex < size(); ++vertex) {
+				if((*this)[vertex] != other[vertex]) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		/*!
+		 * Compares two simple polygons for inequality.
+		 * \param other The simple polygon to compare this with.
+		 * \return ``true`` if the two simple polygons are different, or
+		 * ``false`` if they are equal.
+		 */
+		bool operator !=(const ConstView& other) const {
+			return !((*this) == other);
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
@@ -272,6 +301,27 @@ public:
 	 */
 	View operator [](const size_t position) {
 		return View(*this, position);
+	}
+
+	/*!
+	 * Compares two batches for equality.
+	 *
+	 * Batches of simple polygons are equal if the simple polygons inside them
+	 * are in the same order and pairwise equal to each other.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if both batches are equal, or ``false`` if they are not.
+	 */
+	bool operator ==(const SimplePolygonBatch<SimplePolygon>& other) const {
+		//TODO: Implement efficient batch operation for this.
+		if(size() != other.size()) {
+			return false;
+		}
+		for(size_t simple_polygon = 0; simple_polygon < size(); ++simple_polygon) {
+			if((*this)[simple_polygon] != other[simple_polygon]) { //Must be in the same order.
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/*!
