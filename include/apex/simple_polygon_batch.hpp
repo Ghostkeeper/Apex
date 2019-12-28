@@ -252,7 +252,7 @@ public:
 	 * is in an indeterminate state and should no longer be used.
 	 * \param other The batch to move into this one.
 	 */
-	SimplePolygonBatch(SimplePolygonBatch<SimplePolygon>&& other) :
+	SimplePolygonBatch(SimplePolygonBatch<SimplePolygon>&& other) noexcept :
 		vertex_buffer(std::move(other.vertex_buffer)),
 		index_buffer(std::move(other.index_buffer)) {}
 
@@ -280,7 +280,7 @@ public:
 	 * \param other The batch to move into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(SimplePolygonBatch<SimplePolygon>&& other) {
+	SimplePolygonBatch& operator =(SimplePolygonBatch<SimplePolygon>&& other) noexcept {
 		vertex_buffer = std::move(other.vertex_buffer);
 		index_buffer = std::move(other.index_buffer);
 		return *this;
