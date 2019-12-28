@@ -38,13 +38,13 @@ TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
 TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
 	const SimplePolygonBatch batch1(4, 0);
 	EXPECT_EQ(batch1.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
-	for(size_t i = 0; i < batch1.size(); ++i) {
-		EXPECT_EQ(batch1[i].size(), 0) << "The individual simple polygons must be empty.";
+	for(size_t polygon = 0; polygon < batch1.size(); ++polygon) {
+		EXPECT_EQ(batch1[polygon].size(), 0) << "The individual simple polygons must be empty.";
 	}
 	const SimplePolygonBatch batch2(5, 6);
 	EXPECT_EQ(batch2.size(), 5) << "There should be 5 polygons pre-filled.";
-	for(size_t i = 0; i < batch2.size(); ++i) {
-		EXPECT_EQ(batch2[i].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
+	for(size_t polygon = 0; polygon < batch2.size(); ++polygon) {
+		EXPECT_EQ(batch2[polygon].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
 	}
 }
 
@@ -82,15 +82,20 @@ TEST(SimplePolygonBatch, AccessViewNonConst) {
 TEST(SimplePolygonBatch, PushBackCopy) {
 	const MockSimplePolygon square(MockSimplePolygon::Shape::SQUARE_1000);
 	SimplePolygonBatch<MockSimplePolygon> batch;
-	EXPECT_EQ(batch.size(), 0);
 	batch.push_back(square);
 	EXPECT_EQ(batch.size(), 1) << "We now put 1 simple polygon in the batch.";
 	EXPECT_EQ(batch[0].size(), square.size()) << "The polygon in the batch must be the same as the original.";
+	for(size_t vertex = 0; vertex < square.size(); ++vertex) {
+		EXPECT_EQ(batch[0][vertex], square[vertex]) << "The vertices in the batch must be the same as the original.";
+	}
 
 	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
 	batch.push_back(triangle); //Add another one to the batch.
 	EXPECT_EQ(batch.size(), 2) << "There is now a second polygon in the batch.";
 	EXPECT_EQ(batch[1].size(), triangle.size()) << "The polygon in the batch must be the same as the original.";
+	for(size_t vertex = 0; vertex < triangle.size(); ++vertex) {
+		EXPECT_EQ(batch[1][vertex], triangle[vertex]) << "The vertices in the batch must be the same as the original.";
+	}
 }
 
 }
