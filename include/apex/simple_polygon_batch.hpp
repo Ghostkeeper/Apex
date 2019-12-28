@@ -12,9 +12,10 @@
 #include <vector> //A dynamic data structure to model the two buffers that this batch maintains.
 
 #include "point2.hpp" //To store the vertex data.
-#include "simple_polygon.hpp" //To add simple polygons to this batch.
 
 namespace apex {
+
+class SimplePolygon;
 
 /*!
  * This class represents a set of simple polygons that are grouped together.
