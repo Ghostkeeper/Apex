@@ -25,7 +25,7 @@ TEST(SimplePolygonBatch, Empty) {
 /*!
  * Tests constructing a batch with 0 entries using the default constructor.
  */
-TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
+TEST(SimplePolygonBatch, ConstructorReservingEmpty) {
 	const SimplePolygonBatch batch1(0, 0);
 	EXPECT_EQ(batch1.size(), 0) << "The batch was constructed with 0 polygons.";
 	const SimplePolygonBatch batch2(0, 4);
@@ -35,7 +35,7 @@ TEST(SimplePolygonBatch, DefaultConstructorEmpty) {
 /*!
  * Tests constructing a batch with some default entries.
  */
-TEST(SimplePolygonBatch, DefaultConstructorSeveral) {
+TEST(SimplePolygonBatch, ConstructorReservingSeveral) {
 	const SimplePolygonBatch batch1(4, 0);
 	EXPECT_EQ(batch1.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
 	for(size_t polygon = 0; polygon < batch1.size(); ++polygon) {
