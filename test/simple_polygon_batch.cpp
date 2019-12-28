@@ -59,13 +59,7 @@ TEST(SimplePolygonBatch, AssignmentOperatorCopy) {
 	SimplePolygonBatch<MockSimplePolygon> copy;
 	copy = original; //Should copy all of the data.
 
-	ASSERT_EQ(copy.size(), original.size()) << "The copy must have an equal number of polygons.";
-	for(size_t polygon = 0; polygon < original.size(); ++polygon) {
-		ASSERT_EQ(copy[polygon].size(), original[polygon].size()) << "Each polygon must have an equal number of vertices.";
-		for(size_t vertex = 0; vertex < original[polygon].size(); ++vertex) {
-			EXPECT_EQ(copy[polygon][vertex], original[polygon][vertex]) << "Each vertex must be equal.";
-		}
-	}
+	EXPECT_EQ(copy, original);
 }
 
 /*!
@@ -80,13 +74,7 @@ TEST(SimplePolygonBatch, AssignmentOperatorMove) {
 	SimplePolygonBatch<MockSimplePolygon> target; //The polygon we're going to move it into.
 	target = std::move(copy);
 
-	ASSERT_EQ(target.size(), original.size()) << "The target must have an equal number of polygons.";
-	for(size_t polygon = 0; polygon < original.size(); ++polygon) {
-		ASSERT_EQ(target[polygon].size(), original[polygon].size()) << "Each polygon must have an equal number of vertices.";
-		for(size_t vertex = 0; vertex < original[polygon].size(); ++vertex) {
-			EXPECT_EQ(target[polygon][vertex], original[polygon][vertex]) << "Each vertex must be equal.";
-		}
-	}
+	EXPECT_EQ(target, original);
 }
 
 /*!
