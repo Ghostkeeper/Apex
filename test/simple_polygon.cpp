@@ -23,12 +23,12 @@ public:
 	/*!
 	 * A simple shape with three vertices.
 	 */
-	SimplePolygon triangle;
+	SimplePolygon<> triangle;
 
 	/*!
 	 * A regular octagon.
 	 */
-	SimplePolygon octagon;
+	SimplePolygon<> octagon;
 
 	/*!
 	 * Constructs the fixture simple polygons.
@@ -251,7 +251,7 @@ TEST_F(SimplePolygonFixture, EmplaceStart) {
  */
 TEST_F(SimplePolygonFixture, EmplaceMiddle) {
 	SimplePolygon copy = triangle; //Modify a copy so that we can compare against the original triangle.
-	SimplePolygon::const_iterator position = copy.begin();
+	SimplePolygon<>::const_iterator position = copy.begin();
 	position++;
 	copy.emplace(position, 42, 42);
 
@@ -324,7 +324,7 @@ TEST_F(SimplePolygonFixture, EraseSingleBegin) {
  */
 TEST_F(SimplePolygonFixture, EraseSingleMiddle) {
 	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin();
+	SimplePolygon<>::const_iterator second_vertex = copy.begin();
 	second_vertex++;
 	copy.erase(second_vertex);
 	ASSERT_EQ(copy.size(), octagon.size() - 1) << "One vertex has been removed.";
@@ -339,7 +339,7 @@ TEST_F(SimplePolygonFixture, EraseSingleMiddle) {
  */
 TEST_F(SimplePolygonFixture, EraseSingleEnd) {
 	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator last_vertex = copy.end();
+	SimplePolygon<>::const_iterator last_vertex = copy.end();
 	last_vertex--; //Does this work? Good test!
 	copy.erase(last_vertex);
 	ASSERT_EQ(copy.size(), octagon.size() - 1) << "One vertex has been removed.";
@@ -353,7 +353,7 @@ TEST_F(SimplePolygonFixture, EraseSingleEnd) {
  */
 TEST_F(SimplePolygonFixture, EraseRangeBegin) {
 	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator third_vertex = copy.begin(); //From the beginning to the third vertex is a range of 2 vertices (because the 3rd one is not erased along).
+	SimplePolygon<>::const_iterator third_vertex = copy.begin(); //From the beginning to the third vertex is a range of 2 vertices (because the 3rd one is not erased along).
 	third_vertex++;
 	third_vertex++;
 	copy.erase(copy.begin(), third_vertex);
@@ -368,9 +368,9 @@ TEST_F(SimplePolygonFixture, EraseRangeBegin) {
  */
 TEST_F(SimplePolygonFixture, EraseRangeMiddle) {
 	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin(); //From the second to the fourth vertex is a range of 2 vertices (because the 3rd one is not erased along).
+	SimplePolygon<>::const_iterator second_vertex = copy.begin(); //From the second to the fourth vertex is a range of 2 vertices (because the 3rd one is not erased along).
 	second_vertex++;
-	SimplePolygon::const_iterator fourth_vertex = second_vertex;
+	SimplePolygon<>::const_iterator fourth_vertex = second_vertex;
 	fourth_vertex++;
 	fourth_vertex++;
 	copy.erase(second_vertex, fourth_vertex);
@@ -386,7 +386,7 @@ TEST_F(SimplePolygonFixture, EraseRangeMiddle) {
  */
 TEST_F(SimplePolygonFixture, EraseRangeEnd) {
 	SimplePolygon copy = octagon; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_to_last = copy.end(); //From second-to-last until the end is 2 vertices.
+	SimplePolygon<>::const_iterator second_to_last = copy.end(); //From second-to-last until the end is 2 vertices.
 	second_to_last--;
 	second_to_last--;
 	copy.erase(second_to_last, copy.end());
@@ -433,7 +433,7 @@ TEST_F(SimplePolygonFixture, InsertCopyFront) {
  */
 TEST_F(SimplePolygonFixture, InsertCopyMiddle) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin();
+	SimplePolygon<>::const_iterator second_vertex = copy.begin();
 	second_vertex++;
 	copy.insert(second_vertex, Point2(42, 69)); //Insert a new vertex in the second location.
 	ASSERT_EQ(copy.size(), triangle.size() + 1);
@@ -477,7 +477,7 @@ TEST_F(SimplePolygonFixture, InsertMoveFront) {
  */
 TEST_F(SimplePolygonFixture, InsertMoveMiddle) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin();
+	SimplePolygon<>::const_iterator second_vertex = copy.begin();
 	second_vertex++;
 	Point2&& rvalue = Point2(42, 69);
 	copy.insert(second_vertex, rvalue); //Insert a new vertex in the second location.
@@ -525,7 +525,7 @@ TEST_F(SimplePolygonFixture, InsertIteratorsFront) {
  */
 TEST_F(SimplePolygonFixture, InsertIteratorsMiddle) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin();
+	SimplePolygon<>::const_iterator second_vertex = copy.begin();
 	second_vertex++;
 	copy.insert(second_vertex, octagon.begin(), octagon.end());
 	ASSERT_EQ(copy.size(), triangle.size() + octagon.size());
@@ -575,7 +575,7 @@ TEST_F(SimplePolygonFixture, InsertInitialiserListFront) {
  */
 TEST_F(SimplePolygonFixture, InsertInitialiserListMiddle) {
 	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
-	SimplePolygon::const_iterator second_vertex = copy.begin();
+	SimplePolygon<>::const_iterator second_vertex = copy.begin();
 	second_vertex++;
 	copy.insert(second_vertex, {Point2(99, 88), Point2(42, 69)});
 	ASSERT_EQ(copy.size(), triangle.size() + 2);
@@ -591,7 +591,7 @@ TEST_F(SimplePolygonFixture, InsertInitialiserListMiddle) {
  * Tests iterating around the simple polygon while reading the data.
  */
 TEST_F(SimplePolygonFixture, IteratorConst) {
-	SimplePolygon::const_iterator it = triangle.begin();
+	SimplePolygon<>::const_iterator it = triangle.begin();
 	EXPECT_EQ(triangle[0], *it) << "The iteration must begin at the first vertex.";
 
 	it++;
@@ -608,7 +608,7 @@ TEST_F(SimplePolygonFixture, IteratorConst) {
  * Tests iterating around the simple polygon with the explicit const iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorCBegin) {
-	SimplePolygon::const_iterator it = triangle.cbegin();
+	SimplePolygon<>::const_iterator it = triangle.cbegin();
 	EXPECT_EQ(triangle[0], *it) << "The iteration must begin at the first vertex.";
 
 	it++;
@@ -625,7 +625,7 @@ TEST_F(SimplePolygonFixture, IteratorCBegin) {
  * Tests modifying the polygon by modifying the data in the iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorModification) {
-	SimplePolygon::iterator it = triangle.begin();
+	SimplePolygon<>::iterator it = triangle.begin();
 	EXPECT_EQ(triangle[0], *it) << "The iteration must begin at the first vertex.";
 	it->x = 42;
 	EXPECT_EQ(triangle[0].x, 42) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
@@ -645,7 +645,7 @@ TEST_F(SimplePolygonFixture, IteratorModification) {
  * Tests iterating in reverse around the simple polygon while reading the data.
  */
 TEST_F(SimplePolygonFixture, IteratorReverseConst) {
-	SimplePolygon::const_reverse_iterator it = triangle.rbegin();
+	SimplePolygon<>::const_reverse_iterator it = triangle.rbegin();
 	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
 
 	it++;
@@ -663,7 +663,7 @@ TEST_F(SimplePolygonFixture, IteratorReverseConst) {
  * iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorReverseCBegin) {
-	SimplePolygon::const_reverse_iterator it = triangle.crbegin();
+	SimplePolygon<>::const_reverse_iterator it = triangle.crbegin();
 	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
 
 	it++;
@@ -680,7 +680,7 @@ TEST_F(SimplePolygonFixture, IteratorReverseCBegin) {
  * Tests modifying the polygon by modifying the data in the reverse iterator.
  */
 TEST_F(SimplePolygonFixture, IteratorReverseModification) {
-	SimplePolygon::reverse_iterator it = triangle.rbegin();
+	SimplePolygon<>::reverse_iterator it = triangle.rbegin();
 	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex.";
 	it->x = 42;
 	EXPECT_EQ(triangle[2].x, 42) << "After the iterator has been changed by reference, the data must be stored in the simple polygon too.";
@@ -703,7 +703,7 @@ TEST(SimplePolygon, MaxSize) {
 	//In order to keep the test simple, we check for a minimum given by the OpenCL spec.
 	//Otherwise we're just repeating the algorithm.
 	//TODO: Mock out the OpenCL calls to give this a fixed maximum. This can be done only after the implementation is made to depend on OpenCL.
-	EXPECT_GE(SimplePolygon().max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. This vector must be held in that global memory.";
+	EXPECT_GE(SimplePolygon<>().max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. This vector must be held in that global memory.";
 }
 
 /*!

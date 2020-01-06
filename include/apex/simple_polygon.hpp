@@ -39,11 +39,17 @@ namespace apex {
  *
  * If the vertices of the polygon are winding counter-clockwise, the polygon is
  * positive. Otherwise it is negative.
+ * \tparam VertexStorage The underlying data structure to use for this simple
+ * polygon. By default this is a ``vector``, which allows the simple polygon to
+ * be used separately. You can also use the view on a simple polygon batch to
+ * use one of the elements in the batch separately this way. Any class that
+ * implements the signature of a ``vector`` of ``Point2``s will do.
  */
+template<typename VertexStorage = std::vector<Point2>>
 class SimplePolygon :
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
-		public SimplePolygonArea<SimplePolygon>,
-		public SimplePolygonTranslate<SimplePolygon> {
+		public SimplePolygonArea<SimplePolygon<VertexStorage>>,
+		public SimplePolygonTranslate<SimplePolygon<VertexStorage>> {
 public:
 	/*!
 	 * Iterates one loop around the polygon.
@@ -606,7 +612,7 @@ protected:
 	 * outdated. Upon first accessing the data locally, this local data set will
 	 * be updated.
 	 */
-	std::vector<Point2> vertices;
+	VertexStorage vertices;
 };
 
 }
@@ -621,7 +627,8 @@ namespace std {
  * \param lhs One of the containers to swap.
  * \param rhs The other container to swap.
  */
-void swap(apex::SimplePolygon& lhs, apex::SimplePolygon& rhs) {
+template<typename VertexStorage>
+void swap(apex::SimplePolygon<VertexStorage>& lhs, apex::SimplePolygon<VertexStorage>& rhs) {
 	lhs.swap(rhs);
 }
 
