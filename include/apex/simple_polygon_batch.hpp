@@ -187,6 +187,15 @@ public:
 		}
 
 		/*!
+		 * Return the number of vertices that this simple polygon could contain
+		 * without needing to allocate more memory.
+		 * \return The capacity of this simple polygon.
+		 */
+		size_t capacity() const {
+			return end_index() - start_index();
+		}
+
+		/*!
 		 * Get an iterator to beyond the last vertex in the view on the simple
 		 * polygon.
 		 *
