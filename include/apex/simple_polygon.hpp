@@ -110,6 +110,23 @@ public:
 	SimplePolygon(const SimplePolygon<OtherVertexStorage>& other) : vertices(other.vertices) {}
 
 	/*!
+	 * Moves a simple polygon into this polygon.
+	 *
+	 * The vertex storage is moved directly. If the vertex storage supports it,
+	 * this will also move the vertex storage which may in many cases prevent
+	 * moving or copying the actual vertex data at all, making this a no-op and
+	 * perform very well.
+	 * \tparam OtherVertexStorage The vertex storage type of the original simple
+	 * polygon. This must match the vertex storage type of this simple polygon.
+	 * If the other simple polygon doesn't have the same VertexStorage, the move
+	 * operation will give a compilation error.
+	 */
+	template<typename OtherVertexStorage>
+	SimplePolygon(SimplePolygon<OtherVertexStorage>&& other) {
+		vertices = std::move(other.vertices);
+	}
+
+	/*!
 	 * Initialises the simple polygon with the constructor arguments of the
 	 * vertex storage.
 	 */
