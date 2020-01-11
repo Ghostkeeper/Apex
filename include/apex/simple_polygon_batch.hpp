@@ -76,6 +76,42 @@ public:
 	class ConstView {
 	public:
 		/*!
+		 * Iterates one loop around the polygon.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::iterator iterator;
+
+		/*!
+		 * Iterates one loop around the polygon.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::const_iterator const_iterator;
+
+		/*!
+		 * Iterates one loop around the polygon in reverse.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::reverse_iterator reverse_iterator;
+
+		/*!
+		 * Iterates one loop around the polygon in reverse.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+
+		/*!
 		 * Constructs a new view on a simple polygon batch.
 		 * \param batch The batch to view on.
 		 * \param polygon_index The simple polygon within that batch that this view
