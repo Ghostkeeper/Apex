@@ -390,8 +390,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	View operator [](const size_t position) {
-		return View(*this, position);
+	SimplePolygon operator [](const size_t position) {
+		return SimplePolygon(View(*this, position));
 	}
 
 	/*!

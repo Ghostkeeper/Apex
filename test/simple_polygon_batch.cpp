@@ -126,7 +126,7 @@ TEST(SimplePolygonBatch, AccessViewConst) {
 }
 
 /*!
- * Tests accessing an idividual simple polygon within the batch.
+ * Tests accessing an individual simple polygon within the batch.
  *
  * This also tests the back link to the original batch by looking at the number
  * of vertices in the simple polygon.
@@ -135,7 +135,7 @@ TEST(SimplePolygonBatch, AccessViewConst) {
  */
 TEST(SimplePolygonBatch, AccessViewNonConst) {
 	SimplePolygonBatch<MockSimplePolygon> batch(5, 3);
-	SimplePolygonBatch<MockSimplePolygon>::View second = batch[1];
+	MockSimplePolygon second = batch[1];
 	EXPECT_EQ(second.size(), 0) << "While space for 3 vertices was reserved, no vertices were added.";
 }
 
