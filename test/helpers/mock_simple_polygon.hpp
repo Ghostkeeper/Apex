@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2019 Ghostkeeper
+ * Copyright (C) 2020 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -12,7 +12,6 @@
 #include <vector> //Provides the base mock implementation.
 
 #include "apex/point2.hpp" //The coordinates of the polygon.
-#include "apex/simple_polygon_batch.hpp" //To accept views on the batch as constructor arguments.
 #include "apex/detail/simple_polygon_area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
 #include "apex/detail/simple_polygon_translate.hpp"
 
@@ -58,15 +57,6 @@ public:
 	 * \param shape The shape of this simple polygon.
 	 */
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);
-
-	/*!
-	 * Constructs a mock simple polygon from an entry in a batch.
-	 *
-	 * This entry is copied when constructing. It's not used by reference like
-	 * normally!
-	 * \param polygon_view The view to copy.
-	 */
-	MockSimplePolygon(const SimplePolygonBatch<MockSimplePolygon>::ConstView& polygon_view);
 };
 
 }

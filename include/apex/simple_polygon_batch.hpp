@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2019 Ghostkeeper
+ * Copyright (C) 2020 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -12,11 +12,9 @@
 #include <vector> //A dynamic data structure to model the two buffers that this batch maintains.
 
 #include "point2.hpp" //To store the vertex data.
+#include "simple_polygon.hpp" //The default for the simple polygons in the batch.
 
 namespace apex {
-
-template<typename VertexStorage = std::vector<Point2>>
-class SimplePolygon;
 
 /*!
  * This class represents a set of simple polygons that are grouped together.
@@ -51,7 +49,6 @@ class SimplePolygon;
  * \tparam SimplePolygon An implementation of simple polygons to use. Used to
  * swap out dependencies in automated tests.
  */
-template<typename SimplePolygon = SimplePolygon<>>
 class SimplePolygonBatch {
 public:
 	/*!
@@ -118,7 +115,7 @@ public:
 		 * \param polygon_index The simple polygon within that batch that this view
 		 * is viewing on.
 		 */
-		ConstView(const SimplePolygonBatch<SimplePolygon>& batch, const size_t polygon_index) :
+		ConstView(const SimplePolygonBatch& batch, const size_t polygon_index) :
 			batch(batch),
 			polygon_index(polygon_index) {};
 
@@ -217,7 +214,7 @@ public:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
 		 */
-		const SimplePolygonBatch<SimplePolygon>& batch;
+		const SimplePolygonBatch& batch;
 
 		/*!
 		 * The simple polygon within the batch that this view is viewing on.
@@ -273,25 +270,25 @@ public:
 		 * \param polygon_index The simple polygon within that batch that this view
 		 * is viewing on.
 		 */
-		View(SimplePolygonBatch<SimplePolygon>& batch, const size_t polygon_index) :
+		View(SimplePolygonBatch& batch, const size_t polygon_index) :
 			batch(batch),
 			ConstView(batch, polygon_index) {};
 
-			/*!
-			 * Gives the vertex at the specified index in this simple polygon.
-			 * \param index The index of the vertex to get.
-			 * \return The vertex at the specified index.
-			 */
-			Point2& operator [](const size_t index) {
-				const size_t start_index = batch.index_buffer[ConstView::polygon_index * 3 + 2]; //+2 due to the two starting indices.
-				return batch.vertex_buffer[start_index + index];
-			}
+		/*!
+		 * Gives the vertex at the specified index in this simple polygon.
+		 * \param index The index of the vertex to get.
+		 * \return The vertex at the specified index.
+		 */
+		Point2& operator [](const size_t index) {
+			const size_t start_index = batch.index_buffer[ConstView::polygon_index * 3 + 2]; //+2 due to the two starting indices.
+			return batch.vertex_buffer[start_index + index];
+		}
 
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
 		 */
-		SimplePolygonBatch<SimplePolygon>& batch;
+		SimplePolygonBatch& batch;
 	};
 
 	/*!
@@ -339,7 +336,7 @@ public:
 	 * vertices in the batch.
 	 * \param other The batch to copy into this one.
 	 */
-	SimplePolygonBatch(const SimplePolygonBatch<SimplePolygon>& other) :
+	SimplePolygonBatch(const SimplePolygonBatch& other) :
 		vertex_buffer(other.vertex_buffer),
 		index_buffer(other.index_buffer) {}
 
@@ -353,7 +350,7 @@ public:
 	 * is in an indeterminate state and should no longer be used.
 	 * \param other The batch to move into this one.
 	 */
-	SimplePolygonBatch(SimplePolygonBatch<SimplePolygon>&& other) noexcept :
+	SimplePolygonBatch(SimplePolygonBatch&& other) noexcept :
 		vertex_buffer(std::move(other.vertex_buffer)),
 		index_buffer(std::move(other.index_buffer)) {}
 
@@ -365,7 +362,7 @@ public:
 	 * \param other The batch to copy into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(const SimplePolygonBatch<SimplePolygon>& other) {
+	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
 		vertex_buffer = other.vertex_buffer;
 		index_buffer = other.index_buffer;
 		return *this;
@@ -381,7 +378,7 @@ public:
 	 * \param other The batch to move into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(SimplePolygonBatch<SimplePolygon>&& other) noexcept {
+	SimplePolygonBatch& operator =(SimplePolygonBatch&& other) noexcept {
 		vertex_buffer = std::move(other.vertex_buffer);
 		index_buffer = std::move(other.index_buffer);
 		return *this;
@@ -399,8 +396,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon operator [](const size_t position) const {
-		return SimplePolygon(ConstView(*this, position));
+	SimplePolygon<ConstView> operator [](const size_t position) const {
+		return SimplePolygon<ConstView>(*this, position);
 	}
 
 	/*!
@@ -415,8 +412,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon operator [](const size_t position) {
-		return SimplePolygon(View(*this, position));
+	SimplePolygon<View> operator [](const size_t position) {
+		return SimplePolygon<View>(*this, position);
 	}
 
 	/*!
@@ -427,7 +424,7 @@ public:
 	 * \param other The batch to compare this batch to.
 	 * \return ``true`` if both batches are equal, or ``false`` if they are not.
 	 */
-	bool operator ==(const SimplePolygonBatch<SimplePolygon>& other) const {
+	bool operator ==(const SimplePolygonBatch& other) const {
 		//TODO: Implement efficient batch operation for this.
 		if(size() != other.size()) {
 			return false;
@@ -447,7 +444,8 @@ public:
 	 * operation linear in the size of the provided simple polygon.
 	 * \param simple_polygon The polygon to add to the batch.
 	 */
-	void push_back(const SimplePolygon& simple_polygon) {
+	template<typename VertexStorage>
+	void push_back(const SimplePolygon<VertexStorage>& simple_polygon) {
 		const size_t next_position = index_buffer[1];
 		if(vertex_buffer.capacity() < next_position + simple_polygon.size()) {
 			vertex_buffer.reserve(vertex_buffer.capacity() * 2);
