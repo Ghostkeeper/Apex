@@ -122,4 +122,10 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 	(*this).swap(vertices);
 }
 
+MockSimplePolygon::MockSimplePolygon(const SimplePolygonBatch<MockSimplePolygon>::ConstView& polygon_view) {
+	for(const Point2& vertex : polygon_view) {
+		this->push_back(vertex);
+	}
+}
+
 }

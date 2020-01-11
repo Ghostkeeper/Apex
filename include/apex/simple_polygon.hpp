@@ -57,7 +57,7 @@ public:
 	 * This implementation hides the actual iterator used for the underlying
 	 * data structures.
 	 */
-	typedef std::vector<Point2>::iterator iterator;
+	typedef typename VertexStorage::iterator iterator;
 
 	/*!
 	 * Iterates one loop around the polygon.
@@ -65,7 +65,7 @@ public:
 	 * This implementation hides the actual iterator used for the underlying
 	 * data structures.
 	 */
-	typedef std::vector<Point2>::const_iterator const_iterator;
+	typedef typename VertexStorage::const_iterator const_iterator;
 
 	/*!
 	 * Iterates one loop around the polygon in reverse.
@@ -73,7 +73,7 @@ public:
 	 * This implementation hides the actual iterator used for the underlying
 	 * data structures.
 	 */
-	typedef std::vector<Point2>::reverse_iterator reverse_iterator;
+	typedef typename VertexStorage::reverse_iterator reverse_iterator;
 
 	/*!
 	 * Iterates one loop around the polygon in reverse.
@@ -81,7 +81,27 @@ public:
 	 * This implementation hides the actual iterator used for the underlying
 	 * data structures.
 	 */
-	typedef std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+	typedef typename VertexStorage::const_reverse_iterator const_reverse_iterator;
+
+	/*!
+	 * Copies a simple polygon.
+	 *
+	 * This also copies the vertex storage method, which may copy the actual
+	 * vertex data (depending on the implementation).
+	 *
+	 * Only simple polygons with the same template argument can be copied. If
+	 * the other simple polygon doesn't have the same VertexStorage, it'll give
+	 * a compilation error.
+	 */
+	template<typename VS>
+	SimplePolygon(SimplePolygon<VS>& other) : vertices(other.vertices) {}
+
+	/*!
+	 * Initialises the simple polygon with the constructor arguments of the
+	 * vertex storage.
+	 */
+	template<typename... Args>
+	SimplePolygon(Args&&... storage_constructor_arguments) : vertices(storage_constructor_arguments...) {}
 
 	/*!
 	 * Provides access to the individual vertices of the simple polygon.

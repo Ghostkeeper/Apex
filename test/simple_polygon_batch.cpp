@@ -36,12 +36,12 @@ TEST(SimplePolygonBatch, ConstructorReservingEmpty) {
  * Tests constructing a batch with some default entries.
  */
 TEST(SimplePolygonBatch, ConstructorReservingSeveral) {
-	const SimplePolygonBatch batch1(4, 0);
+	const SimplePolygonBatch<MockSimplePolygon> batch1(4, 0);
 	EXPECT_EQ(batch1.size(), 4) << "There should be 4 polygons pre-filled, even though they don't reserve any memory for it.";
 	for(size_t polygon = 0; polygon < batch1.size(); ++polygon) {
 		EXPECT_EQ(batch1[polygon].size(), 0) << "The individual simple polygons must be empty.";
 	}
-	const SimplePolygonBatch batch2(5, 6);
+	const SimplePolygonBatch<MockSimplePolygon> batch2(5, 6);
 	EXPECT_EQ(batch2.size(), 5) << "There should be 5 polygons pre-filled.";
 	for(size_t polygon = 0; polygon < batch2.size(); ++polygon) {
 		EXPECT_EQ(batch2[polygon].size(), 0) << "While there was memory reserved for each simple polygon, their actual data is still empty.";
@@ -121,7 +121,7 @@ TEST(SimplePolygonBatch, AssignmentOperatorMove) {
  */
 TEST(SimplePolygonBatch, AccessViewConst) {
 	const SimplePolygonBatch<MockSimplePolygon> batch(4, 2);
-	SimplePolygonBatch<MockSimplePolygon>::ConstView first = batch[0];
+	MockSimplePolygon first = batch[0];
 	EXPECT_EQ(first.size(), 0) << "While space for 2 vertices was reserved, no vertices were added.";
 }
 

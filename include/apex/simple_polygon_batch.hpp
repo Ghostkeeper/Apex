@@ -15,6 +15,7 @@
 
 namespace apex {
 
+template<typename VertexStorage = std::vector<Point2>>
 class SimplePolygon;
 
 /*!
@@ -50,7 +51,7 @@ class SimplePolygon;
  * \tparam SimplePolygon An implementation of simple polygons to use. Used to
  * swap out dependencies in automated tests.
  */
-template<typename SimplePolygon = SimplePolygon>
+template<typename SimplePolygon = SimplePolygon<>>
 class SimplePolygonBatch {
 public:
 	/*!
@@ -373,8 +374,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	ConstView operator [](const size_t position) const {
-		return ConstView(*this, position);
+	SimplePolygon operator [](const size_t position) const {
+		return SimplePolygon(ConstView(*this, position));
 	}
 
 	/*!

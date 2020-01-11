@@ -12,6 +12,7 @@
 #include <vector> //Provides the base mock implementation.
 
 #include "apex/point2.hpp" //The coordinates of the polygon.
+#include "apex/simple_polygon_batch.hpp" //To accept views on the batch as constructor arguments.
 #include "apex/detail/simple_polygon_area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
 #include "apex/detail/simple_polygon_translate.hpp"
 
@@ -54,8 +55,18 @@ public:
 
 	/*!
 	 * Construct a mock simple polygon with the specified predefined shape.
+	 * \param shape The shape of this simple polygon.
 	 */
 	MockSimplePolygon(const Shape shape = Shape::EMPTY);
+
+	/*!
+	 * Constructs a mock simple polygon from an entry in a batch.
+	 *
+	 * This entry is copied when constructing. It's not used by reference like
+	 * normally!
+	 * \param polygon_view The view to copy.
+	 */
+	MockSimplePolygon(const SimplePolygonBatch<MockSimplePolygon>::ConstView& polygon_view);
 };
 
 }
