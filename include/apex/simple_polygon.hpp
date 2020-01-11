@@ -163,7 +163,7 @@ public:
 	 * loop. Which specific vertex becomes the first vertex is not defined and
 	 * cannot be relied upon after operations like clipping have been applied.
 	 *
-	 * If the simple plygon is modified within OpenCL, invoking this operator
+	 * If the simple polygon is modified within OpenCL, invoking this operator
 	 * may trigger the application to wait until those operations have been
 	 * completed and downloaded to the host.
 	 * \param index The index of the vertex to get. Only when the simple polygon
@@ -181,7 +181,7 @@ public:
 	 * loop. Which specific vertex becomes the first vertex is not defined and
 	 * cannot be relied upon after operations like clipping have been applied.
 	 *
-	 * If the simple plygon is modified within OpenCL, invoking this operator
+	 * If the simple polygon is modified within OpenCL, invoking this operator
 	 * may trigger the application to wait until those operations have been
 	 * completed and downloaded to the host.
 	 * \param index The index of the vertex to get. Only when the simple polygon

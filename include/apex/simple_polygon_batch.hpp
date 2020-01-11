@@ -136,8 +136,7 @@ public:
 		 * \return The vertex at the specified index.
 		 */
 		const Point2& operator [](const size_t index) const {
-			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
-			return batch.vertex_buffer[start_index + index];
+			return batch.vertex_buffer[start_index() + index];
 		}
 
 		/*!
@@ -183,8 +182,7 @@ public:
 		 */
 		const_iterator begin() const {
 			const_iterator beginning = batch.vertex_buffer.begin();
-			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
-			std::advance(beginning, start_index);
+			std::advance(beginning, start_index());
 			return beginning;
 		}
 
@@ -202,9 +200,7 @@ public:
 		 */
 		const_iterator end() const {
 			const_iterator ending = batch.vertex_buffer.begin();
-			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
-			const size_t size = batch.index_buffer[polygon_index * 3 + 2 + 1]; //+2 due to the two starting indices, +1 since we need the size
-			std::advance(ending, start_index + size);
+			std::advance(ending, start_index() + size());
 			return ending;
 		}
 
@@ -218,6 +214,26 @@ public:
 		 * The simple polygon within the batch that this view is viewing on.
 		 */
 		const size_t polygon_index;
+
+		/*!
+		 * Get the index in the vertex buffer where this view starts.
+		 * \return The index in the vertex buffer where this view starts.
+		 */
+		inline size_t start_index() const {
+			return batch.index_buffer[2 + polygon_index * 3]; //2+ due to the two starting indices.
+		}
+
+		/*!
+		 * Get the index in the vertex buffer where this view ends.
+		 *
+		 * This is the index \e after the last vertex. The actual index is not
+		 * part of this view, and may be unallocated, belong to a different
+		 * simple polygon or may even be outside of the vertex buffer.
+		 * \return The index in the vertex buffer where this view ends.
+		 */
+		inline size_t end_index() const {
+			return batch.index_buffer[2 + polygon_index * 3 + 2]; //2+ due to the two starting indices, +2 since we need the end.
+		}
 	};
 
 	/*!
