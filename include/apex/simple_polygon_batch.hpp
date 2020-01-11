@@ -120,14 +120,6 @@ public:
 			polygon_index(polygon_index) {};
 
 		/*!
-		 * Get the number of vertices in this simple polygon.
-		 * \return The number of vertices in this simple polygon.
-		 */
-		size_t size() const {
-			return batch.index_buffer[polygon_index * 3 + 3]; //+2 due to the two starting indices, then +1 because we're getting the size.
-		}
-
-		/*!
 		 * Gives the vertex at the specified index in this simple polygon.
 		 * \param index The index of the vertex to get.
 		 * \return The vertex at the specified index.
@@ -210,6 +202,14 @@ public:
 			return ending;
 		}
 
+		/*!
+		 * Get the number of vertices in this simple polygon.
+		 * \return The number of vertices in this simple polygon.
+		 */
+		size_t size() const {
+			return batch.index_buffer[polygon_index * 3 + 3]; //+2 due to the two starting indices, then +1 because we're getting the size.
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
@@ -280,8 +280,52 @@ public:
 		 * \return The vertex at the specified index.
 		 */
 		Point2& operator [](const size_t index) {
-			const size_t start_index = batch.index_buffer[ConstView::polygon_index * 3 + 2]; //+2 due to the two starting indices.
-			return batch.vertex_buffer[start_index + index];
+			return batch.vertex_buffer[start_index() + index];
+		}
+
+		/*!
+		 * Get an iterator to the first vertex in the view on the simple
+		 * polygon.
+		 *
+		 * This actually returns an iterator to the vertex in the batch. You
+		 * could theoretically keep iterating further, but this is not supported
+		 * since you could iterate beyond the vertex buffer itself and into
+		 * unallocated memory in between the simple polygons. You should never
+		 * iterate beyond the ``end()`` iterator.
+		 * \return An iterator pointing at the first vertex of the simple
+		 * polygon inside the batch.
+		 */
+		iterator begin() {
+			iterator beginning = batch.vertex_buffer.begin();
+			std::advance(beginning, start_index());
+			return beginning;
+		}
+
+		/*!
+		 * Constructs a new vertex in-place in the simple polygon in the batch.
+		 * \param position The position within this simple polygon.
+		 * \param arguments The constructor arguments of the vertex to add (the
+		 * X and Y coordinates).
+		 */
+		template<class... Args>
+		iterator emplace(const const_iterator position, Args&&... arguments) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
+			if(size() >= capacity()) {
+				reallocate(capacity() * 2 + 1);
+			}
+
+			const size_t start = start_index();
+			for(size_t i = size(); i > index; i--) { //Move all vertices beyond the position by one place to make room.
+				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - 1];
+			}
+			//Construct the vertex in-place.
+			batch.vertex_buffer[start + index] = Point2(arguments...);
+
+			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
 		}
 
 	protected:
@@ -289,6 +333,10 @@ public:
 		 * The batch of simple polygons that this view is referring to.
 		 */
 		SimplePolygonBatch& batch;
+
+		void reallocate(const size_t new_capacity) {
+			//TODO: Implement.
+		}
 	};
 
 	/*!
