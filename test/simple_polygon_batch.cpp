@@ -140,6 +140,18 @@ TEST(SimplePolygonBatch, AccessViewNonConst) {
 }
 
 /*!
+ * Tests whether non-const access of a simple polygon within the batch actually
+ * allows modification by reference.
+ */
+TEST(SimplePolygonBatch, AccessViewNonConstReferenceModification) {
+	SimplePolygonBatch<MockSimplePolygon> batch(5, 3);
+	MockSimplePolygon second = batch[1];
+	MockSimplePolygon other_second = batch[1];
+	second.emplace_back(Point2(10, 10));
+	EXPECT_EQ(other_second.size(), 1) << "The polygon was resized in another instance derived from the same batch.";
+}
+
+/*!
  * Tests the push_back operation that copies a simple polygon into the batch.
  */
 TEST(SimplePolygonBatch, PushBackCopy) {
