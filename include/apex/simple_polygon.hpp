@@ -9,7 +9,7 @@
 #ifndef APEX_SIMPLE_POLYGON
 #define APEX_SIMPLE_POLYGON
 
-#include <utility> //For std::move.
+#include <utility> //For std::forward.
 #include <vector> //To store the vertex data.
 
 #include "point2.hpp" //The vertices of the polygon are 2D points.
@@ -114,7 +114,7 @@ public:
 	 * vertex storage.
 	 */
 	template<typename... Args>
-	SimplePolygon(Args&&... storage_constructor_arguments) : vertices(storage_constructor_arguments...) {}
+	SimplePolygon(Args&&... storage_constructor_arguments) : vertices(std::forward<Args>(storage_constructor_arguments)...) {}
 
 	/*!
 	 * Provides access to the individual vertices of the simple polygon.
