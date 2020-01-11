@@ -88,6 +88,7 @@ public:
 	 *
 	 * This also copies the vertex storage method, which may copy the actual
 	 * vertex data (depending on the implementation).
+	 * \param other The simple polygon to copy into this one.
 	 * \tparam OtherVertexStorage The vertex storage type of the original simple
 	 * polygon. This must match the vertex storage type of this simple polygon.
 	 * If the other simple polygon doesn't have the same VertexStorage, the copy
@@ -101,6 +102,7 @@ public:
 	 *
 	 * This also copies the vertex storage method, which may copy the actual
 	 * vertex data (depending on the implementation).
+	 * \param other The simple polygon to copy into this one.
 	 * \tparam OtherVertexStorage The vertex storage type of the original simple
 	 * polygon. This must match the vertex storage type of this simple polygon.
 	 * If the other simple polygon doesn't have the same VertexStorage, the copy
@@ -116,6 +118,7 @@ public:
 	 * this will also move the vertex storage which may in many cases prevent
 	 * moving or copying the actual vertex data at all, making this a no-op and
 	 * perform very well.
+	 * \param other The simple polygon to move into this one.
 	 * \tparam OtherVertexStorage The vertex storage type of the original simple
 	 * polygon. This must match the vertex storage type of this simple polygon.
 	 * If the other simple polygon doesn't have the same VertexStorage, the move
@@ -129,9 +132,29 @@ public:
 	/*!
 	 * Initialises the simple polygon with the constructor arguments of the
 	 * vertex storage.
+	 * \param storage_constructor_arguments The constructor arguments for the
+	 * vertex storage type, to construct the vertex storage with.
+	 * \tparam The constructor arguments of the vertex storage type.
 	 */
 	template<typename... Args>
 	SimplePolygon(Args&&... storage_constructor_arguments) : vertices(std::forward<Args>(storage_constructor_arguments)...) {}
+
+	/*!
+	 * Copy assignment operator, to assign another simple polygon onto this
+	 * simple polygon.
+	 *
+	 * This will copy the vertex storage data structure, which may copy the
+	 * actual vertex data.
+	 * \param other The simple polygon to assign to this simple polygon.
+	 * \tparam OtherVertexStorage The vertex storage type of the other simple
+	 * polygon. This must match the vertex storage type of this simple polygon.
+	 * If the other simple polygon doesn't have the same VertexStorage, the
+	 * assignment operation will give a compilation error.
+	 */
+	template<typename OtherVertexStorage>
+	const SimplePolygon& operator =(const SimplePolygon<OtherVertexStorage>& other) {
+		vertices = other.vertices;
+	}
 
 	/*!
 	 * Provides access to the individual vertices of the simple polygon.
