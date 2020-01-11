@@ -132,6 +132,45 @@ public:
 			return !((*this) == other);
 		}
 
+		/*!
+		 * Get an iterator to the first vertex in the view on the simple
+		 * polygon.
+		 *
+		 * This actually returns an iterator to the vertex in the batch. You
+		 * could theoretically keep iterating further, but this is not supported
+		 * since you could iterate beyond the vertex buffer itself and into
+		 * unallocated memory in between the simple polygons. You should never
+		 * iterate beyond the ``end()`` iterator.
+		 * \return An iterator pointing at the first vertex of the simple
+		 * polygon inside the batch.
+		 */
+		const_iterator begin() const {
+			const_iterator beginning = batch.vertex_buffer.begin();
+			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
+			std::advance(beginning, start_index);
+			return beginning;
+		}
+
+		/*!
+		 * Get an iterator to beyond the last vertex in the view on the simple
+		 * polygon.
+		 *
+		 * This actually returns an iterator to the end of the view in the
+		 * vertex list in the batch. You could theoretically keep iterating
+		 * further, but this is not supported since you could iterate beyond the
+		 * vertex buffer itself and into unallocated memory in between the
+		 * simple polygons.
+		 * \return An iterator pointing beyond the last vertex of the simple
+		 * polygon inside the batch.
+		 */
+		const_iterator end() const {
+			const_iterator ending = batch.vertex_buffer.begin();
+			const size_t start_index = batch.index_buffer[polygon_index * 3 + 2]; //+2 due to the two starting indices.
+			const size_t size = batch.index_buffer[polygon_index * 3 + 2 + 1]; //+2 due to the two starting indices, +1 since we need the size
+			std::advance(ending, start_index + size);
+			return ending;
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
