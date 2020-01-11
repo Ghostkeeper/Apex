@@ -97,6 +97,19 @@ public:
 	SimplePolygon(SimplePolygon<OtherVertexStorage>& other) : vertices(other.vertices) {}
 
 	/*!
+	 * Copies a simple polygon.
+	 *
+	 * This also copies the vertex storage method, which may copy the actual
+	 * vertex data (depending on the implementation).
+	 * \tparam OtherVertexStorage The vertex storage type of the original simple
+	 * polygon. This must match the vertex storage type of this simple polygon.
+	 * If the other simple polygon doesn't have the same VertexStorage, the copy
+	 * constructor will give a compilation error.
+	 */
+	template<typename OtherVertexStorage>
+	SimplePolygon(const SimplePolygon<OtherVertexStorage>& other) : vertices(other.vertices) {}
+
+	/*!
 	 * Initialises the simple polygon with the constructor arguments of the
 	 * vertex storage.
 	 */
