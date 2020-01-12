@@ -207,6 +207,9 @@ public:
 		if(size() != other.size()) {
 			return false;
 		}
+		if(empty()) { //Both are empty.
+			return true; //Don't go looking for the first vertex. There is none.
+		}
 		//Find first vertex.
 		size_t vertex_offset = -1;
 		for(size_t i = 0; i < other.size(); ++i) {
