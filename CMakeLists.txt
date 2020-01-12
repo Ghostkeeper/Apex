@@ -53,6 +53,7 @@ if(BUILD_TESTS)
 		point2
 		simple_polygon
 		simple_polygon_batch
+		simple_polygon_batch_view
 		detail.simple_polygon_area
 		detail.simple_polygon_translate
 	)
