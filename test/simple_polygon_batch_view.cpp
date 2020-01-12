@@ -78,4 +78,16 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWrite) {
 	EXPECT_EQ(triangle_view[1], Point2(333, 555)) << "The second vertex of the triangle was modified.";
 }
 
+/*!
+ * Tests modifying vertices in the view and seeing if other views are edited by
+ * reference.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
+	SimplePolygon first_view = triangle_and_square[0];
+	const SimplePolygon second_view = triangle_and_square[0];
+	first_view[1].x = 444;
+	first_view[1].y = 666;
+	EXPECT_EQ(second_view[1], Point2(444, 666)) << "The const SimplePolygon was modified because it's viewing the batch which was modified.";
+}
+
 }
