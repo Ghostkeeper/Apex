@@ -485,8 +485,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon<ConstView> operator [](const size_t position) const {
-		return SimplePolygon<ConstView>(*this, position);
+	SimplePolygon<const ConstView> operator [](const size_t position) const {
+		return SimplePolygon<const ConstView>(*this, position);
 	}
 
 	/*!
