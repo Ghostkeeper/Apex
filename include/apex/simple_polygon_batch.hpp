@@ -438,6 +438,12 @@ public:
 	 * as much as possible.
 	 */
 	SimplePolygon<const View> operator [](const size_t position) const {
+		/*This code uses a const_cast to remove the constness of the batch.
+		This would be unsafe, but since we're building a SimplePolygon based on
+		a const view, the const view will guard the constness of the batch. The
+		operation is only unsafe if a copy is made of the actual view into a
+		non-const variable. But since the VertexStorage itself is not exposed by
+		SimplePolygon, you can't make such a copy.*/
 		return SimplePolygon<const View>(const_cast<SimplePolygonBatch&>(*this), position);
 	}
 
