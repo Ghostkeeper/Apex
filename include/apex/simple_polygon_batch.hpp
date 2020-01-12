@@ -50,7 +50,7 @@ namespace apex {
  * swap out dependencies in automated tests.
  */
 class SimplePolygonBatch {
-public:
+protected:
 	/*!
 	 * Provides a view on the data of one simple polygon inside a
 	 * `SimplePolygonBatch`.
@@ -332,6 +332,7 @@ public:
 		}
 	};
 
+public:
 	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
