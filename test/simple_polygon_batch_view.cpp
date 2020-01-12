@@ -62,6 +62,10 @@ TEST_F(SimplePolygonBatchViewFixture, Accessor) {
 	for(size_t vertex = 0; vertex < triangle.size(); ++vertex) {
 		EXPECT_EQ(triangle_view[vertex], triangle[vertex]);
 	}
+	const SimplePolygon square_view = triangle_and_square[1];
+	for(size_t vertex = 0; vertex < square.size(); ++vertex) {
+		EXPECT_EQ(square_view[vertex], square[vertex]);
+	}
 }
 
 }
