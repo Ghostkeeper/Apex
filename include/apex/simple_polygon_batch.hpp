@@ -334,8 +334,40 @@ public:
 		 */
 		SimplePolygonBatch& batch;
 
+		/*!
+		 * Moves this batch to a new location inside the vertex buffer to make
+		 * more space for new vertices.
+		 *
+		 * This copies all of the vertex data to a new location, making it a
+		 * linear operation. Much like the ArrayList variant though, adding new
+		 * vertices won't have to call this operation very often any more as the
+		 * simple polygon grows bigger, resulting in an amortised constant time
+		 * complexity for adding vertices.
+		 * \param new_capacity The amount of vertices that can be stored without
+		 * allocating new memory, after this operation has been completed.
+		 */
 		void reallocate(const size_t new_capacity) {
-			//TODO: Implement.
+			const size_t new_place = batch.index_buffer[1];
+			batch.index_buffer[1] += new_capacity; //TODO: Not thread-safe. To make this thread-safe, read-and-update atomically and do something about the vertex buffer data structure.
+
+			//Make sure we have enough capacity in the vertex buffer itself. Grow by doubling there too.
+			size_t buffer_capacity = batch.vertex_buffer.capacity();
+			while(buffer_capacity < new_place + new_capacity) {
+				buffer_capacity = buffer_capacity * 2 + 1;
+			}
+			if(buffer_capacity > batch.vertex_buffer.capacity()) {
+				batch.vertex_buffer.reserve(buffer_capacity);
+			}
+
+			//Copy all of the data over.
+			const size_t old_place = start_index();
+			for(size_t vertex_index = 0; vertex_index < size(); vertex_index++) {
+				batch.vertex_buffer[new_place + vertex_index] = batch.vertex_buffer[old_place + vertex_index];
+			}
+
+			//Update the index buffer with the new place.
+			batch.index_buffer[2 + polygon_index * 3] = new_place; //2+ due to the two starting indices.
+			batch.index_buffer[2 + polygon_index * 3 + 2] = new_place + new_capacity; //2+ due to the two starting indices, +2 due to setting the end index.
 		}
 	};
 
