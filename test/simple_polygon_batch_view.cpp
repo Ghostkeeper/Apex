@@ -57,7 +57,7 @@ public:
 /*!
  * Tests accessing individual vertices in the view.
  */
-TEST_F(SimplePolygonBatchViewFixture, Accessor) {
+TEST_F(SimplePolygonBatchViewFixture, AccessorRead) {
 	const SimplePolygon triangle_view = triangle_and_square[0];
 	for(size_t vertex = 0; vertex < triangle.size(); ++vertex) {
 		EXPECT_EQ(triangle_view[vertex], triangle[vertex]);
@@ -66,6 +66,16 @@ TEST_F(SimplePolygonBatchViewFixture, Accessor) {
 	for(size_t vertex = 0; vertex < square.size(); ++vertex) {
 		EXPECT_EQ(square_view[vertex], square[vertex]);
 	}
+}
+
+/*!
+ * Tests modifying individual vertices in the view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AccessorWrite) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view[1].x = 333;
+	triangle_view[1].y = 555;
+	EXPECT_EQ(triangle_view[1], Point2(333, 555)) << "The second vertex of the triangle was modified.";
 }
 
 }
