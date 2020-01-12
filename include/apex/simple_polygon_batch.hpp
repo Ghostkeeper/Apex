@@ -284,6 +284,15 @@ public:
 		}
 
 		/*!
+		 * Gives the vertex at the specified index in this simple polygon.
+		 * \param index The index of the vertex to get.
+		 * \return The vertex at the specified index.
+		 */
+		const Point2& operator [](const size_t index) const {
+			return batch.vertex_buffer[start_index() + index];
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
