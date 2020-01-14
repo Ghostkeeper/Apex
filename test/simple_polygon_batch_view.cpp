@@ -200,4 +200,38 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorModification) {
 	EXPECT_EQ(square[3].x, 1337) << "After the iterator has been changed by reference, the data must be stored in the square too.";
 }
 
+/*!
+ * Tests iterating over a view in reverse without modifying it.
+ */
+TEST_F(SimplePolygonBatchViewFixture, IteratorReverseConst) {
+	const SimplePolygon triangle = triangle_and_square[0];
+	SimplePolygon<>::const_reverse_iterator it = triangle.rbegin();
+	EXPECT_EQ(triangle[2], *it) << "The iteration must begin at the last vertex of the triangle.";
+
+	it++;
+	EXPECT_EQ(triangle[1], *it) << "After iterating once, it must represent the second vertex of the triangle.";
+
+	it++;
+	EXPECT_EQ(triangle[0], *it) << "After iterating twice, it must represent the first vertex of the triangle.";
+
+	it++;
+	EXPECT_EQ(triangle.rend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the (reverse) end.";
+
+	const SimplePolygon square = triangle_and_square[1];
+	it = square.rbegin();
+	EXPECT_EQ(square[3], *it) << "The iteration must begin at the last vertex of the square.";
+
+	it++;
+	EXPECT_EQ(square[2], *it) << "After iterating once, it must represent the third vertex of the square.";
+
+	it++;
+	EXPECT_EQ(square[1], *it) << "After iterating twice, it must represent the second vertex of the square.";
+
+	it++;
+	EXPECT_EQ(square[0], *it) << "After iterating thrice, it must represent the first vertex of the square.";
+
+	it++;
+	EXPECT_EQ(square.rend(), it) << "The square has only four vertices, so after iterating four times it must arrive at the (reverse) end.";
+}
+
 }
