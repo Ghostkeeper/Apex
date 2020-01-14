@@ -139,7 +139,7 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorCBegin) {
 	EXPECT_EQ(triangle[2], *it) << "After iterating twice, it must represent the third vertex of the triangle.";
 
 	it++;
-	EXPECT_EQ(triangle.end(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
+	EXPECT_EQ(triangle.cend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 
 	const SimplePolygon square = triangle_and_square[1];
 	it = square.cbegin();
@@ -155,7 +155,7 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorCBegin) {
 	EXPECT_EQ(square[3], *it) << "After iterating thrice, it must represent the fourth vertex of the square.";
 
 	it++;
-	EXPECT_EQ(square.end(), it) << "The square has only four vertices, so after iterating four times it must arrive at the end.";
+	EXPECT_EQ(square.cend(), it) << "The square has only four vertices, so after iterating four times it must arrive at the end.";
 }
 
 /*!

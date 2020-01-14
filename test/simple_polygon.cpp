@@ -618,7 +618,7 @@ TEST_F(SimplePolygonFixture, IteratorCBegin) {
 	EXPECT_EQ(triangle[2], *it) << "After iterating twice, it must represent the third vertex.";
 
 	it++;
-	EXPECT_EQ(triangle.end(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
+	EXPECT_EQ(triangle.cend(), it) << "The triangle has only three vertices, so after iterating thrice it must arrive at the end.";
 }
 
 /*!
