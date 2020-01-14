@@ -224,7 +224,23 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator cbegin() const {
-			return begin();
+			return begin(); //Calls the const version, which returns a const_iterator anyway.
+		}
+
+		/*!
+		 * Get a const iterator to beyond the last vertex in the view on the
+		 * simple polygon.
+		 *
+		 * This actually returns an iterator to the end of the view in the
+		 * vertex list in the batch. You could theoretically keep iterating
+		 * further, but this is not supported since you could iterate beyond the
+		 * vertex buffer itself and into unallocated memory in between the
+		 * simple polygons.
+		 * \return An iterator pointing beyond the last vertex of the simple
+		 * polygon inside the batch.
+		 */
+		const_iterator cend() const {
+			return end(); //Calls the const version, which returns a const_iterator anyway.
 		}
 
 		/*!
