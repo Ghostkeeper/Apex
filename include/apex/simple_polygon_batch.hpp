@@ -268,6 +268,24 @@ protected:
 		 * \return An iterator pointing beyond the last vertex of the simple
 		 * polygon inside the batch.
 		 */
+		iterator end() {
+			iterator ending = batch.vertex_buffer.begin();
+			std::advance(ending, start_index() + size());
+			return ending;
+		}
+
+		/*!
+		 * Get an iterator to beyond the last vertex in the view on the simple
+		 * polygon.
+		 *
+		 * This actually returns an iterator to the end of the view in the
+		 * vertex list in the batch. You could theoretically keep iterating
+		 * further, but this is not supported since you could iterate beyond the
+		 * vertex buffer itself and into unallocated memory in between the
+		 * simple polygons.
+		 * \return An iterator pointing beyond the last vertex of the simple
+		 * polygon inside the batch.
+		 */
 		const_iterator end() const {
 			const_iterator ending = batch.vertex_buffer.begin();
 			std::advance(ending, start_index() + size());
