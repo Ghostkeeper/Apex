@@ -325,6 +325,24 @@ protected:
 		}
 
 		/*!
+		 * Get an iterator to the first vertex in the view on the simple polygon
+		 * when iterating in reverse (which would normally be the last vertex).
+		 *
+		 * This actually returns an iterator to the last vertex in the view in
+		 * the vertex list in the batch. You could theoretically keep iterating
+		 * further, but this is not supported since you could iterate beyond the
+		 * vertex buffer itself and into unallocated memory in between the
+		 * simple polygons.
+		 * \return A reverse iterator pointing to the last vertex of the simple
+		 * polygon inside the batch.
+		 */
+		reverse_iterator rbegin() {
+			reverse_iterator beginning = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
+			std::advance(beginning, batch.vertex_buffer.size() - start_index() - size());
+			return beginning;
+		}
+
+		/*!
 		 * Get an iterator to beyond the last vertex in the view on the simple
 		 * polygon when iterating in reverse (which would normally be before the
 		 * first vertex).
@@ -339,6 +357,25 @@ protected:
 		 */
 		const_reverse_iterator rend() const {
 			const_reverse_iterator ending = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
+			std::advance(ending, batch.vertex_buffer.size() - start_index());
+			return ending;
+		}
+
+		/*!
+		 * Get an iterator to beyond the last vertex in the view on the simple
+		 * polygon when iterating in reverse (which would normally be before the
+		 * first vertex).
+		 *
+		 * This actually returns an iterator to before the beginning of the view
+		 * in the vertex list in the batch. You could theoretically keep
+		 * iterating further, but this is not supported since you could iterate
+		 * beyond the vertex buffer itself and into unallocated memory in
+		 * between the simple polygons.
+		 * \return A reverse iterator pointing to beyond the first vertex of the
+		 * simple polygon inside the batch.
+		 */
+		reverse_iterator rend() {
+			reverse_iterator ending = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
 			std::advance(ending, batch.vertex_buffer.size() - start_index());
 			return ending;
 		}
