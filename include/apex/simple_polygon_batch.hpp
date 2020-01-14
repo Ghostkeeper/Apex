@@ -212,6 +212,24 @@ protected:
 		}
 
 		/*!
+		 * Get a const iterator to the first vertex in the view on the simple
+		 * polygon.
+		 *
+		 * This actually returns an iterator to the vertex in the batch. You
+		 * could theoretically keep iterating further, but this is not supported
+		 * since you could iterate beyond the vertex buffer itself and into
+		 * unallocated memory in between the simple polygons. You should never
+		 * iterate beyond the ``end()`` iterator.
+		 * \return A const iterator pointing at the first vertex of the simple
+		 * polygon inside the batch.
+		 */
+		const_iterator cbegin() const {
+			const_iterator beginning = batch.vertex_buffer.cbegin();
+			std::advance(beginning, start_index());
+			return beginning;
+		}
+
+		/*!
 		 * Constructs a new vertex in-place in the simple polygon in the batch.
 		 * \param position The position within this simple polygon.
 		 * \param arguments The constructor arguments of the vertex to add (the
