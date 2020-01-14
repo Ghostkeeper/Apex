@@ -244,6 +244,40 @@ protected:
 		}
 
 		/*!
+		 * Get a const iterator to the first vertex in the view on the simple
+		 * polygon when iterating in reverse (which would normally be the last
+		 * vertex).
+		 *
+		 * This actually returns an iterator to the last vertex in the view in
+		 * the vertex list in the batch. You could theoretically keep iterating
+		 * further, but this is not supported since you could iterate beyond the
+		 * vertex buffer itself and into unallocated memory in between the
+		 * simple polygons.
+		 * \return A reverse iterator pointing to the last vertex of the simple
+		 * polygon inside the batch.
+		 */
+		const_reverse_iterator crbegin() const {
+			return rbegin(); //Calls the const version, which returns a const_iterator anyway.
+		}
+
+		/*!
+		 * Get a const iterator to beyond the last vertex in the view on the
+		 * simple polygon when iterating in reverse (which would normally be
+		 * before the first vertex).
+		 *
+		 * This actually returns an iterator to before the beginning of the view
+		 * in the vertex list in the batch. You could theoretically keep
+		 * iterating further, but this is not supported since you could iterate
+		 * beyond the vertex buffer itself and into unallocated memory in
+		 * between the simple polygons.
+		 * \return A reverse iterator pointing to beyond the first vertex of the
+		 * simple polygon inside the batch.
+		 */
+		const_reverse_iterator crend() const {
+			return rend(); //Calls the const version, which returns a const_iterator anyway.
+		}
+
+		/*!
 		 * Constructs a new vertex in-place in the simple polygon in the batch.
 		 * \param position The position within this simple polygon.
 		 * \param arguments The constructor arguments of the vertex to add (the
