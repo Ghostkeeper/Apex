@@ -158,4 +158,46 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorCBegin) {
 	EXPECT_EQ(square.end(), it) << "The square has only four vertices, so after iterating four times it must arrive at the end.";
 }
 
+/*!
+ * Tests modifying the polygon by modifying the data in the iterator.
+ */
+TEST_F(SimplePolygonBatchViewFixture, IteratorModification) {
+	SimplePolygon triangle = triangle_and_square[0];
+	SimplePolygon<>::iterator it = triangle.begin();
+	EXPECT_EQ(triangle[0], *it) << "The iteration must begin at the first vertex of the triangle.";
+	it->x = 42;
+	EXPECT_EQ(triangle[0].x, 42) << "After the iterator has been changed by reference, the data must be stored in the triangle too.";
+
+	it++;
+	EXPECT_EQ(triangle[1], *it) << "After iterating once, it must represent the second vertex of the triangle.";
+	it->y = 69;
+	EXPECT_EQ(triangle[1].y, 69) << "After the iterator has been changed by reference, the data must be stored in the triangle too.";
+
+	it++;
+	EXPECT_EQ(triangle[2], *it) << "After iterating twice, it must represent the third vertex of the triangle.";
+	it->x = 666;
+	EXPECT_EQ(triangle[2].x, 666) << "After the iterator has been changed by reference, the data must be stored in the triangle too.";
+
+	SimplePolygon square = triangle_and_square[1];
+	it = square.begin();
+	EXPECT_EQ(square[0], *it) << "The iteration must begin at the first vertex of the square.";
+	it->x = 42;
+	EXPECT_EQ(square[0].x, 42) << "After the iterator has been changed by reference, the data must be stored in the square too.";
+
+	it++;
+	EXPECT_EQ(square[1], *it) << "After iterating once, it must represent the second vertex of the square.";
+	it->y = 69;
+	EXPECT_EQ(square[1].y, 69) << "After the iterator has been changed by reference, the data must be stored in the square too.";
+
+	it++;
+	EXPECT_EQ(square[2], *it) << "After iterating twice, it must represent the third vertex of the square.";
+	it->x = 666;
+	EXPECT_EQ(square[2].x, 666) << "After the iterator has been changed by reference, the data must be stored in the square too.";
+
+	it++;
+	EXPECT_EQ(square[3], *it) << "After iterating thrice, it must represent the fourth vertex of the square.";
+	it->x = 1337;
+	EXPECT_EQ(square[3].x, 1337) << "After the iterator has been changed by reference, the data must be stored in the square too.";
+}
+
 }
