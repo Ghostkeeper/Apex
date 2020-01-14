@@ -224,9 +224,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator cbegin() const {
-			const_iterator beginning = batch.vertex_buffer.cbegin();
-			std::advance(beginning, start_index());
-			return beginning;
+			return begin();
 		}
 
 		/*!
