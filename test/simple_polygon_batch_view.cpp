@@ -91,6 +91,18 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
 }
 
 /*!
+ * Place a new vertex at the start of the triangle.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.emplace(triangle_view.begin(), 20, 30);
+	EXPECT_EQ(triangle_view[0], Point2(20, 30)) << "The new vertex must be the first vertex.";
+	EXPECT_EQ(triangle_view[1], triangle[0]) << "The old first vertex must be shifted.";
+	EXPECT_EQ(triangle_view[2], triangle[1]) << "The old second vertex must be shifted.";
+	EXPECT_EQ(triangle_view[3], triangle[2]) << "The old third vertex must be shifted.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {
