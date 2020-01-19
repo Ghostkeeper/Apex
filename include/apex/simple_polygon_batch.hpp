@@ -656,9 +656,9 @@ public:
 		vertex_buffer.resize(buffer_capacity, Point2(0, 0));
 		index_buffer.push_back(next_position); //Position of this polygon.
 		index_buffer.push_back(simple_polygon.size()); //Size of the polygon.
-		index_buffer.push_back(simple_polygon.size()); //Reserved memory.
+		index_buffer.push_back(next_position + simple_polygon.size()); //End of the reserved memory.
 		for(size_t i = 0; i < simple_polygon.size(); ++i) { //Copy the actual data into the batch.
-			vertex_buffer.push_back(simple_polygon[i]);
+			vertex_buffer[next_position + i] = simple_polygon[i];
 		}
 		index_buffer[0]++; //There is now one more simple polygon.
 		index_buffer[1] += simple_polygon.size();
