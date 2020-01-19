@@ -91,6 +91,17 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
 }
 
 /*!
+ * Tests getting the capacity of a view on a batch where nothing is in the batch
+ * yet.
+ */
+TEST(SimplePolygonBatchViewTest, CapacityEmpty) {
+	SimplePolygonBatch batch(3, 0);
+	for(size_t i = 0; i < batch.size(); ++i) {
+		EXPECT_EQ(batch[0].capacity(), 0) << "No memory has been reserved yet for the individual simple polygon.";
+	}
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
