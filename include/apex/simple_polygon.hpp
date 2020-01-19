@@ -125,9 +125,7 @@ public:
 	 * operation will give a compilation error.
 	 */
 	template<typename OtherVertexStorage>
-	SimplePolygon(SimplePolygon<OtherVertexStorage>&& other) {
-		vertices = std::move(other.vertices);
-	}
+	SimplePolygon(SimplePolygon<OtherVertexStorage>&& other) : vertices(std::move(other.vertices)) {}
 
 	/*!
 	 * Initialises the simple polygon with the constructor arguments of the
