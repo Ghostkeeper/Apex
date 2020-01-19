@@ -447,6 +447,16 @@ TEST_F(SimplePolygonBatchViewFixture, ReserveLower) {
 }
 
 /*!
+ * Tests reserving more memory than the current capacity.
+ */
+TEST_F(SimplePolygonBatchViewFixture, ReserveHigher) {
+	SimplePolygon square_view = triangle_and_square[1];
+
+	square_view.reserve(10);
+	EXPECT_GE(square_view.capacity(), 10) << "Should now have capacity for at least 10 vertices.";
+}
+
+/*!
  * Tests getting the size of a view when it's empty.
  */
 TEST(SimplePolygonBatchView, SizeEmpty) {
