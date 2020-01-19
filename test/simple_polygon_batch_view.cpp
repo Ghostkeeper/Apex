@@ -91,6 +91,28 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
 }
 
 /*!
+ * Tests assigning one repeated vertex to the views on simple polygons in the
+ * batch.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AssignRepeated) {
+	SimplePolygon triangle = triangle_and_square[0];
+	triangle.assign(10, Point2(123, 456));
+
+	ASSERT_EQ(triangle.size(), 10) << "There should now be 10 vertices in what used to be a triangle.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle[i], Point2(123, 456));
+	}
+
+	SimplePolygon square = triangle_and_square[1];
+	square.assign(20, Point2(789, 123));
+
+	ASSERT_EQ(square.size(), 20) << "There should now be 20 vertices in what used to be a square.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square[i], Point2(789, 123));
+	}
+}
+
+/*!
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */

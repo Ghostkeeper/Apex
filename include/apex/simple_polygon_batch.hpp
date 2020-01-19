@@ -167,6 +167,20 @@ protected:
 		}
 
 		/*!
+		 * Replace the contents of the simple polygon with a repeated instance
+		 * of a given vertex.
+		 * \param count How many times to repeat the vertex.
+		 * \param value The vertex coordinate to repeat.
+		 */
+		void assign(const size_t count, const Point2& value) {
+			reserve(count);
+			for(size_t i = 0; i < count; ++i) {
+				batch.vertex_buffer[start_index() + i] = value;
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] = count; //Update the size, clearing any vertices that we didn't override if the original was bigger.
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
