@@ -155,6 +155,22 @@ public:
 	}
 
 	/*!
+	 * Move assignment operator, to move another simple polygon into this simple
+	 * polygon.
+	 *
+	 * In some cases this will be a no-op, making it very fast to execute.
+	 * \param other The simple polygon to assign to this simple polygon.
+	 * \tparam OtherVertexStorage The vertex storage type of the other simple
+	 * polygon. This must match the vertex storage type of this simple polygon.
+	 * If the other simple polygon doesn't have the same VertexStorage, the
+	 * assignment operation will give a compilation error.
+	 */
+	template<typename OtherVertexStorage>
+	SimplePolygon& operator =(SimplePolygon<OtherVertexStorage>&& other) {
+		vertices = std::move(other.vertices);
+	}
+
+	/*!
 	 * Provides access to the individual vertices of the simple polygon.
 	 *
 	 * There is no real start or end to a simple polygon since it's a closed
