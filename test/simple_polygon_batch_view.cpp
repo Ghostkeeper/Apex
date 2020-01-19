@@ -119,6 +119,19 @@ TEST(SimplePolygonBatchView, CapacityFull) {
 }
 
 /*!
+ * Tests clearing the data of views in the batch.
+ */
+TEST_F(SimplePolygonBatchViewFixture, Clear) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.clear();
+	EXPECT_EQ(triangle_view.size(), 0) << "After clearing, the size must be 0.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.clear();
+	EXPECT_EQ(square_view.size(), 0) << "After clearing, the size must be 0.";
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {

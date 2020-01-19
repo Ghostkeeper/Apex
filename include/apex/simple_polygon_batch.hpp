@@ -244,6 +244,16 @@ protected:
 		}
 
 		/*!
+		 * Erases all vertices from the simple polygon in the view.
+		 *
+		 * The capacity of the simple polygon view is unchanged. Nothing is
+		 * re-allocated.
+		 */
+		void clear() noexcept {
+			batch.index_buffer[2 + polygon_index * 3 + 1] = 0; //Set the size to 0. 2+ for the 2 starting vertices, +1 to set the size.
+		}
+
+		/*!
 		 * Get a const iterator to the first vertex in the view on the simple
 		 * polygon when iterating in reverse (which would normally be the last
 		 * vertex).
@@ -419,7 +429,7 @@ protected:
 		 * \return The number of vertices in this simple polygon.
 		 */
 		size_t size() const {
-			return batch.index_buffer[polygon_index * 3 + 3]; //+2 due to the two starting indices, then +1 because we're getting the size.
+			return batch.index_buffer[2 + polygon_index * 3 + 1]; //2+ due to the two starting indices, then +1 because we're getting the size.
 		}
 
 	protected:
