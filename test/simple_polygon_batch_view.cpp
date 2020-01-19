@@ -402,4 +402,12 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorReverseCBegin) {
 	EXPECT_EQ(square.crend(), it) << "The square has only four vertices, so after iterating four times it must arrive at the (reverse) end.";
 }
 
+/*!
+ * Tests getting the size of views on the batch.
+ */
+TEST_F(SimplePolygonBatchViewFixture, Size) {
+	EXPECT_EQ(triangle_and_square[0].size(), 3) << "The triangle has 3 vertices.";
+	EXPECT_EQ(triangle_and_square[1].size(), 4) << "The square has 4 vertices.";
+}
+
 }
