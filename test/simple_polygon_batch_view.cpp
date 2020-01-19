@@ -91,7 +91,7 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
 }
 
 /*!
- * Place a new vertex at the start of the triangle.
+ * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
 	SimplePolygon triangle_view = triangle_and_square[0];
@@ -100,6 +100,20 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
 	EXPECT_EQ(triangle_view[1], triangle[0]) << "The old first vertex must be shifted.";
 	EXPECT_EQ(triangle_view[2], triangle[1]) << "The old second vertex must be shifted.";
 	EXPECT_EQ(triangle_view[3], triangle[2]) << "The old third vertex must be shifted.";
+}
+
+/*!
+ * Place a new vertex in the middle of the simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EmplaceMiddle) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::iterator middle = triangle_view.begin();
+	middle++;
+	triangle_view.emplace(middle, 20, 30);
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex must be unchanged.";
+	EXPECT_EQ(triangle_view[1], Point2(20, 30)) << "The new vertex must be in the second place.";
+	EXPECT_EQ(triangle_view[2], triangle[1]) << "The second vertex must be shifted.";
+	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex must be shifted.";
 }
 
 /*!
