@@ -649,9 +649,11 @@ public:
 	template<typename VertexStorage>
 	void push_back(const SimplePolygon<VertexStorage>& simple_polygon) {
 		const size_t next_position = index_buffer[1];
-		if(vertex_buffer.capacity() < next_position + simple_polygon.size()) {
-			vertex_buffer.reserve(vertex_buffer.capacity() * 2);
+		size_t buffer_capacity = vertex_buffer.size();
+		while(buffer_capacity < next_position + simple_polygon.size()) {
+			buffer_capacity = buffer_capacity * 2 + 1;
 		}
+		vertex_buffer.resize(buffer_capacity, Point2(0, 0));
 		index_buffer.push_back(next_position); //Position of this polygon.
 		index_buffer.push_back(simple_polygon.size()); //Size of the polygon.
 		index_buffer.push_back(simple_polygon.size()); //Reserved memory.
