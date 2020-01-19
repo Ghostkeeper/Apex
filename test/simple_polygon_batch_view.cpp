@@ -94,7 +94,7 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */
-TEST(SimplePolygonBatchViewTest, CapacityEmpty) {
+TEST(SimplePolygonBatchView, CapacityEmpty) {
 	SimplePolygonBatch batch(3, 0);
 	for(size_t i = 0; i < batch.size(); ++i) {
 		EXPECT_EQ(batch[0].capacity(), 0) << "No memory has been reserved yet for the individual simple polygon.";
@@ -105,7 +105,7 @@ TEST(SimplePolygonBatchViewTest, CapacityEmpty) {
  * Tests getting the capacity of a view on a batch when the batch is filled to
  * capacity and beyond.
  */
-TEST(SimplePolygonBatchViewTest, CapacityFull) {
+TEST(SimplePolygonBatchView, CapacityFull) {
 	SimplePolygonBatch batch(3, 3);
 	batch[1].emplace_back(20, 30);
 	EXPECT_GE(batch[1].capacity(), 1) << "There needs to be capacity for at least one vertex now.";
@@ -400,6 +400,16 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorReverseCBegin) {
 
 	it++;
 	EXPECT_EQ(square.crend(), it) << "The square has only four vertices, so after iterating four times it must arrive at the (reverse) end.";
+}
+
+/*!
+ * Tests getting the size of a view when it's empty.
+ */
+TEST(SimplePolygonBatchView, SizeEmpty) {
+	SimplePolygonBatch batch(3, 0);
+	for(size_t i = 0; i < batch.size(); ++i) {
+		EXPECT_EQ(batch[i].size(), 0);
+	}
 }
 
 /*!
