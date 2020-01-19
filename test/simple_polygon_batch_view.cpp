@@ -100,6 +100,13 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
 	for(size_t i = 0; i < triangle.size(); ++i) {
 		EXPECT_EQ(triangle_view[i + 1], triangle[i]) << "The original vertices must be shifted.";
 	}
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.emplace(square_view.begin(), 40, 50);
+	EXPECT_EQ(square_view[0], Point2(40, 50)) << "The new vertex must be the first vertex.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i + 1], square[i]) << "The original vertices must be shifted.";
+	}
 }
 
 /*!
@@ -114,6 +121,17 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceMiddle) {
 	EXPECT_EQ(triangle_view[1], Point2(20, 30)) << "The new vertex must be in the second place.";
 	EXPECT_EQ(triangle_view[2], triangle[1]) << "The second vertex must be shifted.";
 	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex must be shifted.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	middle = square_view.begin();
+	middle++; //Advance it to between the 2nd and 3rd vertices.
+	middle++;
+	square_view.emplace(middle, 40, 50);
+	EXPECT_EQ(square_view[0], square[0]) << "The first vertex must be unchanged.";
+	EXPECT_EQ(square_view[1], square[1]) << "The second vertex must be unchanged.";
+	EXPECT_EQ(square_view[2], Point2(40, 50)) << "The new vertex must be in the third place.";
+	EXPECT_EQ(square_view[3], square[2]) << "The third vertex must be shifted.";
+	EXPECT_EQ(square_view[4], square[3]) << "The fourth vertex must be shifted.";
 }
 
 /*!
@@ -126,6 +144,13 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceEnd) {
 		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their places.";
 	}
 	EXPECT_EQ(triangle_view[3], Point2(20, 30)) << "The new vertex must be at the end.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.emplace(square_view.end(), 40, 50);
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "All of the original vertices are still in their places.";
+	}
+	EXPECT_EQ(square_view[4], Point2(40, 50)) << "The new vertex must be at the end.";
 }
 
 /*!
