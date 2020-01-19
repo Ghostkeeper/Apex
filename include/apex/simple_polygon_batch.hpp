@@ -522,11 +522,7 @@ public:
 		index_buffer.push_back(0); //Position of next polygon.
 
 		//Store ranges for each simple polygon in the index buffer.
-		for(size_t i = 0; i < num_simple_polygons; i++) {
-			index_buffer.push_back(0); //Start of the range.
-			index_buffer.push_back(0); //Size of this simple polygon.
-			index_buffer.push_back(0); //Reserved memory of this simple polygon.
-		}
+		index_buffer.insert(index_buffer.end(), num_simple_polygons * 3, 0); //Insert a 0 for the start, the size and the reserved memory, for each polygon.
 	}
 
 	/*!
