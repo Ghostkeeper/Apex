@@ -102,6 +102,23 @@ TEST(SimplePolygonBatchViewTest, CapacityEmpty) {
 }
 
 /*!
+ * Tests getting the capacity of a view on a batch when the batch is filled to
+ * capacity and beyond.
+ */
+TEST(SimplePolygonBatchViewTest, CapacityFull) {
+	SimplePolygonBatch batch(3, 3);
+	batch[1].emplace_back(20, 30);
+	EXPECT_GE(batch[1].capacity(), 1) << "There needs to be capacity for at least one vertex now.";
+	batch[0].emplace_back(0, 0);
+	batch[0].emplace_back(0, 0);
+	EXPECT_GE(batch[0].capacity(), 2) << "There needs to be capacity for at least two vertices now.";
+	for(size_t i = 0; i < 100; ++i) {
+		batch[2].emplace_back(0, 0);
+	}
+	EXPECT_GE(batch[2].capacity(), 100) << "There needs to be capacity for at least a hundred vertices now.";
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
