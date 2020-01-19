@@ -677,6 +677,12 @@ protected:
 	 * This \e only concerns the actual bytes of data to store the actual
 	 * coordinates of the simple polygons. The ranges where each simple polygon
 	 * starts and ends are stored in the \ref SimplePolygonBatch.index_buffer.
+	 * \todo This buffer is currently always resized in order to provide enough
+	 * space for direct access of the vertices. However this initialises some
+	 * vertices twice (once at zero, the second time with actual vertex data)
+	 * and sometimes unnecessarily. We should reserve instead of resize, but
+	 * then push_back instead of directly accessing the elements of the vertex
+	 * buffer. Measure whether this actually improves performance.
 	 */
 	std::vector<Point2> vertex_buffer;
 
