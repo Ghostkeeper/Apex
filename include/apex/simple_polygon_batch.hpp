@@ -425,6 +425,23 @@ protected:
 		}
 
 		/*!
+		 * Increase the capacity of the view on a polygon to ensure that it can
+		 * contain the specified number of vertices without reallocating to a
+		 * new strip of memory.
+		 *
+		 * The actual size or vertex data is not changed. However if the
+		 * capacity of the view is increased, all current iterators to positions
+		 * in the simple polygon are invalidated. They cannot be used any more
+		 * since the place they refer to is no longer where the data is held.
+		 */
+		void reserve(const size_t new_capacity) {
+			if(new_capacity < capacity()) {
+				return; //Already got the required capacity.
+			}
+			reallocate(new_capacity);
+		}
+
+		/*!
 		 * Get the number of vertices in this simple polygon.
 		 * \return The number of vertices in this simple polygon.
 		 */
