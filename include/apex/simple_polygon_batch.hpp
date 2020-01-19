@@ -470,13 +470,11 @@ protected:
 			batch.index_buffer[1] += new_capacity; //TODO: Not thread-safe. To make this thread-safe, read-and-update atomically and do something about the vertex buffer data structure.
 
 			//Make sure we have enough capacity in the vertex buffer itself. Grow by doubling there too.
-			size_t buffer_capacity = batch.vertex_buffer.capacity();
+			size_t buffer_capacity = batch.vertex_buffer.size();
 			while(buffer_capacity < new_place + new_capacity) {
 				buffer_capacity = buffer_capacity * 2 + 1;
 			}
-			if(buffer_capacity > batch.vertex_buffer.capacity()) {
-				batch.vertex_buffer.reserve(buffer_capacity);
-			}
+			batch.vertex_buffer.resize(buffer_capacity, Point2(0, 0));
 
 			//Copy all of the data over.
 			const size_t old_place = start_index();
