@@ -416,6 +416,20 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorReverseCBegin) {
 }
 
 /*!
+ * Tests reserving memory for an empty simple polygon in a batch.
+ */
+TEST(SimplePolygonBatchView, ReserveEmpty) {
+	SimplePolygonBatch batch(3, 0);
+	SimplePolygon view = batch[1];
+	const size_t original_capacity = view.capacity();
+	view.reserve(0);
+	EXPECT_EQ(view.capacity(), original_capacity) << "No memory was reserved, so it should remain at its original capacity.";
+
+	view.reserve(16);
+	EXPECT_GE(view.capacity(), 16) << "After reserving for 16 vertices, the capacity should be at least 16.";
+}
+
+/*!
  * Tests getting the size of a view when it's empty.
  */
 TEST(SimplePolygonBatchView, SizeEmpty) {
