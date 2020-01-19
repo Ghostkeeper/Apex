@@ -60,6 +60,18 @@ TEST(SimplePolygon, ConstructEmpty) {
 }
 
 /*!
+ * Tests constructing a simple polygon with one vertex repeated many times.
+ */
+TEST(SimplePolygon, ConstructRepeated) {
+	SimplePolygon repeated(10, Point2(66, 66));
+
+	ASSERT_EQ(repeated.size(), 10) << "There should now be 10 vertices in the simple polygon.";
+	for(size_t i = 0; i < repeated.size(); ++i) {
+		EXPECT_EQ(repeated[i], Point2(66, 66));
+	}
+}
+
+/*!
  * Tests copy-constructing a simple polygon.
  */
 TEST_F(SimplePolygonFixture, ConstructCopy) {

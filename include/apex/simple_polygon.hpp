@@ -128,6 +128,17 @@ public:
 	SimplePolygon(SimplePolygon<OtherVertexStorage>&& other) : vertices(std::move(other.vertices)) {}
 
 	/*!
+	 * Creates a simple polygon filled with the same vertex multiple times.
+	 *
+	 * This by itself is not very useful as a shape, since all of the vertices
+	 * will be on top of each other and the simple polygon will be degenerate.
+	 * However you may use this in an algorithm where you first fill the polygon
+	 * with arbitrary vertices and then access those vertices with random
+	 * access.
+	 */
+	SimplePolygon(const size_t count, const Point2& value) : vertices(count, value) {}
+
+	/*!
 	 * Initialises the simple polygon with the constructor arguments of the
 	 * vertex storage.
 	 * \param storage_constructor_arguments The constructor arguments for the
