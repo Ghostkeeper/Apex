@@ -97,9 +97,9 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
 	SimplePolygon triangle_view = triangle_and_square[0];
 	triangle_view.emplace(triangle_view.begin(), 20, 30);
 	EXPECT_EQ(triangle_view[0], Point2(20, 30)) << "The new vertex must be the first vertex.";
-	EXPECT_EQ(triangle_view[1], triangle[0]) << "The old first vertex must be shifted.";
-	EXPECT_EQ(triangle_view[2], triangle[1]) << "The old second vertex must be shifted.";
-	EXPECT_EQ(triangle_view[3], triangle[2]) << "The old third vertex must be shifted.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i + 1], triangle[i]) << "The original vertices must be shifted.";
+	}
 }
 
 /*!
@@ -114,6 +114,18 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceMiddle) {
 	EXPECT_EQ(triangle_view[1], Point2(20, 30)) << "The new vertex must be in the second place.";
 	EXPECT_EQ(triangle_view[2], triangle[1]) << "The second vertex must be shifted.";
 	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex must be shifted.";
+}
+
+/*!
+ * Place a new vertex at the end of the simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EmplaceEnd) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.emplace(triangle_view.end(), 20, 30);
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their places.";
+	}
+	EXPECT_EQ(triangle_view[3], Point2(20, 30)) << "The new vertex must be at the end.";
 }
 
 /*!
