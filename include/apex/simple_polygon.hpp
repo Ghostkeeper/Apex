@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2019 Ghostkeeper
+ * Copyright (C) 2020 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -280,6 +280,21 @@ public:
 	 */
 	const Point2& at(const size_t position) const {
 		return vertices.at(position);
+	}
+
+	/*!
+	 * Replaces the contents of the simple polygon with the specified vertex
+	 * repeated.
+	 *
+	 * The resulting simple polygon will be a set of points on top of each
+	 * other, which is probably useless. However you may still want to use this
+	 * to create an appropriately-sized container and assign correct coordinates
+	 * to the vertices afterwards in your algorithm.
+	 * \param count The number of repetitions of the value.
+	 * \param value The vertex to add multiple times.
+	 */
+	void assign(const size_t count, const Point2& value) {
+		vertices.assign(count, value);
 	}
 
 	/*!
