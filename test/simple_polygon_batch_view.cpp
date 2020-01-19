@@ -430,6 +430,23 @@ TEST(SimplePolygonBatchView, ReserveEmpty) {
 }
 
 /*!
+ * Tests reserving less memory than the original capacity.
+ */
+TEST_F(SimplePolygonBatchViewFixture, ReserveLower) {
+	SimplePolygon square_view = triangle_and_square[1];
+
+	//To test that iterators don't get invalidated, see if modifying it through the iterator actually modifies the simple polygon.
+	SimplePolygon<>::iterator second_vert = square_view.begin();
+	second_vert++; //Now it's the second vertex.
+
+	square_view.reserve(2); //Less than the 4 vertices it already contains.
+	EXPECT_GE(square_view.capacity(), 4) << "Should still have enough capacity for the 4 vertices in there.";
+
+	second_vert->x = 456; //Modify it using the iterator that shouldn't have gotten invalidated.
+	EXPECT_EQ(square_view[1].x, 456) << "The iterator shouldn't get invalidated if the capacity was not increased.";
+}
+
+/*!
  * Tests getting the size of a view when it's empty.
  */
 TEST(SimplePolygonBatchView, SizeEmpty) {
