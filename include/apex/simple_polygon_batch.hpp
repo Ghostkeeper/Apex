@@ -181,6 +181,29 @@ protected:
 		}
 
 		/*!
+		 * Replace the contents of the simple polygon with the contents of a
+		 * range between the two given iterators.
+		 * \param begin The beginning of the range to iterate over.
+		 * \param end The vertex past the last vertex to iterate over.
+		 * \tparam InputIterator The type of iterator to iterate with. The
+		 * ``begin`` iterator needs to have the same type as the ``end``
+		 * iterator.
+		 */
+		template<class InputIterator>
+		void assign(InputIterator begin, InputIterator end) {
+			size_t current_size = 0;
+			for(; begin != end; ++current_size) {
+				if(current_size >= capacity()) {
+					batch.index_buffer[2 + polygon_index * 3 + 1] = current_size; //Reallocation needs to know the size.
+					reallocate((current_size + 1) * 2); //With generic iterators, we won't know the size beforehand since we can't always iterate over the input twice to see how long it goes on.
+				}
+				batch.vertex_buffer[start_index() + current_size] = *begin;
+				begin++;
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] = current_size; //Update the size, clearing any vertices that we didn't override if the original was bigger.
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
