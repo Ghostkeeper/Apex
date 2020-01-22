@@ -95,20 +95,51 @@ TEST_F(SimplePolygonBatchViewFixture, AccessorWriteByReference) {
  * batch.
  */
 TEST_F(SimplePolygonBatchViewFixture, AssignRepeated) {
-	SimplePolygon triangle = triangle_and_square[0];
-	triangle.assign(10, Point2(123, 456));
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.assign(10, Point2(123, 456));
 
-	ASSERT_EQ(triangle.size(), 10) << "There should now be 10 vertices in what used to be a triangle.";
-	for(size_t i = 0; i < triangle.size(); ++i) {
-		EXPECT_EQ(triangle[i], Point2(123, 456));
+	ASSERT_EQ(triangle_view.size(), 10) << "There should now be 10 vertices in what used to be a triangle.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], Point2(123, 456));
 	}
 
-	SimplePolygon square = triangle_and_square[1];
-	square.assign(20, Point2(789, 123));
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.assign(20, Point2(789, 123));
 
-	ASSERT_EQ(square.size(), 20) << "There should now be 20 vertices in what used to be a square.";
-	for(size_t i = 0; i < square.size(); ++i) {
-		EXPECT_EQ(square[i], Point2(789, 123));
+	ASSERT_EQ(square_view.size(), 20) << "There should now be 20 vertices in what used to be a square.";
+	for(size_t i = 0; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], Point2(789, 123));
+	}
+}
+
+/*!
+ * Tests assigning a range of vertices to a view on the batch through beginning
+ * and ending iterators.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AssignIterators) {
+	std::vector<Point2> new_poly_first; //To be assigned to the triangle.
+	for(size_t i = 0; i < 10; ++i) {
+		new_poly_first.emplace_back(i * 10 + i, i * 10 + i);
+	}
+	std::vector<Point2> new_poly_second; //To be assigned to the square.
+	for(size_t i = 0; i < 24; ++i) {
+		new_poly_second.emplace_back(i * 10 + i + 1, i * 10 + i + 1);
+	}
+
+	//Try assigning to the triangle, and verify whether that went well.
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.assign(new_poly_first.begin(), new_poly_first.end());
+	ASSERT_EQ(triangle_view.size(), new_poly_first.size());
+	for(size_t i = 0; i < new_poly_first.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], new_poly_first[i]);
+	}
+
+	//Now try the same for the square.
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.assign(new_poly_second.begin(), new_poly_second.end());
+	ASSERT_EQ(square_view.size(), new_poly_second.size());
+	for(size_t i = 0; i < new_poly_second.size(); ++i) {
+		EXPECT_EQ(square_view[i], new_poly_second[i]);
 	}
 }
 
