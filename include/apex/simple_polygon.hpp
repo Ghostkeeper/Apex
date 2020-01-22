@@ -272,28 +272,6 @@ public:
 	}
 
 	/*!
-	 * Returns a vertex at the specified position along the contour of the
-	 * simple polygon, with bounds checking.
-	 *
-	 * If the position is not within the range of the container, an exception of
-	 * type ``std::out_of_range`` is thrown.
-	 */
-	Point2& at(const size_t position) {
-		return vertices.at(position);
-	}
-
-	/*!
-	 * Returns a vertex at the specified position along the contour of the
-	 * simple polygon, with bounds checking.
-	 *
-	 * If the position is not within the range of the container, an exception of
-	 * type ``std::out_of_range`` is thrown.
-	 */
-	const Point2& at(const size_t position) const {
-		return vertices.at(position);
-	}
-
-	/*!
 	 * Replaces the contents of the simple polygon with the specified vertex
 	 * repeated.
 	 *
@@ -325,6 +303,28 @@ public:
 	 */
 	void assign(std::initializer_list<Point2> initialiser_list) {
 		vertices.assign(initialiser_list);
+	}
+
+	/*!
+	 * Returns a vertex at the specified position along the contour of the
+	 * simple polygon, with bounds checking.
+	 *
+	 * If the position is not within the range of the container, an exception of
+	 * type ``std::out_of_range`` is thrown.
+	 */
+	Point2& at(const size_t position) {
+		return vertices.at(position);
+	}
+
+	/*!
+	 * Returns a vertex at the specified position along the contour of the
+	 * simple polygon, with bounds checking.
+	 *
+	 * If the position is not within the range of the container, an exception of
+	 * type ``std::out_of_range`` is thrown.
+	 */
+	const Point2& at(const size_t position) const {
+		return vertices.at(position);
 	}
 
 	/*!
@@ -468,26 +468,6 @@ public:
 	}
 
 	/*!
-	 * Gives the end of the iteration as returned by ``begin()``.
-	 *
-	 * If this iterator is hit, one complete loop around the simple polygon has
-	 * been made.
-	 */
-	iterator end() noexcept {
-		return vertices.end();
-	}
-
-	/*!
-	 * Gives the end of the iteration as returned by ``begin()``.
-	 *
-	 * If this iterator is hit, one complete loop around the simple polygon has
-	 * been made.
-	 */
-	const_iterator end() const noexcept {
-		return vertices.end();
-	}
-
-	/*!
 	 * Adds a vertex to the simple polygon by providing the ``Point2``'s
 	 * constructor arguments.
 	 *
@@ -505,6 +485,26 @@ public:
 	 */
 	bool empty() const {
 		return vertices.size() == 0; //Implemented in terms of size(), to prevent duplication of code.
+	}
+
+	/*!
+	 * Gives the end of the iteration as returned by ``begin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	iterator end() noexcept {
+		return vertices.end();
+	}
+
+	/*!
+	 * Gives the end of the iteration as returned by ``begin()``.
+	 *
+	 * If this iterator is hit, one complete loop around the simple polygon has
+	 * been made.
+	 */
+	const_iterator end() const noexcept {
+		return vertices.end();
 	}
 
 	/*!
