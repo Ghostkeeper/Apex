@@ -477,7 +477,7 @@ public:
 	 */
 	template<class... Args>
 	void emplace_back(Args&&... arguments) {
-		vertices.emplace(vertices.end(), arguments...); //Implemented in terms of emplace() to reduce duplication of code.
+		vertices.emplace_back(arguments...);
 	}
 
 	/*!

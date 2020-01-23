@@ -329,6 +329,7 @@ protected:
 		 * \param position The position within this simple polygon.
 		 * \param arguments The constructor arguments of the vertex to add (the
 		 * X and Y coordinates).
+		 * \tparam Args The types of the constructor arguments.
 		 */
 		template<class... Args>
 		iterator emplace(const const_iterator position, Args&&... arguments) {
@@ -349,6 +350,22 @@ protected:
 			iterator result = begin();
 			std::advance(result, index);
 			return result;
+		}
+
+		/*!
+		 * Constructs a new vertex in-place at the end of the view in the batch.
+		 * \param arguments The constructor arguments of the vertex to add (the
+		 * X and Y coordinates).
+		 * \tparam Args The types of the constructor arguments.
+		 */
+		template<class... Args>
+		void emplace_back(Args&&... arguments) {
+			if(size() >= capacity()) {
+				reallocate(capacity() * 2 + 1);
+			}
+
+			batch.vertex_buffer[start_index() + size()] = Point2(arguments...); //Construct the vertex in-place.
+			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
 		}
 
 		/*!
