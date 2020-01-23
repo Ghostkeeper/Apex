@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <initializer_list> //To create an initialiser_list input for assign() and compare the result with them.
 
 #include "apex/simple_polygon_batch.hpp" //The code under test.
 
@@ -140,6 +141,31 @@ TEST_F(SimplePolygonBatchViewFixture, AssignIterators) {
 	ASSERT_EQ(square_view.size(), new_poly_second.size());
 	for(size_t i = 0; i < new_poly_second.size(); ++i) {
 		EXPECT_EQ(square_view[i], new_poly_second[i]);
+	}
+}
+
+/*!
+ * Tests replacing the contents of a simple polygon with the contents of an
+ * initialiser list.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AssignInitialiserList) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	std::initializer_list<Point2> list = {Point2(11, 22), Point2(33, 44), Point2(55, 66), Point2(77, 88)};
+	triangle_view.assign(list);
+	ASSERT_EQ(triangle_view.size(), list.size()) << "All of the vertices of the initialiser list must have been taken over.";
+	size_t i = 0;
+	for(const Point2& vertex : list) {
+		EXPECT_EQ(triangle_view[i++], vertex);
+	}
+
+	//Repeat for the second polygon in the batch.
+	SimplePolygon square_view = triangle_and_square[1];
+	list = {Point2(12, 21), Point2(34, 43), Point2(56, 65), Point2(78, 87)};
+	square_view.assign(list);
+	ASSERT_EQ(square_view.size(), list.size()) << "All of the vertices of the initialiser list must have been taken over.";
+	i = 0;
+	for(const Point2& vertex : list) {
+		EXPECT_EQ(square_view[i++], vertex);
 	}
 }
 
