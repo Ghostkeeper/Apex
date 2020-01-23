@@ -369,6 +369,15 @@ protected:
 		}
 
 		/*!
+		 * Returns whether this view on the batch refers to an empty simple
+		 * polygon.
+		 * \return ``true`` if this view is empty, or ``false`` otherwise.
+		 */
+		bool empty() const {
+			return size() == 0;
+		}
+
+		/*!
 		 * Get an iterator to beyond the last vertex in the view on the simple
 		 * polygon.
 		 *

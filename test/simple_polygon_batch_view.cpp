@@ -268,6 +268,22 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceBack) {
 }
 
 /*!
+ * Tests whether empty views are indeed empty according to ``empty()``, and
+ * filled views are not.
+ */
+TEST(SimplePolygonBatchView, Empty) {
+	SimplePolygonBatch batch(3, 0);
+	EXPECT_TRUE(batch[0].empty()) << "The first batch was initialised empty.";
+	EXPECT_TRUE(batch[1].empty()) << "The second batch was initialised empty.";
+	EXPECT_TRUE(batch[2].empty()) << "The third batch was initialised empty.";
+
+	batch[1].emplace_back(40, 50);
+	EXPECT_TRUE(batch[0].empty()) << "The first batch was not modified.";
+	EXPECT_FALSE(batch[1].empty()) << "The second batch is no longer empty because a vertex was added.";
+	EXPECT_TRUE(batch[2].empty()) << "The third batch was not modified.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {

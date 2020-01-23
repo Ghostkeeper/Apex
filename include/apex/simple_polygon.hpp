@@ -484,7 +484,7 @@ public:
 	 * Checks whether the container has no elements.
 	 */
 	bool empty() const {
-		return vertices.size() == 0; //Implemented in terms of size(), to prevent duplication of code.
+		return vertices.empty();
 	}
 
 	/*!
