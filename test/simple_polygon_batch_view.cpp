@@ -248,6 +248,26 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceEnd) {
 }
 
 /*!
+ * Tests emplacing a new vertex at the end using ``emplace_back()``.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EmplaceBack) {
+	//This test is explicitly performed in the other order compared to EmplaceEnd, to hit a bit different cases for what would otherwise be practically the same test.
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.emplace_back(40, 50);
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "All of the original vertices are still in their places.";
+	}
+	EXPECT_EQ(square_view[4], Point2(40, 50)) << "The new vertex must be at the end.";
+
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.emplace_back(20, 30);
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their places.";
+	}
+	EXPECT_EQ(triangle_view[3], Point2(20, 30)) << "The new vertex must be at the end.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {
