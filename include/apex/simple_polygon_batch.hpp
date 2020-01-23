@@ -204,6 +204,20 @@ protected:
 		}
 
 		/*!
+		 * Replace the contents of the simple polygon with the contents of an
+		 * initialiser list.
+		 * \param initialiser_list The initialiser list containing vertices.
+		 */
+		void assign(const std::initializer_list<Point2> initialiser_list) {
+			reserve(initialiser_list.size());
+			size_t position = 0;
+			for(const Point2& vertex : initialiser_list) {
+				batch.vertex_buffer[start_index() + position++] = vertex;
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] = initialiser_list.size(); //Update the size, clearing any vertices that we didn't override if the original was bigger.
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
