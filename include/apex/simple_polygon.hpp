@@ -622,7 +622,7 @@ public:
 	 * \param vertex The new vertex to add.
 	 */
 	void push_back(const Point2& vertex) {
-		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
+		vertices.push_back(vertex);
 	}
 
 	/*!
@@ -631,7 +631,7 @@ public:
 	 * \param vertex The new vertex to move into the simple polygon.
 	 */
 	void push_back(const Point2&& vertex) {
-		vertices.insert(vertices.end(), vertex); //Implemented in terms of insert to reduce code duplication.
+		vertices.push_back(vertex);
 	}
 
 	/*!
