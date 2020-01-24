@@ -575,6 +575,17 @@ TEST_F(SimplePolygonBatchViewFixture, IteratorReverseCBegin) {
 }
 
 /*!
+ * Test getting the front of a view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, FrontConst) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	EXPECT_EQ(triangle_view.front(), triangle[0]);
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	EXPECT_EQ(square_view.front(), square[0]);
+}
+
+/*!
  * Tests reserving memory for an empty simple polygon in a batch.
  */
 TEST(SimplePolygonBatchView, ReserveEmpty) {
