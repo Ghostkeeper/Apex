@@ -218,6 +218,22 @@ protected:
 		}
 
 		/*!
+		 * Returns a reference to a vertex in a certain position in the simple
+		 * polygon.
+		 *
+		 * If the given position is out of range, an ``std::out_of_range``
+		 * exception is shown.
+		 * \param position The index of the vertex to return.
+		 * \return A reference to the vertex in the specified position.
+		 */
+		const Point2& at(const size_t position) const {
+			if(position >= size()) {
+				throw std::out_of_range("Out of range for this view on a simple polygon.");
+			}
+			return batch.vertex_buffer[start_index() + position];
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
