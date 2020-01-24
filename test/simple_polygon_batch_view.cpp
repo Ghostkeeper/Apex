@@ -586,6 +586,19 @@ TEST_F(SimplePolygonBatchViewFixture, FrontConst) {
 }
 
 /*!
+ * Tests modifying the front of a view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, FrontModify) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_and_square[0].front().x = 256;
+	EXPECT_EQ(triangle_view[0], Point2(256, triangle[0].y)) << "The X coordinate was modified from the reference returned by front().";
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	triangle_and_square[1].front().y = 512;
+	EXPECT_EQ(square_view[0], Point2(square[0].x, 512)) << "The Y coordinate was modified from the reference returned by front().";
+}
+
+/*!
  * Tests reserving memory for an empty simple polygon in a batch.
  */
 TEST(SimplePolygonBatchView, ReserveEmpty) {

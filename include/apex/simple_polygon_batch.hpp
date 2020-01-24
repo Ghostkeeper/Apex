@@ -474,6 +474,20 @@ protected:
 		}
 
 		/*!
+		 * Returns a reference to the first element of the view on the simple
+		 * polygon.
+		 *
+		 * Getting the front of an empty simple polygon is undefined. It may
+		 * return a vertex, or run out of range of the internal memory which may
+		 * cause a segfault.
+		 * \return A reference to the first element of the view on the simple
+		 * polygon.
+		 */
+		Point2& front() {
+			return batch.vertex_buffer[start_index()];
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple polygon
 		 * when iterating in reverse (which would normally be the last vertex).
 		 *
