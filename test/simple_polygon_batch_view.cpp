@@ -170,6 +170,21 @@ TEST_F(SimplePolygonBatchViewFixture, AssignInitialiserList) {
 }
 
 /*!
+ * Tests returning a value using the at() function.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AtConstInRange) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view.at(i), triangle[i]);
+	}
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view.at(i), square[i]);
+	}
+}
+
+/*!
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */
