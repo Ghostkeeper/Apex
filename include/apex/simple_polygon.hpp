@@ -334,7 +334,7 @@ public:
 	 * transforming the polygon.
 	 */
 	Point2& back() {
-		return vertices[size() - 1];
+		return vertices.back();
 	}
 
 	/*!
@@ -344,7 +344,7 @@ public:
 	 * transforming the polygon.
 	 */
 	const Point2& back() const {
-		return vertices[size() - 1];
+		return vertices.back();
 	}
 
 	/*!
@@ -535,7 +535,7 @@ public:
 	 * transforming the polygon.
 	 */
 	Point2& front() {
-		return (*this)[0];
+		return vertices.front();
 	}
 
 	/*!
@@ -545,7 +545,7 @@ public:
 	 * transforming the polygon.
 	 */
 	const Point2& front() const {
-		return (*this)[0];
+		return vertices.front();
 	}
 
 	/*!
