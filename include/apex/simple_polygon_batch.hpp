@@ -250,6 +250,20 @@ protected:
 		}
 
 		/*!
+		 * Returns a reference to the last vertex of the view on the simple
+		 * polygon.
+		 *
+		 * Getting the back of an empty simple polygon is undefined. It may
+		 * return a vertex of a different simple polygon, or run out of range of
+		 * the internal memory which may cause a segfault.
+		 * \return A reference to the last vertex of the view on the simple
+		 * polygon.
+		 */
+		const Point2& back() const {
+			return batch.vertex_buffer[start_index() + size() - 1];
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple
 		 * polygon.
 		 *
@@ -464,8 +478,8 @@ protected:
 		 * polygon.
 		 *
 		 * Getting the front of an empty simple polygon is undefined. It may
-		 * return a vertex, or run out of range of the internal memory which may
-		 * cause a segfault.
+		 * return a vertex of a different simple polygon, or run out of range of
+		 * the internal memory which may cause a segfault.
 		 * \return A reference to the first element of the view on the simple
 		 * polygon.
 		 */

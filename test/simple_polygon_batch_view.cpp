@@ -214,6 +214,17 @@ TEST_F(SimplePolygonBatchViewFixture, AtModify) {
 }
 
 /*!
+ * Test getting the back of a view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, BackConst) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	EXPECT_EQ(triangle_view.back(), triangle[2]);
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	EXPECT_EQ(square_view.back(), square[3]);
+}
+
+/*!
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */
