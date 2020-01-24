@@ -185,6 +185,20 @@ TEST_F(SimplePolygonBatchViewFixture, AtConstInRange) {
 }
 
 /*!
+ * Tests raising an error if you use at() out side of the view's range.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AtConstOutOfRange) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	EXPECT_THROW(triangle_view.at(3), std::out_of_range) << "The triangle has 3 vertices, so number 3 is out of range (due to zero-index counting).";
+	EXPECT_THROW(triangle_view.at(7), std::out_of_range) << "This is out of the actual bounds of the vertex buffer.";
+	EXPECT_THROW(triangle_view.at(-1), std::out_of_range) << "This should underflow to maxint, which is also out of range.";
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	EXPECT_THROW(square_view.at(4), std::out_of_range) << "The square has 4 vertices, so number 4 is out of range (due to zero-index counting).";
+	EXPECT_THROW(square_view.at(-1), std::out_of_range) << "This should underflow to maxint, which is also out of range.";
+}
+
+/*!
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */
