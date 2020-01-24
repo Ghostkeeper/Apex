@@ -222,11 +222,27 @@ protected:
 		 * polygon.
 		 *
 		 * If the given position is out of range, an ``std::out_of_range``
-		 * exception is shown.
+		 * exception is thrown.
 		 * \param position The index of the vertex to return.
 		 * \return A reference to the vertex in the specified position.
 		 */
 		const Point2& at(const size_t position) const {
+			if(position >= size()) {
+				throw std::out_of_range("Out of range for this view on a simple polygon.");
+			}
+			return batch.vertex_buffer[start_index() + position];
+		}
+
+		/*!
+		 * Returns a reference to a vertex in a certain position in the simple
+		 * polygon.
+		 *
+		 * If the given position is out of range, an ``std::out_of_range``
+		 * exception is thrown.
+		 * \param position The index of the vertex to return.
+		 * \return A reference to the vertex in the specified position.
+		 */
+		Point2& at(const size_t position) {
 			if(position >= size()) {
 				throw std::out_of_range("Out of range for this view on a simple polygon.");
 			}

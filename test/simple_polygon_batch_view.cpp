@@ -199,6 +199,21 @@ TEST_F(SimplePolygonBatchViewFixture, AtConstOutOfRange) {
 }
 
 /*!
+ * Tests changing a value via the at() function.
+ */
+TEST_F(SimplePolygonBatchViewFixture, AtModify) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	const SimplePolygon triangle_view2 = triangle_and_square[0];
+	triangle_view.at(1).x = 666;
+	EXPECT_EQ(triangle_view2[1].x, 666) << "The triangle must be modified by reference through the at() function.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	const SimplePolygon square_view2 = triangle_and_square[1];
+	square_view.at(3).y = 42;
+	EXPECT_EQ(square_view2[3].y, 42) << "The square must be modified by reference through the at() function.";
+}
+
+/*!
  * Tests getting the capacity of a view on a batch where nothing is in the batch
  * yet.
  */
