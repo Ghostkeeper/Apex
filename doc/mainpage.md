@@ -1,4 +1,5 @@
-#\mainpage
+\mainpage
+
 Apex
 =========
 ![Apex logo](res/logo.svg)
