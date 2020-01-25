@@ -408,9 +408,9 @@ protected:
 		 * \return A pointer to the first vertex that's part of this view in the
 		 * underlying data structure of the view.
 		 */
-		const Point2* data() const {
+		const Point2* data() const noexcept {
 			if(batch.vertex_buffer.empty()) {
-				return nullptr;
+				return batch.vertex_buffer.data();
 			}
 			return &batch.vertex_buffer[start_index()];
 		}
