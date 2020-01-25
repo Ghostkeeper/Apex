@@ -550,6 +550,42 @@ protected:
 		}
 
 		/*!
+		 * Insert a new vertex at the specified position in the simple polygon.
+		 *
+		 * The new element is inserted \e before the specified position.
+		 *
+		 * All iterators pointing to the specified position or after it will be
+		 * invalidated. The iterators pointing to positions before the insertion
+		 * point will not be invalidated, unless this insertion causes the size
+		 * to exceed the current capacity, in which case it'll need to
+		 * reallocate for more memory, which invalidates all iterators.
+		 * \param position The position before which the new vertex will be
+		 * inserted. To insert it at the end, the \ref end iterator may be
+		 * supplied.
+		 * \param value The vertex to insert.
+		 * \return An iterator pointing to the new vertex.
+		 */
+		iterator insert(const_iterator position, const Point2& value) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
+			if(size() >= capacity()) {
+				reallocate(capacity() * 2 + 1);
+			}
+
+			const size_t start = start_index();
+			for(size_t i = size(); i > index; i--) { //Move all vertices beyond the position by one place to make room.
+				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - 1];
+			}
+			//Insert the new vertex.
+			batch.vertex_buffer[start + index] = value;
+
+			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
+		}
+
+		/*!
 		 * Returns the maximum number of vertices that this simple polygon is
 		 * theoretically able to hold due to the implementation.
 		 *
