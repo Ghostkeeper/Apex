@@ -715,6 +715,27 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
 }
 
 /*!
+ * Tests inserting a vertex at the end of the view by copying it in.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertCopyEnd) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.insert(triangle_view.end(), Point2(666, 555));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their original places.";
+	}
+	EXPECT_EQ(triangle_view[3], Point2(666, 555)) << "The new vertex is now the last vertex.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.insert(square_view.end(), Point2(444, 333));
+	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "All of the original vertices are still in their original places.";
+	}
+	EXPECT_EQ(square_view[4], Point2(444, 333)) << "The new vertex is now the last vertex.";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
