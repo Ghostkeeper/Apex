@@ -671,20 +671,22 @@ TEST_F(SimplePolygonBatchViewFixture, FrontModify) {
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertCopyFront) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	triangle_view.insert(triangle_view.begin(), Point2(42, 1337));
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), Point2(42, 1337));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(triangle_view[0], Point2(42, 1337)) << "The new vertex is now the first vertex.";
 	for(size_t i = 0; i < triangle.size(); ++i) {
 		EXPECT_EQ(triangle_view[i + 1], triangle[i]) << "The rest of the vertices have shifted by 1.";
 	}
+	EXPECT_EQ(*result, Point2(42, 1337)) << "The resulting iterator must point to the new vertex.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	square_view.insert(square_view.begin(), Point2(66, 777));
+	result = square_view.insert(square_view.begin(), Point2(66, 777));
 	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(square_view[0], Point2(66, 777)) << "The new vertex is now the first vertex.";
 	for(size_t i = 0; i < square.size(); ++i) {
 		EXPECT_EQ(square_view[i + 1], square[i]) << "The rest of the vertices have shifted by 1.";
 	}
+	EXPECT_EQ(*result, Point2(66, 777)) << "The resulting iterator must point to the new vertex.";
 }
 
 /*!
@@ -694,24 +696,26 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
 	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
 	second_vertex++;
-	triangle_view.insert(second_vertex, Point2(53, 23));
+	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, Point2(53, 23));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex is not moved.";
 	EXPECT_EQ(triangle_view[1], Point2(53, 23)) << "The new vertex is in the second place.";
 	EXPECT_EQ(triangle_view[2], triangle[1]) << "The second vertex has shifted by 1.";
 	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex has shifted by 1.";
+	EXPECT_EQ(*result, Point2(53, 23)) << "The resulting iterator must point to the new vertex.";
 
 	SimplePolygon square_view = triangle_and_square[1];
 	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
 	third_vertex++;
 	third_vertex++;
-	square_view.insert(third_vertex, Point2(13, 37));
+	result = square_view.insert(third_vertex, Point2(13, 37));
 	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(square_view[0], square[0]) << "The first vertex is not moved.";
 	EXPECT_EQ(square_view[1], square[1]) << "The second vertex is not moved.";
 	EXPECT_EQ(square_view[2], Point2(13, 37)) << "The new vertex is in the third place.";
 	EXPECT_EQ(square_view[3], square[2]) << "The third vertex has shifted by 1.";
 	EXPECT_EQ(square_view[4], square[3]) << "The fourth vertex has shifted by 1.";
+	EXPECT_EQ(*result, Point2(13, 37)) << "The resulting iterator must point to the new vertex.";
 }
 
 /*!
@@ -719,20 +723,22 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertCopyEnd) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	triangle_view.insert(triangle_view.end(), Point2(666, 555));
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.end(), Point2(666, 555));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
 	for(size_t i = 0; i < triangle.size(); ++i) {
 		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their original places.";
 	}
 	EXPECT_EQ(triangle_view[3], Point2(666, 555)) << "The new vertex is now the last vertex.";
+	EXPECT_EQ(*result, Point2(666, 555)) << "The resulting iterator must point to the new vertex.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	square_view.insert(square_view.end(), Point2(444, 333));
+	result = square_view.insert(square_view.end(), Point2(444, 333));
 	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
 	for(size_t i = 0; i < square.size(); ++i) {
 		EXPECT_EQ(square_view[i], square[i]) << "All of the original vertices are still in their original places.";
 	}
 	EXPECT_EQ(square_view[4], Point2(444, 333)) << "The new vertex is now the last vertex.";
+	EXPECT_EQ(*result, Point2(444, 333)) << "The resulting iterator must point to the new vertex.";
 }
 
 /*!
