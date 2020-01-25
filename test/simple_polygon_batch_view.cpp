@@ -688,6 +688,33 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyFront) {
 }
 
 /*!
+ * Tests inserting a vertex in the middle of the view by copying it in.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
+	second_vertex++;
+	triangle_view.insert(second_vertex, Point2(53, 23));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex is not moved.";
+	EXPECT_EQ(triangle_view[1], Point2(53, 23)) << "The new vertex is in the second place.";
+	EXPECT_EQ(triangle_view[2], triangle[1]) << "The second vertex has shifted by 1.";
+	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex has shifted by 1.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
+	third_vertex++;
+	third_vertex++;
+	square_view.insert(third_vertex, Point2(13, 37));
+	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
+	EXPECT_EQ(square_view[0], square[0]) << "The first vertex is not moved.";
+	EXPECT_EQ(square_view[1], square[1]) << "The second vertex is not moved.";
+	EXPECT_EQ(square_view[2], Point2(13, 37)) << "The new vertex is in the third place.";
+	EXPECT_EQ(square_view[3], square[2]) << "The third vertex has shifted by 1.";
+	EXPECT_EQ(square_view[4], square[3]) << "The fourth vertex has shifted by 1.";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
