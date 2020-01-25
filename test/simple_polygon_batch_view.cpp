@@ -667,6 +667,16 @@ TEST_F(SimplePolygonBatchViewFixture, FrontModify) {
 }
 
 /*!
+ * Tests the maximum size of the simple polygon.
+ *
+ * The maximum size may not be the limiting factor for the implementation.
+ */
+TEST_F(SimplePolygonBatchViewFixture, MaxSize) {
+	EXPECT_GE(triangle_and_square[0].max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. The library implementation may not be the limiting factor.";
+	EXPECT_GE(triangle_and_square[0].max_size(), 32 * 1024 / sizeof(Point2)) << "According to OpenCL specs, the global memory must be at least 32kB. The library implementation may not be the limiting factor.";
+}
+
+/*!
  * Tests reserving memory for an empty simple polygon in a batch.
  */
 TEST(SimplePolygonBatchView, ReserveEmpty) {

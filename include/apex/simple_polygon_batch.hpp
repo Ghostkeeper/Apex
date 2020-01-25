@@ -550,6 +550,19 @@ protected:
 		}
 
 		/*!
+		 * Returns the maximum number of vertices that this simple polygon is
+		 * theoretically able to hold due to the implementation.
+		 *
+		 * This maximum may be reduced if the batch also contains other simple
+		 * polygons with vertices.
+		 * \return The maximum number of vertices that this simple polygon is
+		 * able to hold.
+		 */
+		size_t max_size() const noexcept {
+			return batch.vertex_buffer.max_size(); //Should really subtract the total size of all other polygons in the batch, but that would be linear.
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple polygon
 		 * when iterating in reverse (which would normally be the last vertex).
 		 *
