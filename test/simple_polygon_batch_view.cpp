@@ -312,6 +312,17 @@ TEST(SimplePolygonBatchView, DataEmpty) {
 }
 
 /*!
+ * Tests modifying a batch view through the data() pointer.
+ */
+TEST_F(SimplePolygonBatchViewFixture, DataModify) {
+	triangle_and_square[0].data()->x = 654;
+	EXPECT_EQ(triangle_and_square[0][0].x, 654) << "The X coordinate of this vertex was modified through the data() pointer.";
+
+	(triangle_and_square[1].data() + 1)->y = 321;
+	EXPECT_EQ(triangle_and_square[1][1].y, 321) << "The Y coordinate of this vertex was modified through the data() pointer.";
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {

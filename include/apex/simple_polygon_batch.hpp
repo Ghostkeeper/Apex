@@ -403,12 +403,29 @@ protected:
 		 * storage.
 		 *
 		 * This returns a pointer to the first vertex that is part of this view.
-		 * If the size of the underlying vertex buffer is 0, this will return a
+		 * If the size of the underlying vertex buffer is 0, this may return a
 		 * null pointer.
 		 * \return A pointer to the first vertex that's part of this view in the
 		 * underlying data structure of the view.
 		 */
 		const Point2* data() const noexcept {
+			if(batch.vertex_buffer.empty()) {
+				return batch.vertex_buffer.data();
+			}
+			return &batch.vertex_buffer[start_index()];
+		}
+
+		/*!
+		 * Returns a pointer to the underlying batch buffer serving as element
+		 * storage.
+		 *
+		 * This returns a pointer to the first vertex that is part of this view.
+		 * If the size of the underlying vertex buffer is 0, this may return a
+		 * null pointer.
+		 * \return A pointer to the first vertex that's part of this view in the
+		 * underlying data structure of the view.
+		 */
+		Point2* data() noexcept {
 			if(batch.vertex_buffer.empty()) {
 				return batch.vertex_buffer.data();
 			}
