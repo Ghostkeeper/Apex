@@ -399,6 +399,23 @@ protected:
 		}
 
 		/*!
+		 * Returns a pointer to the underlying batch buffer serving as element
+		 * storage.
+		 *
+		 * This returns a pointer to the first vertex that is part of this view.
+		 * If the size of the underlying vertex buffer is 0, this will return a
+		 * null pointer.
+		 * \return A pointer to the first vertex that's part of this view in the
+		 * underlying data structure of the view.
+		 */
+		const Point2* data() const {
+			if(batch.vertex_buffer.empty()) {
+				return nullptr;
+			}
+			return &batch.vertex_buffer[start_index()];
+		}
+
+		/*!
 		 * Constructs a new vertex in-place in the simple polygon in the batch.
 		 * \param position The position within this simple polygon.
 		 * \param arguments The constructor arguments of the vertex to add (the

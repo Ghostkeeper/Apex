@@ -279,6 +279,23 @@ TEST_F(SimplePolygonBatchViewFixture, Clear) {
 }
 
 /*!
+ * Tests getting the data pointer of a view in a batch.
+ */
+TEST_F(SimplePolygonBatchViewFixture, DataConst) {
+	const SimplePolygon triangle_view = triangle_and_square[0];
+	const Point2* triangle_data = triangle_view.data();
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(*(triangle_data + i), triangle[i]) << "The pointer should point at the beginning of the entire range of the triangle.";
+	}
+
+	const SimplePolygon square_view = triangle_and_square[1];
+	const Point2* square_data = square_view.data();
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(*(square_data + i), square[i]) << "The pointer should point at the beginning of the entire range of the square.";
+	}
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
