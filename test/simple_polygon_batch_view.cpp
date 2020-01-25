@@ -296,6 +296,22 @@ TEST_F(SimplePolygonBatchViewFixture, DataConst) {
 }
 
 /*!
+ * Tests getting the data pointer to an empty view in an empty batch.
+ *
+ * This is tested because it's an exceptional case since there is no starting
+ * vertex then, not even for the entire buffer.
+ */
+TEST(SimplePolygonBatchView, DataEmpty) {
+	const SimplePolygonBatch batch(3, 0);
+	const SimplePolygon view0 = batch[0];
+	EXPECT_NO_THROW(view0.data());
+	const SimplePolygon view1 = batch[1];
+	EXPECT_NO_THROW(view1.data());
+	const SimplePolygon view2 = batch[2];
+	EXPECT_NO_THROW(view2.data());
+}
+
+/*!
  * Place a new vertex at the start of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
