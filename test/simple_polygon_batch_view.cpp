@@ -667,6 +667,27 @@ TEST_F(SimplePolygonBatchViewFixture, FrontModify) {
 }
 
 /*!
+ * Tests inserting a vertex at the front of the view by copying it in.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertCopyFront) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.insert(triangle_view.begin(), Point2(42, 1337));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
+	EXPECT_EQ(triangle_view[0], Point2(42, 1337)) << "The new vertex is now the first vertex.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i + 1], triangle[i]) << "The rest of the vertices have shifted by 1.";
+	}
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.insert(square_view.begin(), Point2(66, 777));
+	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
+	EXPECT_EQ(square_view[0], Point2(66, 777)) << "The new vertex is now the first vertex.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i + 1], square[i]) << "The rest of the vertices have shifted by 1.";
+	}
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
