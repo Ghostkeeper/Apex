@@ -654,6 +654,21 @@ protected:
 		}
 
 		/*!
+		 * This function is a no-op for this implementation.
+		 *
+		 * It would normally request the memory usage to be reduced to fit
+		 * exactly the amount of vertices used by this simple polygon. However
+		 * since this simple polygon is part of a batch and the batch uses a
+		 * monotonic allocation algorithm to reserve memory for its members, the
+		 * memory usage cannot shrink for just one individual simple polygon.
+		 *
+		 * To actually reduce memory usage here, you need to use the
+		 * \ref SimplePolygonBatch::shrink_to_fit function of the batch that
+		 * contains this simple polygon.
+		 */
+		inline void shrink_to_fit() noexcept {}
+
+		/*!
 		 * Get the number of vertices in this simple polygon.
 		 * \return The number of vertices in this simple polygon.
 		 */

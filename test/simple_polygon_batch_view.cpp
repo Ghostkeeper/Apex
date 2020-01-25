@@ -718,6 +718,17 @@ TEST_F(SimplePolygonBatchViewFixture, ReserveHigher) {
 }
 
 /*!
+ * Tests that shrinking to fit doesn't lose data.
+ */
+TEST_F(SimplePolygonBatchViewFixture, ShrinkToFit) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.reserve(100);
+	triangle_view.shrink_to_fit();
+	EXPECT_GE(triangle_view.capacity(), triangle_view.size());
+	EXPECT_EQ(triangle_view.size(), triangle.size());
+}
+
+/*!
  * Tests getting the size of a view when it's empty.
  */
 TEST(SimplePolygonBatchView, SizeEmpty) {
