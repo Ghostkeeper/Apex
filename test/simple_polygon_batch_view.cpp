@@ -823,7 +823,8 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMoveEnd) {
 }
 
 /*!
- * Tests inserting multiple vertices at a time at the front of the polygon.
+ * Tests inserting multiple copies of a vertex at a time at the front of the
+ * simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertMultipleFront) {
 	SimplePolygon triangle_view = triangle_and_square[0];
@@ -847,6 +848,42 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleFront) {
 		EXPECT_EQ(square_view[i + 69], square[i]) << "All of the original vertices must have shifted by 69 to make space.";
 	}
 	EXPECT_EQ(result, square_view.begin()) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+}
+
+/*!
+ * Tests inserting multiple copies of a vertex at a time in the middle of the
+ * simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertMultipleMiddle) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
+	second_vertex++; //Makes it the second vertex.
+	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, 42, Point2(37, 13));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 42) << "The number of vertices has risen by 42.";
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The new vertices were inserted between the first and second vertices, so the first one must still be there.";
+	for(size_t i = 0; i < 42; ++i) {
+		EXPECT_EQ(triangle_view[i + 1], Point2(37, 13)) << "The next 42 vertices must all be copies of the one inserted.";
+	}
+	for(size_t i = 1; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i + 42], triangle[i]) << "The rest of the vertices must have shifted by 42 places.";
+	}
+	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
+	third_vertex++;
+	third_vertex++; //Makes it the third vertex.
+	result = square_view.insert(third_vertex, 42, Point2(37, 13));
+	ASSERT_EQ(square_view.size(), square.size() + 42) << "The number of vertices has risen by 42.";
+	EXPECT_EQ(square_view[0], square[0]) << "The new vertices were inserted between the second and third vertices, so the first one must still be there.";
+	EXPECT_EQ(square_view[1], square[1]) << "The new vertices were inserted between the second and third vertices, so the second one must still be there.";
+	for(size_t i = 0; i < 42; ++i) {
+		EXPECT_EQ(square_view[i + 2], Point2(37, 13)) << "The next 42 vertices must all be copies of the one inserted.";
+	}
+	for(size_t i = 2; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i + 42], square[i]) << "The rest of the vertices must have shifted by 42 places.";
+	}
+	EXPECT_EQ(*result, square_view[2]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
 }
 
 /*!
