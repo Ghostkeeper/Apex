@@ -527,6 +527,22 @@ TEST_F(SimplePolygonFixture, InsertMoveBack) {
 }
 
 /*!
+ * Tests inserting multiple copies of a vertex at once at the beginning of the
+ * vertex list.
+ */
+TEST_F(SimplePolygonFixture, InsertMultipleFront) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.begin(), 42, Point2(99, 88));
+	ASSERT_EQ(copy.size(), triangle.size() + 42) << "There must now be 42 new vertices.";
+	for(size_t i = 0; i < 42; ++i) {
+		EXPECT_EQ(copy[i], Point2(99, 88)) << "All 42 copies must be copies of the original vertex.";
+	}
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i + 42], triangle[i]) << "All vertices must have shifted by 42 to make space.";
+	}
+}
+
+/*!
  * Tests inserting a range of vertices indicated by two iterators in the front
  * of the list of vertices.
  */

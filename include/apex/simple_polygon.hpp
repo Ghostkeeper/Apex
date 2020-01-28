@@ -571,6 +571,23 @@ public:
 	}
 
 	/*!
+	 * Inserts a number of copies of a new vertex at a specified position in the
+	 * simple polygon.
+	 *
+	 * This by itself is not very useful for polygons, but an algorithm that
+	 * inserts a bunch of vertices may use this as a way to make space for
+	 * actual vertex data that is filled in later. Inserting a bunch of vertices
+	 * at once is more efficient than inserting them one by one.
+	 * \param position The vertex is inserted before this position in the loop.
+	 * \param count The number of copies to insert.
+	 * \param vertex The coordinates of the new vertex.
+	 * \return An iterator pointing to the newly inserted vertex.
+	 */
+	iterator insert(const const_iterator position, const size_t count, const Point2& vertex) {
+		return vertices.insert(position, count, vertex);
+	}
+
+	/*!
 	 * Inserts a range of vertices between ``first`` and ``last`` at a speciied
 	 * position in the simple polygon.
 	 * \param position The vertices are inserted before this position in the
