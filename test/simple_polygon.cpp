@@ -562,6 +562,22 @@ TEST_F(SimplePolygonFixture, InsertMultipleMiddle) {
 }
 
 /*!
+ * Tests inserting multiple copies of a vertex at once at the end of the vertex
+ * list.
+ */
+TEST_F(SimplePolygonFixture, InsertMultipleEnd) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.end(), 42, Point2(77, 66));
+	ASSERT_EQ(copy.size(), triangle.size() + 42) << "There must now be 42 new vertices.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "All vertices are in front of the inserted vertices, so they shouldn't be shifted.";
+	}
+	for(size_t i = 0; i < 42; ++i) {
+		EXPECT_EQ(copy[triangle.size() + i], Point2(77, 66)) << "All 42 copies must be copies of the original vertex.";
+	}
+}
+
+/*!
  * Tests inserting a range of vertices indicated by two iterators in the front
  * of the list of vertices.
  */
