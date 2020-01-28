@@ -887,6 +887,34 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleMiddle) {
 }
 
 /*!
+ * Tests inserting multiple copies of a vertex at a time at the end of the
+ * simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertMultipleEnd) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.end(), 42, Point2(13, 37));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 42) << "The number of vertices has risen by 42.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "All of the original vertices are still in their original places.";
+	}
+	for(size_t i = 0; i < 42; ++i) {
+		EXPECT_EQ(triangle_view[i + triangle.size()], Point2(13, 37)) << "The new vertices are now at the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[triangle.size()]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	result = square_view.insert(square_view.end(), 69, Point2(313, 37));
+	ASSERT_EQ(square_view.size(), square.size() + 69) << "The number of vertices has risen by 69.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "All of the original vertices are still in their original places.";
+	}
+	for(size_t i = 0; i < 69; ++i) {
+		EXPECT_EQ(square_view[i + square.size()], Point2(313, 37)) << "The new vertices are now at the end.";
+	}
+	EXPECT_EQ(*result, square_view[square.size()]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
