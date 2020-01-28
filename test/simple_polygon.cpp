@@ -662,6 +662,21 @@ TEST_F(SimplePolygonFixture, InsertInitialiserListMiddle) {
 }
 
 /*!
+ * Tests inserting an initialiser list of vertices at the end of a simple
+ * polygon.
+ */
+TEST_F(SimplePolygonFixture, InsertInitialiserListEnd) {
+	SimplePolygon copy = triangle; //Modify a copy rather than the original, so we can compare with the original.
+	copy.insert(copy.end(), {Point2(99, 88), Point2(42, 69)});
+	ASSERT_EQ(copy.size(), triangle.size() + 2) << "Two new vertices were added.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(copy[i], triangle[i]) << "All of the vertices are still in their original place, since it only added anything at the end.";
+	}
+	EXPECT_EQ(copy[triangle.size()], Point2(99, 88)) << "The first new vertex was added at the end.";
+	EXPECT_EQ(copy[triangle.size() + 1], Point2(42, 69)) << "The second new vertex was added after it.";
+}
+
+/*!
  * Tests iterating around the simple polygon while reading the data.
  */
 TEST_F(SimplePolygonFixture, IteratorConst) {
