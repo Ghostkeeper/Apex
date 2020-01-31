@@ -641,7 +641,7 @@ protected:
 		 * to exceed the current capacity, in which case it'll need to
 		 * reallocate for more memory, which invalidates all iterators.
 		 * \param position The position before which the new vertices will be
-		 * inserted. To insert it at the end, the \ref end iterator may be
+		 * inserted. To insert them at the end, the \ref end iterator may be
 		 * supplied.
 		 * \param count How many copies of the vertex to insert.
 		 * \param value The vertex to insert there.
@@ -668,6 +668,30 @@ protected:
 			iterator result = begin();
 			std::advance(result, index);
 			return result;
+		}
+
+		/*!
+		 * Inserts a range of vertices at the specified position in the simple
+		 * polygon.
+		 *
+		 * The new vertices are inserted \e before the specified position.
+		 *
+		 * All iterators pointing to the specified position or after it will be
+		 * invalidated. The iterators pointing to positions before the insertion
+		 * point will not be invalidated, unless this insertion causes the size
+		 * to exceed the current capacity, in which case it'll need to
+		 * reallocate for more money, which invalidates all iterators.
+		 * \param position The position before which the new vertices will be
+		 * inserted. To insert them at the end, the \ref end iterator may be
+		 * supplied.
+		 * \param begin The start of the range of vertices to insert.
+		 * \param end The end of the range of vertices to insert. This is the
+		 * element \e after the last vertex.
+		 */
+		template<class InputIterator>
+		iterator insert(const const_iterator position, InputIterator begin, const InputIterator end) {
+			//Dispatch to the most efficient implementation for the current iterator type.
+			return insert_iterator_dispatch<InputIterator>(position, begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
 		}
 
 		/*!
@@ -826,6 +850,150 @@ protected:
 		 */
 		inline size_t end_index() const {
 			return batch.index_buffer[2 + polygon_index * 3 + 2]; //2+ due to the two starting indices, +2 since we need the end.
+		}
+
+		/*!
+		 * This implements the \ref insert function if the input decorator is a
+		 * random access iterator.
+		 *
+		 * This is the most preferred implementation, because if the iterator
+		 * allows random access, the number of elements to insert can be
+		 * calculated in constant time by taking the difference of the begin and
+		 * end pointers. This way we'll know how much to shift the rest of the
+		 * vertices and how much memory to reserve beforehand.
+		 * \param position The position in the simple polygon to insert the
+		 * vertices before.
+		 * \param start The beginning of the range to insert.
+		 * \param end The ending of the range to insert (after the last vertex).
+		 * \return An iterator to the beginning of the inserted range.
+		 */
+		template<class InputIterator>
+		iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::random_access_iterator_tag) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
+			const size_t count = end - start;
+			if(size() + count > capacity()) {
+				reallocate(capacity() * 2 + count);
+			}
+
+			const size_t buffer_start = start_index();
+			for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
+				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - count];
+			}
+			//Insert the new vertices.
+			for(size_t i = 0; start != end; start++, ++i) {
+				batch.vertex_buffer[buffer_start + index + i] = *start;
+			}
+
+			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
+		}
+
+		/*!
+		 * This implements the \ref insert function if the input decorator is a
+		 * forward iterator.
+		 *
+		 * This is less ideal than random access, since it can't be determined
+		 * how big the range is without iterating over it. However since this is
+		 * a forward iterator, we are able to rewind and iterate over it once
+		 * first to determine its size in linear time, still preventing the need
+		 * to shift the vertices after the position multiple times.
+		 * \param position The position in the simple polygon to insert the
+		 * vertices before.
+		 * \param start The beginning of the range to insert.
+		 * \param end The ending of the range to insert (after the last vertex).
+		 * \return An iterator to the beginning of the inserted range.
+		 */
+		template<class InputIterator>
+		iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::forward_iterator_tag) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
+			const size_t buffer_start = start_index();
+			size_t count = 0;
+			if(position != end()) {
+				for(InputIterator counter = start; counter != end; counter++) { //Count how many inputs we have.
+					++count;
+				}
+				if(size() + count > capacity()) {
+					reallocate(capacity() * 2 + count);
+				}
+
+				for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
+					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - count];
+				}
+				//Insert the new vertices.
+				for(size_t i = 0; start != end; start++, ++i) {
+					batch.vertex_buffer[buffer_start + index + i] = *start;
+				}
+			} else { //Don't bother counting and shifting if we're inserting at the end.
+				for(size_t i = 0; start != end; start++, ++i) {
+					if(size() + i >= capacity()) {
+						reallocate(capacity() * 2 + 1);
+					}
+					batch.vertex_buffer[buffer_start + index + i] = *start;
+					count++;
+				}
+			}
+
+			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
+		}
+
+		/*!
+		 * This implements the \ref insert function if the input decorator is
+		 * not a forward iterator.
+		 *
+		 * This is the worst case, where we're not allowed to iterate over the
+		 * range more than once and we can't determine the size beforehand. So
+		 * the only thing we can really do is to shift the other vertices,
+		 * insert a new vertex, and repeat until the iterator range is done.
+		 * However one trick we can apply is to shift by multiple spaces at once
+		 * and shift back after the iteration is done.
+		 * \param position The position in the simple polygon to insert the
+		 * vertices before.
+		 * \param range_start The beginning of the range to insert.
+		 * \param range_end The ending of the range to insert (after the last
+		 * vertex).
+		 * \return An iterator to the beginning of the inserted range.
+		 */
+		template<class InputIterator>
+		iterator insert_iterator_dispatch(const const_iterator position, InputIterator range_start, const InputIterator range_end, const std::input_iterator_tag) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
+			const size_t buffer_start = start_index();
+			size_t remaining_space = 0; //How many spots we still have left before we need to shift vertices again.
+			size_t count = 0;
+			for(;range_start != range_end; range_start++, ++count) {
+				if(size() + count > capacity()) {
+					reallocate(capacity() * 2 + 1);
+				}
+				if(remaining_space == 0) { //Need to make sure we've got room to insert without overwriting vertices afterwards.
+					//Move towards the end of the capacity so that we can insert more often.
+					const size_t move_distance = capacity() - size() - count; //How far can we move these vertices.
+					for(size_t i = capacity() - 1; i >= index + count; --i) {
+						batch.vertex_buffer[buffer_start + i + move_distance] = batch.vertex_buffer[buffer_start + i];
+					}
+					remaining_space = move_distance;
+				}
+				batch.vertex_buffer[buffer_start + count] = *range_start;
+				--remaining_space;
+			}
+
+			//Move vertices after the insertion back if there was any remaining space.
+			if(remaining_space > 0) {
+				for(size_t i = index + count; i < capacity() - remaining_space; ++i) {
+					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + remaining_space];
+				}
+			}
+
+			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
 		}
 
 		/*!
