@@ -945,7 +945,7 @@ using MyIteratorTypes = testing::Types<std::vector<Point2>::iterator, MyForwardI
 TYPED_TEST_SUITE(InsertIteratorsParametrised, MyIteratorTypes);
 
 /*!
- * Tests inserting a range between iterators at the beginning of the simple
+ * Tests inserting a range between iterators at the beginning of a simple
  * polygon.
  */
 TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
@@ -968,6 +968,17 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
 		EXPECT_EQ(triangle_view[inserted_range.size() + i], this->triangle[i]) << "The original triangle vertices are now shifted to the end.";
 	}
 	EXPECT_EQ(*result, triangle_view[0]) << "The returned iterator must point to the beginning of the inserted range.";
+
+	SimplePolygon square_view = this->triangle_and_square[1];
+	result = square_view.insert(square_view.begin(), *range_start, *range_end);
+	ASSERT_EQ(square_view.size(), this->square.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
+	for(size_t i = 0; i < inserted_range.size(); ++i) {
+		EXPECT_EQ(square_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
+	}
+	for(size_t i = 0; i < this->triangle.size(); ++i) {
+		EXPECT_EQ(square_view[inserted_range.size() + i], this->square[i]) << "The original triangle vertices are now shifted to the end.";
+	}
+	EXPECT_EQ(*result, square_view[0]) << "The returned iterator must point to the beginning of the inserted range.";
 }
 
 /*!
