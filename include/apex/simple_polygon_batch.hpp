@@ -985,7 +985,7 @@ protected:
 					}
 					remaining_space = move_distance;
 				}
-				batch.vertex_buffer[buffer_start + count] = *range_start;
+				batch.vertex_buffer[buffer_start + index + count] = *range_start;
 				--remaining_space;
 			}
 
