@@ -1146,6 +1146,37 @@ TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListMiddle) {
 }
 
 /*!
+ * Tests inserting a list of vertices at the end of the simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListEnd) {
+	const std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
+
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.end(), inserted_list);
+	ASSERT_EQ(triangle_view.size(), triangle.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	size_t i = 0;
+	for(; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "The original triangle vertices are still in their original places.";
+	}
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(triangle_view[i++], vertex) << "The inserted list is at the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[triangle.size()]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	result = square_view.insert(square_view.end(), inserted_list);
+	ASSERT_EQ(square_view.size(), square.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	i = 0;
+	for(; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "The original square vertices are still in their original places.";
+	}
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(square_view[i++], vertex) << "The inserted list is at the end.";
+	}
+	EXPECT_EQ(*result, square_view[square.size()]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
