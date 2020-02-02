@@ -1079,7 +1079,7 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsEnd) {
  * Tests inserting a list of vertices at the front of the simple polygon.
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListFront) {
-	std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
+	const std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
 
 	SimplePolygon triangle_view = triangle_and_square[0];
 	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), inserted_list);
@@ -1092,6 +1092,18 @@ TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListFront) {
 		EXPECT_EQ(triangle_view[i], triangle[i - inserted_list.size()]) << "The original triangle vertices have been shifted to the end.";
 	}
 	EXPECT_EQ(*result, triangle_view[0]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	result = square_view.insert(square_view.begin(), inserted_list);
+	ASSERT_EQ(square_view.size(), square.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	i = 0;
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(square_view[i++], vertex) << "The inserted list is at the front.";
+	}
+	for(; i < inserted_list.size() + square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i - inserted_list.size()]) << "The original square vertices have been shifted to the end.";
+	}
+	EXPECT_EQ(*result, square_view[0]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
 }
 
 /*!
