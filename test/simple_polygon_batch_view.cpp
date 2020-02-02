@@ -1107,6 +1107,45 @@ TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListFront) {
 }
 
 /*!
+ * Tests inserting a list of vertices in the middle of the simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListMiddle) {
+	const std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
+
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
+	second_vertex++; //Actually makes it the second vertex.
+	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, inserted_list);
+	ASSERT_EQ(triangle_view.size(), triangle.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex is still in its original place.";
+	size_t i = 1;
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(triangle_view[i++], vertex) << "The inserted list is in the middle.";
+	}
+	for(; i < inserted_list.size() + triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i - inserted_list.size()]) << "The rest of the triangle vertices have been shifted to the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
+	third_vertex++;
+	third_vertex++; //Actually makes it the third vertex.
+	result = square_view.insert(third_vertex, inserted_list);
+	ASSERT_EQ(square_view.size(), square.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	EXPECT_EQ(square_view[0], square[0]) << "The first vertex is still in its original place.";
+	EXPECT_EQ(square_view[1], square[1]) << "The second vertex is still in its original place.";
+	i = 2;
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(square_view[i++], vertex) << "The inserted list is in the middle.";
+	}
+	for(; i < inserted_list.size() + square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i - inserted_list.size()]) << "The rest of the square vertices have been shifted to the end.";
+	}
+	EXPECT_EQ(*result, square_view[2]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
