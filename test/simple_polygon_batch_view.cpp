@@ -346,8 +346,7 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceStart) {
  */
 TEST_F(SimplePolygonBatchViewFixture, EmplaceMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::iterator middle = triangle_view.begin();
-	middle++;
+	SimplePolygon<>::iterator middle = triangle_view.begin() + 1;
 	triangle_view.emplace(middle, 20, 30);
 	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex must be unchanged.";
 	EXPECT_EQ(triangle_view[1], Point2(20, 30)) << "The new vertex must be in the second place.";
@@ -355,9 +354,7 @@ TEST_F(SimplePolygonBatchViewFixture, EmplaceMiddle) {
 	EXPECT_EQ(triangle_view[3], triangle[2]) << "The third vertex must be shifted.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	middle = square_view.begin();
-	middle++; //Advance it to between the 2nd and 3rd vertices.
-	middle++;
+	middle = square_view.begin() + 2;
 	square_view.emplace(middle, 40, 50);
 	EXPECT_EQ(square_view[0], square[0]) << "The first vertex must be unchanged.";
 	EXPECT_EQ(square_view[1], square[1]) << "The second vertex must be unchanged.";
@@ -449,8 +446,7 @@ TEST_F(SimplePolygonBatchViewFixture, EraseStart) {
  */
 TEST_F(SimplePolygonBatchViewFixture, EraseMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++; //This makes it the second vertex.
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::iterator result = triangle_view.erase(second_vertex);
 
 	ASSERT_EQ(triangle_view.size(), triangle.size() - 1) << "The size must be reduced by 1.";
@@ -461,9 +457,7 @@ TEST_F(SimplePolygonBatchViewFixture, EraseMiddle) {
 	EXPECT_EQ(*result, triangle_view[1]) << "Return the vertex after the removed one.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++; //This makes it the third vertex.
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	result = square_view.erase(third_vertex);
 
 	ASSERT_EQ(square_view.size(), square.size() - 1) << "The size must be reduced by 1.";
@@ -478,9 +472,7 @@ TEST_F(SimplePolygonBatchViewFixture, EraseMiddle) {
  */
 TEST_F(SimplePolygonBatchViewFixture, EraseRangeStart) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator third_vertex = triangle_view.begin();
-	third_vertex++;
-	third_vertex++; //Actually makes it the third vertex.
+	const SimplePolygon<>::const_iterator third_vertex = triangle_view.begin() + 2;
 	SimplePolygon<>::iterator result = triangle_view.erase(triangle_view.begin(), third_vertex); //Erase the first and second vertices.
 
 	ASSERT_EQ(triangle_view.size(), triangle.size() - 2) << "That must have erased two vertices.";
@@ -490,10 +482,7 @@ TEST_F(SimplePolygonBatchViewFixture, EraseRangeStart) {
 	EXPECT_EQ(*result, triangle_view[0]) << "Return the vertex after the last removed one.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator fourth_vertex = square_view.begin();
-	fourth_vertex++;
-	fourth_vertex++;
-	fourth_vertex++; //Actually makes it the fourth vertex.
+	const SimplePolygon<>::const_iterator fourth_vertex = square_view.begin() + 3;
 	result = square_view.erase(square_view.begin(), fourth_vertex); //Erase the first 3 vertices.
 
 	ASSERT_EQ(square_view.size(), square.size() - 3) << "That must have erased three vertices.";
@@ -508,8 +497,7 @@ TEST_F(SimplePolygonBatchViewFixture, EraseRangeStart) {
  */
 TEST_F(SimplePolygonBatchViewFixture, EraseRangeMiddleEnd) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++; //Actually makes it the second vertex.
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::iterator result = triangle_view.erase(second_vertex, triangle_view.end()); //Erase the second and third vertices.
 
 	ASSERT_EQ(triangle_view.size(), triangle.size() - 2) << "That must have erased two vertices.";
@@ -518,12 +506,8 @@ TEST_F(SimplePolygonBatchViewFixture, EraseRangeMiddleEnd) {
 	EXPECT_EQ(result, triangle_view.end()) << "Return the vertex after the last removed one.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	second_vertex = square_view.begin();
-	second_vertex++; //Actually makes it the second vertex.
-	SimplePolygon<>::const_iterator fourth_vertex = square_view.begin();
-	fourth_vertex++;
-	fourth_vertex++;
-	fourth_vertex++; //Actually makes it the fourth vertex.
+	second_vertex = square_view.begin() + 1;
+	SimplePolygon<>::const_iterator fourth_vertex = square_view.begin() + 3;
 	result = square_view.erase(second_vertex, fourth_vertex); //Erase the second and third vertices.
 	ASSERT_EQ(square_view.size(), square.size() - 2) << "That must have erased two vertices.";
 	EXPECT_EQ(square_view[0], square[0]) << "The first vertex must still be left intact.";
@@ -806,8 +790,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyFront) {
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++;
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, Point2(53, 23));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex is not moved.";
@@ -817,9 +800,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertCopyMiddle) {
 	EXPECT_EQ(*result, Point2(53, 23)) << "The resulting iterator must point to the new vertex.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++;
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	result = square_view.insert(third_vertex, Point2(13, 37));
 	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
 	EXPECT_EQ(square_view[0], square[0]) << "The first vertex is not moved.";
@@ -883,8 +864,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMoveFront) {
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertMoveMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++;
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	Point2 vertex(53, 23);
 	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, std::move(vertex));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The number of vertices has risen by 1.";
@@ -895,9 +875,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMoveMiddle) {
 	EXPECT_EQ(*result, Point2(53, 23)) << "The resulting iterator must point to the new vertex.";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++;
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	Point2 vertex2(13, 37);
 	result = square_view.insert(third_vertex, std::move(vertex2));
 	ASSERT_EQ(square_view.size(), square.size() + 1) << "The number of vertices has risen by 1.";
@@ -968,8 +946,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleFront) {
  */
 TEST_F(SimplePolygonBatchViewFixture, InsertMultipleMiddle) {
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++; //Makes it the second vertex.
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, 42, Point2(37, 13));
 	ASSERT_EQ(triangle_view.size(), triangle.size() + 42) << "The number of vertices has risen by 42.";
 	EXPECT_EQ(triangle_view[0], triangle[0]) << "The new vertices were inserted between the first and second vertices, so the first one must still be there.";
@@ -982,9 +959,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleMiddle) {
 	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++; //Makes it the third vertex.
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	result = square_view.insert(third_vertex, 42, Point2(37, 13));
 	ASSERT_EQ(square_view.size(), square.size() + 42) << "The number of vertices has risen by 42.";
 	EXPECT_EQ(square_view[0], square[0]) << "The new vertices were inserted between the second and third vertices, so the first one must still be there.";
@@ -1130,8 +1105,7 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
  */
 TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsMiddle) {
 	SimplePolygon triangle_view = this->triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++; //Actually makes it the second vertex.
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, *this->range_start, *this->range_end);
 	ASSERT_EQ(triangle_view.size(), this->triangle.size() + this->inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
 	EXPECT_EQ(triangle_view[0], this->triangle[0]) << "The first vertex is still in its original position.";
@@ -1144,9 +1118,7 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsMiddle) {
 	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning of the inserted range.";
 
 	SimplePolygon square_view = this->triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++; //Actually makes it the third vertex.
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	result = square_view.insert(third_vertex, *this->range_start, *this->range_end);
 	ASSERT_EQ(square_view.size(), this->square.size() + this->inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
 	EXPECT_EQ(square_view[0], this->square[0]) << "The first vertex is still in its original position.";
@@ -1225,8 +1197,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListMiddle) {
 	const std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
 
 	SimplePolygon triangle_view = triangle_and_square[0];
-	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
-	second_vertex++; //Actually makes it the second vertex.
+	const SimplePolygon<>::const_iterator second_vertex = triangle_view.begin() + 1;
 	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, inserted_list);
 	ASSERT_EQ(triangle_view.size(), triangle.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
 	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex is still in its original place.";
@@ -1240,9 +1211,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListMiddle) {
 	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
 
 	SimplePolygon square_view = triangle_and_square[1];
-	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
-	third_vertex++;
-	third_vertex++; //Actually makes it the third vertex.
+	const SimplePolygon<>::const_iterator third_vertex = square_view.begin() + 2;
 	result = square_view.insert(third_vertex, inserted_list);
 	ASSERT_EQ(square_view.size(), square.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
 	EXPECT_EQ(square_view[0], square[0]) << "The first vertex is still in its original place.";
@@ -1319,8 +1288,7 @@ TEST_F(SimplePolygonBatchViewFixture, ReserveLower) {
 	SimplePolygon square_view = triangle_and_square[1];
 
 	//To test that iterators don't get invalidated, see if modifying it through the iterator actually modifies the simple polygon.
-	SimplePolygon<>::iterator second_vert = square_view.begin();
-	second_vert++; //Now it's the second vertex.
+	SimplePolygon<>::iterator second_vert = square_view.begin() + 1;
 
 	square_view.reserve(2); //Less than the 4 vertices it already contains.
 	EXPECT_GE(square_view.capacity(), 4) << "Should still have enough capacity for the 4 vertices in there.";
