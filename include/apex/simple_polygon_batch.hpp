@@ -290,9 +290,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		iterator begin() {
-			iterator beginning = batch.vertex_buffer.begin();
-			std::advance(beginning, start_index());
-			return beginning;
+			return batch.vertex_buffer.begin() + start_index();
 		}
 
 		/*!
@@ -308,9 +306,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator begin() const {
-			const_iterator beginning = batch.vertex_buffer.begin();
-			std::advance(beginning, start_index());
-			return beginning;
+			return batch.vertex_buffer.begin() + start_index();
 		}
 
 		/*!
@@ -454,10 +450,7 @@ protected:
 			batch.vertex_buffer[start + index] = Point2(arguments...);
 
 			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -498,9 +491,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		iterator end() {
-			iterator ending = batch.vertex_buffer.begin();
-			std::advance(ending, start_index() + size());
-			return ending;
+			return batch.vertex_buffer.begin() + (start_index() + size());
 		}
 
 		/*!
@@ -516,9 +507,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator end() const {
-			const_iterator ending = batch.vertex_buffer.begin();
-			std::advance(ending, start_index() + size());
-			return ending;
+			return batch.vertex_buffer.begin() + (start_index() + size());
 		}
 
 		/*!
@@ -537,11 +526,7 @@ protected:
 				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + 1];
 			}
 			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Reduce the size by one.
-
-			//Convert iterator to non-const version.
-			iterator result = batch.vertex_buffer.begin();
-			std::advance(result, buffer_start + index);
-			return result;
+			return batch.vertex_buffer.begin() + (buffer_start + index); //Convert iterator to non-const version.
 		}
 
 		/*!
@@ -562,11 +547,7 @@ protected:
 				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + num_removed];
 			}
 			batch.index_buffer[2 + polygon_index * 3 + 1] -= num_removed; //Reduce the size.
-
-			//Convert iterator to non-const version.
-			iterator result = batch.vertex_buffer.begin();
-			std::advance(result, buffer_start + index);
-			return result;
+			return batch.vertex_buffer.begin() + (buffer_start + index); //Convert iterator to non-const version.
 		}
 
 		/*!
@@ -627,10 +608,7 @@ protected:
 			batch.vertex_buffer[start + index] = value;
 
 			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -666,10 +644,7 @@ protected:
 			batch.vertex_buffer[start + index] = value;
 
 			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -712,10 +687,7 @@ protected:
 			}
 
 			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -780,10 +752,7 @@ protected:
 			}
 
 			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -978,10 +947,7 @@ protected:
 			}
 
 			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -1032,10 +998,7 @@ protected:
 			}
 
 			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
@@ -1088,10 +1051,7 @@ protected:
 			}
 
 			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
-
-			iterator result = begin();
-			std::advance(result, index);
-			return result;
+			return begin() + index;
 		}
 
 		/*!
