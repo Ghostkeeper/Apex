@@ -915,6 +915,59 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleEnd) {
 }
 
 /*!
+ * Iterator type to wrap ``vector``'s iterator to restrict its usage more for
+ * the purpose of a test.
+ *
+ * The insertion function needs to work for strictly forward iterators as well.
+ */
+struct MyForwardIterator : std::vector<Point2>::iterator {
+	using iterator_category = std::forward_iterator_tag;
+};
+
+/*!
+ * Iterator type to wrap ``vector``'s iterator to restrict its usage more for
+ * the purpose of a test.
+ *
+ * The insertion function needs to work for input iterators as well.
+ */
+struct MyInputIterator : std::vector<Point2>::iterator {
+	using iterator_category = std::input_iterator_tag;
+};
+
+/*!
+ * To type-parametrise the insert-by-iterators tests, make a copy of the fixture
+ * that we'll type-parametrise.
+ * \tparam T The type that this test suite is parametrised with.
+ */
+template<typename T>
+class InsertIteratorsParameterised : public SimplePolygonBatchViewFixture {};
+using MyIteratorTypes = testing::Types<std::vector<Point2>::iterator, MyForwardIterator, MyInputIterator>;
+TYPED_TEST_SUITE(InsertIteratorsParameterised, MyIteratorTypes);
+
+/*!
+ * Tests inserting a range between iterators at the beginning of the simple
+ * polygon.
+ */
+TYPED_TEST(InsertIteratorsParameterised, InsertIteratorsFront) {
+	std::vector<Point2> inserted_range(42, Point2(69, 96));
+	std::vector<Point2>::iterator vector_begin = inserted_range.begin();
+	std::vector<Point2>::iterator vector_end = inserted_range.end();
+	TypeParam* range_start = reinterpret_cast<TypeParam*>(&vector_begin);
+	TypeParam* range_end = reinterpret_cast<TypeParam*>(&vector_end);
+
+	SimplePolygon triangle_view = this->triangle_and_square[0];
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), *range_start, *range_end);
+	ASSERT_EQ(triangle_view.size(), this->triangle.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
+	for(size_t i = 0; i < inserted_range.size(); ++i) {
+		ASSERT_EQ(triangle_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
+	}
+	for(size_t i = 0; i < this->triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[inserted_range.size() + i], this->triangle[i]) << "The original triangle vertices are now shifted to the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[0]) << "The returned iterator must point to the beginning of the inserted range.";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.
