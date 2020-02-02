@@ -1076,6 +1076,25 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsEnd) {
 }
 
 /*!
+ * Tests inserting a list of vertices at the front of the simple polygon.
+ */
+TEST_F(SimplePolygonBatchViewFixture, InsertInitialiserListFront) {
+	std::initializer_list<Point2> inserted_list({Point2(10, 20), Point2(20, 30), Point2(30, 40), Point2(40, 50)});
+
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), inserted_list);
+	ASSERT_EQ(triangle_view.size(), triangle.size() + inserted_list.size()) << "The number of vertices has increased by the size of the list.";
+	size_t i = 0;
+	for(const Point2& vertex : inserted_list) {
+		EXPECT_EQ(triangle_view[i++], vertex) << "The inserted list is at the front.";
+	}
+	for(; i < inserted_list.size() + triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i - inserted_list.size()]) << "The original triangle vertices have been shifted to the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[0]) << "The returned iterator must point to the beginning where the vertices were inserted (after reallocation).";
+}
+
+/*!
  * Tests the maximum size of the simple polygon.
  *
  * The maximum size may not be the limiting factor for the implementation.

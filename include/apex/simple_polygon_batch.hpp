@@ -680,7 +680,7 @@ protected:
 		 * invalidated. The iterators pointing to positions before the insertion
 		 * point will not be invalidated, unless this insertion causes the size
 		 * to exceed the current capacity, in which case it'll need to
-		 * reallocate for more money, which invalidates all iterators.
+		 * reallocate for more memory, which invalidates all iterators.
 		 * \param position The position before which the new vertices will be
 		 * inserted. To insert them at the end, the \ref end iterator may be
 		 * supplied.
@@ -694,6 +694,48 @@ protected:
 		iterator insert(const const_iterator position, InputIterator begin, const InputIterator end) {
 			//Dispatch to the most efficient implementation for the current iterator type.
 			return insert_iterator_dispatch<InputIterator>(position, begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+		}
+
+		/*!
+		 * Inserts a list of vertices at the specified position in the simple
+		 * polygon.
+		 *
+		 * The new vertices are inserted \e before the specified position.
+		 *
+		 * All iterators pointing to the specified position or after it will be
+		 * invalidated. The iterators pointing to positions before the insertion
+		 * point will not be invalidated, unless this insertion causes the size
+		 * to exceed the current capacity, in which case it'll need to
+		 * reallocate for more memory, which invalidates all iterators.
+		 * \param position The position before which the new vertices will be
+		 * inserted. To insert them at the end, the \ref end iterator may be
+		 * supplied.
+		 * \param initialiser_list The list of vertices to insert.
+		 * \return An iterator pointing to the first of the new vertices that
+		 * was inserted.
+		 */
+		iterator insert(const const_iterator position, const std::initializer_list<Point2> initialiser_list) {
+			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the inpute iterator).
+			const size_t count = initialiser_list.size();
+			if(size() + count > capacity()) {
+				reallocate(capacity() * 2 + count);
+			}
+
+			const size_t start = start_index();
+			for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
+				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - count];
+			}
+			//Insert the new vertices.
+			size_t i = 0;
+			for(const Point2& vertex : initialiser_list) {
+				batch.vertex_buffer[start + index + i++] = vertex;
+			}
+
+			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+
+			iterator result = begin();
+			std::advance(result, index);
+			return result;
 		}
 
 		/*!
