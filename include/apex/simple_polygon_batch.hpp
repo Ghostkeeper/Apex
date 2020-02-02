@@ -687,6 +687,8 @@ protected:
 		 * \param begin The start of the range of vertices to insert.
 		 * \param end The end of the range of vertices to insert. This is the
 		 * element \e after the last vertex.
+		 * \return An iterator pointing to the first of the new vertices that
+		 * was inserted.
 		 */
 		template<class InputIterator>
 		iterator insert(const const_iterator position, InputIterator begin, const InputIterator end) {
@@ -872,7 +874,7 @@ protected:
 		iterator insert_iterator_dispatch(const const_iterator position, InputIterator range_start, const InputIterator range_end, const std::random_access_iterator_tag) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
 			const size_t count = range_end - range_start;
-			if(size() + count > capacity()) {
+			if(size() + count >= capacity()) {
 				reallocate(capacity() * 2 + count);
 			}
 
@@ -917,7 +919,7 @@ protected:
 				for(InputIterator counter = range_start; counter != range_end; counter++) { //Count how many inputs we have.
 					++count;
 				}
-				if(size() + count > capacity()) {
+				if(size() + count >= capacity()) {
 					reallocate(capacity() * 2 + count);
 				}
 
@@ -969,7 +971,7 @@ protected:
 			size_t remaining_space = 0; //How many spots we still have left before we need to shift vertices again.
 			size_t count = 0;
 			for(;range_start != range_end; range_start++, ++count) {
-				if(size() + count > capacity()) {
+				if(size() + count >= capacity()) {
 					reallocate(capacity() * 2 + 1);
 				}
 				if(remaining_space == 0) { //Need to make sure we've got room to insert without overwriting vertices afterwards.
