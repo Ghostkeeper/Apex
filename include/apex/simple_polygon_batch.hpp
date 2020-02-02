@@ -913,17 +913,17 @@ protected:
 		template<class InputIterator>
 		iterator insert_iterator_dispatch(const const_iterator position, InputIterator range_start, const InputIterator range_end, const std::forward_iterator_tag) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
-			const size_t buffer_start = start_index();
+			const size_t original_size = size(); //Get the size at the start since we need to update the size before reallocating.
 			size_t count = 0;
 			if(position != end()) {
 				for(InputIterator counter = range_start; counter != range_end; counter++) { //Count how many inputs we have.
 					++count;
 				}
-				if(size() + count >= capacity()) {
+				if(original_size + count >= capacity()) {
 					reallocate(capacity() * 2 + count);
 				}
-
-				for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
+				const size_t buffer_start = start_index();
+				for(size_t i = original_size - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
 					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - count];
 				}
 				//Insert the new vertices.
@@ -932,15 +932,16 @@ protected:
 				}
 			} else { //Don't bother counting and shifting if we're inserting at the end.
 				for(size_t i = 0; range_start != range_end; range_start++, ++i) {
-					if(size() + i >= capacity()) {
+					if(original_size + i >= capacity()) {
+						batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Update the size before reallocating.
 						reallocate(capacity() * 2 + 1);
 					}
-					batch.vertex_buffer[buffer_start + index + i] = *range_start;
+					batch.vertex_buffer[start_index() + index + i] = *range_start;
 					count++;
 				}
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
 
 			iterator result = begin();
 			std::advance(result, index);
@@ -967,16 +968,18 @@ protected:
 		template<class InputIterator>
 		iterator insert_iterator_dispatch(const const_iterator position, InputIterator range_start, const InputIterator range_end, const std::input_iterator_tag) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
-			const size_t buffer_start = start_index();
+			const size_t original_size = size(); //Get the size as well since we need to update the size before reallocating.
 			size_t remaining_space = 0; //How many spots we still have left before we need to shift vertices again.
 			size_t count = 0;
 			for(;range_start != range_end; range_start++, ++count) {
-				if(size() + count >= capacity()) {
+				if(original_size + count >= capacity()) {
+					batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Update the size before reallocating.
 					reallocate(capacity() * 2 + 1);
 				}
+				const size_t buffer_start = start_index();
 				if(remaining_space == 0) { //Need to make sure we've got room to insert without overwriting vertices afterwards.
 					//Move towards the end of the capacity so that we can insert more often.
-					const size_t move_distance = capacity() - size() - count; //How far can we move these vertices.
+					const size_t move_distance = capacity() - original_size - count; //How far can we move these vertices.
 					for(size_t i = capacity() - 1; i >= index + count + move_distance; --i) {
 						batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - move_distance];
 					}
@@ -988,12 +991,13 @@ protected:
 
 			//Move vertices after the insertion back if there was any remaining space.
 			if(remaining_space > 0) {
+				const size_t buffer_start = start_index();
 				for(size_t i = index + count; i < capacity() - remaining_space; ++i) {
 					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + remaining_space];
 				}
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
 
 			iterator result = begin();
 			std::advance(result, index);
@@ -1217,7 +1221,6 @@ public:
 		return index_buffer[0];
 	}
 
-protected:
 	/*!
 	 * The main buffer that contains the vertex data.
 	 *
@@ -1232,7 +1235,7 @@ protected:
 	 * buffer. Measure whether this actually improves performance.
 	 */
 	std::vector<Point2> vertex_buffer;
-
+protected:
 	/*!
 	 * A separate buffer that contains the positions in the
 	 * \ref SimplePolygonBatch.vertex_buffer where each simple polygon starts

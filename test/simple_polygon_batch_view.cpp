@@ -920,7 +920,7 @@ TEST_F(SimplePolygonBatchViewFixture, InsertMultipleEnd) {
  *
  * The insertion function needs to work for strictly forward iterators as well.
  */
-struct MyForwardIterator : std::vector<Point2>::iterator {
+struct MyForwardIterator : public std::vector<Point2>::iterator {
 	using iterator_category = std::forward_iterator_tag;
 };
 
@@ -930,7 +930,7 @@ struct MyForwardIterator : std::vector<Point2>::iterator {
  *
  * The insertion function needs to work for input iterators as well.
  */
-struct MyInputIterator : std::vector<Point2>::iterator {
+struct MyInputIterator : public std::vector<Point2>::iterator {
 	using iterator_category = std::input_iterator_tag;
 };
 
@@ -959,7 +959,7 @@ TYPED_TEST(InsertIteratorsParameterised, InsertIteratorsFront) {
 	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), *range_start, *range_end);
 	ASSERT_EQ(triangle_view.size(), this->triangle.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
 	for(size_t i = 0; i < inserted_range.size(); ++i) {
-		ASSERT_EQ(triangle_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
+		EXPECT_EQ(triangle_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
 	}
 	for(size_t i = 0; i < this->triangle.size(); ++i) {
 		EXPECT_EQ(triangle_view[inserted_range.size() + i], this->triangle[i]) << "The original triangle vertices are now shifted to the end.";
