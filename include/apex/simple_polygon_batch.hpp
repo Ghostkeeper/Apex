@@ -528,6 +528,7 @@ protected:
 		 * invalidated. The iterators pointing to positions before this vertex
 		 * will not be invalidated.
 		 * \param position The position of the vertex to erase.
+		 * \return An iterator to the vertex after the removed vertex.
 		 */
 		iterator erase(const const_iterator position) {
 			const size_t buffer_start = start_index();
@@ -536,6 +537,31 @@ protected:
 				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + 1];
 			}
 			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Reduce the size by one.
+
+			//Convert iterator to non-const version.
+			iterator result = batch.vertex_buffer.begin();
+			std::advance(result, buffer_start + index);
+			return result;
+		}
+
+		/*!
+		 * Erases a range of vertices from the simple polygon.
+		 *
+		 * The iterators pointing to positions within or after the range will be
+		 * invalidated. The iterators pointing to positions before the range
+		 * will not be invalidated.
+		 * \param first The beginning of the range of vertices to remove.
+		 * \param end The position \e after the last vertex to remove.
+		 * \return A new iterator to the vertex indicated by `end`.
+		 */
+		iterator erase(const_iterator first, const const_iterator end) {
+			const size_t buffer_start = start_index();
+			const size_t index = first - begin();
+			const size_t num_removed = end - first;
+			for(size_t i = index; i < size() - num_removed; ++i) { //Shift other vertices over the range.
+				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + num_removed];
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] -= num_removed; //Reduce the size.
 
 			//Convert iterator to non-const version.
 			iterator result = batch.vertex_buffer.begin();

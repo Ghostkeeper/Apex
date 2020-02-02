@@ -474,6 +474,36 @@ TEST_F(SimplePolygonBatchViewFixture, EraseMiddle) {
 }
 
 /*!
+ * Tests removing a range of vertices from the beginning of the view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EraseRangeStart) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator third_vertex = triangle_view.begin();
+	third_vertex++;
+	third_vertex++; //Actually makes it the third vertex.
+	SimplePolygon<>::iterator result = triangle_view.erase(triangle_view.begin(), third_vertex); //Erase the first and second vertices.
+
+	ASSERT_EQ(triangle_view.size(), triangle.size() - 2) << "That must have erased two vertices.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i + 2]) << "The rest of the vertices must have been shifted by 2.";
+	}
+	EXPECT_EQ(*result, triangle_view[0]) << "Return the vertex after the last removed one.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	SimplePolygon<>::const_iterator fourth_vertex = square_view.begin();
+	fourth_vertex++;
+	fourth_vertex++;
+	fourth_vertex++; //Actually makes it the fourth vertex.
+	result = square_view.erase(square_view.begin(), fourth_vertex); //Erase the first 3 vertices.
+
+	ASSERT_EQ(square_view.size(), square.size() - 3) << "That must have erased three vertices.";
+	for(size_t i = 0; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i + 3]) << "The rest of the vertices must have been shifted by 3.";
+	}
+	EXPECT_EQ(*result, square_view[0]) << "Return the vertex after the last removed one.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {
