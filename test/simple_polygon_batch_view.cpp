@@ -422,6 +422,20 @@ TEST(SimplePolygonBatchView, Empty) {
 }
 
 /*!
+ * Tests erasing a vertex from the start of the view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EraseStart) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::iterator result = triangle_view.erase(triangle_view.begin());
+
+	ASSERT_EQ(triangle_view.size(), triangle.size() - 1) << "The size must be reduced by 1.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i + 1]) << "All of the vertices must have been shifted by 1.";
+	}
+	EXPECT_EQ(*result, triangle_view[0]) << "Return the vertex after the removed one.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {

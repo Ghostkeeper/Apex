@@ -522,6 +522,28 @@ protected:
 		}
 
 		/*!
+		 * Erases one vertex from the simple polygon.
+		 *
+		 * The iterators pointing to positions at or after this vertex will be
+		 * invalidated. The iterators pointing to positions before this vertex
+		 * will not be invalidated.
+		 * \param position The position of the vertex to erase.
+		 */
+		iterator erase(const const_iterator position) {
+			const size_t buffer_start = start_index();
+			const size_t index = position - begin();
+			for(size_t i = index; i < size() - 1; ++i) { //Shift other vertices over this one.
+				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + 1];
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Reduce the size by one.
+
+			//Convert iterator to non-const version.
+			iterator result = batch.vertex_buffer.begin();
+			std::advance(result, buffer_start + index);
+			return result;
+		}
+
+		/*!
 		 * Returns a reference to the first element of the view on the simple
 		 * polygon.
 		 *
