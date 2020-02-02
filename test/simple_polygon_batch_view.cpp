@@ -962,7 +962,7 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
 	SimplePolygon<>::const_iterator result = triangle_view.insert(triangle_view.begin(), *range_start, *range_end);
 	ASSERT_EQ(triangle_view.size(), this->triangle.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
 	for(size_t i = 0; i < inserted_range.size(); ++i) {
-		EXPECT_EQ(triangle_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
+		EXPECT_EQ(triangle_view[i], inserted_range[i]) << "The inserted range is now at the beginning of the triangle.";
 	}
 	for(size_t i = 0; i < this->triangle.size(); ++i) {
 		EXPECT_EQ(triangle_view[inserted_range.size() + i], this->triangle[i]) << "The original triangle vertices are now shifted to the end.";
@@ -973,12 +973,56 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
 	result = square_view.insert(square_view.begin(), *range_start, *range_end);
 	ASSERT_EQ(square_view.size(), this->square.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
 	for(size_t i = 0; i < inserted_range.size(); ++i) {
-		EXPECT_EQ(square_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
+		EXPECT_EQ(square_view[i], inserted_range[i]) << "The inserted range is now at the beginning of the square.";
 	}
 	for(size_t i = 0; i < this->square.size(); ++i) {
 		EXPECT_EQ(square_view[inserted_range.size() + i], this->square[i]) << "The original square vertices are now shifted to the end.";
 	}
 	EXPECT_EQ(*result, square_view[0]) << "The returned iterator must point to the beginning of the inserted range.";
+}
+
+/*!
+ * Tests inserting a range between iterators in the middle of a simple polygon.
+ */
+TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsMiddle) {
+	std::vector<Point2> inserted_range;
+	for(size_t i = 0; i < 42; ++i) {
+		inserted_range.emplace_back(69 + i, 96 + i);
+	}
+	std::vector<Point2>::iterator vector_begin = inserted_range.begin();
+	std::vector<Point2>::iterator vector_end = inserted_range.end();
+	TypeParam* range_start = reinterpret_cast<TypeParam*>(&vector_begin);
+	TypeParam* range_end = reinterpret_cast<TypeParam*>(&vector_end);
+
+	SimplePolygon triangle_view = this->triangle_and_square[0];
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
+	second_vertex++; //Actually makes it the second vertex.
+	SimplePolygon<>::const_iterator result = triangle_view.insert(second_vertex, *range_start, *range_end);
+	ASSERT_EQ(triangle_view.size(), this->triangle.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
+	EXPECT_EQ(triangle_view[0], this->triangle[0]) << "The first vertex is still in its original position.";
+	for(size_t i = 0; i < inserted_range.size(); ++i) {
+		EXPECT_EQ(triangle_view[i + 1], inserted_range[i]) << "The inserted range is now in the middle of the triangle.";
+	}
+	for(size_t i = 1; i < this->triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[inserted_range.size() + i], this->triangle[i]) << "The rest of the triangle vertices are now shifted to the end.";
+	}
+	EXPECT_EQ(*result, triangle_view[1]) << "The returned iterator must point to the beginning of the inserted range.";
+
+	SimplePolygon square_view = this->triangle_and_square[1];
+	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
+	third_vertex++;
+	third_vertex++; //Actually makes it the third vertex.
+	result = square_view.insert(third_vertex, *range_start, *range_end);
+	ASSERT_EQ(square_view.size(), this->square.size() + inserted_range.size()) << "The number of vertices has risen by the contents of the inserted range.";
+	EXPECT_EQ(square_view[0], this->square[0]) << "The first vertex is still in its original position.";
+	EXPECT_EQ(square_view[1], this->square[1]) << "The second vertex is still in its original position.";
+	for(size_t i = 0; i < inserted_range.size(); ++i) {
+		EXPECT_EQ(square_view[i + 2], inserted_range[i]) << "The inserted range is now in the middle of the square.";
+	}
+	for(size_t i = 2; i < this->square.size(); ++i) {
+		EXPECT_EQ(square_view[inserted_range.size() + i], this->square[i]) << "The rest of the square vertices are now shifted to the end.";
+	}
+	EXPECT_EQ(*result, square_view[2]) << "The returned iterator must point to the beginning of the inserted range.";
 }
 
 /*!
