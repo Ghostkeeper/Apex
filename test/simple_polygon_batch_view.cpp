@@ -975,8 +975,8 @@ TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
 	for(size_t i = 0; i < inserted_range.size(); ++i) {
 		EXPECT_EQ(square_view[i], inserted_range[i]) << "The inserted range is now at the beginning.";
 	}
-	for(size_t i = 0; i < this->triangle.size(); ++i) {
-		EXPECT_EQ(square_view[inserted_range.size() + i], this->square[i]) << "The original triangle vertices are now shifted to the end.";
+	for(size_t i = 0; i < this->square.size(); ++i) {
+		EXPECT_EQ(square_view[inserted_range.size() + i], this->square[i]) << "The original square vertices are now shifted to the end.";
 	}
 	EXPECT_EQ(*result, square_view[0]) << "The returned iterator must point to the beginning of the inserted range.";
 }
