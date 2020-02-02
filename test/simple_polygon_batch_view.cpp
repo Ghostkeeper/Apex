@@ -1289,6 +1289,29 @@ TEST_F(SimplePolygonBatchViewFixture, PushBackCopy) {
 }
 
 /*!
+ * Tests pushing a vertex to the back by moving it in.
+ */
+TEST_F(SimplePolygonBatchViewFixture, PushBackMove) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	Point2 new_vertex(42, 69);
+	triangle_view.push_back(std::move(new_vertex));
+	ASSERT_EQ(triangle_view.size(), triangle.size() + 1) << "The size must be increased by 1.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "The original vertices must still be in their places.";
+	}
+	EXPECT_EQ(triangle_view[triangle.size()], Point2(42, 69)) << "The new vertex must be at the end.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	Point2 new_vertex2(69, 42);
+	square_view.push_back(std::move(new_vertex2));
+	ASSERT_EQ(square_view.size(), square.size() + 1) << "The size must be increased by 1.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "The original vertices must still be in their places.";
+	}
+	EXPECT_EQ(square_view[square.size()], Point2(69, 42)) << "The new vertex must be at the end.";
+}
+
+/*!
  * Tests reserving memory for an empty simple polygon in a batch.
  */
 TEST(SimplePolygonBatchView, ReserveEmpty) {
