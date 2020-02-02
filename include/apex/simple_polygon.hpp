@@ -581,7 +581,7 @@ public:
 	 * \param position The vertex is inserted before this position in the loop.
 	 * \param count The number of copies to insert.
 	 * \param vertex The coordinates of the new vertex.
-	 * \return An iterator pointing to the newly inserted vertex.
+	 * \return An iterator pointing to the first of the newly inserted vertices.
 	 */
 	iterator insert(const const_iterator position, const size_t count, const Point2& vertex) {
 		return vertices.insert(position, count, vertex);
@@ -595,10 +595,11 @@ public:
 	 * \param first The first vertex to insert in the simple polygon.
 	 * \param last The vertex after the last vertex to insert in the simple
 	 * polygon.
+	 * \return An iterator pointing to the first of the newly inserted vertices.
 	 */
 	template<class InputIterator>
-	void insert(const_iterator position, InputIterator first, InputIterator last) {
-		vertices.insert(position, first, last);
+	iterator insert(const_iterator position, InputIterator first, InputIterator last) {
+		return vertices.insert(position, first, last);
 	}
 
 	/*!
