@@ -940,16 +940,19 @@ struct MyInputIterator : public std::vector<Point2>::iterator {
  * \tparam T The type that this test suite is parametrised with.
  */
 template<typename T>
-class InsertIteratorsParameterised : public SimplePolygonBatchViewFixture {};
+class InsertIteratorsParametrised : public SimplePolygonBatchViewFixture {};
 using MyIteratorTypes = testing::Types<std::vector<Point2>::iterator, MyForwardIterator, MyInputIterator>;
-TYPED_TEST_SUITE(InsertIteratorsParameterised, MyIteratorTypes);
+TYPED_TEST_SUITE(InsertIteratorsParametrised, MyIteratorTypes);
 
 /*!
  * Tests inserting a range between iterators at the beginning of the simple
  * polygon.
  */
-TYPED_TEST(InsertIteratorsParameterised, InsertIteratorsFront) {
-	std::vector<Point2> inserted_range(42, Point2(69, 96));
+TYPED_TEST(InsertIteratorsParametrised, InsertIteratorsFront) {
+	std::vector<Point2> inserted_range;
+	for(size_t i = 0; i < 42; ++i) {
+		inserted_range.emplace_back(69 + i, 96 + i);
+	}
 	std::vector<Point2>::iterator vector_begin = inserted_range.begin();
 	std::vector<Point2>::iterator vector_end = inserted_range.end();
 	TypeParam* range_start = reinterpret_cast<TypeParam*>(&vector_begin);
