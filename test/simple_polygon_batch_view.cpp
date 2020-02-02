@@ -975,8 +975,8 @@ public:
 		}
 		vector_begin = inserted_range.begin();
 		vector_end = inserted_range.end();
-		range_start = reinterpret_cast<T*>(&vector_begin);
-		range_end = reinterpret_cast<T*>(&vector_end);
+		range_start = static_cast<T*>(&vector_begin);
+		range_end = static_cast<T*>(&vector_end);
 	}
 };
 using MyIteratorTypes = testing::Types<std::vector<Point2>::iterator, MyForwardIterator, MyInputIterator>;
