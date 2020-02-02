@@ -433,6 +433,15 @@ TEST_F(SimplePolygonBatchViewFixture, EraseStart) {
 		EXPECT_EQ(triangle_view[i], triangle[i + 1]) << "All of the vertices must have been shifted by 1.";
 	}
 	EXPECT_EQ(*result, triangle_view[0]) << "Return the vertex after the removed one.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	result = square_view.erase(square_view.begin());
+
+	ASSERT_EQ(square_view.size(), square.size() - 1) << "The size must be reduced by 1.";
+	for(size_t i = 0; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i + 1]) << "All of the vertices must have been shifted by 1.";
+	}
+	EXPECT_EQ(*result, square_view[0]) << "Return the vertex after the removed one.";
 }
 
 /*!
