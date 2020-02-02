@@ -769,6 +769,21 @@ protected:
 		}
 
 		/*!
+		 * Appends a vertex at the end of the simple polygon.
+		 *
+		 * The vertex is copied in this case. This may cause a reallocation,
+		 * which will invalidate all iterators to vertices in this batch.
+		 * \param vertex The vertex to add to the simple polygon.
+		 */
+		void push_back(const Point2& vertex) {
+			if(size() + 1 > capacity()) {
+				reallocate(capacity() * 2 + 1);
+			}
+			batch.vertex_buffer[start_index() + size()] = vertex;
+			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+		}
+
+		/*!
 		 * Get an iterator to the first vertex in the view on the simple polygon
 		 * when iterating in reverse (which would normally be the last vertex).
 		 *
