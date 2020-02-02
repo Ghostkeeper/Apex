@@ -977,8 +977,8 @@ protected:
 				if(remaining_space == 0) { //Need to make sure we've got room to insert without overwriting vertices afterwards.
 					//Move towards the end of the capacity so that we can insert more often.
 					const size_t move_distance = capacity() - size() - count; //How far can we move these vertices.
-					for(size_t i = capacity() - 1; i >= index + count; --i) {
-						batch.vertex_buffer[buffer_start + i + move_distance] = batch.vertex_buffer[buffer_start + i];
+					for(size_t i = capacity() - 1; i >= index + count + move_distance; --i) {
+						batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - move_distance];
 					}
 					remaining_space = move_distance;
 				}
