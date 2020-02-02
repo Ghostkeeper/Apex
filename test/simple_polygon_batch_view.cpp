@@ -445,6 +445,35 @@ TEST_F(SimplePolygonBatchViewFixture, EraseStart) {
 }
 
 /*!
+ * Tests erasing a vertex from the middle of the view.
+ */
+TEST_F(SimplePolygonBatchViewFixture, EraseMiddle) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon<>::const_iterator second_vertex = triangle_view.begin();
+	second_vertex++; //This makes it the second vertex.
+	SimplePolygon<>::iterator result = triangle_view.erase(second_vertex);
+
+	ASSERT_EQ(triangle_view.size(), triangle.size() - 1) << "The size must be reduced by 1.";
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The first vertex must still be in its place.";
+	for(size_t i = 1; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i + 1]) << "The rest of the vertices must have been shifted by 1.";
+	}
+	EXPECT_EQ(*result, triangle_view[1]) << "Return the vertex after the removed one.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	SimplePolygon<>::const_iterator third_vertex = square_view.begin();
+	third_vertex++;
+	third_vertex++; //This makes it the third vertex.
+	result = square_view.erase(third_vertex);
+
+	ASSERT_EQ(square_view.size(), square.size() - 1) << "The size must be reduced by 1.";
+	for(size_t i = 2; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i + 1]) << "The rest of the vertices must have been shifted by 1.";
+	}
+	EXPECT_EQ(*result, square_view[2]) << "Return the vertex after the removed one.";
+}
+
+/*!
  * Tests iterating over a view without modifying it.
  */
 TEST_F(SimplePolygonBatchViewFixture, IteratorConst) {
