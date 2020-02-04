@@ -1387,6 +1387,31 @@ TEST_F(SimplePolygonBatchViewFixture, ResizeSmaller) {
 }
 
 /*!
+ * Tests resizing a view to make it larger without providing a fill vertex.
+ */
+TEST_F(SimplePolygonBatchViewFixture, ResizeLargerDefault) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.resize(5);
+	ASSERT_EQ(triangle_view.size(), 5) << "The size was set to 5.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "The original vertices are still there.";
+	}
+	for(size_t i = triangle.size(); i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], Point2(0, 0)) << "The rest of the vertices were zero-initialised.";
+	}
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.resize(9);
+	ASSERT_EQ(square_view.size(), 9) << "The size was set to 9.";
+	for(size_t i = 0; i < square.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "The original vertices are still there.";
+	}
+	for(size_t i = square.size(); i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], Point2(0, 0)) << "The rest of the vertices were zero-initialised.";
+	}
+}
+
+/*!
  * Tests that shrinking to fit doesn't lose data.
  */
 TEST_F(SimplePolygonBatchViewFixture, ShrinkToFit) {
