@@ -843,6 +843,18 @@ TEST_F(SimplePolygonFixture, ReserveCapacity) {
 }
 
 /*!
+ * Tests resizing the simple polygon to something smaller.
+ */
+TEST_F(SimplePolygonFixture, ResizeSmaller) {
+	SimplePolygon triangle_copy = triangle; //Make a copy so that we can compare the edited polygon with the original.
+	triangle_copy.resize(2);
+	ASSERT_EQ(triangle_copy.size(), 2) << "We resized it to contain only 2 vertices.";
+	for(size_t i = 0; i < triangle_copy.size(); ++i) {
+		EXPECT_EQ(triangle_copy[i], triangle[i]) << "The remaining vertices must still be in their places.";
+	}
+}
+
+/*!
  * Tests whether shrink_to_fit doesn't destroy anything.
  *
  * The shrink_to_fit method doesn't give any guarantees that the capacity is

@@ -706,8 +706,26 @@ public:
 	 * More memory may still be reserved in OpenCL should the need arise.
 	 * \param new_capacity The new minimum capacity for the simple polygon.
 	 */
-	void reserve(size_t new_capacity) {
+	void reserve(const size_t new_capacity) {
 		vertices.reserve(new_capacity);
+	}
+
+	/*!
+	 * Changes the size of the simple polygon.
+	 *
+	 * If the size is reduced, the superfluous vertices at the seam are
+	 * discarded.
+	 *
+	 * If the size is increased, it will add new vertices until the desired size
+	 * is reached. If no default vertex is provided, the vertex at coordinate
+	 * ``(0, 0)`` will be inserted instead.
+	 * \param new_size The new number of vertices for the simple polygon.
+	 * \param default_vertex If growing the size of the simple polygon, this
+	 * vertex will be used to fill the number of vertices until the desired size
+	 * is reached.
+	 */
+	void resize(const size_t new_size, const Point2& default_vertex = Point2(0, 0)) {
+		vertices.resize(new_size, default_vertex);
 	}
 
 	/*!
