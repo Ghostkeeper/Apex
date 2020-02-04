@@ -900,6 +900,25 @@ protected:
 		}
 
 		/*!
+		 * Resize the simple polygon to a specific size.
+		 *
+		 * If the new size is smaller, vertices are removed.
+		 *
+		 * If the new size is bigger, vertices at position 0,0 will be added.
+		 * \param new_size The new size for a container.
+		 */
+		void resize(const size_t new_size) {
+			if(new_size > size()) {
+				reserve(new_size);
+				const size_t start = start_index();
+				for(size_t i = size(); i < new_size; ++i) {
+					batch.vertex_buffer[start + i] = Point2(0, 0);
+				}
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] = new_size; //Set the new size. This may drop some vertices.
+		}
+
+		/*!
 		 * This function is a no-op for this implementation.
 		 *
 		 * It would normally request the memory usage to be reduced to fit
