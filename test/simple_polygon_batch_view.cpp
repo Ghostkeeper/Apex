@@ -1268,6 +1268,25 @@ TEST_F(SimplePolygonBatchViewFixture, MaxSize) {
 }
 
 /*!
+ * Tests removing the last vertex.
+ */
+TEST_F(SimplePolygonBatchViewFixture, PopBack) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.pop_back();
+	ASSERT_EQ(triangle_view.size(), triangle.size() - 1) << "The pop_back must have removed one vertex.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], triangle[i]) << "The original vertices must still be present.";
+	}
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.pop_back();
+	ASSERT_EQ(square_view.size(), square.size() - 1) << "The pop_back must have removed one vertex.";
+	for(size_t i = 0; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], square[i]) << "The original vertices must still be present.";
+	}
+}
+
+/*!
  * Tests pushing a vertex to the back by copying it in.
  */
 TEST_F(SimplePolygonBatchViewFixture, PushBackCopy) {

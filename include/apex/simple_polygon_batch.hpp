@@ -769,6 +769,16 @@ protected:
 		}
 
 		/*!
+		 * Removes the last vertex of the loop.
+		 *
+		 * Calling ``pop_back`` on an empty container is undefined. In fact,
+		 * this might just cause an underflow on the size.
+		 */
+		void pop_back() {
+			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Just reduce the size.
+		}
+
+		/*!
 		 * Appends a vertex at the end of the simple polygon.
 		 *
 		 * The vertex is copied in this case. This may cause a reallocation,
