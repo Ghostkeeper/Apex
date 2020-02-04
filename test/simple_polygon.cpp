@@ -855,6 +855,22 @@ TEST_F(SimplePolygonFixture, ResizeSmaller) {
 }
 
 /*!
+ * Tests resizing the simple polygon to something larger by default
+ * initialisation.
+ */
+TEST_F(SimplePolygonFixture, ResizeLargerDefault) {
+	SimplePolygon triangle_copy = triangle; //Make a copy so that we can compare the edited polygon with the original.
+	triangle_copy.resize(5);
+	ASSERT_EQ(triangle_copy.size(), 5) << "We resized it to contain 5 vertices.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_copy[i], triangle[i]) << "The original vertices are still there.";
+	}
+	for(size_t i = triangle.size(); i < triangle_copy.size(); ++i) {
+		EXPECT_EQ(triangle_copy[i], Point2(0, 0)) << "The new vertices must be zero-initialised.";
+	}
+}
+
+/*!
  * Tests whether shrink_to_fit doesn't destroy anything.
  *
  * The shrink_to_fit method doesn't give any guarantees that the capacity is
