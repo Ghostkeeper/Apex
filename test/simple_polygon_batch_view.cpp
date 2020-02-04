@@ -1371,6 +1371,22 @@ TEST_F(SimplePolygonBatchViewFixture, ReserveHigher) {
 }
 
 /*!
+ * Tests resizing a view to make it smaller.
+ */
+TEST_F(SimplePolygonBatchViewFixture, ResizeSmaller) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.resize(1);
+	ASSERT_EQ(triangle_view.size(), 1) << "The size was set to 1.";
+	EXPECT_EQ(triangle_view[0], triangle[0]) << "The last remaining vertex must remain the same.";
+
+	SimplePolygon square_view = triangle_and_square[1];
+	square_view.resize(2);
+	ASSERT_EQ(square_view.size(), 2) << "The size was set to 2.";
+	EXPECT_EQ(square_view[0], square[0]) << "The original vertices must remain in place.";
+	EXPECT_EQ(square_view[1], square[1]) << "The original vertices must remain in place, also the second one.";
+}
+
+/*!
  * Tests that shrinking to fit doesn't lose data.
  */
 TEST_F(SimplePolygonBatchViewFixture, ShrinkToFit) {
