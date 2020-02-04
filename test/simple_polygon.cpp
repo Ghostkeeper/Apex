@@ -871,6 +871,22 @@ TEST_F(SimplePolygonFixture, ResizeLargerDefault) {
 }
 
 /*!
+ * Tests resizing the simple polygon to something larger with a customised
+ * default vertex.
+ */
+TEST_F(SimplePolygonFixture, ResizeLargerCustom) {
+	SimplePolygon triangle_copy = triangle; //Make a copy so that we can compare the edited polygon with the original.
+	triangle_copy.resize(7, Point2(13, 37));
+	ASSERT_EQ(triangle_copy.size(), 7) << "We resized it to contain 7 vertices.";
+	for(size_t i = 0; i < triangle.size(); ++i) {
+		EXPECT_EQ(triangle_copy[i], triangle[i]) << "The original vertices are still there.";
+	}
+	for(size_t i = triangle.size(); i < triangle_copy.size(); ++i) {
+		EXPECT_EQ(triangle_copy[i], Point2(13, 37)) << "The new vertices must be equal to the default we provided.";
+	}
+}
+
+/*!
  * Tests whether shrink_to_fit doesn't destroy anything.
  *
  * The shrink_to_fit method doesn't give any guarantees that the capacity is
