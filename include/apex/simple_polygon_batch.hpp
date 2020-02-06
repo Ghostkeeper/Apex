@@ -953,7 +953,7 @@ protected:
 		/*!
 		 * The simple polygon within the batch that this view is viewing on.
 		 */
-		const size_t polygon_index;
+		size_t polygon_index;
 
 		/*!
 		 * Get the index in the vertex buffer where this view starts.
