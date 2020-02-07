@@ -1487,4 +1487,30 @@ TEST_F(SimplePolygonBatchViewFixture, SwapWithinBatch) {
 	}
 }
 
+/*!
+ * Tests swapping simple polygons between batches.
+ *
+ * This will need to swap the actual vertex data.
+ */
+TEST_F(SimplePolygonBatchViewFixture, SwapDifferentBatch) {
+	//Create another batch to swap from.
+	SimplePolygonBatch other_batch(0, 4);
+	other_batch.push_back(square);
+	other_batch.push_back(square);
+
+	SimplePolygon other_view = other_batch[1];
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.swap(other_view);
+
+	ASSERT_EQ(triangle_view.size(), square.size()) << "The triangle was swapped with a square, so the size must swap.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], square[i]) << "The triangle was swapped with a square, so the data must swap.";
+	}
+
+	ASSERT_EQ(other_view.size(), triangle.size()) << "The square was swapped with a triangle.";
+	for(size_t i = 0; i < other_view.size(); ++i) {
+		EXPECT_EQ(other_view[i], triangle[i]) << "The square was swapped with a triangle, so the data must swap.";
+	}
+}
+
 }
