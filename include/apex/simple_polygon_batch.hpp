@@ -987,7 +987,7 @@ protected:
 					}
 				}
 
-				std::swap(batch.index_buffer[2 + polygon_index + 1], other.batch.index_buffer[2 + other.polygon_index + 1]); //Swap the sizes too.
+				std::swap(batch.index_buffer[2 + polygon_index * 3 + 1], other.batch.index_buffer[2 + other.polygon_index * 3 + 1]); //Swap the sizes too.
 			}
 		}
 
