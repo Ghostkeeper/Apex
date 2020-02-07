@@ -944,6 +944,53 @@ protected:
 			return batch.index_buffer[2 + polygon_index * 3 + 1]; //2+ due to the two starting indices, then +1 because we're getting the size.
 		}
 
+		/*!
+		 * Exchanges the contents of this simple polygon with those of another.
+		 *
+		 * The membership of a batch or the position in it is not swapped. If
+		 * there are any other views on the same polygon, they will also change
+		 * along.
+		 *
+		 * If the two views are part of the same batch, this will only swap
+		 * indices around and it will complete in constant time. If the two
+		 * views are not part of the same batch, the data itself needs to be
+		 * swapped, which will take linear time and may cause reallocations in
+		 * the batch of the smaller simple polygon.
+		 * \param other The view with which to swap the contents.
+		 */
+		void swap(View& other) {
+			if(&batch == &other.batch) {
+				std::swap(batch.index_buffer[2 + polygon_index * 3], batch.index_buffer[2 + other.polygon_index * 3]);
+				std::swap(batch.index_buffer[2 + polygon_index * 3 + 1], batch.index_buffer[2 + other.polygon_index * 3 + 1]);
+				std::swap(batch.index_buffer[2 + polygon_index * 3 + 2], batch.index_buffer[2 + other.polygon_index * 3 + 2]);
+			} else { //Different batches, so we need to swap the actual contents.
+				//TODO: The reservation will move the vertices to the new storage. Afterwards we'll move them. We could prevent one move here, shaving off up to 50% of the work.
+				//Make sure both have enough storage space.
+				const size_t my_size = size();
+				const size_t other_size = other.size();
+				reserve(other_size);
+				other.reserve(my_size);
+
+				const size_t my_start = start_index();
+				const size_t other_start = other.start_index();
+				size_t i = 0;
+				for(; i < std::min(size(), other.size()); ++i) {
+					std::swap(batch.vertex_buffer[my_start + i], other.batch.vertex_buffer[other_start + i]);
+				}
+				if(my_size > other_size) { //Move over any remaining items from the biggest to the smallest one.
+					for(; i < my_size; ++i) {
+						other.batch.vertex_buffer[other_start + i] = batch.vertex_buffer[my_start + i];
+					}
+				} else if(other_size > my_size) {
+					for(; i < other_size; ++i) {
+						batch.vertex_buffer[my_start + i] = other.batch.vertex_buffer[other_start + i];
+					}
+				}
+
+				std::swap(batch.index_buffer[2 + polygon_index + 1], other.batch.index_buffer[2 + other.polygon_index + 1]); //Swap the sizes too.
+			}
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
