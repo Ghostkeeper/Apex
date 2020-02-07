@@ -1465,4 +1465,26 @@ TEST_F(SimplePolygonBatchViewFixture, Size) {
 	EXPECT_EQ(triangle_and_square[1].size(), 4) << "The square has 4 vertices.";
 }
 
+/*!
+ * Tests swapping simple polygons within the same batch.
+ *
+ * This implementation won't need to actually swap the data, just the indices
+ * pointing to the data.
+ */
+TEST_F(SimplePolygonBatchViewFixture, SwapWithinBatch) {
+	SimplePolygon triangle_view = triangle_and_square[0];
+	SimplePolygon square_view = triangle_and_square[1];
+	triangle_view.swap(square_view);
+
+	ASSERT_EQ(triangle_view.size(), square.size()) << "The triangle and square were swapped, so the size must now be the square's size.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], square[i]) << "The triangle now contains the square's vertices.";
+	}
+
+	ASSERT_EQ(square_view.size(), triangle.size()) << "The triangle and square were swapped, so the size must now be the square's size.";
+	for(size_t i = 0; i < square_view.size(); ++i) {
+		EXPECT_EQ(square_view[i], triangle[i]) << "The square now contains the triangle's vertices.";
+	}
+}
+
 }
