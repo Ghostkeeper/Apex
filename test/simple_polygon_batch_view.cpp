@@ -1472,10 +1472,10 @@ TEST_F(SimplePolygonBatchViewFixture, Size) {
  * pointing to the data.
  */
 TEST_F(SimplePolygonBatchViewFixture, SwapWithinBatch) {
-	SimplePolygon triangle_view = triangle_and_square[0];
 	SimplePolygon square_view = triangle_and_square[1];
-	triangle_view.swap(square_view);
+	triangle_and_square[0].swap(square_view);
 
+	const SimplePolygon triangle_view = triangle_and_square[0];
 	ASSERT_EQ(triangle_view.size(), square.size()) << "The triangle and square were swapped, so the size must now be the square's size.";
 	for(size_t i = 0; i < triangle_view.size(); ++i) {
 		EXPECT_EQ(triangle_view[i], square[i]) << "The triangle now contains the square's vertices.";
