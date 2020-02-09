@@ -50,6 +50,9 @@ class SimplePolygon :
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
 		public SimplePolygonArea<SimplePolygon<VertexStorage>>,
 		public SimplePolygonTranslate<SimplePolygon<VertexStorage>> {
+
+	template<class OtherVertexStorage>
+	friend class SimplePolygon; //Allow touching the privates of other instances of this template.
 public:
 	/*!
 	 * Iterates one loop around the polygon.
@@ -750,8 +753,12 @@ public:
 
 	/*!
 	 * Swaps the contents of this simple polygon instance with that of another.
+	 * \param other The simple polygon to swap the content with.
+	 * \tparam OtherVertexStorage The type of storage that the polygon to swap
+	 * with is using.
 	 */
-	void swap(SimplePolygon& other) {
+	template<class OtherVertexStorage>
+	void swap(SimplePolygon<OtherVertexStorage>& other) {
 		vertices.swap(other.vertices);
 	}
 
