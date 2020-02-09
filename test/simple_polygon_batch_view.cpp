@@ -1513,4 +1513,27 @@ TEST_F(SimplePolygonBatchViewFixture, SwapDifferentBatch) {
 	}
 }
 
+/*!
+ * Tests swapping the contents of a view with that of a vector.
+ */
+TEST_F(SimplePolygonBatchViewFixture, SwapVector) {
+	SimplePolygon target; //Vector-based simple polygon.
+	for(size_t i = 0; i < 20; ++i) {
+		target.emplace_back(i * 121, i * 133);
+	}
+	SimplePolygon original = target; //Make a copy so that we can compare with the original state.
+
+	SimplePolygon triangle_view = triangle_and_square[0];
+	triangle_view.swap(target);
+
+	ASSERT_EQ(triangle_view.size(), original.size()) << "The triangle was swapped with the target, so it must now have the target's original size.";
+	for(size_t i = 0; i < triangle_view.size(); ++i) {
+		EXPECT_EQ(triangle_view[i], original[i]) << "The triangle was swapped with the target, so it must now have the target's original vertices.";
+	}
+	ASSERT_EQ(target.size(), triangle.size()) << "The target was swapped with the triangle, so it must now have the triangle's original size.";
+	for(size_t i = 0; i < target.size(); ++i) {
+		EXPECT_EQ(target[i], triangle[i]) << "The target was swapped with the triangle, so it must now have the triangle's original vertices.";
+	}
+}
+
 }

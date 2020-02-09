@@ -991,6 +991,39 @@ protected:
 			}
 		}
 
+		/*!
+		 * Exchange the contents of this view on a simple polygon batch with the
+		 * contents of another type of vertex storage for simple polygons: a
+		 * vector.
+		 *
+		 * This allows swapping simple polygon data between two simple polygons
+		 * with different storage types.
+		 * \param other The vector of vertices to swap the data with.
+		 */
+		void swap(std::vector<Point2>& other) {
+			const size_t my_size = size();
+			const size_t other_size = other.size();
+			reserve(other_size);
+			other.reserve(my_size);
+
+			const size_t my_start = start_index();
+			size_t i = 0;
+			for(; i < std::min(my_size, other_size); ++i) {
+				std::swap(batch.vertex_buffer[my_start + i], other[i]);
+			}
+			if(my_size > other_size) {
+				for(; i < my_size; ++i) {
+					other.push_back(batch.vertex_buffer[i]);
+				}
+			} else if(other_size > my_size) {
+				for(; i < other_size; ++i) {
+					batch.vertex_buffer[my_start + i] = other[i];
+				}
+				other.resize(my_size, Point2(0, 0)); //Shrink the other one to discard any remaining vertices.
+			}
+			batch.index_buffer[2 + polygon_index * 3 + 1] = other_size;
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
