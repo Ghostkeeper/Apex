@@ -160,11 +160,11 @@ TEST_F(SimplePolygonBatchViewFixture, AssignInitialiserList) {
 
 	//Repeat for the second polygon in the batch.
 	SimplePolygon square_view = triangle_and_square[1];
-	list = {Point2(12, 21), Point2(34, 43), Point2(56, 65), Point2(78, 87)};
-	square_view.assign(list);
-	ASSERT_EQ(square_view.size(), list.size()) << "All of the vertices of the initialiser list must have been taken over.";
+	std::initializer_list<Point2> list2 = {Point2(12, 21), Point2(34, 43), Point2(56, 65), Point2(78, 87)};
+	square_view.assign(list2);
+	ASSERT_EQ(square_view.size(), list2.size()) << "All of the vertices of the initialiser list must have been taken over.";
 	i = 0;
-	for(const Point2& vertex : list) {
+	for(const Point2& vertex : list2) {
 		EXPECT_EQ(square_view[i++], vertex);
 	}
 }
