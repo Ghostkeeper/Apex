@@ -71,7 +71,7 @@ if(BUILD_TESTS)
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${test_dirname})
 
 		add_executable(${test_case} test/${test_path}.cpp ${test_helpers})
-		target_link_libraries(${test_case} apex apex_test_helpers ${GOOGLETEST_BOTH_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
+		target_link_libraries(${test_case} PRIVATE apex apex_test_helpers ${GOOGLETEST_BOTH_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
 		add_dependencies(${test_case} GoogleTest apex_test_helpers)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
