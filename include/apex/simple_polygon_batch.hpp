@@ -50,7 +50,7 @@ namespace apex {
  * swap out dependencies in automated tests.
  */
 class SimplePolygonBatch {
-protected:
+protected:  
 	/*!
 	 * Provides a view on the data of one simple polygon inside a
 	 * `SimplePolygonBatch`.
@@ -1264,6 +1264,39 @@ public:
 
 		//Store ranges for each simple polygon in the index buffer.
 		index_buffer.insert(index_buffer.end(), num_simple_polygons * 3, 0); //Insert a 0 for the start, the size and the reserved memory, for each polygon.
+	}
+
+	/*!
+	 * Constructs a new batch of simple polygons, repeating a given simple
+	 * polygon a number of times.
+	 *
+	 * The data of the simple polygon is copied a number of times. The memory
+	 * reserved is exactly the amount necessary for all the copies of this
+	 * simple polygon.
+	 * \param num_simple_polygons How many copies of the given simple polygon to
+	 * create.
+	 * \param repeated_simple_polygon The simple polygon to copy.
+	 */
+	SimplePolygonBatch(const size_t num_simple_polygons, const SimplePolygon<>& repeated_simple_polygon) {
+		const size_t vertices_per_polygon = repeated_simple_polygon.size();
+
+		//Fill the entire index buffer first (for cache locality).
+		index_buffer.reserve(num_simple_polygons * 3 + 2);
+		index_buffer.push_back(num_simple_polygons);
+		index_buffer.push_back(num_simple_polygons * vertices_per_polygon); //Position of next polygon (after all of the initial polygons are inserted).
+		for(size_t i = 0; i < num_simple_polygons; ++i) {
+			index_buffer.push_back(i * vertices_per_polygon); //Start index.
+			index_buffer.push_back(vertices_per_polygon); //Size.
+			index_buffer.push_back((i + 1) * vertices_per_polygon); //End index.
+		}
+
+		//Fill in the vertex buffer then, repeating the same polygon over and over again.
+		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
+		for(size_t i = 0; i < num_simple_polygons; ++i) {
+			for(const Point2& vertex : repeated_simple_polygon) {
+				vertex_buffer.push_back(vertex);
+			}
+		}
 	}
 
 	/*!
