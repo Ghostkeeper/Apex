@@ -1333,7 +1333,7 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon<const View> operator [](const size_t position) const {
+	const SimplePolygon<const View> operator [](const size_t position) const {
 		/*This code uses a const_cast to remove the constness of the batch.
 		This would be unsafe, but since we're building a SimplePolygon based on
 		a const view, the const view will guard the constness of the batch. The
