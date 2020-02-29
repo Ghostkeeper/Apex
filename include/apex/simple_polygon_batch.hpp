@@ -1381,6 +1381,22 @@ public:
 	}
 
 	/*!
+	 * Returns the number of simple polygons this batch can contain without
+	 * needing to allocate more memory for the index buffer.
+	 *
+	 * This only concerns the index buffer which tracks the size, capacity and
+	 * position of the vertex data for each simple polygon in the batch. This
+	 * does not concern the vertex data. How many simple polygons the batch can
+	 * actually hold without reallocating the vertex buffer depends on the size
+	 * of these simple polygons and how often the have been reallocated before.
+	 * \return The number of simple polygons this batch can contain without
+	 * needing to allocate more memory for the index buffer.
+	 */
+	size_t capacity() const {
+		return (index_buffer.capacity() - 2) / 3; //-2 for the two starting vertices. Divide by 3 because we're storing 3 numbers per polygon.
+	}
+
+	/*!
 	 * Copies a simple polygon into the batch.
 	 *
 	 * The data of the simple polygon is copied completely, making this

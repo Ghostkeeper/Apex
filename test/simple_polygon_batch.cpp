@@ -184,6 +184,19 @@ TEST(SimplePolygonBatch, AccessViewNonConstReferenceModification) {
 }
 
 /*!
+ * Tests the capacity of the batch.
+ */
+TEST_F(SimplePolygonBatchFixture, Capacity) {
+	ASSERT_GE(triangle_and_square.capacity(), triangle_and_square.size());
+
+	//Now try if it still holds after a bunch of reallocations.
+	for(size_t i = 0; i < 100; ++i) {
+		triangle_and_square.push_back(triangle);
+	}
+	ASSERT_GE(triangle_and_square.capacity(), triangle_and_square.size());
+}
+
+/*!
  * Tests the push_back operation that copies a simple polygon into the batch.
  */
 TEST_F(SimplePolygonBatchFixture, PushBackCopy) {
