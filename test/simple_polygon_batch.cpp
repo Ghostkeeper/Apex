@@ -88,6 +88,21 @@ TEST(SimplePolygonBatch, ConstructorReservingSeveral) {
 }
 
 /*!
+ * Tests the repeating constructor when inserting an empty polygon to repeat.
+ */
+TEST(SimplePolygonBatch, ConstructorRepeatingEmpty) {
+	const SimplePolygon empty;
+	const SimplePolygonBatch batch1(4, empty); //4 copies of the empty simple polygon.
+	EXPECT_EQ(batch1.size(), 4) << "There should be 4 polygons pre-filled. 4 empty polygons.";
+	for(size_t polygon = 0; polygon < batch1.size(); ++polygon) {
+		EXPECT_TRUE(batch1[polygon].empty()) << "The individual simple polygons must be empty.";
+	}
+
+	const SimplePolygonBatch batch2(0, empty); //No copies at all.
+	EXPECT_EQ(batch2.size(), 0) << "This batch should be empty since we gave it 0 copies.";
+}
+
+/*!
  * Tests the copy constructor.
  */
 TEST_F(SimplePolygonBatchFixture, ConstructorCopy) {
