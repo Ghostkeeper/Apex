@@ -1412,6 +1412,17 @@ public:
 	size_t size() const {
 		return index_buffer[0];
 	}
+protected:
+	/*!
+	 * A separate buffer that contains the positions in the
+	 * \ref SimplePolygonBatch.vertex_buffer where each simple polygon starts
+	 * and ends, as well as the total number of simple polygons.
+	 *
+	 * The total number of simple polygons is stored in the first element. Every
+	 * pair of numbers afterwards is a position in the vertex buffer where each
+	 * simple polygon starts and ends.
+	 */
+	std::vector<size_t> index_buffer;
 
 	/*!
 	 * The main buffer that contains the vertex data.
@@ -1427,17 +1438,6 @@ public:
 	 * buffer. Measure whether this actually improves performance.
 	 */
 	std::vector<Point2> vertex_buffer;
-protected:
-	/*!
-	 * A separate buffer that contains the positions in the
-	 * \ref SimplePolygonBatch.vertex_buffer where each simple polygon starts
-	 * and ends, as well as the total number of simple polygons.
-	 *
-	 * The total number of simple polygons is stored in the first element. Every
-	 * pair of numbers afterwards is a position in the vertex buffer where each
-	 * simple polygon starts and ends.
-	 */
-	std::vector<size_t> index_buffer;
 };
 
 }
