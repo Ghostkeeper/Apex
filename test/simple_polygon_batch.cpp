@@ -103,6 +103,28 @@ TEST(SimplePolygonBatch, ConstructorRepeatingEmpty) {
 }
 
 /*!
+ * Tests the repeating constructor that repeats a simple polygon.
+ */
+TEST(SimplePolygonBatch, ConstructorRepeating) {
+	SimplePolygon polygon;
+	polygon.emplace_back(100, 0);
+	polygon.emplace_back(0, 400);
+	polygon.emplace_back(-250, 0);
+
+	const SimplePolygonBatch batch1(6, polygon); //6 copies of this polygon.
+	EXPECT_EQ(batch1.size(), 6) << "There should be 6 polygons pre-filled.";
+	for(size_t polygon_index = 0; polygon_index < batch1.size(); ++polygon_index) {
+		ASSERT_EQ(batch1[polygon_index].size(), polygon.size()) << "Each polygon in the batch must be equal size as the original.";
+		for(size_t vertex_index = 0; vertex_index < polygon.size(); ++vertex_index) {
+			EXPECT_EQ(batch1[polygon_index][vertex_index], polygon[vertex_index]) << "The contents of each polygon in the batch must be the same as the original.";
+		}
+	}
+
+	const SimplePolygonBatch batch2(0, polygon); //0 copies of this polygon.
+	EXPECT_EQ(batch2.size(), 0) << "This batch should be empty since we gave it 0 copies.";
+}
+
+/*!
  * Tests the copy constructor.
  */
 TEST_F(SimplePolygonBatchFixture, ConstructorCopy) {
