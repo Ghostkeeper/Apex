@@ -1233,6 +1233,24 @@ protected:
 
 public:
 	/*!
+	 * This is an iterator that allows iterating over the simple polygons inside
+	 * this batch.
+	 *
+	 * The iterator is of the random access type, mimicking that of a vector.
+	 * You can freely iterate back and forth, jump ahead with multiple indices
+	 * at once, repeatedly iterate, etc.
+	 *
+	 * Getting the underlying vector within the batch requires constructing the
+	 * view on the batch and a simple polygon around it. This involves some
+	 * performance cost. As always, try not to use the individual simple
+	 * polygons within a batch; always use batch operations for maximum
+	 * performance.
+	 */
+	struct const_iterator {
+		
+	};
+
+	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
 	SimplePolygonBatch() {
