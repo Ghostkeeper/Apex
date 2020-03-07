@@ -1245,9 +1245,43 @@ public:
 	 * performance cost. As always, try not to use the individual simple
 	 * polygons within a batch; always use batch operations for maximum
 	 * performance.
+	 *
+	 * Since the iterator points at a hypothetical simple polygon inside the
+	 * batch and the view on the batch needs to have knowledge of which batch
+	 * it's viewing on, this iterator also needs to store which batch it's
+	 * viewing on. This has the downside that the iterator takes twice as much
+	 * memory, in order to store a reference to the batch as well as which index
+	 * in the batch. However it also has the upside that these iterators don't
+	 * ever get invalidated as long as the same polygon is in that index.
 	 */
 	struct const_iterator {
-		
+		/*!
+		 * The batch that this iterator is iterating over.
+		 */
+		SimplePolygonBatch& batch;
+
+		/*!
+		 * The index of a simple polygon in the batch.
+		 */
+		size_t index;
+
+		/*!
+		 * Constructs a fresh const_iterator pointing to a batch and an index.
+		 */
+		const_iterator(SimplePolygonBatch& batch, const size_t index) : batch(batch), index(index) {};
+
+		/*!
+		 * Returns the simple polygon that the iterator is currently pointing
+		 * at.
+		 *
+		 * This actually constructs a simple polygon based on a view on the
+		 * batch. This is not very efficient. It's better to use batch
+		 * operations on the batch, rather than working with individual
+		 * polygons.
+		 */
+		SimplePolygon<SimplePolygonBatch::View> operator*() {
+			return batch[index];
+		}
 	};
 
 	/*!
