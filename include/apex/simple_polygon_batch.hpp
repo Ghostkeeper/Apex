@@ -1231,7 +1231,6 @@ protected:
 		}
 	};
 
-public:
 	/*!
 	 * This is an iterator that allows iterating over the simple polygons inside
 	 * this batch.
@@ -1259,7 +1258,7 @@ public:
 	 * entire iterator will be const.
 	 */
 	template<typename BatchType>
-	struct iterator {
+	struct Iterator {
 		/*!
 		 * The batch that this iterator is iterating over.
 		 */
@@ -1273,7 +1272,7 @@ public:
 		/*!
 		 * Constructs a fresh const_iterator pointing to a batch and an index.
 		 */
-		iterator(BatchType& batch, const size_t index) : batch(batch), index(index) {};
+		Iterator(BatchType& batch, const size_t index) : batch(batch), index(index) {};
 
 		/*!
 		 * Returns the simple polygon that the iterator is currently pointing
@@ -1288,6 +1287,10 @@ public:
 			return batch[index];
 		}
 	};
+
+public:
+	using iterator = Iterator<SimplePolygonBatch>;
+	using const_iterator = Iterator<const SimplePolygonBatch>;
 
 	/*!
 	 * Construct a new vector of vectors, completely empty.
@@ -1468,6 +1471,15 @@ public:
 			}
 		}
 		return true;
+	}
+
+	/*!
+	 * Gives an iterator to the first simple polygon in the batch.
+	 *
+	 * If the batch is empty, the returned iterator will be equal to ``end()``.
+	 */
+	const_iterator begin() const {
+		return const_iterator(*this, 0);
 	}
 
 	/*!
