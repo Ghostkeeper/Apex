@@ -1282,7 +1282,7 @@ protected:
 		 * Copies an ``Iterator``.
 		 * \param original The iterator to copy.
 		 */
-		Iterator(const Iterator& original) : batch(original.batch), index(original.index) {};
+		Iterator(const Iterator<BatchType>& original) : batch(original.batch), index(original.index) {};
 
 		/*!
 		 * Returns the simple polygon that the iterator is currently pointing
