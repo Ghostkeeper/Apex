@@ -224,10 +224,20 @@ TEST(SimplePolygonBatch, AccessViewNonConstReferenceModification) {
  * Tests dereferencing a const iterator.
  */
 TEST_F(SimplePolygonBatchFixture, ConstIteratorDereferencing) {
-	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this select the correct overload.
+	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this selects the correct overload.
 	SimplePolygonBatch::const_iterator first = const_batch.begin();
 	SimplePolygon triangle_view = *first;
 	EXPECT_EQ(triangle_view.size(), 3) << "Verify that this references to the triangle.";
+}
+
+/*!
+ * Tests duplicating a const iterator.
+ */
+TEST_F(SimplePolygonBatchFixture, ConstIteratorCopy) {
+	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this selects the correct overload.
+	SimplePolygonBatch::const_iterator first = const_batch.begin();
+	SimplePolygonBatch::const_iterator first_clone = first;
+	EXPECT_EQ((*first_clone).size(), 3) << "Verify that this references to the triangle.";
 }
 
 /*!
