@@ -1253,12 +1253,17 @@ public:
 	 * memory, in order to store a reference to the batch as well as which index
 	 * in the batch. However it also has the upside that these iterators don't
 	 * ever get invalidated as long as the same polygon is in that index.
+	 * \tparam The type of the batch that this iterator is pointing to. This
+	 * must be either a normal ``SimplePolygonBatch`` or a ``const
+	 * SimplePolygonBatch``. Depending on whether this is const or not, the
+	 * entire iterator will be const.
 	 */
-	struct const_iterator {
+	template<typename BatchType>
+	struct iterator {
 		/*!
 		 * The batch that this iterator is iterating over.
 		 */
-		SimplePolygonBatch& batch;
+		BatchType& batch;
 
 		/*!
 		 * The index of a simple polygon in the batch.
@@ -1268,7 +1273,7 @@ public:
 		/*!
 		 * Constructs a fresh const_iterator pointing to a batch and an index.
 		 */
-		const_iterator(SimplePolygonBatch& batch, const size_t index) : batch(batch), index(index) {};
+		iterator(BatchType& batch, const size_t index) : batch(batch), index(index) {};
 
 		/*!
 		 * Returns the simple polygon that the iterator is currently pointing
@@ -1279,7 +1284,7 @@ public:
 		 * operations on the batch, rather than working with individual
 		 * polygons.
 		 */
-		SimplePolygon<SimplePolygonBatch::View> operator*() {
+		SimplePolygon<const SimplePolygonBatch::View> operator*() const {
 			return batch[index];
 		}
 	};
