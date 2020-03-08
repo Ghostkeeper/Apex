@@ -220,6 +220,13 @@ TEST(SimplePolygonBatch, AccessViewNonConstReferenceModification) {
 	EXPECT_EQ(other_second.size(), 1) << "The polygon was resized in another instance derived from the same batch.";
 }
 
+TEST_F(SimplePolygonBatchFixture, ConstIteratorDereferencing) {
+	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this select the correct overload.
+	SimplePolygonBatch::const_iterator first = const_batch.begin();
+	SimplePolygon triangle_view = *first;
+	EXPECT_EQ(triangle_view.size(), 3);
+}
+
 /*!
  * Tests the capacity of the batch.
  */
