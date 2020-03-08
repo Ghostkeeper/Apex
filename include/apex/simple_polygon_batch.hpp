@@ -1270,9 +1270,19 @@ protected:
 		size_t index;
 
 		/*!
-		 * Constructs a fresh const_iterator pointing to a batch and an index.
+		 * Constructs a fresh ``Iterator`` pointing to a batch and an index
+		 * inside that batch.
+		 * \param batch The batch to which the iterator points.
+		 * \param index The index of the simple polygon within that batch to
+		 * which this iterator is currently pointing.
 		 */
 		Iterator(BatchType& batch, const size_t index) : batch(batch), index(index) {};
+
+		/*!
+		 * Copies an ``Iterator``.
+		 * \param original The iterator to copy.
+		 */
+		Iterator(const Iterator& original) : batch(original.batch), index(original.index) {};
 
 		/*!
 		 * Returns the simple polygon that the iterator is currently pointing
