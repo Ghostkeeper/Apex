@@ -236,6 +236,16 @@ TEST_F(SimplePolygonBatchFixture, ConstIteratorDereferencing) {
 TEST_F(SimplePolygonBatchFixture, ConstIteratorCopy) {
 	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this selects the correct overload.
 	SimplePolygonBatch::const_iterator first = const_batch.begin();
+	SimplePolygonBatch::const_iterator first_clone = SimplePolygonBatch::const_iterator(first);
+	EXPECT_EQ((*first_clone).size(), 3) << "Verify that this references to the triangle.";
+}
+
+/*!
+ * Tests duplicating a const iterator through the assignment operator.
+ */
+TEST_F(SimplePolygonBatchFixture, ConstIteratorAssignment) {
+	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this selects the correct overload.
+	SimplePolygonBatch::const_iterator first = const_batch.begin();
 	SimplePolygonBatch::const_iterator first_clone = first;
 	EXPECT_EQ((*first_clone).size(), 3) << "Verify that this references to the triangle.";
 }

@@ -1285,6 +1285,12 @@ protected:
 		Iterator(const Iterator<BatchType>& original) = default;
 
 		/*!
+		 * Assigns an ``Iterator`` to a different version, copying it.
+		 * \param original The iterator to copy.
+		 */
+		Iterator<BatchType>& operator =(const Iterator<BatchType>& original) = default;
+
+		/*!
 		 * Returns the simple polygon that the iterator is currently pointing
 		 * at.
 		 *
@@ -1293,7 +1299,7 @@ protected:
 		 * operations on the batch, rather than working with individual
 		 * polygons.
 		 */
-		SimplePolygon<const SimplePolygonBatch::View> operator*() const {
+		SimplePolygon<const SimplePolygonBatch::View> operator *() const {
 			return batch[index];
 		}
 	};
