@@ -1287,6 +1287,7 @@ protected:
 		/*!
 		 * Assigns an ``Iterator`` to a different version, copying it.
 		 * \param original The iterator to copy.
+		 * \return A reference to this iterator.
 		 */
 		Iterator<BatchType>& operator =(const Iterator<BatchType>& original) = default;
 
@@ -1301,6 +1302,16 @@ protected:
 		 */
 		SimplePolygon<const SimplePolygonBatch::View> operator *() const {
 			return batch[index];
+		}
+
+		/*!
+		 * Check whether two iterators point to the same simple polygon.
+		 * \param other The iterator to compare with.
+		 * \return ``True`` if the other iterator points to the same simple
+		 * polygon, or ``False`` if it doesn't.
+		 */
+		bool operator ==(const Iterator<BatchType>& other) {
+			return index == other.index && &batch == &other.batch;
 		}
 	};
 
