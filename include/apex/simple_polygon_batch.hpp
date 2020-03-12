@@ -1516,6 +1516,7 @@ public:
 	 * Gives an iterator to the first simple polygon in the batch.
 	 *
 	 * If the batch is empty, the returned iterator will be equal to ``end()``.
+	 * \return An iterator to the first simple polygon in the batch.
 	 */
 	const_iterator begin() const {
 		return const_iterator(*this, 0);
@@ -1535,6 +1536,15 @@ public:
 	 */
 	size_t capacity() const {
 		return (index_buffer.capacity() - 2) / 3; //-2 for the two starting vertices. Divide by 3 because we're storing 3 numbers per polygon.
+	}
+
+	/*!
+	 * Gives an iterator to the element beyond the last simple polygon in the
+	 * batch.
+	 * \return An iterator to beyond the last simple polygon in the batch.
+	 */
+	const_iterator end() const {
+		return const_iterator(*this, size());
 	}
 
 	/*!
