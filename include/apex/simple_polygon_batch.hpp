@@ -1310,7 +1310,7 @@ protected:
 		 * \return ``True`` if the other iterator points to the same simple
 		 * polygon, or ``False`` if it doesn't.
 		 */
-		bool operator ==(const Iterator<BatchType>& other) {
+		bool operator ==(const Iterator<BatchType>& other) const {
 			return index == other.index && &batch == &other.batch;
 		}
 	};
