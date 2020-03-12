@@ -1313,6 +1313,18 @@ protected:
 		bool operator ==(const Iterator<BatchType>& other) const {
 			return index == other.index && &batch == &other.batch;
 		}
+
+		/*!
+		 * Increments the iterator to point to the next simple polygon within
+		 * the batch.
+		 *
+		 * This is the prefix increment operator. It's used as ``++it;``.
+		 * \return A reference to the incremented iterator.
+		 */
+		Iterator<BatchType>& operator++() {
+			++index;
+			return *this;
+		}
 	};
 
 public:
