@@ -1307,11 +1307,21 @@ protected:
 		/*!
 		 * Check whether two iterators point to the same simple polygon.
 		 * \param other The iterator to compare with.
-		 * \return ``True`` if the other iterator points to the same simple
-		 * polygon, or ``False`` if it doesn't.
+		 * \return ``true`` if the other iterator points to the same simple
+		 * polygon, or ``false`` if it doesn't.
 		 */
 		bool operator ==(const Iterator<BatchType>& other) const {
 			return index == other.index && &batch == &other.batch;
+		}
+
+		/*!
+		 * Check whether two iterators don't point to the same simple polygon.
+		 * \param other The iterator to compare with.
+		 * \return ``false`` if the other iterator points to the same simple
+		 * polygon, or ``true`` if it doesn't.
+		 */
+		bool operator !=(const Iterator<BatchType>& other) const {
+			return !(*this == other);
 		}
 
 		/*!
