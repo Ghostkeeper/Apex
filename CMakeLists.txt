@@ -27,6 +27,9 @@ target_compile_features(apex INTERFACE cxx_noexcept)
 target_compile_features(apex INTERFACE cxx_relaxed_constexpr)
 target_compile_features(apex INTERFACE cxx_rvalue_references)
 target_compile_features(apex INTERFACE cxx_right_angle_brackets)
+if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
+	message(FATAL_ERROR "GCC version must be at least 8.0 due to fixes in const overload selection!")
+endif()
 
 #Tests.
 option(BUILD_TESTS "Build tests to verify correctness of the library." OFF)
