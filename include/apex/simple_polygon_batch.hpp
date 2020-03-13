@@ -1335,6 +1335,19 @@ protected:
 			++index;
 			return *this;
 		}
+
+		/*!
+		 * Increments the iterator to point to the next simple polygon within
+		 * the batch.
+		 *
+		 * This is the postfix increment operator. It's used as ``it++;``.
+		 * \return The position of the iterator before incrementing it.
+		 */
+		Iterator<BatchType> operator++(int) {
+			Iterator<BatchType> result(*this); //A copy before incrementing to return.
+			++index;
+			return result;
+		}
 	};
 
 public:
