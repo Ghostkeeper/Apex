@@ -9,14 +9,14 @@ name: Automated Tests
 on: [push, pull_request]
 
 jobs:
-    ctest: #Performs the CMake tests.
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout
-            uses: actions/checkout@v2
-        - name: CMake
-            run: cmake .
-        - name: Make
-            run: make
-        - name: CTest
-            run: ctest --verbose
+  ctest: #Performs the CMake tests.
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: CMake
+      run: cmake .
+    - name: Make
+      run: make
+    - name: CTest
+      run: ctest --verbose
