@@ -12,6 +12,7 @@ Requirements
 ----
 Apex is a header-only library, meaning that there are no binaries to distribute. To use Apex, only the files in the `include` folder need to be included into your project. However some dependencies are required as well:
 * A C++17-compliant compiler. Apex is tested using GCC and MinGW-w64.
+  * When using GCC, use at GCC-8 or later. In GCC-7.4 there are still bugs that prevent this library from compiling.
 * Boost.Compute is used to interact with OpenCL. This is also a header-only library.
   * Boost.Compute requires the headers of Boost itself.
 * An installation of OpenCL should be present on the user's computer to leverage the OpenCL capabilities. If this is not present, Apex will fall back to host-only code at the cost of performance.
