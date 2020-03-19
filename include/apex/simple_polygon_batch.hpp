@@ -26,8 +26,8 @@ namespace apex {
  * allows those compute devices to parallelise better, dividing the work and
  * ultimately coming up with an answer sooner.
  *
- * This class is essentially a vector-of-vectors implementation. The data is
- * stored in a single buffer, which allows that buffer to be transferred to
+ * This class is essentially a vector-of-vectors implementation. The vertex data
+ * is stored in a single buffer, which allows that buffer to be transferred to
  * compute devices in one single copy, rather than having to spraggle the data
  * from many different places on heap memory (at the mercy of where each
  * separate vector left the data). However a second buffer is required to keep
@@ -41,11 +41,18 @@ namespace apex {
  * gaps halfway in the buffer to move them to, so the buffer will only grow
  * unless it is optimised.
  *
- * The index buffer contains the total number of simple polygons, the location
- * of the next polygon in the buffer, and the start, size and end of each of
- * them. This way, the two buffers contain the complete state of the batch, and
- * copying them both to a compute device allows all of the same computations
- * there.
+ * The \ref views vector is a set of simple polygons based on views on the
+ * batch. These simple polygons use the internal ``View`` class as their data
+ * structure which allows them to access and modify the batch safely. These
+ * polygons then behave in the same way as if they are not part of a batch at
+ * all. However individually changing polygons within a batch this way is less
+ * efficient than group operations (and even marginally less efficient than if
+ * the simple polygon would not be inside a batch).
+ *
+ * The vertex data and the views together form the complete state of the batch.
+ * They are intended to be sent together as two buffers to the compute devices
+ * of OpenCL. This allows all of the batch operations to be executed on the
+ * compute devices.
  * \tparam SimplePolygon An implementation of simple polygons to use. Used to
  * swap out dependencies in automated tests.
  */
