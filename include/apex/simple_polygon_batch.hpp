@@ -41,9 +41,9 @@ namespace apex {
  * gaps halfway in the buffer to move them to, so the buffer will only grow
  * unless it is optimised.
  *
- * The \ref views vector is a set of simple polygons based on views on the
- * batch. These simple polygons use the internal ``View`` class as their data
- * structure which allows them to access and modify the batch safely. These
+ * The \ref simple_polygons vector is a set of simple polygons based on views on
+ * the batch. These simple polygons use the internal \ref View class as their
+ * data source, which allows them to access and modify the batch safely. These
  * polygons then behave in the same way as if they are not part of a batch at
  * all. However individually changing polygons within a batch this way is less
  * efficient than group operations (and even marginally less efficient than if
@@ -1611,15 +1611,16 @@ public:
 	}
 protected:
 	/*!
-	 * A separate buffer that contains the positions in the
-	 * \ref SimplePolygonBatch.vertex_buffer where each simple polygon starts
-	 * and ends, as well as the total number of simple polygons.
+	 * The list of simple polygons within this batch.
 	 *
-	 * The total number of simple polygons is stored in the first element. Every
-	 * pair of numbers afterwards is a position in the vertex buffer where each
-	 * simple polygon starts and ends.
+	 * The list of simple polygons is ordered, so the order matters. Changing
+	 * the order means changing the batch.
+	 *
+	 * The simple polygons in this vector are based of the \ref View data
+	 * source. This ``View`` refers to positions within the vertex buffer of the
+	 * batch.
 	 */
-	std::vector<size_t> index_buffer;
+	std::vector<SimplePolygon<View>> simple_polygons;
 
 	/*!
 	 * The main buffer that contains the vertex data.
