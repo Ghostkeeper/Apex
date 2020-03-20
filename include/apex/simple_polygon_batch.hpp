@@ -122,9 +122,11 @@ protected:
 		 * \param polygon_index The simple polygon within that batch that this
 		 * view is viewing on.
 		 */
-		View(SimplePolygonBatch& batch, const size_t polygon_index) :
+		View(SimplePolygonBatch& batch, const size_t start_index, const size_t size, const size_t capacity) :
 			batch(batch),
-			polygon_index(polygon_index) {};
+			start_index(start_index),
+			num_vertices(size),
+			current_capacity(capacity) {};
 
 		/*!
 		 * Compares two simple polygons for equality.
@@ -161,7 +163,7 @@ protected:
 		 * \return The vertex at the specified index.
 		 */
 		const Point2& operator [](const size_t index) const {
-			return batch.vertex_buffer[start_index() + index];
+			return batch.vertex_buffer[start_index + index];
 		}
 
 		/*!
@@ -170,7 +172,7 @@ protected:
 		 * \return The vertex at the specified index.
 		 */
 		Point2& operator [](const size_t index) {
-			return batch.vertex_buffer[start_index() + index];
+			return batch.vertex_buffer[start_index + index];
 		}
 
 		/*!
@@ -182,9 +184,9 @@ protected:
 		void assign(const size_t count, const Point2& value) {
 			reserve(count);
 			for(size_t i = 0; i < count; ++i) {
-				batch.vertex_buffer[start_index() + i] = value;
+				batch.vertex_buffer[start_index + i] = value;
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] = count; //Update the size, clearing any vertices that we didn't override if the original was bigger.
+			num_vertices = count; //Update the size, discarding any vertices that we didn't override if the original was bigger.
 		}
 
 		/*!
@@ -201,13 +203,13 @@ protected:
 			size_t current_size = 0;
 			for(; begin != end; ++current_size) {
 				if(current_size >= capacity()) {
-					batch.index_buffer[2 + polygon_index * 3 + 1] = current_size; //Reallocation needs to know the size.
+					num_vertices = current_size; //Reallocation needs to know the size.
 					reallocate((current_size + 1) * 2); //With generic iterators, we won't know the size beforehand since we can't always iterate over the input twice to see how long it goes on.
 				}
-				batch.vertex_buffer[start_index() + current_size] = *begin;
+				batch.vertex_buffer[start_index + current_size] = *begin;
 				begin++;
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] = current_size; //Update the size, clearing any vertices that we didn't override if the original was bigger.
+			num_vertices = current_size; //Update the size, clearing any vertices that we didn't override if the original was bigger.
 		}
 
 		/*!
@@ -219,9 +221,9 @@ protected:
 			reserve(initialiser_list.size());
 			size_t position = 0;
 			for(const Point2& vertex : initialiser_list) {
-				batch.vertex_buffer[start_index() + position++] = vertex;
+				batch.vertex_buffer[start_index + position++] = vertex;
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] = initialiser_list.size(); //Update the size, clearing any vertices that we didn't override if the original was bigger.
+			num_vertices = initialiser_list.size(); //Update the size, clearing any vertices that we didn't override if the original was bigger.
 		}
 
 		/*!
@@ -237,7 +239,7 @@ protected:
 			if(position >= size()) {
 				throw std::out_of_range("Out of range for this view on a simple polygon.");
 			}
-			return batch.vertex_buffer[start_index() + position];
+			return batch.vertex_buffer[start_index + position];
 		}
 
 		/*!
@@ -253,7 +255,7 @@ protected:
 			if(position >= size()) {
 				throw std::out_of_range("Out of range for this view on a simple polygon.");
 			}
-			return batch.vertex_buffer[start_index() + position];
+			return batch.vertex_buffer[start_index + position];
 		}
 
 		/*!
@@ -267,7 +269,7 @@ protected:
 		 * polygon.
 		 */
 		const Point2& back() const {
-			return batch.vertex_buffer[start_index() + size() - 1];
+			return batch.vertex_buffer[start_index + size() - 1];
 		}
 
 		/*!
@@ -281,7 +283,7 @@ protected:
 		 * polygon.
 		 */
 		Point2& back() {
-			return batch.vertex_buffer[start_index() + size() - 1];
+			return batch.vertex_buffer[start_index + size() - 1];
 		}
 
 		/*!
@@ -297,7 +299,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		iterator begin() {
-			return batch.vertex_buffer.begin() + start_index();
+			return batch.vertex_buffer.begin() + start_index;
 		}
 
 		/*!
@@ -313,7 +315,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator begin() const {
-			return batch.vertex_buffer.begin() + start_index();
+			return batch.vertex_buffer.begin() + start_index;
 		}
 
 		/*!
@@ -322,7 +324,7 @@ protected:
 		 * \return The capacity of this simple polygon.
 		 */
 		size_t capacity() const {
-			return end_index() - start_index();
+			return current_capacity;
 		}
 
 		/*!
@@ -364,7 +366,7 @@ protected:
 		 * re-allocated.
 		 */
 		void clear() noexcept {
-			batch.index_buffer[2 + polygon_index * 3 + 1] = 0; //Set the size to 0. 2+ for the 2 starting vertices, +1 to set the size.
+			num_vertices = 0; //Set the size to 0, which automatically pretends like the remaining vertices don't exist.
 		}
 
 		/*!
@@ -415,7 +417,7 @@ protected:
 			if(batch.vertex_buffer.empty()) {
 				return batch.vertex_buffer.data();
 			}
-			return &batch.vertex_buffer[start_index()];
+			return &batch.vertex_buffer[start_index];
 		}
 
 		/*!
@@ -432,7 +434,7 @@ protected:
 			if(batch.vertex_buffer.empty()) {
 				return batch.vertex_buffer.data();
 			}
-			return &batch.vertex_buffer[start_index()];
+			return &batch.vertex_buffer[start_index];
 		}
 
 		/*!
@@ -449,14 +451,13 @@ protected:
 				reallocate(capacity() * 2 + 1);
 			}
 
-			const size_t start = start_index();
 			for(size_t i = size(); i > index; i--) { //Move all vertices beyond the position by one place to make room.
-				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - 1];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - 1];
 			}
 			//Construct the vertex in-place.
-			batch.vertex_buffer[start + index] = Point2(arguments...);
+			batch.vertex_buffer[start_index + index] = Point2(arguments...);
 
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			++num_vertices; //Increment the size.
 			return begin() + index;
 		}
 
@@ -472,8 +473,8 @@ protected:
 				reallocate(capacity() * 2 + 1);
 			}
 
-			batch.vertex_buffer[start_index() + size()] = Point2(arguments...); //Construct the vertex in-place.
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			batch.vertex_buffer[start_index + size()] = Point2(arguments...); //Construct the vertex in-place.
+			++num_vertices; //Increment the size.
 		}
 
 		/*!
@@ -498,7 +499,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		iterator end() {
-			return batch.vertex_buffer.begin() + (start_index() + size());
+			return batch.vertex_buffer.begin() + (start_index + size());
 		}
 
 		/*!
@@ -514,7 +515,7 @@ protected:
 		 * polygon inside the batch.
 		 */
 		const_iterator end() const {
-			return batch.vertex_buffer.begin() + (start_index() + size());
+			return batch.vertex_buffer.begin() + (start_index + size());
 		}
 
 		/*!
@@ -527,13 +528,12 @@ protected:
 		 * \return An iterator to the vertex after the removed vertex.
 		 */
 		iterator erase(const const_iterator position) {
-			const size_t buffer_start = start_index();
 			const size_t index = position - begin();
 			for(size_t i = index; i < size() - 1; ++i) { //Shift other vertices over this one.
-				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + 1];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i + 1];
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Reduce the size by one.
-			return batch.vertex_buffer.begin() + (buffer_start + index); //Convert iterator to non-const version.
+			--num_vertices; //Reduce the size by one.
+			return batch.vertex_buffer.begin() + (start_index + index); //Convert iterator to non-const version by constructing a new one.
 		}
 
 		/*!
@@ -547,14 +547,13 @@ protected:
 		 * \return A new iterator to the vertex indicated by `end`.
 		 */
 		iterator erase(const_iterator first, const const_iterator end) {
-			const size_t buffer_start = start_index();
 			const size_t index = first - begin();
 			const size_t num_removed = end - first;
 			for(size_t i = index; i < size() - num_removed; ++i) { //Shift other vertices over the range.
-				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + num_removed];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i + num_removed];
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] -= num_removed; //Reduce the size.
-			return batch.vertex_buffer.begin() + (buffer_start + index); //Convert iterator to non-const version.
+			num_vertices -= num_removed; //Reduce the size.
+			return batch.vertex_buffer.begin() + (start_index + index); //Convert iterator to non-const version by constructing a new one.
 		}
 
 		/*!
@@ -568,7 +567,7 @@ protected:
 		 * polygon.
 		 */
 		const Point2& front() const {
-			return batch.vertex_buffer[start_index()];
+			return batch.vertex_buffer[start_index];
 		}
 
 		/*!
@@ -582,7 +581,7 @@ protected:
 		 * polygon.
 		 */
 		Point2& front() {
-			return batch.vertex_buffer[start_index()];
+			return batch.vertex_buffer[start_index];
 		}
 
 		/*!
@@ -607,14 +606,13 @@ protected:
 				reallocate(capacity() * 2 + 1);
 			}
 
-			const size_t start = start_index();
 			for(size_t i = size(); i > index; --i) { //Move all vertices beyond the position by one place to make room.
-				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - 1];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - 1];
 			}
 			//Insert the new vertex.
-			batch.vertex_buffer[start + index] = value;
+			batch.vertex_buffer[start_index + index] = value;
 
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			++num_vertices; //Increment the size.
 			return begin() + index;
 		}
 
@@ -643,14 +641,13 @@ protected:
 				reallocate(capacity() * 2 + 1);
 			}
 
-			const size_t start = start_index();
 			for(size_t i = size(); i > index; --i) { //Move all vertices beyond the position by one place to make room.
-				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - 1];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - 1];
 			}
 			//Insert the new vertex.
-			batch.vertex_buffer[start + index] = value;
+			batch.vertex_buffer[start_index + index] = value;
 
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			++num_vertices; //Increment the size.
 			return begin() + index;
 		}
 
@@ -684,16 +681,15 @@ protected:
 				reallocate(capacity() * 2 + count);
 			}
 
-			const size_t start = start_index();
 			for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
-				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - count];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - count];
 			}
 			//Insert the new vertices.
 			for(size_t i = 0; i < count; ++i) {
-				batch.vertex_buffer[start + index + i] = value;
+				batch.vertex_buffer[start_index + index + i] = value;
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+			num_vertices += count; //Increase the size.
 			return begin() + index;
 		}
 
@@ -748,17 +744,16 @@ protected:
 				reallocate(capacity() * 2 + count);
 			}
 
-			const size_t start = start_index();
 			for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
-				batch.vertex_buffer[start + i] = batch.vertex_buffer[start + i - count];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - count];
 			}
 			//Insert the new vertices.
 			size_t i = 0;
 			for(const Point2& vertex : initialiser_list) {
-				batch.vertex_buffer[start + index + i++] = vertex;
+				batch.vertex_buffer[start_index + index + i++] = vertex;
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+			num_vertices += count; //Increase the size.
 			return begin() + index;
 		}
 
@@ -782,7 +777,7 @@ protected:
 		 * this might just cause an underflow on the size.
 		 */
 		void pop_back() {
-			batch.index_buffer[2 + polygon_index * 3 + 1]--; //Just reduce the size.
+			--num_vertices; //Just reduce the size. This automatically forgets one vertex from the end.
 		}
 
 		/*!
@@ -796,8 +791,8 @@ protected:
 			if(size() + 1 > capacity()) {
 				reallocate(capacity() * 2 + 1);
 			}
-			batch.vertex_buffer[start_index() + size()] = vertex;
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			batch.vertex_buffer[start_index + size()] = vertex;
+			++num_vertices;
 		}
 
 		/*!
@@ -811,8 +806,8 @@ protected:
 			if(size() + 1 > capacity()) {
 				reallocate(capacity() * 2 + 1);
 			}
-			batch.vertex_buffer[start_index() + size()] = vertex;
-			batch.index_buffer[2 + polygon_index * 3 + 1]++; //Increment the size.
+			batch.vertex_buffer[start_index + size()] = vertex;
+			++num_vertices;
 		}
 
 		/*!
@@ -829,7 +824,7 @@ protected:
 		 */
 		const_reverse_iterator rbegin() const {
 			const_reverse_iterator beginning = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
-			std::advance(beginning, batch.vertex_buffer.size() - start_index() - size());
+			std::advance(beginning, batch.vertex_buffer.size() - start_index - size());
 			return beginning;
 		}
 
@@ -847,7 +842,7 @@ protected:
 		 */
 		reverse_iterator rbegin() {
 			reverse_iterator beginning = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
-			std::advance(beginning, batch.vertex_buffer.size() - start_index() - size());
+			std::advance(beginning, batch.vertex_buffer.size() - start_index - size());
 			return beginning;
 		}
 
@@ -866,7 +861,7 @@ protected:
 		 */
 		const_reverse_iterator rend() const {
 			const_reverse_iterator ending = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
-			std::advance(ending, batch.vertex_buffer.size() - start_index());
+			std::advance(ending, batch.vertex_buffer.size() - start_index);
 			return ending;
 		}
 
@@ -885,7 +880,7 @@ protected:
 		 */
 		reverse_iterator rend() {
 			reverse_iterator ending = batch.vertex_buffer.rbegin(); //So pointing to the last vertex in the buffer.
-			std::advance(ending, batch.vertex_buffer.size() - start_index());
+			std::advance(ending, batch.vertex_buffer.size() - start_index);
 			return ending;
 		}
 
@@ -920,12 +915,12 @@ protected:
 		void resize(const size_t new_size, const Point2& default_value = Point2(0, 0)) {
 			if(new_size > size()) {
 				reserve(new_size);
-				const size_t start = start_index();
+				const size_t start = start_index;
 				for(size_t i = size(); i < new_size; ++i) {
 					batch.vertex_buffer[start + i] = default_value;
 				}
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] = new_size; //Set the new size. This may drop some vertices.
+			num_vertices = new_size; //Set the new size. This may drop some vertices.
 		}
 
 		/*!
@@ -948,7 +943,7 @@ protected:
 		 * \return The number of vertices in this simple polygon.
 		 */
 		size_t size() const {
-			return batch.index_buffer[2 + polygon_index * 3 + 1]; //2+ due to the two starting indices, then +1 because we're getting the size.
+			return num_vertices;
 		}
 
 		/*!
@@ -967,9 +962,9 @@ protected:
 		 */
 		void swap(View& other) {
 			if(&batch == &other.batch) {
-				std::swap(batch.index_buffer[2 + polygon_index * 3], batch.index_buffer[2 + other.polygon_index * 3]);
-				std::swap(batch.index_buffer[2 + polygon_index * 3 + 1], batch.index_buffer[2 + other.polygon_index * 3 + 1]);
-				std::swap(batch.index_buffer[2 + polygon_index * 3 + 2], batch.index_buffer[2 + other.polygon_index * 3 + 2]);
+				std::swap(start_index, other.start_index);
+				std::swap(num_vertices, other.num_vertices);
+				std::swap(current_capacity, other.current_capacity);
 			} else { //Different batches, so we need to swap the actual contents.
 				//TODO: The reservation will move the vertices to the new storage. Afterwards we'll move them. We could prevent one move here, shaving off up to 50% of the work.
 				//Make sure both have enough storage space.
@@ -978,23 +973,22 @@ protected:
 				reserve(other_size);
 				other.reserve(my_size);
 
-				const size_t my_start = start_index();
-				const size_t other_start = other.start_index();
 				size_t i = 0;
 				for(; i < std::min(size(), other.size()); ++i) {
-					std::swap(batch.vertex_buffer[my_start + i], other.batch.vertex_buffer[other_start + i]);
+					std::swap(batch.vertex_buffer[start_index + i], other.batch.vertex_buffer[other.start_index + i]);
 				}
 				if(my_size > other_size) { //Move over any remaining items from the biggest to the smallest one.
 					for(; i < my_size; ++i) {
-						other.batch.vertex_buffer[other_start + i] = batch.vertex_buffer[my_start + i];
+						other.batch.vertex_buffer[other.start_index + i] = batch.vertex_buffer[start_index + i];
 					}
 				} else if(other_size > my_size) {
 					for(; i < other_size; ++i) {
-						batch.vertex_buffer[my_start + i] = other.batch.vertex_buffer[other_start + i];
+						batch.vertex_buffer[start_index + i] = other.batch.vertex_buffer[other.start_index + i];
 					}
 				}
 
-				std::swap(batch.index_buffer[2 + polygon_index * 3 + 1], other.batch.index_buffer[2 + other.polygon_index * 3 + 1]); //Swap the sizes too.
+				std::swap(num_vertices, other.num_vertices); //Swap the sizes too.
+				//But the start index and the capacity remains their own.
 			}
 		}
 
@@ -1013,10 +1007,9 @@ protected:
 			reserve(other_size);
 			other.reserve(my_size);
 
-			const size_t my_start = start_index();
 			size_t i = 0;
 			for(; i < std::min(my_size, other_size); ++i) {
-				std::swap(batch.vertex_buffer[my_start + i], other[i]);
+				std::swap(batch.vertex_buffer[start_index + i], other[i]);
 			}
 			if(my_size > other_size) {
 				for(; i < my_size; ++i) {
@@ -1024,11 +1017,11 @@ protected:
 				}
 			} else if(other_size > my_size) {
 				for(; i < other_size; ++i) {
-					batch.vertex_buffer[my_start + i] = other[i];
+					batch.vertex_buffer[start_index + i] = other[i];
 				}
 				other.resize(my_size, Point2(0, 0)); //Shrink the other one to discard any remaining vertices.
 			}
-			batch.index_buffer[2 + polygon_index * 3 + 1] = other_size;
+			num_vertices = other_size;
 		}
 
 	protected:
@@ -1038,29 +1031,24 @@ protected:
 		SimplePolygonBatch& batch;
 
 		/*!
-		 * The simple polygon within the batch that this view is viewing on.
+		 * The position within the vertex buffer of the batch where this simple
+		 * polygon starts.
 		 */
-		size_t polygon_index;
+		size_t start_index;
 
 		/*!
-		 * Get the index in the vertex buffer where this view starts.
-		 * \return The index in the vertex buffer where this view starts.
+		 * The number of vertices currently in this simple polygon.
 		 */
-		inline size_t start_index() const {
-			return batch.index_buffer[2 + polygon_index * 3]; //2+ due to the two starting indices.
-		}
+		size_t num_vertices;
 
 		/*!
-		 * Get the index in the vertex buffer where this view ends.
+		 * How many vertices this simple polygon could maximally contain without
+		 * needing to resize its allocation within the vertex buffer.
 		 *
-		 * This is the index \e after the last vertex. The actual index is not
-		 * part of this view, and may be unallocated, belong to a different
-		 * simple polygon or may even be outside of the vertex buffer.
-		 * \return The index in the vertex buffer where this view ends.
+		 * This would be named ``capacity`` if it weren't for the specification
+		 * of ``vector`` already using that name for a method.
 		 */
-		inline size_t end_index() const {
-			return batch.index_buffer[2 + polygon_index * 3 + 2]; //2+ due to the two starting indices, +2 since we need the end.
-		}
+		size_t current_capacity;
 
 		/*!
 		 * This implements the \ref insert function if the input decorator is a
@@ -1086,16 +1074,15 @@ protected:
 				reallocate(capacity() * 2 + count);
 			}
 
-			const size_t buffer_start = start_index();
 			for(size_t i = size() - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
-				batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - count];
+				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - count];
 			}
 			//Insert the new vertices.
 			for(size_t i = 0; range_start != range_end; range_start++, ++i) {
-				batch.vertex_buffer[buffer_start + index + i] = *range_start;
+				batch.vertex_buffer[start_index + index + i] = *range_start;
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] += count; //Increase the size.
+			num_vertices += count;
 			return begin() + index;
 		}
 
@@ -1127,26 +1114,25 @@ protected:
 				if(original_size + count >= capacity()) {
 					reallocate(capacity() * 2 + count);
 				}
-				const size_t buffer_start = start_index();
 				for(size_t i = original_size - 1 + count; i > index; --i) { //Move all vertices beyond the position by multiple places to make room.
-					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - count];
+					batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - count];
 				}
 				//Insert the new vertices.
 				for(size_t i = 0; range_start != range_end; range_start++, ++i) {
-					batch.vertex_buffer[buffer_start + index + i] = *range_start;
+					batch.vertex_buffer[start_index + index + i] = *range_start;
 				}
 			} else { //Don't bother counting and shifting if we're inserting at the end.
 				for(size_t i = 0; range_start != range_end; range_start++, ++i) {
 					if(original_size + i >= capacity()) {
-						batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Update the size before reallocating.
+						num_vertices = original_size + count; //Update the size before reallocating.
 						reallocate(capacity() * 2 + 1);
 					}
-					batch.vertex_buffer[start_index() + index + i] = *range_start;
+					batch.vertex_buffer[start_index + index + i] = *range_start;
 					count++;
 				}
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
+			num_vertices = original_size + count; //Final size.
 			return begin() + index;
 		}
 
@@ -1175,31 +1161,29 @@ protected:
 			size_t count = 0;
 			for(;range_start != range_end; range_start++, ++count) {
 				if(original_size + count >= capacity()) {
-					batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Update the size before reallocating.
+					num_vertices = original_size + count; //Update the size before reallocating.
 					reallocate(capacity() * 2 + 1);
 				}
-				const size_t buffer_start = start_index();
 				if(remaining_space == 0) { //Need to make sure we've got room to insert without overwriting vertices afterwards.
 					//Move towards the end of the capacity so that we can insert more often.
 					const size_t move_distance = capacity() - original_size - count; //How far can we move these vertices.
 					for(size_t i = capacity() - 1; i >= index + count + move_distance; --i) {
-						batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i - move_distance];
+						batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - move_distance];
 					}
 					remaining_space = move_distance;
 				}
-				batch.vertex_buffer[buffer_start + index + count] = *range_start;
+				batch.vertex_buffer[start_index + index + count] = *range_start;
 				--remaining_space;
 			}
 
 			//Move vertices after the insertion back if there was any remaining space.
 			if(remaining_space > 0) {
-				const size_t buffer_start = start_index();
 				for(size_t i = index + count; i < capacity() - remaining_space; ++i) {
-					batch.vertex_buffer[buffer_start + i] = batch.vertex_buffer[buffer_start + i + remaining_space];
+					batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i + remaining_space];
 				}
 			}
 
-			batch.index_buffer[2 + polygon_index * 3 + 1] = original_size + count; //Increase the size.
+			num_vertices = original_size + count; //Final size.
 			return begin() + index;
 		}
 
@@ -1216,8 +1200,8 @@ protected:
 		 * allocating new memory, after this operation has been completed.
 		 */
 		void reallocate(const size_t new_capacity) {
-			const size_t new_place = batch.index_buffer[1];
-			batch.index_buffer[1] += new_capacity; //TODO: Not thread-safe. To make this thread-safe, read-and-update atomically and do something about the vertex buffer data structure.
+			const size_t new_place = batch.next_position;
+			batch.next_position += new_capacity; //TODO: Not thread-safe. To make this thread-safe, read-and-update atomically and do something about the vertex buffer data structure.
 
 			//Make sure we have enough capacity in the vertex buffer itself. Grow by doubling there too.
 			size_t buffer_capacity = batch.vertex_buffer.size();
@@ -1227,14 +1211,12 @@ protected:
 			batch.vertex_buffer.resize(buffer_capacity, Point2(0, 0));
 
 			//Copy all of the data over.
-			const size_t old_place = start_index();
 			for(size_t vertex_index = 0; vertex_index < size(); vertex_index++) {
-				batch.vertex_buffer[new_place + vertex_index] = batch.vertex_buffer[old_place + vertex_index];
+				batch.vertex_buffer[new_place + vertex_index] = batch.vertex_buffer[start_index + vertex_index];
 			}
 
-			//Update the index buffer with the new place.
-			batch.index_buffer[2 + polygon_index * 3] = new_place; //2+ due to the two starting indices.
-			batch.index_buffer[2 + polygon_index * 3 + 2] = new_place + new_capacity; //2+ due to the two starting indices, +2 due to setting the end index.
+			start_index = new_place;
+			current_capacity = new_capacity;
 		}
 	};
 
@@ -1636,6 +1618,20 @@ protected:
 	 * buffer. Measure whether this actually improves performance.
 	 */
 	std::vector<Point2> vertex_buffer;
+
+	/*!
+	 * Position within the \ref vertex_buffer where the next simple polygon
+	 * would start from if a new range would need to be allocated.
+	 *
+	 * Since the vertex buffer is not completely contiguous (after some
+	 * reallocations have occurred) it is not known where there could be room
+	 * somewhere halfway the vertex buffer. Instead, we're going to allocate
+	 * monotonically. The allocation will always occur at the end of the vertex
+	 * buffer. Since the polygons can be out of order in the vertex buffer,
+	 * finding the end of the vertex buffer would also be linear. Instead, we'll
+	 * store the next position here so that we can get it in constant time.
+	 */
+	size_t next_position;
 };
 
 }
