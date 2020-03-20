@@ -1347,7 +1347,8 @@ public:
 	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
-	SimplePolygonBatch() {};
+	SimplePolygonBatch() :
+			next_position(0) {};
 
 	/*!
 	 * Constructs a new batch of simple polygons, reserving space for a certain
@@ -1366,7 +1367,8 @@ public:
 	 * on average.
 	 */
 	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) :
-			simple_polygons(num_simple_polygons, SimplePolygon<View>(*this, 0, 0, 0)) { //Start at 0, 0 size and 0 capacity. Size and capacity will grow as necessary.
+			simple_polygons(num_simple_polygons, SimplePolygon<View>(*this, 0, 0, 0)), //Start at 0, 0 size and 0 capacity. Size and capacity will grow as necessary.
+			next_position(0) {
 		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
 	}
 
