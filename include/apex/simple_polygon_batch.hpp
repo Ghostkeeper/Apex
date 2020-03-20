@@ -79,6 +79,7 @@ protected:
 	 * refer to \ref SimplePolygonBatch.View .
 	 */
 	class View {
+		friend class SimplePolygonBatch; //This enclosing class knows about the implementation of the nested class.
 	public:
 		/*!
 		 * Iterates one loop around the polygon.
@@ -123,10 +124,10 @@ protected:
 		 * view is viewing on.
 		 */
 		View(SimplePolygonBatch& batch, const size_t start_index, const size_t size, const size_t capacity) :
-			batch(batch),
-			start_index(start_index),
-			num_vertices(size),
-			current_capacity(capacity) {};
+				batch(batch),
+				start_index(start_index),
+				num_vertices(size),
+				current_capacity(capacity) {};
 
 		/*!
 		 * Compares two simple polygons for equality.
@@ -1346,10 +1347,7 @@ public:
 	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
-	SimplePolygonBatch() {
-		index_buffer.push_back(0); //Start off with 0 simple polygons.
-		index_buffer.push_back(0); //And the first polygon would get allocated to the 0th position.
-	}
+	SimplePolygonBatch() {};
 
 	/*!
 	 * Constructs a new batch of simple polygons, reserving space for a certain
@@ -1367,14 +1365,9 @@ public:
 	 * \param vertices_per_polygon How much memory to reserve for each polygon
 	 * on average.
 	 */
-	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) {
+	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) :
+			simple_polygons(num_simple_polygons, SimplePolygon<View>(*this, 0, 0, 0)) { //Start at 0, 0 size and 0 capacity. Size and capacity will grow as necessary.
 		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
-		index_buffer.reserve(num_simple_polygons * 3 + 2);
-		index_buffer.push_back(num_simple_polygons); //Number of polygons.
-		index_buffer.push_back(0); //Position of next polygon.
-
-		//Store ranges for each simple polygon in the index buffer.
-		index_buffer.insert(index_buffer.end(), num_simple_polygons * 3, 0); //Insert a 0 for the start, the size and the reserved memory, for each polygon.
 	}
 
 	/*!
@@ -1392,17 +1385,14 @@ public:
 		const size_t vertices_per_polygon = repeated_simple_polygon.size();
 
 		//Fill the entire index buffer first (for cache locality).
-		index_buffer.reserve(num_simple_polygons * 3 + 2);
-		index_buffer.push_back(num_simple_polygons);
-		index_buffer.push_back(num_simple_polygons * vertices_per_polygon); //Position of next polygon (after all of the initial polygons are inserted).
+		simple_polygons.reserve(num_simple_polygons);
 		for(size_t i = 0; i < num_simple_polygons; ++i) {
-			index_buffer.push_back(i * vertices_per_polygon); //Start index.
-			index_buffer.push_back(vertices_per_polygon); //Size.
-			index_buffer.push_back((i + 1) * vertices_per_polygon); //End index.
+			simple_polygons.emplace_back(*this, i * vertices_per_polygon, vertices_per_polygon, vertices_per_polygon);
 		}
+		next_position = num_simple_polygons * vertices_per_polygon;
 
 		//Fill in the vertex buffer then, repeating the same polygon over and over again.
-		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
+		vertex_buffer.reserve(next_position);
 		for(size_t i = 0; i < num_simple_polygons; ++i) {
 			for(const Point2& vertex : repeated_simple_polygon) {
 				vertex_buffer.push_back(vertex);
@@ -1418,8 +1408,14 @@ public:
 	 * \param other The batch to copy into this one.
 	 */
 	SimplePolygonBatch(const SimplePolygonBatch& other) :
-		vertex_buffer(other.vertex_buffer),
-		index_buffer(other.index_buffer) {}
+			vertex_buffer(other.vertex_buffer), //Copies all the vertex data at once.
+			next_position(other.next_position) {
+		//Copy the simple polygons one by one since we need to adjust their references to the batch.
+		simple_polygons.reserve(other.simple_polygons.size());
+		for(const SimplePolygon<View>& other_polygon : other.simple_polygons) {
+			simple_polygons.emplace_back(*this, other_polygon.storage().start_index, other_polygon.storage().num_vertices, other_polygon.storage().current_capacity);
+		}
+	}
 
 	/*!
 	 * Moves a batch into this batch.
@@ -1432,8 +1428,14 @@ public:
 	 * \param other The batch to move into this one.
 	 */
 	SimplePolygonBatch(SimplePolygonBatch&& other) noexcept :
-		vertex_buffer(std::move(other.vertex_buffer)),
-		index_buffer(std::move(other.index_buffer)) {}
+			vertex_buffer(std::move(other.vertex_buffer)),
+			next_position(std::move(other.next_position)) {
+		//Copy the simple polygons one by one since we need to adjust their references to the batch.
+		simple_polygons.reserve(other.simple_polygons.size());
+		for(const SimplePolygon<View>& other_polygon : other.simple_polygons) {
+			simple_polygons.emplace_back(*this, other_polygon.storage().start_index, other_polygon.storage().num_vertices, other_polygon.storage().current_capacity);
+		}
+	}
 
 	/*!
 	 * Copy assignment operator to copy one batch into another variable.
@@ -1445,7 +1447,11 @@ public:
 	 */
 	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
 		vertex_buffer = other.vertex_buffer;
-		index_buffer = other.index_buffer;
+		//Copy the simple polygons one by one since we need to adjust their references to the batch.
+		simple_polygons.reserve(other.simple_polygons.size());
+		for(const SimplePolygon<View>& other_polygon : other.simple_polygons) {
+			simple_polygons.emplace_back(*this, other_polygon.storage().start_index, other_polygon.storage().num_vertices, other_polygon.storage().current_capacity);
+		}
 		return *this;
 	}
 
@@ -1461,7 +1467,11 @@ public:
 	 */
 	SimplePolygonBatch& operator =(SimplePolygonBatch&& other) noexcept {
 		vertex_buffer = std::move(other.vertex_buffer);
-		index_buffer = std::move(other.index_buffer);
+		//Copy the simple polygons one by one since we need to adjust their references to the batch.
+		simple_polygons.reserve(other.simple_polygons.size());
+		for(const SimplePolygon<View>& other_polygon : other.simple_polygons) {
+			simple_polygons.emplace_back(*this, other_polygon.storage().start_index, other_polygon.storage().num_vertices, other_polygon.storage().current_capacity);
+		}
 		return *this;
 	}
 
@@ -1477,14 +1487,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	const SimplePolygon<const View> operator [](const size_t position) const {
-		/*This code uses a const_cast to remove the constness of the batch.
-		This would be unsafe, but since we're building a SimplePolygon based on
-		a const view, the const view will guard the constness of the batch. The
-		operation is only unsafe if a copy is made of the actual view into a
-		non-const variable. But since the VertexStorage itself is not exposed by
-		SimplePolygon, you can't make such a copy.*/
-		return SimplePolygon<const View>(const_cast<SimplePolygonBatch&>(*this), position);
+	const SimplePolygon<View>& operator [](const size_t position) const {
+		return simple_polygons[position];
 	}
 
 	/*!
@@ -1499,8 +1503,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon<View> operator [](const size_t position) {
-		return SimplePolygon<View>(*this, position);
+	SimplePolygon<View>& operator [](const size_t position) {
+		return simple_polygons[position];
 	}
 
 	/*!
@@ -1547,7 +1551,7 @@ public:
 	 * needing to allocate more memory for the index buffer.
 	 */
 	size_t capacity() const {
-		return (index_buffer.capacity() - 2) / 3; //-2 for the two starting vertices. Divide by 3 because we're storing 3 numbers per polygon.
+		return simple_polygons.capacity();
 	}
 
 	/*!
@@ -1568,20 +1572,16 @@ public:
 	 */
 	template<typename VertexStorage>
 	void push_back(const SimplePolygon<VertexStorage>& simple_polygon) {
-		const size_t next_position = index_buffer[1];
 		size_t buffer_capacity = vertex_buffer.size();
 		while(buffer_capacity < next_position + simple_polygon.size()) {
 			buffer_capacity = buffer_capacity * 2 + 1;
 		}
+		simple_polygons.emplace_back(*this, next_position, simple_polygon.size(), simple_polygon.size());
 		vertex_buffer.resize(buffer_capacity, Point2(0, 0));
-		index_buffer.push_back(next_position); //Position of this polygon.
-		index_buffer.push_back(simple_polygon.size()); //Size of the polygon.
-		index_buffer.push_back(next_position + simple_polygon.size()); //End of the reserved memory.
 		for(size_t i = 0; i < simple_polygon.size(); ++i) { //Copy the actual data into the batch.
 			vertex_buffer[next_position + i] = simple_polygon[i];
 		}
-		index_buffer[0]++; //There is now one more simple polygon.
-		index_buffer[1] += simple_polygon.size();
+		next_position += simple_polygon.size();
 	}
 
 	/*!
@@ -1589,7 +1589,7 @@ public:
 	 * \return The number of simple polygons in this batch.
 	 */
 	size_t size() const {
-		return index_buffer[0];
+		return simple_polygons.size();
 	}
 protected:
 	/*!
