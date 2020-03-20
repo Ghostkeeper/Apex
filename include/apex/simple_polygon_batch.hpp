@@ -1341,7 +1341,22 @@ protected:
 	};
 
 public:
+	/*!
+	 * The iterator for iterating over the simple polygons in this batch.
+	 *
+	 * This iterator is a random access iterator, meaning you can iterate back
+	 * and forth, jump around with multiple positions at once and everything.
+	 * You can also make modifications to the batch using this iterator.
+	 */
 	using iterator = Iterator<SimplePolygonBatch>;
+
+	/*!
+	 * The iterator for iterating over the simple polygons in this batch, read-
+	 * only mode.
+	 *
+	 * This iterator is a random access iterator, meaning you can iterate back
+	 * and forth, jump around with multiple positions at once and everything.
+	 */
 	using const_iterator = Iterator<const SimplePolygonBatch>;
 
 	/*!
