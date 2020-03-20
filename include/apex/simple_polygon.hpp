@@ -752,6 +752,17 @@ public:
 	}
 
 	/*!
+	 * Directly access the underlying storage data structure used by this simple
+	 * polygon.
+	 *
+	 * This is for maintenance access only, really. Access to this data
+	 * structure is not thread-safe.
+	 */
+	const VertexStorage& storage() const {
+		return vertices;
+	}
+
+	/*!
 	 * Swaps the contents of this simple polygon instance with that of another.
 	 * \param other The simple polygon to swap the content with.
 	 * \tparam OtherVertexStorage The type of storage that the polygon to swap
