@@ -896,7 +896,7 @@ protected:
 		 * since the place they refer to is no longer where the data is held.
 		 */
 		void reserve(const size_t new_capacity) {
-			if(new_capacity < capacity()) {
+			if(new_capacity <= capacity()) {
 				return; //Already got the required capacity.
 			}
 			reallocate(new_capacity);
