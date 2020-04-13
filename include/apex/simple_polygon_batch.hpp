@@ -1222,6 +1222,37 @@ protected:
 	};
 
 	/*!
+	 * This is a helper class that refers to one of the views on the batch of
+	 * simple polygons.
+	 *
+	 * This class is intended to behave similar to a `View&`, a reference to a
+	 * view, or perhaps as a `View*`, but with a few differences. The reference
+	 * refers to the batch and an index within that batch, so that the reference
+	 * doesn't get invalidated if the contents of the batch gets reallocated
+	 * such as for an increase in capacity.
+	 *
+	 * The purpose of this class is to allow creating multiple instances of a
+	 * `SimplePolygon` within a batch by accessing the polygons within the batch
+	 * from their index, but to have each of those refer to the same actual view
+	 * on the batch. This way, if one of the instances gets modified e.g. by
+	 * adding vertices to the simple polygon, the other instances also get
+	 * updated. If this weren't the case, the data structure could get corrupt.
+	 *
+	 * The reference gets invalidated once the index doesn't point to the same
+	 * element any more, for example by inserting a simple polygon in the batch
+	 * before this reference's index, or by deleting the simple polygon it
+	 * refers to. It also gets invalidated if the whole batch gets moved or
+	 * destroyed, since the pointer kept in this reference gets invalidated
+	 * then.
+	 *
+	 * This reference is pretty much a transparent wrapper around the `View`
+	 * that it refers to.
+	 */
+	class Reference {
+		
+	};
+
+	/*!
 	 * This is an iterator that allows iterating over the simple polygons inside
 	 * this batch.
 	 *
