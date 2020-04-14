@@ -37,7 +37,7 @@ if(BUILD_TESTS)
 	enable_testing()
 
 	find_package(GoogleTest REQUIRED)
-        find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters.
+	find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters.
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
