@@ -24,7 +24,7 @@
 #How to obtain GoogleTest.
 option(USE_SYSTEM_GOOGLETEST "Use Google Test libraries installed on your computer." TRUE)
 option(BUILD_GOOGLETEST "Download the source code for Google Test, build that and use it in this project." FALSE)
-if(NOT USE_SYSTEM_GOOGLETEST AND NOT BUILD_GOOGLETEST)
+if(GoogleTest_FIND_REQUIRED AND NOT USE_SYSTEM_GOOGLETEST AND NOT BUILD_GOOGLETEST)
 	message(FATAL_ERROR "Need to have either USE_SYSTEM_GOOGLETEST or BUILD_GOOGLETEST enabled, since GoogleTest is required.")
 endif()
 if(USE_SYSTEM_GOOGLETEST AND BUILD_GOOGLETEST)
