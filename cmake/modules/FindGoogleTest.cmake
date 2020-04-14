@@ -96,6 +96,15 @@ try_compile(_googletest_is_1_1 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "$
 if(_googletest_is_1_1)
 	set(GOOGLETEST_VERSION_MINOR 1)
 endif()
+unset(_googletest_is_1_1)
+
+#Test for v1.2.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.2.cpp" "#include<gtest/gtest.h>\nTEST(Probe, FatalFailureAssertion) { int i = 0; ASSERT_NO_FATAL_FAILURE(i == 0); }")
+try_compile(_googletest_is_1_2 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.2.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_2)
+	set(GOOGLETEST_VERSION_MINOR 2)
+endif()
+unset(_googletest_is_1_2)
 
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
