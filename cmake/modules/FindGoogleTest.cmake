@@ -6,11 +6,17 @@
 
 #Find module for the Google Test testing suite.
 #
-#This module expands on CMake's built-in find module in one way:
+#This module expands on CMake's built-in find module in three ways:
 # - It gives the option to download GoogleTest sources from the internet and use
 #   that instead of using the installed libraries on your system. This is
 #   required since we need a version of GoogleTest that is not yet installed by
 #   default through the package distribution of most distro's yet.
+# - It allows requiring certain versions of the GoogleTest library.
+# - It outputs the version that was actually found.
+#
+# This supports version testing up to GoogleTest 1.10. The patch version cannot
+# be detected and is thus ignored (in both the requirements from the find call
+# and the output variables).
 #
 #This module exports the following variables:
 # - GOOGLETEST_FOUND: True if the Google Test suite was found, or False if it
@@ -20,6 +26,9 @@
 # - GOOGLETEST_MAIN_LIBRARIES: A library that allows creating a test as a
 #   separate executable (with its own main() entry point).
 # - GOOGLETEST_BOTH_LIBRARIES: Both the normal library and the main library.
+# - GOOGLETEST_VERSION_STRING: Version of Google Test found, e.g. "1.10.0".
+# - GOOGLETEST_VERSION_MAJOR: Major version number of Google Test found.
+# - GOOGLETEST_VERSION_MINOR: Minor version number of Google Test found.
 
 #How to obtain GoogleTest.
 option(USE_SYSTEM_GOOGLETEST "Use Google Test libraries installed on your computer." TRUE)
@@ -36,7 +45,7 @@ if(USE_SYSTEM_GOOGLETEST)
 	find_package(GTest QUIET)
 	if(GTEST_FOUND)
 		if(NOT GoogleTest_FIND_QUIETLY)
-			message(STATUS "Found GoogleTest.")
+			message(STATUS "Found Google Test on the system.")
 		endif()
 		set(GOOGLETEST_FOUND TRUE)
 		set(GOOGLETEST_INCLUDE_DIRS "${GTEST_INCLUDE_DIRS}")
@@ -73,6 +82,24 @@ if(NOT GOOGLETEST_FOUND)
 			message(WARNING "Could NOT find Google Test.")
 		endif()
 	endif()
+endif()
+
+#Try to find the version number of GoogleTest by component testing.
+set(GOOGLETEST_VERSION_MAJOR 1) #Always 1.
+set(GOOGLETEST_VERSION_MINOR 0) #Start off under the assumption that it's at LEAST version 1.0, the oldest published version.
+
+find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters, so sadly it's also required to detect version of GoogleThread.
+
+#Test for v1.1.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" "#include<gtest/gtest.h>\nTEST(Probe, ExceptionAssertion) { int i = 0; ASSERT_NO_THROW(i == 0); }")
+try_compile(_googletest_is_1_1 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_1)
+	set(GOOGLETEST_VERSION_MINOR 1)
+endif()
+
+set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
+if(NOT GoogleTest_FIND_QUIETLY)
+	message(STATUS "Google Test version is: ${GOOGLETEST_VERSION_STRING}.")
 endif()
 
 mark_as_advanced(GOOGLETEST_INCLUDE_DIRS)
