@@ -36,7 +36,7 @@ option(BUILD_TESTS "Build tests to verify correctness of the library." OFF)
 if(BUILD_TESTS)
 	enable_testing()
 
-	find_package(GoogleTest REQUIRED)
+	find_package(GoogleTest 1.10 REQUIRED)
 	find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters.
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
