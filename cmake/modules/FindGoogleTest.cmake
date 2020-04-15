@@ -153,6 +153,17 @@ if(NOT GoogleTest_FIND_QUIETLY)
 	message(STATUS "Google Test version is: ${GOOGLETEST_VERSION_STRING}.")
 endif()
 
+#Check if we have the correct version then as per requirements.
+if(GoogleTest_FIND_VERSION_EXACT)
+	if((NOT GoogleTest_FIND_VERSION_MAJOR EQUAL GOOGLETEST_VERSION_MAJOR) OR (NOT GoogleTest_FIND_VERSION_MINOR EQUAL GOOGLETEST_VERSION_MINOR))
+		if(GoogleTest_FIND_REQUIRED)
+			message(FATAL_ERROR "Google Test version needs to be exactly ${GoogleTest_FIND_VERSION_MAJOR}.${GoogleTest_FIND_VERSION_MINOR}, but found version ${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}.")
+		else()
+			message(WARNING "Google Test version needs to be exactly ${GoogleTest_FIND_VERSION_MAJOR}.${GoogleTest_FIND_VERSION_MINOR}, but found version ${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}.")
+		endif()
+	endif()
+endif()
+
 mark_as_advanced(GOOGLETEST_INCLUDE_DIRS)
 mark_as_advanced(GOOGLETEST_LIBRARIES)
 mark_as_advanced(GOOGLETEST_MAIN_LIBRARIES)
