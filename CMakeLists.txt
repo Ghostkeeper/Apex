@@ -66,6 +66,8 @@ if(BUILD_TESTS)
 	add_custom_target(build_all_tests)
 	add_test(BuildTests "${CMAKE_COMMAND}" --build ${CMAKE_CURRENT_BINARY_DIR} --target build_all_tests)
 
+	include(GoogleTest) #Defines the gtest_discover_tests command.
+
 	foreach(test_case ${test_names})
 		#Expand periods to slashes for the path to the test case, since CMake can't handle slashes in target names.
 		string(REPLACE . / test_path ${test_case})
@@ -80,6 +82,7 @@ if(BUILD_TESTS)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
+		gtest_discover_tests(${test_case})
 	endforeach()
 endif()
 
