@@ -74,8 +74,12 @@ if(BUILD_GOOGLETEST)
 	set(GOOGLETEST_BOTH_LIBRARIES "${GOOGLETEST_LIBRARIES};${GOOGLETEST_MAIN_LIBRARIES}")
 endif()
 
-if(NOT GOOGLETEST_FOUND AND GoogleTest_FIND_REQUIRED)
-	message(FATAL_ERROR "Could NOT find Google Test.")
+if(NOT GOOGLETEST_FOUND)
+	if(GoogleTest_FIND_REQUIRED)
+		message(FATAL_ERROR "Could NOT find Google Test.")
+	else()
+		message(WARNING "Could NOT find Google Test.")
+	endif()
 endif()
 
 #Try to find the version number of GoogleTest by component testing.
