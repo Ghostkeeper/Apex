@@ -124,13 +124,15 @@ if(_googletest_is_1_5)
 endif()
 unset(_googletest_is_1_5)
 
-#Test for v1.6.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.6.cpp" "#include<gtest/gtest.h>\nTEST(Probe, AddFailureAt) { ADD_FAILURE_AT(\"googletest_probe_v1.6.cpp\", 1); }")
-try_compile(_googletest_is_1_6 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.6.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
-if(_googletest_is_1_6)
-	set(GOOGLETEST_VERSION_MINOR 6)
+#Test for v1.6 or v1.7.
+#Can't detect the difference between those since there were no new features in 1.7 that would make compilation break when using 1.6.
+#There were new features but only in the output of the program in the test log; since we only compile and don't run we can't test this.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.7.cpp" "#include<gtest/gtest.h>\nTEST(Probe, AddFailureAt) { ADD_FAILURE_AT(\"googletest_probe_v1.7.cpp\", 1); }")
+try_compile(_googletest_is_1_7 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.7.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_7)
+	set(GOOGLETEST_VERSION_MINOR 7)
 endif()
-unset(_googletest_is_1_6)
+unset(_googletest_is_1_7)
 
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
