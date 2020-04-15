@@ -124,6 +124,14 @@ if(_googletest_is_1_5)
 endif()
 unset(_googletest_is_1_5)
 
+#Test for v1.6.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.6.cpp" "#include<gtest/gtest.h>\nTEST(Probe, AddFailureAt) { ADD_FAILURE_AT(\"googletest_probe_v1.6.cpp\", 1); }")
+try_compile(_googletest_is_1_6 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.6.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_6)
+	set(GOOGLETEST_VERSION_MINOR 6)
+endif()
+unset(_googletest_is_1_6)
+
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
 	message(STATUS "Google Test version is: ${GOOGLETEST_VERSION_STRING}.")
