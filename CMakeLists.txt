@@ -82,7 +82,7 @@ if(BUILD_TESTS)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
 		add_test(${test_case} ${test_case})
 		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
-		gtest_discover_tests(${test_case})
+		gtest_discover_tests(${test_case} PROPERTIES DEPENDS BuildTests)
 	endforeach()
 endif()
 
