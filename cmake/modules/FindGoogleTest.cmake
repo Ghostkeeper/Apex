@@ -91,7 +91,7 @@ set(GOOGLETEST_VERSION_MINOR 0) #Start off under the assumption that it's at LEA
 find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters, so sadly it's also required to detect version of GoogleThread.
 
 #Test for v1.1.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" "#include<gtest/gtest.h>\nTEST(Probe, ExceptionAssertion) { int i = 0; ASSERT_NO_THROW(i == 0); }")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" "#include<gtest/gtest.h>\nTEST(Probe, ExceptionAssertion) { ASSERT_NO_THROW(1 == 0); }")
 try_compile(_googletest_is_1_1 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
 if(_googletest_is_1_1)
 	set(GOOGLETEST_VERSION_MINOR 1)
@@ -99,7 +99,7 @@ endif()
 unset(_googletest_is_1_1)
 
 #Test for v1.2.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.2.cpp" "#include<gtest/gtest.h>\nTEST(Probe, FatalFailureAssertion) { int i = 0; ASSERT_NO_FATAL_FAILURE(i == 0); }")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.2.cpp" "#include<gtest/gtest.h>\nTEST(Probe, FatalFailureAssertion) { ASSERT_NO_FATAL_FAILURE(1 == 0); }")
 try_compile(_googletest_is_1_2 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.2.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
 if(_googletest_is_1_2)
 	set(GOOGLETEST_VERSION_MINOR 2)
@@ -107,12 +107,20 @@ endif()
 unset(_googletest_is_1_2)
 
 #Test for v1.3.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.3.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathTest) { int i = 0; ASSERT_EXIT(i == 0, ::testing::ExitedWithCode(0), \"\"); }")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.3.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathTest) { ASSERT_EXIT(1 == 0, ::testing::ExitedWithCode(0), \"\"); }")
 try_compile(_googletest_is_1_3 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.3.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
 if(_googletest_is_1_3)
 	set(GOOGLETEST_VERSION_MINOR 3)
 endif()
 unset(_googletest_is_1_3)
+
+#Test for v1.4.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.4.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathIfSupported) { ASSERT_DEATH_IF_SUPPORTED(1 == 0, \"\"); }")
+try_compile(_googletest_is_1_4 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.4.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_4)
+	set(GOOGLETEST_VERSION_MINOR 4)
+endif()
+unset(_googletest_is_1_4)
 
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
