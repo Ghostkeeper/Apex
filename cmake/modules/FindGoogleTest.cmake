@@ -134,6 +134,14 @@ if(_googletest_is_1_7)
 endif()
 unset(_googletest_is_1_7)
 
+#Test for v1.8
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.8.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathTest) { ASSERT_EQ(1, GTEST_HAS_STD_SHARED_PTR_); }")
+try_compile(_googletest_is_1_8 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.8.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_8)
+	set(GOOGLETEST_VERSION_MINOR 8)
+endif()
+unset(_googletest_is_1_8)
+
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
 	message(STATUS "Google Test version is: ${GOOGLETEST_VERSION_STRING}.")
