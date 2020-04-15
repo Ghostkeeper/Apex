@@ -114,13 +114,15 @@ if(_googletest_is_1_3)
 endif()
 unset(_googletest_is_1_3)
 
-#Test for v1.4.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.4.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathIfSupported) { ASSERT_DEATH_IF_SUPPORTED(1 == 0, \"\"); }")
-try_compile(_googletest_is_1_4 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.4.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
-if(_googletest_is_1_4)
-	set(GOOGLETEST_VERSION_MINOR 4)
+#Test for v1.4 or v1.5.
+#Can't detect the difference between those since there were no new features in 1.5 that would make compilation break when using 1.4.
+#Only if threads are not available, but we require threads anyway, so we can't test this.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.5.cpp" "#include<gtest/gtest.h>\nTEST(Probe, DeathIfSupported) { ASSERT_DEATH_IF_SUPPORTED(1 == 0, \"\"); }")
+try_compile(_googletest_is_1_5 "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe" "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.5.cpp" LINK_LIBRARIES "${GOOGLETEST_BOTH_LIBRARIES};${CMAKE_THREAD_LIBS_INIT}")
+if(_googletest_is_1_5)
+	set(GOOGLETEST_VERSION_MINOR 5)
 endif()
-unset(_googletest_is_1_4)
+unset(_googletest_is_1_5)
 
 set(GOOGLETEST_VERSION_STRING "${GOOGLETEST_VERSION_MAJOR}.${GOOGLETEST_VERSION_MINOR}")
 if(NOT GoogleTest_FIND_QUIETLY)
