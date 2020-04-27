@@ -15,8 +15,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: CMake
-      run: cmake . -DCMAKE_CXX_COMPILER="/usr/bin/g++-8" -DBUILD_TESTS=ON
+      run: cmake . -DCMAKE_CXX_COMPILER="/usr/bin/g++-8" -DBUILD_TESTS=ON -DUSE_SYSTEM_GOOGLETEST=OFF -DBUILD_GOOGLETEST=ON
     - name: Make
       run: make
     - name: CTest
-      run: ctest --verbose
+      run: make test
