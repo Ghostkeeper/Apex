@@ -80,8 +80,6 @@ if(BUILD_TESTS)
 		target_include_directories(${test_case} PRIVATE ${GOOGLETEST_INCLUDE_DIRS})
 		add_dependencies(${test_case} GoogleTest apex_test_helpers)
 		add_dependencies(build_all_tests ${test_case}) #Make sure that this gets built as part of the build_all_tests target.
-		add_test(${test_case} ${test_case})
-		set_tests_properties(${test_case} PROPERTIES DEPENDS BuildTests)
 		gtest_discover_tests(${test_case} PROPERTIES DEPENDS BuildTests)
 	endforeach()
 endif()
