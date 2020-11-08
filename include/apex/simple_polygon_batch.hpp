@@ -57,7 +57,9 @@ namespace apex {
  * swap out dependencies in automated tests.
  */
 class SimplePolygonBatch {
-protected:  
+protected:
+	class Reference;
+
 	/*!
 	 * Provides a view on the data of one simple polygon inside a
 	 * `SimplePolygonBatch`.
@@ -80,6 +82,7 @@ protected:
 	 */
 	class View {
 		friend class SimplePolygonBatch; //This enclosing class knows about the implementation of the nested class.
+		friend class SimplePolygonBatch::Reference;
 	public:
 		/*!
 		 * Iterates one loop around the polygon.
@@ -1025,6 +1028,10 @@ protected:
 			num_vertices = other_size;
 		}
 
+		void swap(SimplePolygonBatch::Reference& other) {
+			swap(other.batch.simple_polygons[other.index].storage());
+		}
+
 	protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
@@ -1249,7 +1256,267 @@ protected:
 	 * that it refers to.
 	 */
 	class Reference {
+		friend class SimplePolygonBatch::View;
+	public:
+		/*!
+		 * Iterates one loop around the polygon.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::iterator iterator;
+
+		/*!
+		 * Iterates one loop around the polygon.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::const_iterator const_iterator;
+
+		/*!
+		 * Iterates one loop around the polygon in reverse.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::reverse_iterator reverse_iterator;
+
+		/*!
+		 * Iterates one loop around the polygon in reverse.
+		 *
+		 * This actually uses the iterator type of the vertex buffer in the
+		 * batch of simple polygons, since the view will iterate over those
+		 * vertices.
+		 */
+		typedef typename std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+
+        /*!
+         * Construct a new reference to a view in a batch.
+         * \param batch The batch of simple polygons to refer to.
+         * \param index The view within that batch to refer to.
+         */
+		Reference(SimplePolygonBatch& batch, const size_t index) : batch(batch), index(index) {};
+
+		bool operator ==(const Reference& other) const {
+			return batch.simple_polygons[index] == other.batch.simple_polygons[other.index];
+		}
+
+		bool operator !=(const Reference& other) const {
+			return batch.simple_polygons[index] != other.batch.simple_polygons[other.index];
+		}
+
+		const Point2& operator [](const size_t index) const {
+			return batch.simple_polygons[this->index][index];
+		}
+
+		Point2& operator [](const size_t index) {
+			return batch.simple_polygons[this->index][index];
+		}
+
+		void assign(const size_t count, const Point2& value) {
+			batch.simple_polygons[index].assign(count, value);
+		}
+
+		template<class InputIterator>
+		void assign(InputIterator begin, InputIterator end) {
+			batch.simple_polygons[index].assign(begin, end);
+		}
+
+		void assign(const std::initializer_list<Point2> initialiser_list) {
+			batch.simple_polygons[index].assign(initialiser_list);
+		}
+
+		const Point2& at(const size_t position) const {
+			return batch.simple_polygons[index].at(position);
+		}
+
+		Point2& at(const size_t position) {
+			return batch.simple_polygons[index].at(position);
+		}
+
+		const Point2& back() const {
+			return batch.simple_polygons[index].back();
+		}
+
+		Point2& back() {
+			return batch.simple_polygons[index].back();
+		}
+
+		iterator begin() {
+			return batch.simple_polygons[index].begin();
+		}
+
+		const_iterator begin() const {
+			return batch.simple_polygons[index].begin();
+		}
+
+		size_t capacity() const {
+			return batch.simple_polygons[index].capacity();
+		}
+
+		const_iterator cbegin() const {
+			return batch.simple_polygons[index].cbegin();
+		}
+
+		const_iterator cend() const {
+			return batch.simple_polygons[index].cend();
+		}
+
+		void clear() noexcept {
+			batch.simple_polygons[index].clear();
+		}
+
+		const_reverse_iterator crbegin() const {
+			return batch.simple_polygons[index].crbegin();
+		}
+
+		const_reverse_iterator crend() const {
+			return batch.simple_polygons[index].crend();
+		}
+
+		const Point2* data() const noexcept {
+			return batch.simple_polygons[index].data();
+		}
+
+		Point2* data() noexcept {
+			return batch.simple_polygons[index].data();
+		}
+
+		template<class... Args>
+		iterator emplace(const const_iterator position, Args&&... arguments) {
+			return batch.simple_polygons[index].emplace(position, arguments...);
+		}
+
+		template<class... Args>
+		void emplace_back(Args&&... arguments) {
+			return batch.simple_polygons[index].emplace_back(arguments...);
+		}
+
+		bool empty() const {
+			return batch.simple_polygons[index].empty();
+		}
+
+		iterator end() {
+			return batch.simple_polygons[index].end();
+		}
+
+		const_iterator end() const {
+			return batch.simple_polygons[index].end();
+		}
+
+		iterator erase(const const_iterator position) {
+			return batch.simple_polygons[index].erase(position);
+		}
+
+		iterator erase(const_iterator first, const const_iterator end) {
+			return batch.simple_polygons[index].erase(first, end);
+		}
+
+		const Point2& front() const {
+			return batch.simple_polygons[index].front();
+		}
+
+		Point2& front() {
+			return batch.simple_polygons[index].front();
+		}
+
+		iterator insert(const const_iterator position, const Point2& value) {
+			return batch.simple_polygons[index].insert(position, value);
+		}
+
+		iterator insert(const const_iterator position, Point2&& value) {
+			return batch.simple_polygons[index].insert(position, value);
+		}
+
+		iterator insert(const const_iterator position, const size_t count, const Point2& value) {
+			return batch.simple_polygons[index].insert(position, count, value);
+		}
+
+		template<class InputIterator>
+		iterator insert(const const_iterator position, InputIterator begin, const InputIterator end) {
+			return batch.simple_polygons[index].insert(position, begin, end);
+		}
+
+		iterator insert(const const_iterator position, const std::initializer_list<Point2> initialiser_list) {
+			return batch.simple_polygons[index].insert(position, initialiser_list);
+		}
+
+		size_t max_size() const noexcept {
+			return batch.simple_polygons[index].max_size();
+		}
+
+		void pop_back() {
+			batch.simple_polygons[index].pop_back();
+		}
+
+		void push_back(const Point2& vertex) {
+			batch.simple_polygons[index].push_back(vertex);
+		}
+
+		void push_back(Point2&& vertex) {
+			batch.simple_polygons[index].push_back(vertex);
+		}
+
+		const_reverse_iterator rbegin() const {
+			return batch.simple_polygons[index].rbegin();
+		}
+
+		reverse_iterator rbegin() {
+			return batch.simple_polygons[index].rbegin();
+		}
+
+		const_reverse_iterator rend() const {
+			return batch.simple_polygons[index].rend();
+		}
+
+		reverse_iterator rend() {
+			return batch.simple_polygons[index].rend();
+		}
+
+		void reserve(const size_t new_capacity) {
+			batch.simple_polygons[index].reserve(new_capacity);
+		}
+
+		void resize(const size_t new_size, const Point2& default_value = Point2(0, 0)) {
+			batch.simple_polygons[index].resize(new_size, default_value);
+		}
+
+		void shrink_to_fit() noexcept {
+			batch.simple_polygons[index].shrink_to_fit();
+		}
+
+		size_t size() const {
+			return batch.simple_polygons[index].size();
+		}
 		
+		void swap(SimplePolygonBatch::View& other) {
+			batch.simple_polygons[index].storage().swap(other);
+		}
+
+		/*!
+		 * Exchange the contents of this view on a simple polygon batch with the
+		 * contents of another type of vertex storage for simple polygons: a
+		 * vector.
+		 *
+		 * This allows swapping simple polygon data between two simple polygons
+		 * with different storage types.
+		 * \param other The vector of vertices to swap the data with.
+		 */
+		void swap(std::vector<Point2>& other) {
+			batch.simple_polygons[index].storage().swap(other);
+		}
+
+		void swap(SimplePolygonBatch::Reference& other) {
+			batch.simple_polygons[index].storage().swap(other.batch.simple_polygons[other.index].storage()); //Swap the views that each of these refer to.
+		}
+
+	protected:
+		SimplePolygonBatch& batch;
+		size_t index;
 	};
 
 	/*!
@@ -1322,7 +1589,7 @@ protected:
 		 * polygons.
 		 */
 		SimplePolygon<const SimplePolygonBatch::View> operator *() const {
-			return batch[index];
+			return batch.simple_polygons[index];
 		}
 
 		/*!
@@ -1535,8 +1802,14 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	const SimplePolygon<View>& operator [](const size_t position) const {
-		return simple_polygons[position];
+	const SimplePolygon<const Reference> operator [](const size_t position) const {
+		/*This code uses a const_cast to remove the constness of the batch.
+		This would be unsafe, but since we're building a SimplePolygon based on
+		a const view, the const view will guard the constness of the batch. The
+		operation is only unsafe if a copy is made of the actual view into a
+		non-const variable. But since the VertexStorage itself is not exposed by
+		SimplePolygon, you can't make such a copy.*/
+		return SimplePolygon<const Reference>(const_cast<SimplePolygonBatch&>(*this), position);
 	}
 
 	/*!
@@ -1551,8 +1824,8 @@ public:
 	 * Rather than using this accessor, try to use batch processing operations
 	 * as much as possible.
 	 */
-	SimplePolygon<View>& operator [](const size_t position) {
-		return simple_polygons[position];
+	SimplePolygon<Reference> operator [](const size_t position) {
+		return SimplePolygon<Reference>(*this, position);
 	}
 
 	/*!

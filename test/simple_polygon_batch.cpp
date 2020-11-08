@@ -256,7 +256,8 @@ TEST_F(SimplePolygonBatchFixture, ConstIteratorAssignment) {
 TEST_F(SimplePolygonBatchFixture, ConstIteratorPreIncrement) {
 	const SimplePolygonBatch const_batch = triangle_and_square; //Effectively const-cast this one to ensure that this selects the correct overload.
 	SimplePolygonBatch::const_iterator iterator = const_batch.begin();
-	EXPECT_EQ(*iterator, triangle_and_square[0]);
+	const SimplePolygon result = *iterator;
+	EXPECT_EQ(result, triangle_and_square[0]);
 	SimplePolygonBatch::const_iterator copy = ++iterator; //Try getting a copy to test the pre-incrementing.
 	EXPECT_EQ(*copy, triangle_and_square[1]) << "The return value of the pre-increment is a reference to the iterator after incrementing it, so it must point to the incremented position.";
 	EXPECT_EQ(*iterator, triangle_and_square[1]) << "After incrementing, the iterator must point to the second element.";
