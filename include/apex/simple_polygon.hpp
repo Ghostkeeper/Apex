@@ -230,7 +230,8 @@ public:
 	 * \return ``true`` if this polygon is the same as the other polygon, or
 	 * ``false`` otherwise.
 	 */
-	bool operator ==(const SimplePolygon& other) const {
+	template<typename OtherVertexStorage>
+	bool operator ==(const SimplePolygon<OtherVertexStorage>& other) const {
 		//TODO: Put implementation in separate file and allow multiple implementations.
 		if(size() != other.size()) {
 			return false;
@@ -466,8 +467,8 @@ public:
 	 * \param arguments The arguments used to construct the vertices.
 	 */
 	template<class... Args>
-	void emplace(const_iterator position, Args&&... arguments) {
-		vertices.emplace(position, arguments...);
+	iterator emplace(const_iterator position, Args&&... arguments) {
+		return vertices.emplace(position, arguments...);
 	}
 
 	/*!
@@ -759,6 +760,17 @@ public:
 	 * structure is not thread-safe.
 	 */
 	const VertexStorage& storage() const {
+		return vertices;
+	}
+
+    /*!
+     * Directly access the underlying storage data structure used by this simple
+     * polygon.
+     *
+     * This is for maintenance access only, really. Access to this data
+     * structure is not thread-safe.
+     */
+	VertexStorage& storage() {
 		return vertices;
 	}
 
