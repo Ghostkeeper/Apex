@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_SIMPLE_POLYGON_TRANSLATE_HPP
-#define APEX_SIMPLE_POLYGON_TRANSLATE_HPP
+#ifndef APEX_TRANSLATE_HPP
+#define APEX_TRANSLATE_HPP
 
 namespace apex {
 
@@ -67,4 +67,4 @@ private:
 
 }
 
-#endif //APEX_SIMPLE_POLYGON_TRANSLATE_HPP
+#endif //APEX_TRANSLATE_HPP

@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_SIMPLE_POLYGON_AREA_HPP
-#define APEX_SIMPLE_POLYGON_AREA_HPP
+#ifndef APEX_AREA_HPP
+#define APEX_AREA_HPP
 
 #include "../coordinate.hpp" //To return area_t.
 
@@ -105,4 +105,4 @@ private:
 
 }
 
-#endif //APEX_SIMPLE_POLYGON_AREA_HPP
+#endif //APEX_AREA_HPP
