@@ -50,9 +50,9 @@ namespace apex {
  * the simple polygon would not be inside a batch).
  *
  * The vertex data and the views together form the complete state of the batch.
- * They are intended to be sent together as two buffers to the compute devices
- * of OpenCL. This allows all of the batch operations to be executed on the
- * compute devices.
+ * They are intended to be sent together as two buffers to the compute devices.
+ * This allows all of the batch operations to be executed on the compute
+ * devices.
  * \tparam SimplePolygon An implementation of simple polygons to use. Used to
  * swap out dependencies in automated tests.
  */
