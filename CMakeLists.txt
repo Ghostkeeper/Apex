@@ -49,6 +49,8 @@ if(BUILD_TESTS)
 	#The main library then needs to be told to link to GoogleTest to define friend tests.
 	add_definitions(-DBUILD_TESTS)
 	target_include_directories(apex INTERFACE ${GOOGLETEST_INCLUDE_DIRS})
+	target_link_libraries(apex INTERFACE ${GOOGLETEST_BOTH_LIBRARIES})
+	add_dependencies(apex GoogleTest)
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
