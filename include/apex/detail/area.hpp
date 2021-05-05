@@ -10,6 +10,9 @@
 #define APEX_AREA_HPP
 
 #include <omp.h> //To do parallel processing.
+#ifdef BUILD_TESTS
+	#include <gtest/gtest.h> //To declare friend classes.
+#endif
 
 #include "../coordinate.hpp" //To return area_t.
 
@@ -221,6 +224,22 @@ private:
 		return *static_cast<const SimplePolygonBase*>(this);
 	}
 
+#ifdef BUILD_TESTS
+	FRIEND_TEST(SimplePolygonArea, InitialAreaIsZero);
+	FRIEND_TEST(SimplePolygonArea, Square1000);
+	FRIEND_TEST(SimplePolygonArea, Square1000NegativeX);
+	FRIEND_TEST(SimplePolygonArea, Square1000NegativeY);
+	FRIEND_TEST(SimplePolygonArea, Square1000NegativeXY);
+	FRIEND_TEST(SimplePolygonArea, Square1000Centred);
+	FRIEND_TEST(SimplePolygonArea, Triangle1000);
+	FRIEND_TEST(SimplePolygonArea, ThinRectangle);
+	FRIEND_TEST(SimplePolygonArea, Concave);
+	FRIEND_TEST(SimplePolygonArea, Negative);
+	FRIEND_TEST(SimplePolygonArea, SelfIntersecting);
+	FRIEND_TEST(SimplePolygonArea, Point);
+	FRIEND_TEST(SimplePolygonArea, Line);
+	FRIEND_TEST(SimplePolygonArea, Circle);
+#endif
 };
 
 }
