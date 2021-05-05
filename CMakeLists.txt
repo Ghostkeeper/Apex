@@ -42,10 +42,13 @@ endif()
 option(BUILD_TESTS "Build tests to verify correctness of the library." OFF)
 if(BUILD_TESTS)
 	enable_testing()
-	add_definitions(-DBUILD_TESTS)
 
 	find_package(GoogleTest 1.10 REQUIRED)
 	find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters.
+
+	#The main library then needs to be told to link to GoogleTest to define friend tests.
+	add_definitions(-DBUILD_TESTS)
+	target_include_directories(apex INTERFACE ${GOOGLETEST_INCLUDE_DIRS})
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
