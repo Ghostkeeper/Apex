@@ -19,4 +19,4 @@ jobs:
     - name: Make
       run: make
     - name: CTest
-      run: make test
+      run: ctest --verbose
