@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2019 Ghostkeeper
+ * Copyright (C) 2021 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -24,7 +24,9 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
 	EXPECT_EQ(empty_polygon.area(), true_area);
 	EXPECT_EQ(empty_polygon.area_st(), true_area);
 	EXPECT_EQ(empty_polygon.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(empty_polygon.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -36,7 +38,9 @@ TEST(SimplePolygonArea, Square1000) {
 	EXPECT_EQ(square_1000.area(), true_area);
 	EXPECT_EQ(square_1000.area_st(), true_area);
 	EXPECT_EQ(square_1000.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(square_1000.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -48,7 +52,9 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
 	EXPECT_EQ(negative_x.area(), true_area);
 	EXPECT_EQ(negative_x.area_st(), true_area);
 	EXPECT_EQ(negative_x.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(negative_x.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -60,7 +66,9 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
 	EXPECT_EQ(negative_y.area(), true_area);
 	EXPECT_EQ(negative_y.area_st(), true_area);
 	EXPECT_EQ(negative_y.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(negative_y.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -73,7 +81,9 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
 	EXPECT_EQ(negative_xy.area(), true_area);
 	EXPECT_EQ(negative_xy.area_st(), true_area);
 	EXPECT_EQ(negative_xy.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(negative_xy.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -85,7 +95,9 @@ TEST(SimplePolygonArea, Square1000Centred) {
 	EXPECT_EQ(centred.area(), true_area);
 	EXPECT_EQ(centred.area_st(), true_area);
 	EXPECT_EQ(centred.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(centred.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -97,7 +109,9 @@ TEST(SimplePolygonArea, Triangle1000) {
 	EXPECT_EQ(triangle.area(), true_area);
 	EXPECT_EQ(triangle.area_st(), true_area);
 	EXPECT_EQ(triangle.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(triangle.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -111,7 +125,9 @@ TEST(SimplePolygonArea, ThinRectangle) {
 	EXPECT_EQ(thin_rectangle.area(), true_area);
 	EXPECT_EQ(thin_rectangle.area_st(), true_area);
 	EXPECT_EQ(thin_rectangle.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(thin_rectangle.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -123,7 +139,9 @@ TEST(SimplePolygonArea, Concave) {
 	EXPECT_EQ(arrowhead.area(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 	EXPECT_EQ(arrowhead.area_st(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 	EXPECT_EQ(arrowhead.area_mt(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+#ifdef GPU_TESTS
 	EXPECT_EQ(arrowhead.area_gpu(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+#endif
 }
 
 /*!
@@ -136,7 +154,9 @@ TEST(SimplePolygonArea, Negative) {
 	EXPECT_EQ(negative.area(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 	EXPECT_EQ(negative.area_st(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 	EXPECT_EQ(negative.area_mt(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+#ifdef GPU_TESTS
 	EXPECT_EQ(negative.area_gpu(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+#endif
 }
 
 /*!
@@ -148,7 +168,9 @@ TEST(SimplePolygonArea, SelfIntersecting) {
 	EXPECT_EQ(hourglass.area(), true_area);
 	EXPECT_EQ(hourglass.area_st(), true_area);
 	EXPECT_EQ(hourglass.area_mt(), true_area);
+#ifdef GPU_TESTS
 	EXPECT_EQ(hourglass.area_gpu(), true_area);
+#endif
 }
 
 /*!
@@ -159,7 +181,9 @@ TEST(SimplePolygonArea, Point) {
 	EXPECT_EQ(point.area(), 0) << "Points don't have any surface area.";
 	EXPECT_EQ(point.area_st(), 0) << "Points don't have any surface area.";
 	EXPECT_EQ(point.area_mt(), 0) << "Points don't have any surface area.";
+#ifdef GPU_TESTS
 	EXPECT_EQ(point.area_gpu(), 0) << "Points don't have any surface area.";
+#endif
 }
 
 /*!
@@ -170,7 +194,9 @@ TEST(SimplePolygonArea, Line) {
 	EXPECT_EQ(line.area(), 0) << "Lines don't have any surface area.";
 	EXPECT_EQ(line.area_st(), 0) << "Lines don't have any surface area.";
 	EXPECT_EQ(line.area_mt(), 0) << "Lines don't have any surface area.";
+#ifdef GPU_TESTS
 	EXPECT_EQ(line.area_gpu(), 0) << "Lines don't have any surface area.";
+#endif
 }
 
 /*!
@@ -198,7 +224,9 @@ TEST(SimplePolygonArea, Circle) {
 	EXPECT_NEAR(circle.area(), ground_truth, error_margin);
 	EXPECT_NEAR(circle.area_st(), ground_truth, error_margin);
 	EXPECT_NEAR(circle.area_mt(), ground_truth, error_margin);
+#ifdef GPU_TESTS
 	EXPECT_NEAR(circle.area_gpu(), ground_truth, error_margin);
+#endif
 }
 
 }
