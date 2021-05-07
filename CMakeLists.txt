@@ -52,6 +52,15 @@ if(BUILD_TESTS)
 	target_link_libraries(apex INTERFACE ${GOOGLETEST_BOTH_LIBRARIES})
 	add_dependencies(apex GoogleTest)
 
+	#Only perform GPU tests if we have a GPU and basic operations are supported.
+	#E.g. on some computers parallel distribution works, but reductions don't. So include a reduction in the test.
+	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" "#include <omp.h>\nint main() {\nint x = 0;\n#pragma omp teams distribute parallel for reduction(+:x)\nfor(int i = 0; i < 1; ++i) {x += 1;}\nreturn x;}")
+	try_run(gpu_supported gpu_compile_result "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe" "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" CMAKE_FLAGS "-DCMAKE_CXX_FLAGS:string=${OpenMP_CXX_FLAGS}")
+	if(gpu_supported EQUAL 1)
+		message(STATUS "Found GPU support on this computer. Building GPU tests.")
+		add_definitions(-DGPU_TESTS)
+	endif()
+
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
 		mock_simple_polygon.cpp
