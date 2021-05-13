@@ -206,10 +206,12 @@ protected:
 	area_t area_gpu() const {
 		area_t area = 0;
 		const size_t size = base().size();
+		const SimplePolygonBase& polygon = base();
+		#pragma omp target map(to:polygon) map(tofrom:area)
 		#pragma omp teams distribute parallel for reduction(+:area)
 		for(size_t vertex = 0; vertex < size; ++vertex) {
 			size_t previous = (vertex - 1 + size) % size;
-			area += static_cast<area_t>(base()[previous].x) * base()[vertex].y - static_cast<area_t>(base()[previous].y) * base()[vertex].x;
+			area += static_cast<area_t>(polygon[previous].x) * polygon[vertex].y - static_cast<area_t>(polygon[previous].y) * polygon[vertex].x;
 		}
 		return area / 2;
 	}
