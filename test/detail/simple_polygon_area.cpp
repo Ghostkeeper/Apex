@@ -204,7 +204,7 @@ TEST(SimplePolygonArea, Line) {
  * vertices.
  *
  * This is tested with a regular polygon that approaches a circle. The ground
- * truth is caluclated with the formula for the area of a regular polygon:
+ * truth is calculated with the formula for the area of a regular polygon:
  * 1/2 * n * r^2 * sin(2*pi / n)
  */
 TEST(SimplePolygonArea, Circle) {
@@ -218,8 +218,8 @@ TEST(SimplePolygonArea, Circle) {
 		circle.emplace_back(x, y);
 	}
 
-	constexpr area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
-	constexpr area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
+	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
+	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
 	EXPECT_NEAR(circle.area(), ground_truth, error_margin);
 	EXPECT_NEAR(circle.area_st(), ground_truth, error_margin);
