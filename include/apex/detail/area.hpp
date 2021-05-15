@@ -207,7 +207,7 @@ protected:
 		area_t area = 0;
 		const size_t size = base().size();
 		const Point2* vertices = base().data();
-		#pragma omp target teams distribute parallel for reduction(+:area)
+		#pragma omp target teams distribute parallel for map(to:vertices) map(tofrom:area) reduction(+:area)
 		for(size_t vertex = 0; vertex < size; ++vertex) {
 			size_t previous = (vertex - 1 + size) % size;
 			area += static_cast<area_t>(vertices[previous].x) * vertices[vertex].y - static_cast<area_t>(vertices[previous].y) * vertices[vertex].x;
