@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef SIMPLE_POLYGON_BATCH_HPP
-#define SIMPLE_POLYGON_BATCH_HPP
+#ifndef APEX_SIMPLE_POLYGON_BATCH
+#define APEX_SIMPLE_POLYGON_BATCH
 
 #include <vector> //A dynamic data structure to model the two buffers that this batch maintains.
 
@@ -1960,4 +1960,4 @@ protected:
 
 }
 
-#endif //SIMPLE_POLYGON_BATCH_HPP
+#endif //APEX_SIMPLE_POLYGON_BATCH

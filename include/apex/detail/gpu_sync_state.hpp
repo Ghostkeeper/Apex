@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_GPU_SYNC_STATE_HPP
-#define APEX_GPU_SYNC_STATE_HPP
+#ifndef APEX_GPU_SYNC_STATE
+#define APEX_GPU_SYNC_STATE
 
 namespace apex {
 
@@ -26,4 +26,4 @@ enum GPUSyncState {
 
 }
 
-#endif //APEX_GPU_SYNC_STATE_HPP
+#endif //APEX_GPU_SYNC_STATE
