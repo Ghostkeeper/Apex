@@ -48,6 +48,26 @@ class Point2;
 class GPUDataTracker {
 public:
 	/*!
+	 * Signal that the point data has changed on the GPU.
+	 *
+	 * Any data on the host will be invalidated. If data is changed on the host
+	 * and the GPU simultaneously, the latest change will be seen as leading.
+	 */
+	static void changed_on_gpu(const Point2* points) {
+		sync_state[points] = GPUSyncState::DEVICE;
+	}
+
+	/*!
+	 * Signal that the point data has changed on the host.
+	 *
+	 * Any data on the GPU will be invalidated. If data is changed on the host
+	 * and the GPU simultaneously, the latest change will be seen as leading.
+	 */
+	static void changed_on_host(const Point2* points) {
+		sync_state[points] = GPUSyncState::HOST;
+	}
+
+	/*!
 	 * Synchronise point data to the GPU.
 	 *
 	 * If the GPU data was outdated, this ensures that the data on the GPU is
