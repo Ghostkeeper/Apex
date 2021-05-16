@@ -30,17 +30,24 @@ namespace apex {
  * version, the data on the GPU is the most up-to-date, or whether the two are
  * in sync.
  *
- * There is only one instance of this class. Being a resource management class,
- * it is inappropriate to have multiple copies to track these resources. The
- * same tracker needs to be available for all instances. As such, it is made a
- * singleton.
+ * Being a resource management system, it is inappropriate to have multiple
+ * copies tracking the synchronisation state of memory objects. For that reason,
+ * this class is completely static. It is impossible to instantiate the class.
+ * The class exists only as a scope to provide namespacing and to allow tests to
+ * substitute the class for a mock.
  */
 class GPUDataTracker {
 public:
-	static GPUDataTracker& getInstance() {
-		static GPUDataTracker instance; //Instantiated on first use (because it is static).
-		return instance;
-	}
+	/*!
+	 * This object may not be instantiated.
+	 *
+	 * Being a resource management system, it is inappropriate to have multiple
+	 * copies tracking the synchronisation state of memory objects. For that
+	 * reason, this class is completely static. It is impossible to instantiate
+	 * the class. The class exists only as a scope to provide namespacing and to
+	 * allow tests to substitute the class for a mock.
+	 */
+	GPUDataTracker() = delete;
 
 	/*!
 	 * This object may not be copied.
@@ -51,14 +58,6 @@ public:
 	 * This object may not be assigned.
 	 */
 	void operator =(const GPUDataTracker& original) = delete;
-
-private:
-	/*!
-	 * Instantiates the GPUDataTracker instance.
-	 *
-	 * This may only be called from the ``getInstance`` method.
-	 */
-	GPUDataTracker() {}
 };
 
 }
