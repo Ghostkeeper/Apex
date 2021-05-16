@@ -14,7 +14,6 @@
 
 #include "point2.hpp" //The vertices of the polygon are 2D points.
 
-#include "detail/gpu_sync_state.hpp" //This vertex data may be on the GPU.
 //Implementations separated out for readability using the Curiously Recurring Template Pattern.
 #include "detail/area.hpp"
 #include "detail/translate.hpp"
@@ -99,9 +98,7 @@ public:
 	 * constructor will give a compilation error.
 	 */
 	template<typename OtherVertexStorage>
-	SimplePolygon(SimplePolygon<OtherVertexStorage>& other) :
-		vertices(other.vertices),
-		gpu_sync_state(GPUSyncState::HOST) {}
+	SimplePolygon(SimplePolygon<OtherVertexStorage>& other) : vertices(other.vertices) {}
 
 	/*!
 	 * Copies a simple polygon.
@@ -115,9 +112,7 @@ public:
 	 * constructor will give a compilation error.
 	 */
 	template<typename OtherVertexStorage>
-	SimplePolygon(const SimplePolygon<OtherVertexStorage>& other) :
-		vertices(other.vertices),
-		gpu_sync_state(GPUSyncState::HOST) {}
+	SimplePolygon(const SimplePolygon<OtherVertexStorage>& other) : vertices(other.vertices) {}
 
 	/*!
 	 * Moves a simple polygon into this polygon.
@@ -800,12 +795,6 @@ protected:
 	 * be updated.
 	 */
 	VertexStorage vertices;
-
-	/*!
-	 * Tracking whether the most recent version of this simple polygon is stored
-	 * on the host, on the GPU or whether they are currently in sync.
-	 */
-	GPUSyncState gpu_sync_state;
 };
 
 }
