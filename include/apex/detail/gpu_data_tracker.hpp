@@ -9,7 +9,12 @@
 #ifndef APEX_GPU_DATA_TRACKER
 #define APEX_GPU_DATA_TRACKER
 
+#include "gpu_sync_state.hpp" //Tracking the synchronisation states of memory objects.
+
 namespace apex {
+
+//Forward declare all data types that we need to be able to sync.
+class Point2;
 
 /*!
  * The ``GPUDataTracker`` tracks what data is currently on the GPU and what is
@@ -35,9 +40,45 @@ namespace apex {
  * this class is completely static. It is impossible to instantiate the class.
  * The class exists only as a scope to provide namespacing and to allow tests to
  * substitute the class for a mock.
+ *
+ * Since OpenMP needs to know the types of data being handled, this class
+ * features overloads for several data types that need to be synchronised to the
+ * GPU. If a different data type needs to be added, it can easily be added.
  */
 class GPUDataTracker {
 public:
+	/*!
+	 * Synchronise point data to the GPU.
+	 *
+	 * If the GPU data was outdated, this ensures that the data on the GPU is
+	 * up to date again. If the data on the GPU was already updated, this won't
+	 * unnecessarily transfer anything.
+	 */
+	static void sync_to_gpu(const Point2* points, const size_t count) {
+		std::unordered_map<Point2*, GPUSyncState>::iterator current_sync_state = sync_state.find(points);
+		if(current_sync_state != sync_state.end() && current_sync_state->second != GPUSyncState::HOST) { //GPU already has the most recent copy.
+			return;
+		}
+		#pragma omp target data map(to:points[0, count])
+		sync_state[points] = GPUSyncState::SYNC; //The host and device are now in sync.
+	}
+
+	/*!
+	 * Synchronise point data to the host.
+	 *
+	 * If the host data was outdated, this ensures that the data on the host is
+	 * up to date again. If the data on the host was already updated, this won't
+	 * unnecessarily transfer anything.
+	 */
+	static void sync_to_host(const Point2* points, const size_t count) {
+		std::unordered_map<Point2* GPUSyncState>::iterator current_sync_state = sync_state.find(points);
+		if(current_sync_state == sync_state.end() || current_sync_state->second != GPUSyncState::DEVICE) { //Host already has the most recent copy.
+			return;
+		}
+		#pragma omp target data map(from:points[0, count])
+		sync_state[points] = GPUSyncState::SYNC; //The host and device are now in sync.
+	}
+
 	/*!
 	 * This object may not be instantiated.
 	 *
@@ -58,6 +99,13 @@ public:
 	 * This object may not be assigned.
 	 */
 	void operator =(const GPUDataTracker& original) = delete;
+
+private:
+	/*!
+	 * For each memory object, tracks whether the object is currently up-to-date
+	 * in the host, in the GPU, or both.
+	 */
+	static std::unordered_map<Point2*, GPUSyncState> sync_state;
 };
 
 }
