@@ -80,8 +80,8 @@ if(BUILD_TESTS)
 		simple_polygon
 		simple_polygon_batch
 		simple_polygon_batch_view
-		detail.simple_polygon_area
-		detail.simple_polygon_translate
+		detail.area
+		detail.translate
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.
