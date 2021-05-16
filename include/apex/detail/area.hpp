@@ -149,7 +149,7 @@ protected:
 	area_t area_mt() const {
 		area_t area = 0;
 		const size_t size = base().size();
-		#pragma omp parallel for reduction(+:area)
+		#pragma omp parallel for simd reduction(+:area)
 		for(size_t vertex = 0; vertex < size; ++vertex) {
 			size_t previous = (vertex - 1 + size) % size;
 			area += static_cast<area_t>(base()[previous].x) * base()[vertex].y - static_cast<area_t>(base()[previous].y) * base()[vertex].x;
