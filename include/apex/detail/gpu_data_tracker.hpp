@@ -9,8 +9,6 @@
 #ifndef APEX_GPU_DATA_TRACKER
 #define APEX_GPU_DATA_TRACKER
 
-#include "gpu_sync_state.hpp" //Tracking the synchronisation states of memory objects.
-
 namespace apex {
 
 //Forward declare all data types that we need to be able to sync.
@@ -120,7 +118,20 @@ public:
 	 */
 	void operator =(const GPUDataTracker& original) = delete;
 
-private:
+protected:
+	/*!
+	 * These are the possible states of a piece of data being stored on the GPU
+	 * or on the host.
+	 *
+	 * Either the host has the most recent copy, the GPU has the most recent
+	 * copy, or both have the most recent copy (they are in sync).
+	 */
+	enum GPUSyncState {
+		HOST, //The host currently has a more recent copy. The polygon may not be on the GPU at all.
+		DEVICE, //The GPU device currently has a more recent copy.
+		SYNC //The host and GPU are currently in sync. Both have a recent copy.
+	};
+	
 	/*!
 	 * For each memory object, tracks whether the object is currently up-to-date
 	 * in the host, in the GPU, or both.
