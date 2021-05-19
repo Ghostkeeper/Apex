@@ -73,7 +73,7 @@ public:
 	 * unnecessarily transfer anything.
 	 */
 	static void sync_to_gpu(const Point2* points, const size_t count) {
-		std::unordered_map<Point2*, GPUSyncState>::iterator current_sync_state = sync_state.find(points);
+		std::unordered_map<const Point2*, GPUSyncState>::iterator current_sync_state = sync_state.find(points);
 		if(current_sync_state != sync_state.end() && current_sync_state->second != GPUSyncState::HOST) { //GPU already has the most recent copy.
 			return;
 		}
@@ -89,7 +89,7 @@ public:
 	 * unnecessarily transfer anything.
 	 */
 	static void sync_to_host(const Point2* points, const size_t count) {
-		std::unordered_map<Point2* GPUSyncState>::iterator current_sync_state = sync_state.find(points);
+		std::unordered_map<const Point2*, GPUSyncState>::iterator current_sync_state = sync_state.find(points);
 		if(current_sync_state == sync_state.end() || current_sync_state->second != GPUSyncState::DEVICE) { //Host already has the most recent copy.
 			return;
 		}
@@ -136,7 +136,7 @@ protected:
 	 * For each memory object, tracks whether the object is currently up-to-date
 	 * in the host, in the GPU, or both.
 	 */
-	static std::unordered_map<Point2*, GPUSyncState> sync_state;
+	static std::unordered_map<const Point2*, GPUSyncState> sync_state;
 };
 
 }
