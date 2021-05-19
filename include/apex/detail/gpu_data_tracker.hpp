@@ -139,6 +139,8 @@ protected:
 	static std::unordered_map<const Point2*, GPUSyncState> sync_state;
 };
 
+std::unordered_map<const Point2*, GPUDataTracker::GPUSyncState> GPUDataTracker::sync_state;
+
 }
 
 #endif //APEX_GPU_DATA_TRACKER
