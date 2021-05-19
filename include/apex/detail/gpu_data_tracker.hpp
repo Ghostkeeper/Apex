@@ -77,7 +77,7 @@ public:
 		if(current_sync_state != sync_state.end() && current_sync_state->second != GPUSyncState::HOST) { //GPU already has the most recent copy.
 			return;
 		}
-		#pragma omp target data map(to:points[0, count])
+		#pragma omp target enter data map(to:points[0, count])
 		sync_state[points] = GPUSyncState::SYNC; //The host and device are now in sync.
 	}
 
@@ -93,7 +93,7 @@ public:
 		if(current_sync_state == sync_state.end() || current_sync_state->second != GPUSyncState::DEVICE) { //Host already has the most recent copy.
 			return;
 		}
-		#pragma omp target data map(from:points[0, count])
+		#pragma omp target update from(points[0, count])
 		sync_state[points] = GPUSyncState::SYNC; //The host and device are now in sync.
 	}
 
