@@ -9,10 +9,10 @@
 #ifndef APEX_GPU_DATA_TRACKER
 #define APEX_GPU_DATA_TRACKER
 
-namespace apex {
+//All the types we need to be able to sync.
+#include "apex/point2.hpp"
 
-//Forward declare all data types that we need to be able to sync.
-class Point2;
+namespace apex {
 
 /*!
  * The ``GPUDataTracker`` tracks what data is currently on the GPU and what is
