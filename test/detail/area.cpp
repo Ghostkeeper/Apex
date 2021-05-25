@@ -236,4 +236,11 @@ TEST(SimplePolygonBatchArea, EmptyBatch) {
 	EXPECT_EQ(empty.area(), ground_truth) << "The area of an empty batch is an empty list.";
 }
 
+TEST(SimplePolygonBatchArea, SingleEmpty) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_EMPTY);
+
+	std::vector<area_t> ground_truth = {0};
+	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, and it is empty.";
+}
+
 }
