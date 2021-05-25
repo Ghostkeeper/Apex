@@ -10,6 +10,7 @@
 #include <gtest/gtest.h> //To run the test.
 
 #include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
+#include "../helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
 
 #define PI 3.14159265358979 //To construct and calculate the area of a regular N-gon.
 
@@ -227,6 +228,12 @@ TEST(SimplePolygonArea, Circle) {
 #ifdef GPU_TESTS
 	EXPECT_NEAR(circle.area_gpu(), ground_truth, error_margin);
 #endif
+}
+
+TEST(SimplePolygonBatchArea, EmptyBatch) {
+	MockSimplePolygonBatch empty;
+	std::vector<area_t> ground_truth;
+	EXPECT_EQ(empty.area(), ground_truth) << "The area of an empty batch is an empty list.";
 }
 
 }
