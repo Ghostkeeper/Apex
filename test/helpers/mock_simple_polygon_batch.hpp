@@ -28,6 +28,17 @@ namespace apex {
  */
 class MockSimplePolygonBatch : public std::vector<std::vector<Point2>>,
 		public SimplePolygonBatchArea<MockSimplePolygonBatch> {
+public:
+	/*!
+	 * Some basic contents to initialise the batch with.
+	 *
+	 * These can be used in the constructor as a fixture of sorts to test with.
+	 */
+	enum Contents {
+		EMPTY, //The batch is left empty (0 polygons).
+	};
+
+	MockSimplePolygonBatch(const Contents contents = Contents::EMPTY);
 };
 
 }
