@@ -9,6 +9,11 @@
 #ifndef APEX_MOCK_SIMPLE_POLYGON_BATCH
 #define APEX_MOCK_SIMPLE_POLYGON_BATCH
 
+#include <vector> //Provides the base mock implementation.
+
+#include "apex/point2.hpp" //The coordinates of the polygons.
+#include "apex/detail/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
+
 namespace apex {
 
 /*!
