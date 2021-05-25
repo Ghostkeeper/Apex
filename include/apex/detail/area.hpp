@@ -225,6 +225,8 @@ private:
 		return *static_cast<const SimplePolygonBase*>(this);
 	}
 
+	template <typename SimplePolygonBatchBase>
+	friend class SimplePolygonBatchArea; //Calls upon individual implementations of this class to ensure runtime characteristics.
 #ifdef BUILD_TESTS
 	FRIEND_TEST(SimplePolygonArea, InitialAreaIsZero);
 	FRIEND_TEST(SimplePolygonArea, Square1000);
