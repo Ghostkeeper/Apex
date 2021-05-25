@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef MOCKSIMPLEPOLYGON_HPP
-#define MOCKSIMPLEPOLYGON_HPP
+#ifndef APEX_MOCK_SIMPLE_POLYGON
+#define APEX_MOCK_SIMPLE_POLYGON
 
 #include <vector> //Provides the base mock implementation.
 
@@ -61,4 +61,4 @@ public:
 
 }
 
-#endif //MOCKSIMPLEPOLYGON_HPP
+#endif //APEX_MOCK_SIMPLE_POLYGON
