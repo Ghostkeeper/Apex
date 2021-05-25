@@ -11,7 +11,7 @@
 namespace apex {
 
 MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Contents contents) {
-	std::vector<std::vector<Point2>> polygons;
+	std::vector<MockSimplePolygon> polygons;
 	switch(contents) {
 		case EMPTY: {
 			break;

@@ -13,6 +13,7 @@
 
 #include "apex/point2.hpp" //The coordinates of the polygons.
 #include "apex/detail/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
+#include "mock_simple_polygon.hpp" //The contents of the batch are themselves mocked.
 
 namespace apex {
 
@@ -31,7 +32,7 @@ namespace apex {
  * much slower though, since the efficient buffers with vertex data will be
  * created on the fly.
  */
-class MockSimplePolygonBatch : public std::vector<std::vector<Point2>>,
+class MockSimplePolygonBatch : public std::vector<MockSimplePolygon>,
 		public SimplePolygonBatchArea<MockSimplePolygonBatch> {
 public:
 	/*!
