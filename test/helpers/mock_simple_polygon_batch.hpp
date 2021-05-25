@@ -42,6 +42,7 @@ public:
 	 */
 	enum Contents {
 		EMPTY, //The batch is left empty (0 polygons).
+		SINGLE_EMPTY, //The batch contains a single polygon with 0 vertices.
 	};
 
 	MockSimplePolygonBatch(const Contents contents = Contents::EMPTY);

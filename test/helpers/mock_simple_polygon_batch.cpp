@@ -16,6 +16,10 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 		case EMPTY: {
 			break;
 		}
+		case SINGLE_EMPTY: {
+			polygons.emplace_back(MockSimplePolygon::Shape::EMPTY);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
