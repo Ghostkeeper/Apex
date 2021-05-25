@@ -230,12 +230,21 @@ TEST(SimplePolygonArea, Circle) {
 #endif
 }
 
+/*!
+ * Tests getting the area of an empty batch.
+ */
 TEST(SimplePolygonBatchArea, EmptyBatch) {
 	MockSimplePolygonBatch empty;
 	std::vector<area_t> ground_truth;
 	EXPECT_EQ(empty.area(), ground_truth) << "The area of an empty batch is an empty list.";
 }
 
+/*!
+ * Tests getting the area of a batch with one polygon. That polygon is empty.
+ *
+ * This serves as a base case for whether the polygons in the batch are actually
+ * used.
+ */
 TEST(SimplePolygonBatchArea, SingleEmpty) {
 	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_EMPTY);
 
