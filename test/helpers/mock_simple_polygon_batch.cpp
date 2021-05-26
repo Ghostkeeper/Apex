@@ -20,6 +20,10 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::EMPTY);
 			break;
 		}
+		case SINGLE_POINT: {
+			polygons.emplace_back(MockSimplePolygon::Shape::POINT);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
