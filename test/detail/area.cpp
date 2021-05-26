@@ -284,4 +284,18 @@ TEST(SimplePolygonBatchArea, SingleSquare) {
 	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, and it's a 1000x1000 square.";
 }
 
+/*!
+ * Tests getting the area of a batch with a square and a triangle.
+ *
+ * Because the two shapes have different numbers of vertices and different
+ * surface areas, this tests getting correct separation between the triangles of
+ * the batch, and also that the results are properly formatted.
+ */
+TEST(SimplePolygonBatchArea, SquareTriangle) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SQUARE_TRIANGLE);
+
+	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000 / 2};
+	EXPECT_EQ(batch.area(), ground_truth) << "The square is 1000x1000. The triangle has a base and height of 1000, so an area of half of that.";
+}
+
 }
