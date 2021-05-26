@@ -252,4 +252,15 @@ TEST(SimplePolygonBatchArea, SingleEmpty) {
 	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, and it is empty.";
 }
 
+/*!
+ * Tests getting the area of a batch with one polygon. That polygon has just a
+ * single vertex, without any surface area.
+ */
+TEST(SimplePolygonBatchArea, SinglePoint) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_POINT);
+
+	std::vector<area_t> ground_truth = {0};
+	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, but it's just a point with no surface area.";
+}
+
 }
