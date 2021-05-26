@@ -46,6 +46,7 @@ public:
 		SINGLE_POINT, //The batch contains a single polygon with 1 vertex.
 		SINGLE_LINE, //The batch contains a single polygon with 2 vertices.
 		SINGLE_SQUARE, //The batch contains a single 1000x1000 square.
+		SQUARE_TRIANGLE, //The batch contains a square and a triangle.
 	};
 
 	MockSimplePolygonBatch(const Contents contents = Contents::EMPTY);
