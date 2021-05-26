@@ -28,6 +28,10 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::LINE);
 			break;
 		}
+		case SINGLE_SQUARE: {
+			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
