@@ -48,6 +48,15 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
 			break;
 		}
+		case EDGE_CASES: {
+			polygons.emplace_back(MockSimplePolygon::Shape::NEGATIVE_SQUARE);
+			polygons.emplace_back(MockSimplePolygon::Shape::HOURGLASS);
+			polygons.emplace_back(MockSimplePolygon::Shape::ZERO_WIDTH);
+			polygons.emplace_back(MockSimplePolygon::Shape::LINE);
+			polygons.emplace_back(MockSimplePolygon::Shape::POINT);
+			polygons.emplace_back(MockSimplePolygon::Shape::EMPTY);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }

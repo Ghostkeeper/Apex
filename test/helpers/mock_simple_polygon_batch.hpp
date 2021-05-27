@@ -49,6 +49,7 @@ public:
 		SQUARE_TRIANGLE, //The batch contains a square and a triangle.
 		SQUARE_TRIANGLE_SQUARE, //The batch contains a square, a triangle and another square.
 		TWO_SQUARES, //The batch contains two identical squares.
+		EDGE_CASES, //The batch contains a few shapes of negative surface area, zero surface area and self-intersecting shapes.
 	};
 
 	MockSimplePolygonBatch(const Contents contents = Contents::EMPTY);
