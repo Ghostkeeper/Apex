@@ -337,4 +337,15 @@ TEST(SimplePolygonBatchArea, TwoSquares) {
 	EXPECT_EQ(batch.area(), ground_truth) << "The batch has two 1000x1000 squares.";
 }
 
+/*!
+ * Tests all sorts of edge cases, to see if the batch version handles those the
+ * same way as the normal algorithms.
+ */
+TEST(SimplePolygonBatchArea, EdgeCases) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::EDGE_CASES);
+
+	const std::vector<area_t> ground_truth = {-1000 * 1000, 0, 0, 0, 0, 0};
+	EXPECT_EQ(batch.area(), ground_truth) << "The first element is a negative square. The second is self-intersecting which causes the negative area to compensate for the positive. The rest all has no surface.";
+}
+
 }
