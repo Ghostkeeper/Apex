@@ -37,6 +37,12 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::TRIANGLE_1000);
 			break;
 		}
+		case SQUARE_TRIANGLE_SQUARE: {
+			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
+			polygons.emplace_back(MockSimplePolygon::Shape::TRIANGLE_1000);
+			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
