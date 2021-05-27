@@ -342,4 +342,21 @@ TEST(SimplePolygonBatchArea, EdgeCases) {
 	EXPECT_EQ(batch.area(), ground_truth) << "The first element is a negative square. The second is self-intersecting which causes the negative area to compensate for the positive. The rest all has no surface.";
 }
 
+/*!
+ * Tests getting the area of some polygons with many vertices.
+ */
+TEST(SimplePolygonBatchArea, TwoCircles) {
+	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::TWO_CIRCLES);
+
+	constexpr size_t num_vertices = 1000000;
+	constexpr coord_t radius = 1000000;
+	const area_t true_area = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
+	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
+
+	const std::vector<area_t> calculated_areas = batch.area();
+	for(area_t calculated_area : calculated_areas) {
+		EXPECT_NEAR(calculated_area, true_area, error_margin);
+	}
+}
+
 }
