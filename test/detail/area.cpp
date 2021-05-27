@@ -12,7 +12,7 @@
 #include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
 #include "../helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
 
-#define PI 3.14159265358979 //To construct and calculate the area of a regular N-gon.
+#define PI 3.14159265358979 //To calculate the area of a regular N-gon.
 
 namespace apex {
 
@@ -224,13 +224,7 @@ TEST(SimplePolygonArea, ZeroWidth) {
 TEST(SimplePolygonArea, Circle) {
 	constexpr size_t num_vertices = 1000000;
 	constexpr coord_t radius = 1000000;
-	MockSimplePolygon circle;
-	circle.reserve(num_vertices);
-	for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
-		const coord_t x = std::lround(std::cos(PI * 2 / num_vertices * vertex) * radius); //This rounding naturally introduces error, so we must allow some lenience in the output.
-		const coord_t y = std::lround(std::sin(PI * 2 / num_vertices * vertex) * radius);
-		circle.emplace_back(x, y);
-	}
+	MockSimplePolygon circle(MockSimplePolygon::Shape::CIRCLE);
 
 	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.

@@ -6,7 +6,11 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include <cmath> //To construct an approximation of a circle.
+
 #include "mock_simple_polygon.hpp"
+
+#define PI 3.14159265358979 //To construct an approximation of a circle.
 
 namespace apex {
 
@@ -126,6 +130,16 @@ MockSimplePolygon::MockSimplePolygon(const MockSimplePolygon::Shape shape) {
 				Point2(0, 0)
 			};
 			break;
+		}
+		case CIRCLE: {
+			constexpr size_t num_vertices = 1000000;
+			constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
+			vertices.reserve(num_vertices);
+			for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
+				const coord_t x = std::lround(std::cos(PI * 2 / num_vertices * vertex) * radius);
+				const coord_t y = std::lround(std::sin(PI * 2 / num_vertices * vertex) * radius);
+				vertices.emplace_back(x, y);
+			}
 		}
 	}
 	(*this).swap(vertices);
