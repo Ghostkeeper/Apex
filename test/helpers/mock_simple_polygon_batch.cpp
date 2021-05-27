@@ -57,6 +57,15 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::EMPTY);
 			break;
 		}
+		case TWO_CIRCLES: {
+			polygons.emplace_back(MockSimplePolygon::Shape::CIRCLE);
+			polygons.emplace_back(MockSimplePolygon::Shape::CIRCLE);
+			//Move the second circle 1000 points to positive X.
+			for(Point2& vertex : polygons.back()) {
+				vertex.x += 1000;
+			}
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
