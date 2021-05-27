@@ -311,4 +311,17 @@ TEST(SimplePolygonBatchArea, SquareTriangleSquare) {
 	EXPECT_EQ(batch.area(), ground_truth) << "The first and third polygons are squares of 1000x1000. The middle one is a triangle, with half of that area.";
 }
 
+/*!
+ * Tests getting the area of a batch with two identical squares.
+ *
+ * If any algorithm has trouble with the case where the entire batch is the same
+ * it would fail this test.
+ */
+TEST(SimplePolygonBatchArea, TwoSquares) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::TWO_SQUARES);
+
+	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000};
+	EXPECT_EQ(batch.area(), ground_truth) << "The batch has two 1000x1000 squares.";
+}
+
 }
