@@ -201,6 +201,19 @@ TEST(SimplePolygonArea, Line) {
 }
 
 /*!
+ * Tests the area of a zero-width shape. It won't have any surface area.
+ */
+TEST(SimplePolygonArea, ZeroWidth) {
+	const MockSimplePolygon zero_width(MockSimplePolygon::Shape::ZERO_WIDTH);
+	EXPECT_EQ(zero_width.area(), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(zero_width.area_st(), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(zero_width.area_mt(), 0) << "The shape has no width, so no surface area.";
+#ifdef GPU_TESTS
+	EXPECT_EQ(zero_width.area_gpu(), 0) << "The shape has no width, so no surface area.";
+#endif
+}
+
+/*!
  * Tests computing the area of a regular simple polygon that consists of many
  * vertices.
  *

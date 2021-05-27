@@ -241,6 +241,7 @@ private:
 	FRIEND_TEST(SimplePolygonArea, SelfIntersecting);
 	FRIEND_TEST(SimplePolygonArea, Point);
 	FRIEND_TEST(SimplePolygonArea, Line);
+	FRIEND_TEST(SimplePolygonArea, ZeroWidth);
 	FRIEND_TEST(SimplePolygonArea, Circle);
 #endif
 };
