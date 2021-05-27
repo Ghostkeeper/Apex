@@ -48,6 +48,7 @@ public:
 		SINGLE_SQUARE, //The batch contains a single 1000x1000 square.
 		SQUARE_TRIANGLE, //The batch contains a square and a triangle.
 		SQUARE_TRIANGLE_SQUARE, //The batch contains a square, a triangle and another square.
+		TWO_SQUARES, //The batch contains two identical squares.
 	};
 
 	MockSimplePolygonBatch(const Contents contents = Contents::EMPTY);

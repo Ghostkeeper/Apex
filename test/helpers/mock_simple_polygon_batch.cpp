@@ -43,6 +43,11 @@ MockSimplePolygonBatch::MockSimplePolygonBatch(const MockSimplePolygonBatch::Con
 			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
 			break;
 		}
+		case TWO_SQUARES: {
+			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
+			polygons.emplace_back(MockSimplePolygon::Shape::SQUARE_1000);
+			break;
+		}
 	}
 	(*this).swap(polygons);
 }
