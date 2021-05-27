@@ -298,4 +298,17 @@ TEST(SimplePolygonBatchArea, SquareTriangle) {
 	EXPECT_EQ(batch.area(), ground_truth) << "The square is 1000x1000. The triangle has a base and height of 1000, so an area of half of that.";
 }
 
+/*!
+ * Tests getting the area of a batch with a square, a triangle and a square.
+ *
+ * This tests getting the area of a batch where the size of the polygons is both
+ * reduced and increased.
+ */
+TEST(SimplePolygonBatchArea, SquareTriangleSquare) {
+	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SQUARE_TRIANGLE_SQUARE);
+
+	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000 / 2, 1000 * 1000};
+	EXPECT_EQ(batch.area(), ground_truth) << "The first and third polygons are squares of 1000x1000. The middle one is a triangle, with half of that area.";
+}
+
 }
