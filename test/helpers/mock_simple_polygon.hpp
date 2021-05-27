@@ -50,6 +50,7 @@ public:
 		ARROWHEAD, //Triangle pointing up with less tall triangle subtracted from it, forming an arrowhead.
 		NEGATIVE_SQUARE, //1000x1000 square, but the winding order is wrong so it's a negative area.
 		HOURGLASS, //Self-intersecting shape, like a square but with two vertices flipped. The bottom half is negative.
+		ZERO_WIDTH, //A rectangle of 1000x0. Like the line, but with 4 vertices, some of which are the same coordinates.
 	};
 
 	/*!
