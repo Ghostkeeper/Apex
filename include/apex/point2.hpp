@@ -35,6 +35,11 @@ public:
 	coord_t y;
 
 	/*!
+	 * Create a new point at position [0,0].
+	 */
+	constexpr Point2() : x(0), y(0) {}
+
+	/*!
 	 * Create a new point.
 	 * \param x The projection of the desired point on the X dimension.
 	 * \param y The projection of the desired point on the Y dimension.
