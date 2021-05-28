@@ -86,8 +86,8 @@ protected:
 	 * refer to \ref SimplePolygonBatch.View .
 	 */
 	class View {
-		friend class SimplePolygonBatch; //This enclosing class knows about the implementation of the nested class.
-		friend class SimplePolygonBatch::Reference;
+		friend class Batch<std::vector<Element>>; //This enclosing class knows about the implementation of the nested class.
+		friend class Batch<std::vector<Element>>::Reference;
 	public:
 		/*!
 		 * Iterates one loop around the polygon.
@@ -131,7 +131,7 @@ protected:
 		 * \param polygon_index The simple polygon within that batch that this
 		 * view is viewing on.
 		 */
-		View(SimplePolygonBatch& batch, const size_t start_index, const size_t size, const size_t capacity) :
+		View(Batch<std::vector<Element>>& batch, const size_t start_index, const size_t size, const size_t capacity) :
 				batch(batch),
 				start_index(start_index),
 				num_vertices(size),
@@ -1033,7 +1033,7 @@ protected:
 			num_vertices = other_size;
 		}
 
-		void swap(SimplePolygonBatch::Reference& other) {
+		void swap(Batch<std::vector<Element>>::Reference& other) {
 			swap(other.batch.simple_polygons[other.index].storage());
 		}
 
@@ -1041,7 +1041,7 @@ protected:
 		/*!
 		 * The batch of simple polygons that this view is referring to.
 		 */
-		SimplePolygonBatch& batch;
+		Batch<std::vector<Element>>& batch;
 
 		/*!
 		 * The position within the vertex buffer of the batch where this simple
@@ -1261,7 +1261,7 @@ protected:
 	 * that it refers to.
 	 */
 	class Reference {
-		friend class SimplePolygonBatch::View;
+		friend class Batch<std::vector<Element>>::View;
 	public:
 		/*!
 		 * Iterates one loop around the polygon.
@@ -1304,7 +1304,7 @@ protected:
          * \param batch The batch of simple polygons to refer to.
          * \param index The view within that batch to refer to.
          */
-		Reference(SimplePolygonBatch& batch, const size_t index) : batch(batch), index(index) {};
+		Reference(Batch<std::vector<Element>>& batch, const size_t index) : batch(batch), index(index) {};
 
 		bool operator ==(const Reference& other) const {
 			return batch.simple_polygons[index] == other.batch.simple_polygons[other.index];
@@ -1498,7 +1498,7 @@ protected:
 			return batch.simple_polygons[index].size();
 		}
 		
-		void swap(SimplePolygonBatch::View& other) {
+		void swap(Batch<std::vector<Element>>::View& other) {
 			batch.simple_polygons[index].storage().swap(other);
 		}
 
@@ -1515,12 +1515,12 @@ protected:
 			batch.simple_polygons[index].storage().swap(other);
 		}
 
-		void swap(SimplePolygonBatch::Reference& other) {
+		void swap(Batch<std::vector<Element>>::Reference& other) {
 			batch.simple_polygons[index].storage().swap(other.batch.simple_polygons[other.index].storage()); //Swap the views that each of these refer to.
 		}
 
 	protected:
-		SimplePolygonBatch& batch;
+		Batch<std::vector<Element>>& batch;
 		size_t index;
 	};
 
@@ -1593,7 +1593,7 @@ protected:
 		 * operations on the batch, rather than working with individual
 		 * polygons.
 		 */
-		SimplePolygon<const SimplePolygonBatch::View> operator *() const {
+		SimplePolygon<const Batch<std::vector<Element>>::View> operator *() const {
 			return batch.simple_polygons[index];
 		}
 
@@ -1651,7 +1651,7 @@ public:
 	 * and forth, jump around with multiple positions at once and everything.
 	 * You can also make modifications to the batch using this iterator.
 	 */
-	using iterator = Iterator<SimplePolygonBatch>;
+	using iterator = Iterator<Batch<std::vector<Element>>>;
 
 	/*!
 	 * The iterator for iterating over the simple polygons in this batch, read-
@@ -1660,12 +1660,12 @@ public:
 	 * This iterator is a random access iterator, meaning you can iterate back
 	 * and forth, jump around with multiple positions at once and everything.
 	 */
-	using const_iterator = Iterator<const SimplePolygonBatch>;
+	using const_iterator = Iterator<const Batch<std::vector<Element>>>;
 
 	/*!
 	 * Construct a new vector of vectors, completely empty.
 	 */
-	SimplePolygonBatch() :
+	Batch() :
 			next_position(0) {};
 
 	/*!
@@ -1684,7 +1684,7 @@ public:
 	 * \param vertices_per_polygon How much memory to reserve for each polygon
 	 * on average.
 	 */
-	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) :
+	Batch(const size_t num_simple_polygons, const size_t vertices_per_polygon) :
 			simple_polygons(num_simple_polygons, SimplePolygon<View>(*this, 0, 0, 0)), //Start at 0, 0 size and 0 capacity. Size and capacity will grow as necessary.
 			next_position(0) {
 		vertex_buffer.reserve(num_simple_polygons * vertices_per_polygon);
@@ -1701,7 +1701,7 @@ public:
 	 * create.
 	 * \param repeated_simple_polygon The simple polygon to copy.
 	 */
-	SimplePolygonBatch(const size_t num_simple_polygons, const SimplePolygon<>& repeated_simple_polygon) {
+	Batch(const size_t num_simple_polygons, const SimplePolygon<>& repeated_simple_polygon) {
 		const size_t vertices_per_polygon = repeated_simple_polygon.size();
 
 		//Fill the entire index buffer first (for cache locality).
@@ -1727,7 +1727,7 @@ public:
 	 * vertices in the batch.
 	 * \param other The batch to copy into this one.
 	 */
-	SimplePolygonBatch(const SimplePolygonBatch& other) :
+	Batch(const Batch<std::vector<Element>>& other) :
 			vertex_buffer(other.vertex_buffer), //Copies all the vertex data at once.
 			next_position(other.next_position) {
 		//Copy the simple polygons one by one since we need to adjust their references to the batch.
@@ -1747,7 +1747,7 @@ public:
 	 * is in an indeterminate state and should no longer be used.
 	 * \param other The batch to move into this one.
 	 */
-	SimplePolygonBatch(SimplePolygonBatch&& other) noexcept :
+	Batch(Batch<std::vector<Element>>&& other) noexcept :
 			vertex_buffer(std::move(other.vertex_buffer)),
 			next_position(std::move(other.next_position)) {
 		//Copy the simple polygons one by one since we need to adjust their references to the batch.
@@ -1765,7 +1765,7 @@ public:
 	 * \param other The batch to copy into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(const SimplePolygonBatch& other) {
+	Batch& operator =(const Batch<std::vector<Element>>& other) {
 		vertex_buffer = other.vertex_buffer;
 		//Copy the simple polygons one by one since we need to adjust their references to the batch.
 		simple_polygons.reserve(other.simple_polygons.size());
@@ -1785,7 +1785,7 @@ public:
 	 * \param other The batch to move into this one.
 	 * \return A reference to this batch for chaining.
 	 */
-	SimplePolygonBatch& operator =(SimplePolygonBatch&& other) noexcept {
+	Batch& operator =(Batch<std::vector<Element>>&& other) noexcept {
 		vertex_buffer = std::move(other.vertex_buffer);
 		//Copy the simple polygons one by one since we need to adjust their references to the batch.
 		simple_polygons.reserve(other.simple_polygons.size());
@@ -1814,7 +1814,7 @@ public:
 		operation is only unsafe if a copy is made of the actual view into a
 		non-const variable. But since the VertexStorage itself is not exposed by
 		SimplePolygon, you can't make such a copy.*/
-		return SimplePolygon<const Reference>(const_cast<SimplePolygonBatch&>(*this), position);
+		return SimplePolygon<const Reference>(const_cast<Batch<std::vector<Element>>&>(*this), position);
 	}
 
 	/*!
@@ -1841,7 +1841,7 @@ public:
 	 * \param other The batch to compare this batch to.
 	 * \return ``true`` if both batches are equal, or ``false`` if they are not.
 	 */
-	bool operator ==(const SimplePolygonBatch& other) const {
+	bool operator ==(const Batch<std::vector<Element>>& other) const {
 		//TODO: Implement efficient batch operation for this.
 		if(size() != other.size()) {
 			return false;

@@ -59,6 +59,12 @@ class SimplePolygonBatch :
 		public Batch<std::vector<Point2>>,
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
 		public SimplePolygonBatchArea<SimplePolygonBatch> {
+public:
+	SimplePolygonBatch() : Batch<std::vector<Point2>>() {}
+	SimplePolygonBatch(const size_t num_simple_polygons, const size_t vertices_per_polygon) : Batch<std::vector<Point2>>(num_simple_polygons, vertices_per_polygon) {}
+	SimplePolygonBatch(const size_t num_simple_polygons, const SimplePolygon<>& repeated_simple_polygon) : Batch<std::vector<Point2>>(num_simple_polygons, repeated_simple_polygon) {}
+	SimplePolygonBatch(const Batch<std::vector<Point2>>& other) : Batch<std::vector<Point2>>(other) {}
+	SimplePolygonBatch(Batch<std::vector<Point2>>&& other) noexcept : Batch<std::vector<Point2>>(other) {}
 };
 
 }
