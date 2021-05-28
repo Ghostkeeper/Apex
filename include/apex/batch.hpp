@@ -96,7 +96,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::iterator iterator;
+		typedef typename std::vector<Element>::iterator iterator;
 
 		/*!
 		 * Iterates one loop around the polygon.
@@ -105,7 +105,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::const_iterator const_iterator;
+		typedef typename std::vector<Element>::const_iterator const_iterator;
 
 		/*!
 		 * Iterates one loop around the polygon in reverse.
@@ -114,7 +114,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::reverse_iterator reverse_iterator;
+		typedef typename std::vector<Element>::reverse_iterator reverse_iterator;
 
 		/*!
 		 * Iterates one loop around the polygon in reverse.
@@ -123,7 +123,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+		typedef typename std::vector<Element>::const_reverse_iterator const_reverse_iterator;
 
 		/*!
 		 * Constructs a new view on a simple polygon batch.
@@ -171,7 +171,7 @@ protected:
 		 * \param index The index of the vertex to get.
 		 * \return The vertex at the specified index.
 		 */
-		const Point2& operator [](const size_t index) const {
+		const Element& operator [](const size_t index) const {
 			return batch.vertex_buffer[start_index + index];
 		}
 
@@ -180,7 +180,7 @@ protected:
 		 * \param index The index of the vertex to get.
 		 * \return The vertex at the specified index.
 		 */
-		Point2& operator [](const size_t index) {
+		Element& operator [](const size_t index) {
 			return batch.vertex_buffer[start_index + index];
 		}
 
@@ -190,7 +190,7 @@ protected:
 		 * \param count How many times to repeat the vertex.
 		 * \param value The vertex coordinate to repeat.
 		 */
-		void assign(const size_t count, const Point2& value) {
+		void assign(const size_t count, const Element& value) {
 			reserve(count);
 			for(size_t i = 0; i < count; ++i) {
 				batch.vertex_buffer[start_index + i] = value;
@@ -226,10 +226,10 @@ protected:
 		 * initialiser list.
 		 * \param initialiser_list The initialiser list containing vertices.
 		 */
-		void assign(const std::initializer_list<Point2> initialiser_list) {
+		void assign(const std::initializer_list<Element> initialiser_list) {
 			reserve(initialiser_list.size());
 			size_t position = 0;
-			for(const Point2& vertex : initialiser_list) {
+			for(const Element& vertex : initialiser_list) {
 				batch.vertex_buffer[start_index + position++] = vertex;
 			}
 			num_vertices = initialiser_list.size(); //Update the size, clearing any vertices that we didn't override if the original was bigger.
@@ -244,7 +244,7 @@ protected:
 		 * \param position The index of the vertex to return.
 		 * \return A reference to the vertex in the specified position.
 		 */
-		const Point2& at(const size_t position) const {
+		const Element& at(const size_t position) const {
 			if(position >= size()) {
 				throw std::out_of_range("Out of range for this view on a simple polygon.");
 			}
@@ -260,7 +260,7 @@ protected:
 		 * \param position The index of the vertex to return.
 		 * \return A reference to the vertex in the specified position.
 		 */
-		Point2& at(const size_t position) {
+		Element& at(const size_t position) {
 			if(position >= size()) {
 				throw std::out_of_range("Out of range for this view on a simple polygon.");
 			}
@@ -277,7 +277,7 @@ protected:
 		 * \return A reference to the last vertex of the view on the simple
 		 * polygon.
 		 */
-		const Point2& back() const {
+		const Element& back() const {
 			return batch.vertex_buffer[start_index + size() - 1];
 		}
 
@@ -291,7 +291,7 @@ protected:
 		 * \return A reference to the last vertex of the view on the simple
 		 * polygon.
 		 */
-		Point2& back() {
+		Element& back() {
 			return batch.vertex_buffer[start_index + size() - 1];
 		}
 
@@ -422,7 +422,7 @@ protected:
 		 * \return A pointer to the first vertex that's part of this view in the
 		 * underlying data structure of the view.
 		 */
-		const Point2* data() const noexcept {
+		const Element* data() const noexcept {
 			if(batch.vertex_buffer.empty()) {
 				return batch.vertex_buffer.data();
 			}
@@ -439,7 +439,7 @@ protected:
 		 * \return A pointer to the first vertex that's part of this view in the
 		 * underlying data structure of the view.
 		 */
-		Point2* data() noexcept {
+		Element* data() noexcept {
 			if(batch.vertex_buffer.empty()) {
 				return batch.vertex_buffer.data();
 			}
@@ -464,7 +464,7 @@ protected:
 				batch.vertex_buffer[start_index + i] = batch.vertex_buffer[start_index + i - 1];
 			}
 			//Construct the vertex in-place.
-			batch.vertex_buffer[start_index + index] = Point2(arguments...);
+			batch.vertex_buffer[start_index + index] = Element(arguments...);
 
 			++num_vertices; //Increment the size.
 			return begin() + index;
@@ -482,7 +482,7 @@ protected:
 				reallocate(capacity() * 2 + 1);
 			}
 
-			batch.vertex_buffer[start_index + size()] = Point2(arguments...); //Construct the vertex in-place.
+			batch.vertex_buffer[start_index + size()] = Element(arguments...); //Construct the vertex in-place.
 			++num_vertices; //Increment the size.
 		}
 
@@ -575,7 +575,7 @@ protected:
 		 * \return A reference to the first element of the view on the simple
 		 * polygon.
 		 */
-		const Point2& front() const {
+		const Element& front() const {
 			return batch.vertex_buffer[start_index];
 		}
 
@@ -589,7 +589,7 @@ protected:
 		 * \return A reference to the first element of the view on the simple
 		 * polygon.
 		 */
-		Point2& front() {
+		Element& front() {
 			return batch.vertex_buffer[start_index];
 		}
 
@@ -609,7 +609,7 @@ protected:
 		 * \param value The vertex to insert.
 		 * \return An iterator pointing to the new vertex.
 		 */
-		iterator insert(const const_iterator position, const Point2& value) {
+		iterator insert(const const_iterator position, const Element& value) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
 			if(size() >= capacity()) {
 				reallocate(capacity() * 2 + 1);
@@ -644,7 +644,7 @@ protected:
 		 * \param value The vertex to insert.
 		 * \return An iterator pointing to the new vertex.
 		 */
-		iterator insert(const const_iterator position, Point2&& value) {
+		iterator insert(const const_iterator position, Element&& value) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
 			if(size() >= capacity()) {
 				reallocate(capacity() * 2 + 1);
@@ -684,7 +684,7 @@ protected:
 		 * \return An iterator pointing to the first of the new vertices that
 		 * was inserted.
 		 */
-		iterator insert(const const_iterator position, const size_t count, const Point2& value) {
+		iterator insert(const const_iterator position, const size_t count, const Element& value) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the input iterator).
 			if(size() + count > capacity()) {
 				reallocate(capacity() * 2 + count);
@@ -746,7 +746,7 @@ protected:
 		 * \return An iterator pointing to the first of the new vertices that
 		 * was inserted.
 		 */
-		iterator insert(const const_iterator position, const std::initializer_list<Point2> initialiser_list) {
+		iterator insert(const const_iterator position, const std::initializer_list<Element> initialiser_list) {
 			const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the inpute iterator).
 			const size_t count = initialiser_list.size();
 			if(size() + count > capacity()) {
@@ -758,7 +758,7 @@ protected:
 			}
 			//Insert the new vertices.
 			size_t i = 0;
-			for(const Point2& vertex : initialiser_list) {
+			for(const Element& vertex : initialiser_list) {
 				batch.vertex_buffer[start_index + index + i++] = vertex;
 			}
 
@@ -796,7 +796,7 @@ protected:
 		 * which will invalidate all iterators to vertices in this batch.
 		 * \param vertex The vertex to add to the simple polygon.
 		 */
-		void push_back(const Point2& vertex) {
+		void push_back(const Element& vertex) {
 			if(size() + 1 > capacity()) {
 				reallocate(capacity() * 2 + 1);
 			}
@@ -811,7 +811,7 @@ protected:
 		 * which will invalidate all iterators to vertices in this batch.
 		 * \param vertex The vertex to add to the simple polygon.
 		 */
-		void push_back(Point2&& vertex) {
+		void push_back(Element&& vertex) {
 			if(size() + 1 > capacity()) {
 				reallocate(capacity() * 2 + 1);
 			}
@@ -921,7 +921,7 @@ protected:
 		 * \param default_value A vertex to insert if the simple polygon needs
 		 * to become bigger.
 		 */
-		void resize(const size_t new_size, const Point2& default_value = Point2(0, 0)) {
+		void resize(const size_t new_size, const Element& default_value = Element()) {
 			if(new_size > size()) {
 				reserve(new_size);
 				const size_t start = start_index;
@@ -1010,7 +1010,7 @@ protected:
 		 * with different storage types.
 		 * \param other The vector of vertices to swap the data with.
 		 */
-		void swap(std::vector<Point2>& other) {
+		void swap(std::vector<Element>& other) {
 			const size_t my_size = size();
 			const size_t other_size = other.size();
 			reserve(other_size);
@@ -1028,7 +1028,7 @@ protected:
 				for(; i < other_size; ++i) {
 					batch.vertex_buffer[start_index + i] = other[i];
 				}
-				other.resize(my_size, Point2(0, 0)); //Shrink the other one to discard any remaining vertices.
+				other.resize(my_size, Element()); //Shrink the other one to discard any remaining vertices.
 			}
 			num_vertices = other_size;
 		}
@@ -1221,7 +1221,7 @@ protected:
 			while(buffer_capacity < new_place + new_capacity) {
 				buffer_capacity = buffer_capacity * 2 + 1;
 			}
-			batch.vertex_buffer.resize(buffer_capacity, Point2(0, 0));
+			batch.vertex_buffer.resize(buffer_capacity, Element());
 
 			//Copy all of the data over.
 			for(size_t vertex_index = 0; vertex_index < size(); vertex_index++) {
@@ -1270,7 +1270,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::iterator iterator;
+		typedef typename std::vector<Element>::iterator iterator;
 
 		/*!
 		 * Iterates one loop around the polygon.
@@ -1279,7 +1279,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::const_iterator const_iterator;
+		typedef typename std::vector<Element>::const_iterator const_iterator;
 
 		/*!
 		 * Iterates one loop around the polygon in reverse.
@@ -1288,7 +1288,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::reverse_iterator reverse_iterator;
+		typedef typename std::vector<Element>::reverse_iterator reverse_iterator;
 
 		/*!
 		 * Iterates one loop around the polygon in reverse.
@@ -1297,7 +1297,7 @@ protected:
 		 * batch of simple polygons, since the view will iterate over those
 		 * vertices.
 		 */
-		typedef typename std::vector<Point2>::const_reverse_iterator const_reverse_iterator;
+		typedef typename std::vector<Element>::const_reverse_iterator const_reverse_iterator;
 
         /*!
          * Construct a new reference to a view in a batch.
@@ -1314,15 +1314,15 @@ protected:
 			return batch.simple_polygons[index] != other.batch.simple_polygons[other.index];
 		}
 
-		const Point2& operator [](const size_t index) const {
+		const Element& operator [](const size_t index) const {
 			return batch.simple_polygons[this->index][index];
 		}
 
-		Point2& operator [](const size_t index) {
+		Element& operator [](const size_t index) {
 			return batch.simple_polygons[this->index][index];
 		}
 
-		void assign(const size_t count, const Point2& value) {
+		void assign(const size_t count, const Element& value) {
 			batch.simple_polygons[index].assign(count, value);
 		}
 
@@ -1331,23 +1331,23 @@ protected:
 			batch.simple_polygons[index].assign(begin, end);
 		}
 
-		void assign(const std::initializer_list<Point2> initialiser_list) {
+		void assign(const std::initializer_list<Element> initialiser_list) {
 			batch.simple_polygons[index].assign(initialiser_list);
 		}
 
-		const Point2& at(const size_t position) const {
+		const Element& at(const size_t position) const {
 			return batch.simple_polygons[index].at(position);
 		}
 
-		Point2& at(const size_t position) {
+		Element& at(const size_t position) {
 			return batch.simple_polygons[index].at(position);
 		}
 
-		const Point2& back() const {
+		const Element& back() const {
 			return batch.simple_polygons[index].back();
 		}
 
-		Point2& back() {
+		Element& back() {
 			return batch.simple_polygons[index].back();
 		}
 
@@ -1383,11 +1383,11 @@ protected:
 			return batch.simple_polygons[index].crend();
 		}
 
-		const Point2* data() const noexcept {
+		const Element* data() const noexcept {
 			return batch.simple_polygons[index].data();
 		}
 
-		Point2* data() noexcept {
+		Element* data() noexcept {
 			return batch.simple_polygons[index].data();
 		}
 
@@ -1421,23 +1421,23 @@ protected:
 			return batch.simple_polygons[index].erase(first, end);
 		}
 
-		const Point2& front() const {
+		const Element& front() const {
 			return batch.simple_polygons[index].front();
 		}
 
-		Point2& front() {
+		Element& front() {
 			return batch.simple_polygons[index].front();
 		}
 
-		iterator insert(const const_iterator position, const Point2& value) {
+		iterator insert(const const_iterator position, const Element& value) {
 			return batch.simple_polygons[index].insert(position, value);
 		}
 
-		iterator insert(const const_iterator position, Point2&& value) {
+		iterator insert(const const_iterator position, Element&& value) {
 			return batch.simple_polygons[index].insert(position, value);
 		}
 
-		iterator insert(const const_iterator position, const size_t count, const Point2& value) {
+		iterator insert(const const_iterator position, const size_t count, const Element& value) {
 			return batch.simple_polygons[index].insert(position, count, value);
 		}
 
@@ -1446,7 +1446,7 @@ protected:
 			return batch.simple_polygons[index].insert(position, begin, end);
 		}
 
-		iterator insert(const const_iterator position, const std::initializer_list<Point2> initialiser_list) {
+		iterator insert(const const_iterator position, const std::initializer_list<Element> initialiser_list) {
 			return batch.simple_polygons[index].insert(position, initialiser_list);
 		}
 
@@ -1458,11 +1458,11 @@ protected:
 			batch.simple_polygons[index].pop_back();
 		}
 
-		void push_back(const Point2& vertex) {
+		void push_back(const Element& vertex) {
 			batch.simple_polygons[index].push_back(vertex);
 		}
 
-		void push_back(Point2&& vertex) {
+		void push_back(Element&& vertex) {
 			batch.simple_polygons[index].push_back(vertex);
 		}
 
@@ -1486,7 +1486,7 @@ protected:
 			batch.simple_polygons[index].reserve(new_capacity);
 		}
 
-		void resize(const size_t new_size, const Point2& default_value = Point2(0, 0)) {
+		void resize(const size_t new_size, const Element& default_value = Element(0, 0)) {
 			batch.simple_polygons[index].resize(new_size, default_value);
 		}
 
@@ -1511,7 +1511,7 @@ protected:
 		 * with different storage types.
 		 * \param other The vector of vertices to swap the data with.
 		 */
-		void swap(std::vector<Point2>& other) {
+		void swap(std::vector<Element>& other) {
 			batch.simple_polygons[index].storage().swap(other);
 		}
 
@@ -1714,7 +1714,7 @@ public:
 		//Fill in the vertex buffer then, repeating the same polygon over and over again.
 		vertex_buffer.reserve(next_position);
 		for(size_t i = 0; i < num_simple_polygons; ++i) {
-			for(const Point2& vertex : repeated_simple_polygon) {
+			for(const Element& vertex : repeated_simple_polygon) {
 				vertex_buffer.push_back(vertex);
 			}
 		}
@@ -1903,7 +1903,7 @@ public:
 			buffer_capacity = buffer_capacity * 2 + 1;
 		}
 		simple_polygons.emplace_back(*this, next_position, simple_polygon.size(), simple_polygon.size());
-		vertex_buffer.resize(buffer_capacity, Point2(0, 0));
+		vertex_buffer.resize(buffer_capacity, Element());
 		for(size_t i = 0; i < simple_polygon.size(); ++i) { //Copy the actual data into the batch.
 			vertex_buffer[next_position + i] = simple_polygon[i];
 		}
@@ -1943,7 +1943,7 @@ protected:
 	 * then push_back instead of directly accessing the elements of the vertex
 	 * buffer. Measure whether this actually improves performance.
 	 */
-	std::vector<Point2> vertex_buffer;
+	std::vector<Element> vertex_buffer;
 
 	/*!
 	 * Position within the \ref vertex_buffer where the next simple polygon
