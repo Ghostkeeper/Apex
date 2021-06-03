@@ -256,6 +256,30 @@ public:
 	}
 
 	/*!
+	 * Return an iterator to the first element of the batch.
+	 * \return An iterator to the first element of the batch.
+	 */
+	iterator begin() noexcept {
+		return elements.begin();
+	}
+
+	/*!
+	 * Return an iterator to the first element of the batch.
+	 * \return An iterator to the first element of the batch.
+	 */
+	const_iterator begin() const noexcept {
+		return elements.begin();
+	}
+
+	/*!
+	 * Return an iterator to the first element of the batch.
+	 * \return An iterator to the first element of the batch.
+	 */
+	const_iterator cbegin() const noexcept {
+		return elements.cbegin();
+	}
+
+	/*!
 	 * Returns a pointer to the underlying array serving as element storage.
 	 *
 	 * This can be used for high-performance algorithms to work on the direct
