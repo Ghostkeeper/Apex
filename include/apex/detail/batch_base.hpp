@@ -80,6 +80,32 @@ public:
 	 */
 	BatchBase(std::initializer_list<Element> initialiser_list) : elements(initialiser_list) {}
 
+	/*!
+	 * Copies the contents of a different batch to the assigned batch.
+	 * \param other The batch to copy into this batch.
+	 */
+	BatchBase<Element>& operator =(const BatchBase<Element>& other) {
+		elements = other.elements;
+	}
+
+	/*!
+	 * Moves the contents of a different batch into the assigned batch.
+	 *
+	 * The elements of the batch will not be copied.
+	 * \param other The batch to move into this batch.
+	 */
+	BatchBase<Element>& operator =(BatchBase<Element>&& other) noexcept {
+		elements = std::move(other.elements);
+	}
+
+	/*!
+	 * Copies the contents of an intialiser list into this batch.
+	 * \param initialiser_list The list to copy into this batch.
+	 */
+	BatchBase<Element>& operator =(std::initializer_list<Element> initialiser_list) {
+		elements = initialiser_list;
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
