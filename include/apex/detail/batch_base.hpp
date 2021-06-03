@@ -688,6 +688,17 @@ public:
 		return elements.size();
 	}
 
+	/*!
+	 * Swap the contents of the batch with that of another batch.
+	 *
+	 * This swap is made by reference and can be executed in constant time,
+	 * without needing to copy or move the individual elements of the batches.
+	 * \param other The batch to swap contents with.
+	 */
+	void swap(BatchBase<Element>& other) noexcept {
+		elements.swap(other.elements);
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
@@ -696,6 +707,24 @@ protected:
 	 */
 	std::vector<Element> elements;
 };
+
+}
+
+namespace std {
+
+/*!
+ * Swap the contents of two batches.
+ *
+ * This swap is made by reference and can be executed in constant time, without
+ * needing to copy or move the individual elements of the batches.
+ * \tparam Element The type of elements contained in the batches.
+ * \param left The batch to swap with \ref right.
+ * \param right The batch to swap with \ref left.
+ */
+template<typename Element>
+void swap(apex::BatchBase<Element>& left, apex::BatchBase<Element>& right) noexcept {
+	left.swap(right);
+}
 
 }
 
