@@ -106,6 +106,40 @@ public:
 		elements = initialiser_list;
 	}
 
+	/*!
+	 * Replace the contents of the batch with a number of copies of the
+	 * specified value.
+	 *
+	 * Any old elements in the batch are erased.
+	 * \param count The number of copies of the value to put into this batch.
+	 * \param value The element to copy repeatedly.
+	 */
+	void assign(const size_t count, const Element& value) {
+		elements.assign(count, value);
+	}
+
+	/*!
+	 * Replace the contents of the batch with the elements in the specified
+	 * range ``[first, last)``.
+	 * \param first The first element in the range of elements to copy into the
+	 * batch.
+	 * \param last The iterator signalling the end of the range of elements to
+	 * copy into the batch.
+	 */
+	template<class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		elements.assign(first, last);
+	}
+
+	/*!
+	 * Replace the contents of the batch with the elements in an initialiser
+	 * list.
+	 * \param initialiser_list A list of elements to copy into this batch.
+	 */
+	void assign(std::initializer_list<Element> initialiser_list) {
+		elements.assign(initialiser_list);
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
