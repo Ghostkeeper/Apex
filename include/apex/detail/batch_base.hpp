@@ -365,6 +365,8 @@ public:
 	 * By constructing the element in-place in the batch, an additional copy may
 	 * be prevented, as it would otherwise construct the element elsewhere and
 	 * copy it in if no move semantics are available.
+	 * \tparam Args The types of arguments that the element takes in its
+	 * constructor.
 	 * \param position The position to insert the new element. The element will
 	 * be placed before this position. If the \ref end position is provided, the
 	 * element will be appended to the end of the batch.
@@ -374,6 +376,23 @@ public:
 	template<class... Args>
 	iterator emplace(const_iterator position, Args&&... args) {
 		return elements.emplace(args...);
+	}
+
+	/*!
+	 * Append a new element to the end of the batch, constructing the element
+	 * in-place.
+	 *
+	 * By constructing the element in-place in the batch, an additional copy may
+	 * be prevented, as it would otherwise construct the element elsewhere and
+	 * copy it in if no move semantics are available.
+	 * \tparam Args The types of arguments that the element takes in its
+	 * constructor.
+	 * \param args The arguments to forward to the constructor of the element.
+	 * \return A reference to the newly inserted element.
+	 */
+	template<class... Args>
+	Element& emplace_back(Args&&... args) {
+		return elements.emplace_back(args...);
 	}
 
 	/*!
