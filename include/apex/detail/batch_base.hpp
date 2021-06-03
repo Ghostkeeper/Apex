@@ -290,6 +290,17 @@ public:
 	}
 
 	/*!
+	 * Return a reverse iterator to the first element of the reversed range.
+	 *
+	 * This points to the element referenced by \ref back, the last element of
+	 * the batch.
+	 * \return A reverse iterator to the first element of the reversed range.
+	 */
+	const_reverse_iterator crbegin() const {
+		return elements.crbegin();
+	}
+
+	/*!
 	 * Returns a pointer to the underlying array serving as element storage.
 	 *
 	 * This can be used for high-performance algorithms to work on the direct
@@ -351,6 +362,28 @@ public:
 	 */
 	const Element& front() const {
 		return elements.front();
+	}
+
+	/*!
+	 * Return a reverse iterator to the first element of the reversed range.
+	 *
+	 * This points to the element referenced by \ref back, the last element of
+	 * the batch.
+	 * \return A reverse iterator to the first element of the reversed range.
+	 */
+	reverse_iterator rbegin() {
+		return elements.rbegin();
+	}
+
+	/*!
+	 * Return a reverse iterator to the first element of the reversed range.
+	 *
+	 * This points to the element referenced by \ref back, the last element of
+	 * the batch.
+	 * \return A reverse iterator to the first element of the reversed range.
+	 */
+	const_reverse_iterator rbegin() const {
+		return elements.rbegin();
 	}
 
 protected:
