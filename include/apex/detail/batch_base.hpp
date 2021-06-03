@@ -335,6 +335,15 @@ public:
 	}
 
 	/*!
+	 * Tests whether the batch contains any elements or not.
+	 * \return ``true`` if the batch contains no elements, or ``false`` if there
+	 * are some elements in the batch.
+	 */
+	bool empty() const noexcept {
+		return elements.empty();
+	}
+
+	/*!
 	 * Return an iterator marking the end of the elements in the batch.
 	 *
 	 * This iterator itself is beyond the range of the batch and not accessible.
