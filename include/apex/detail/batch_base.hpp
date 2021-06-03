@@ -212,6 +212,26 @@ public:
 		return elements.at(position);
 	}
 
+	/*!
+	 * Return a reference to the first element in the batch.
+	 *
+	 * Calling front on an empty batch is undefined.
+	 * \return A reference to the first element in the batch.
+	 */
+	Element& front() {
+		return elements.front();
+	}
+
+	/*!
+	 * Return a reference to the first element in the batch.
+	 *
+	 * Calling front on an empty batch is undefined.
+	 * \return A reference to the first element in the batch.
+	 */
+	const Element& front() const {
+		return elements.front();
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
