@@ -280,6 +280,16 @@ public:
 	}
 
 	/*!
+	 * Return an iterator marking the end of the elements in the batch.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return An iterator marking the end of the elements in the batch.
+	 */
+	const_iterator cend() const {
+		return elements.cend();
+	}
+
+	/*!
 	 * Returns a pointer to the underlying array serving as element storage.
 	 *
 	 * This can be used for high-performance algorithms to work on the direct
@@ -301,6 +311,26 @@ public:
 	 */
 	const Element* data() const noexcept {
 		return elements.data();
+	}
+
+	/*!
+	 * Return an iterator marking the end of the elements in the batch.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return An iterator marking the end of the elements in the batch.
+	 */
+	iterator end() {
+		return elements.end();
+	}
+
+	/*!
+	 * Return an iterator marking the end of the elements in the batch.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return An iterator marking the end of the elements in the batch.
+	 */
+	const_iterator end() const {
+		return elements.end();
 	}
 
 	/*!
