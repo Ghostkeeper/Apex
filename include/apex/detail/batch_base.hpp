@@ -439,6 +439,25 @@ public:
 	}
 
 	/*!
+	 * Increase the capacity of the batch to accommodate at least a certain
+	 * number of elements without having to re-allocate more memory for the
+	 * data.
+	 *
+	 * The actual contents of the batch are unchanged. This does not add any
+	 * elements to the batch. Reducing the capacity to anything lower than what
+	 * it currently is has no effect.
+	 *
+	 * If the capacity is increased, all iterators to elements in this batch are
+	 * invalidated. References are also invalidated for some ``Batch``
+	 * specialisations, but may preserve validation for others.
+	 * \param new_capacity The minimum amount of elements that the batch needs
+	 * to be able to contain without having to allocate more memory after this.
+	 */
+	void reserve(const size_t new_capacity) {
+		elements.reserve(new_capacity);
+	}
+
+	/*!
 	 * Return the number of elements in the batch.
 	 * \return The number of elements in the batch.
 	 */
