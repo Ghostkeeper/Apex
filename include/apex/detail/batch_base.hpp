@@ -425,6 +425,14 @@ public:
 		return elements.rend();
 	}
 
+	/*!
+	 * Return the number of elements in the batch.
+	 * \return The number of elements in the batch.
+	 */
+	size_t size() const noexcept {
+		return elements.size();
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
