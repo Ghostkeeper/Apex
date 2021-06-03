@@ -233,6 +233,30 @@ public:
 	}
 
 	/*!
+	 * Returns a pointer to the underlying array serving as element storage.
+	 *
+	 * This can be used for high-performance algorithms to work on the direct
+	 * elements of the batch, particularly when working with libraries that use
+	 * more of a C-style interface.
+	 * \return A pointer to the start of the data in the batch.
+	 */
+	Element* data() noexcept {
+		return elements.data();
+	}
+
+	/*!
+	 * Returns a pointer to the underlying array serving as element storage.
+	 *
+	 * This can be used for high-performance algorithms to work on the direct
+	 * elements of the batch, particularly when working with libraries that use
+	 * more of a C-style interface.
+	 * \return A pointer to the start of the data in the batch.
+	 */
+	const Element* data() const noexcept {
+		return elements.data();
+	}
+
+	/*!
 	 * Return a reference to the first element in the batch.
 	 *
 	 * Calling front on an empty batch is undefined.
