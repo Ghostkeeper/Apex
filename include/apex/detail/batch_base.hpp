@@ -565,6 +565,15 @@ public:
 	}
 
 	/*!
+	 * Remove the last element of the batch.
+	 *
+	 * Removing the last element of an empty batch is undefined.
+	 */
+	void pop_back() {
+		elements.pop_back();
+	}
+
+	/*!
 	 * Appends a new element to the end of the batch.
 	 * \param value The element to add to the batch. A copy will be made of this
 	 * element.
