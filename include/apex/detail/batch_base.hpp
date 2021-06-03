@@ -23,6 +23,10 @@ namespace apex {
  * That class behaves like a vector, but uses composition rather than
  * inheritance to mimic its behaviour. That way, inheriting from this batch base
  * is safe.
+ *
+ * This batch base doesn't support customising the allocator. If a specific
+ * allocator is necessary, it should be customised in the template
+ * specialisation.
  * \tparam Element The type of data stored in this batch.
  */
 template<typename Element>
@@ -83,9 +87,11 @@ public:
 	/*!
 	 * Copies the contents of a different batch to the assigned batch.
 	 * \param other The batch to copy into this batch.
+	 * \return A reference to this batch itself.
 	 */
 	BatchBase<Element>& operator =(const BatchBase<Element>& other) {
 		elements = other.elements;
+		return *this;
 	}
 
 	/*!
@@ -93,17 +99,21 @@ public:
 	 *
 	 * The elements of the batch will not be copied.
 	 * \param other The batch to move into this batch.
+	 * \return A reference to this batch itself.
 	 */
 	BatchBase<Element>& operator =(BatchBase<Element>&& other) noexcept {
 		elements = std::move(other.elements);
+		return *this;
 	}
 
 	/*!
 	 * Copies the contents of an intialiser list into this batch.
 	 * \param initialiser_list The list to copy into this batch.
+	 * \return A reference to this batch itself.
 	 */
 	BatchBase<Element>& operator =(std::initializer_list<Element> initialiser_list) {
 		elements = initialiser_list;
+		return *this;
 	}
 
 	/*!
