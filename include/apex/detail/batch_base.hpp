@@ -406,6 +406,33 @@ public:
 	}
 
 	/*!
+	 * Remove the specified element from the batch.
+	 *
+	 * Elements after the erased element will be moved to fill its place.
+	 * \param position An iterator to the element to erase.
+	 * \return An iterator referencing the element that took the place of the
+	 * removed element.
+	 */
+	iterator erase(const_iterator position) {
+		return elements.erase(position);
+	}
+
+	/*!
+	 * Remove a range of elements from the batch.
+	 *
+	 * Elements after the erased range will be moved to fill their places.
+	 * \param first The first element of the range of elements to remove.
+	 * \param last An iterator signalling the end of the range of elements to
+	 * remove. This is an iterator to the element after the last removed
+	 * element.
+	 * \return An iterator referencing the element that took the place of the
+	 * first removed element.
+	 */
+	iterator erase(const_iterator first, const_iterator last) {
+		return elements.erase(first, last);
+	}
+
+	/*!
 	 * Return a reference to the first element in the batch.
 	 *
 	 * Calling front on an empty batch is undefined.
