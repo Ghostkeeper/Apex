@@ -117,6 +117,32 @@ public:
 	}
 
 	/*!
+	 * Return a reference to the element at the specified position.
+	 *
+	 * Individual access of elements in a batch defeats its purpose for
+	 * improving performance of parallel algorithms. In some cases, it may be
+	 * considerably slower than accessing elements of a normal vector. Consider
+	 * using the batch's methods as much as possible for processing its
+	 * contents.
+	 */
+	Element& operator [](const size_t position) {
+		return elements[position];
+	}
+
+	/*!
+	 * Return a reference to the element at the specified position.
+	 *
+	 * Individual access of elements in a batch defeats its purpose for
+	 * improving performance of parallel algorithms. In some cases, it may be
+	 * considerably slower than accessing elements of a normal vector. Consider
+	 * using the batch's methods as much as possible for processing its
+	 * contents.
+	 */
+	const Element& operator [](const size_t position) const {
+		return elements[position];
+	}
+
+	/*!
 	 * Replace the contents of the batch with a number of copies of the
 	 * specified value.
 	 *
@@ -152,6 +178,15 @@ public:
 
 	/*!
 	 * Return a reference to the element in the batch at the specified position.
+	 *
+	 * If the position is out of bounds for the size of the batch,
+	 * ``std::out_of_range`` will be raised.
+	 *
+	 * Individual access of elements in a batch defeats its purpose for
+	 * improving performance of parallel algorithms. In some cases, it may be
+	 * considerably slower than accessing elements of a normal vector. Consider
+	 * using the batch's methods as much as possible for processing its
+	 * contents.
 	 * \return A reference to the element in the batch at the specified
 	 * position.
 	 */
@@ -161,6 +196,15 @@ public:
 
 	/*!
 	 * Return a reference to the element in the batch at the specified position.
+	 *
+	 * If the position is out of bounds for the size of the batch,
+	 * ``std::out_of_range`` will be raised.
+	 *
+	 * Individual access of elements in a batch defeats its purpose for
+	 * improving performance of parallel algorithms. In some cases, it may be
+	 * considerably slower than accessing elements of a normal vector. Consider
+	 * using the batch's methods as much as possible for processing its
+	 * contents.
 	 * \return A reference to the element in the batch at the specified
 	 * position.
 	 */
