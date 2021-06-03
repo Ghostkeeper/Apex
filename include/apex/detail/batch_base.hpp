@@ -26,7 +26,8 @@ namespace apex {
  *
  * This batch base doesn't support customising the allocator. If a specific
  * allocator is necessary, it should be customised in the template
- * specialisation.
+ * specialisation. It also doesn't support ``shrink_to_fit``, which is not
+ * available to all specialisations of the batch.
  * \tparam Element The type of data stored in this batch.
  */
 template<typename Element>
@@ -296,6 +297,17 @@ public:
 	 */
 	const_iterator cend() const noexcept {
 		return elements.cend();
+	}
+
+	/*!
+	 * Erases all contents of the batch.
+	 *
+	 * After this, the batch will be empty. The capacity will be unchanged.
+	 *
+	 * All iterators into the batch will be invalidated.
+	 */
+	void clear() noexcept {
+		elements.clear();
 	}
 
 	/*!
