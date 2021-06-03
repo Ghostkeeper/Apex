@@ -33,6 +33,29 @@ template<typename Element>
 class BatchBase {
 public:
 	/*!
+	 * Random-access iterator type to traverse elements in this batch.
+	 */
+	using iterator = std::vector<Element>::iterator;
+
+	/*!
+	 * Random-access iterator type to traverse elements in this batch without
+	 * allowing modifications to those elements.
+	 */
+	using const_iterator = std::vector<Element>::const_iterator;
+
+	/*!
+	 * Random-access iterator type to traverse elements in this batch in reverse
+	 * order.
+	 */
+	using reverse_iterator = std::vector<Element>::reverse_iterator;
+
+	/*!
+	 * Random-access iterator type to traverse elements in this batch in reverse
+	 * order without allowing modifications to those elements.
+	 */
+	using const_reverse_iterator = std::vector<Element>::const_reverse_iterator;
+
+	/*!
 	 * Constructs an empty batch.
 	 */
 	BatchBase() noexcept {}
