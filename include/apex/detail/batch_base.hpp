@@ -546,6 +546,24 @@ public:
 	}
 
 	/*!
+	 * Appends a new element to the end of the batch.
+	 * \param value The element to add to the batch. A copy will be made of this
+	 * element.
+	 */
+	void push_back(const Element& value) {
+		elements.push_back(value);
+	}
+
+	/*!
+	 * Appends a new element to the end of the batch.
+	 * \param value The element to add to the batch. The element will be moved
+	 * using move semantics into the batch.
+	 */
+	void push_back(Element&& value) {
+		elements.push_back(value);
+	}
+
+	/*!
 	 * Return a reverse iterator to the first element of the reversed range.
 	 *
 	 * This points to the element referenced by \ref back, the last element of
