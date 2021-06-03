@@ -384,6 +384,19 @@ public:
 	}
 
 	/*!
+	 * Return the theoretical maximum number of elements that this batch could
+	 * hold.
+	 *
+	 * This is the maximum that the library safely supports without hitting
+	 * integer overflows or other such limitations. The actual maximum may also
+	 * be limited by the available RAM or other resource limitations, but that
+	 * is not reflected by this value.
+	 */
+	size_t max_size() const noexcept {
+		return elements.max_size();
+	}
+
+	/*!
 	 * Return a reverse iterator to the first element of the reversed range.
 	 *
 	 * This points to the element referenced by \ref back, the last element of
