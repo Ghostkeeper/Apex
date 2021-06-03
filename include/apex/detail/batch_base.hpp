@@ -78,6 +78,8 @@ public:
 
 	/*!
 	 * Construct a batch with the contents of the range ``[first, last)``.
+	 * \tparam InputIterator This constructor accepts any type of input
+	 * iterator.
 	 * \param first The iterator to start copying from.
 	 * \param last An iterator signalling that the range of elements to copy has
 	 * ended.
@@ -181,6 +183,7 @@ public:
 	/*!
 	 * Replace the contents of the batch with the elements in the specified
 	 * range ``[first, last)``.
+	 * \tparam InputIterator This function accepts any type of input iterator.
 	 * \param first The first element in the range of elements to copy into the
 	 * batch.
 	 * \param last The iterator signalling the end of the range of elements to
@@ -402,6 +405,86 @@ public:
 	 */
 	const Element& front() const {
 		return elements.front();
+	}
+
+	/*!
+	 * Insert a new element at the specified position in the batch.
+	 *
+	 * The element will be inserted before the specified position. If the
+	 * \ref end iterator is provided, the element will be appended to the end of
+	 * the batch.
+	 * \param position The position at which to insert the new element.
+	 * \param value The element to insert. A copy will be made of this element.
+	 * \return An iterator to the newly inserted element.
+	 */
+	iterator insert(const_iterator position, const Element& value) {
+		return elements.insert(position, value);
+	}
+
+	/*!
+	 * Insert a new element at the specified position in the batch.
+	 *
+	 * The element will be inserted before the specified position. If the
+	 * \ref end iterator is provided, the element will be appended to the end of
+	 * the batch.
+	 * \param position The position at which to insert the new element.
+	 * \param value The element to insert. The element will not be copied, but
+	 * moved with move semantics into the batch.
+	 * \return An iterator to the newly inserted element.
+	 */
+	iterator insert(const_iterator position, Element&& value) {
+		return elements.insert(position, value);
+	}
+
+	/*!
+	 * Insert a number of copies of an element at the specified position in the
+	 * batch.
+	 *
+	 * The element will be copied the specified number of times. All elements
+	 * are inserted before the specified position. If the \ref end iterator is
+	 * provided, the elements will be appended to the end of the batch.
+	 * \param position The position at which to insert the new elements.
+	 * \param count The number of copies of the element to insert.
+	 * \param value The element to insert copies of.
+	 * \return An iterator to the first element of the range of newly inserted
+	 * copies. If \ref count was 0, it returns \ref position.
+	 */
+	iterator insert(const_iterator position, const size_t count, const Element& value) {
+		return elements.insert(position, count, value);
+	}
+
+	/*!
+	 * Insert a range of elements at the specified position in the batch.
+	 *
+	 * All elements will be inserted before the specified position. If the
+	 * \ref end iterator is provided, the elements will be appended to the end
+	 * of the batch.
+	 * \tparam This function accepts any type of input iterators.
+	 * \param position The position at which to insert the new elements.
+	 * \param first The first element of the range of values to insert.
+	 * \param last An iterator signalling the end of the range of values to
+	 * insert. This value itself will not be inserted, only elements before it.
+	 * \return An iterator to the first element of the range of newly inserted
+	 * elements. If the range was empty, it returns \ref position.
+	 */
+	template<class InputIterator>
+	iterator insert(const_iterator position, InputIterator first, InputIterator last) {
+		return elements.insert(position, first, last);
+	}
+
+	/*!
+	 * Insert a list of elements at the specified position in the batch.
+	 *
+	 * All elements will be inserted before the specified position. If the
+	 * \ref end iterator is provided, the elements will be appended to the end
+	 * of the batch.
+	 * \param position The position at which to insert the new elements.
+	 * \param initialiser_list The list of elements to insert.
+	 * \return An iterator to the first element of the range of newly inserted
+	 * elements. If the list was empty, it returns \ref position.
+	 */
+	iterator insert(const_iterator position, std::initializer_list<Element> initialiser_list) {
+		return elements.insert(position, initialiser_list);
 	}
 
 	/*!
