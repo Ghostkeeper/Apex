@@ -213,6 +213,26 @@ public:
 	}
 
 	/*!
+	 * Return a reference to the last element in the batch.
+	 *
+	 * Calling back on an empty batch is undefined.
+	 * \return A reference to the last element in the batch.
+	 */
+	Element& back() {
+		return elements.back();
+	}
+
+	/*!
+	 * Return a reference to the last element in the batch.
+	 *
+	 * Calling back on an empty batch is undefined.
+	 * \return A reference to the last element in the batch.
+	 */
+	const Element& back() const {
+		return elements.back();
+	}
+
+	/*!
 	 * Return a reference to the first element in the batch.
 	 *
 	 * Calling front on an empty batch is undefined.
