@@ -272,6 +272,15 @@ public:
 	}
 
 	/*!
+	 * Return the number of elements that the batch has currently allocated
+	 * space for.
+	 * \return The capacity of the currently allocated storage.
+	 */
+	size_t capacity() const noexcept {
+		return elements.capacity();
+	}
+
+	/*!
 	 * Return an iterator to the first element of the batch.
 	 * \return An iterator to the first element of the batch.
 	 */
