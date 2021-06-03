@@ -335,7 +335,7 @@ public:
 	}
 
 	/*!
-	 * Returns a pointer to the underlying array serving as element storage.
+	 * Return a pointer to the underlying array serving as element storage.
 	 *
 	 * This can be used for high-performance algorithms to work on the direct
 	 * elements of the batch, particularly when working with libraries that use
@@ -347,7 +347,7 @@ public:
 	}
 
 	/*!
-	 * Returns a pointer to the underlying array serving as element storage.
+	 * Return a pointer to the underlying array serving as element storage.
 	 *
 	 * This can be used for high-performance algorithms to work on the direct
 	 * elements of the batch, particularly when working with libraries that use
@@ -356,6 +356,24 @@ public:
 	 */
 	const Element* data() const noexcept {
 		return elements.data();
+	}
+
+	/*!
+	 * Insert a new element in the batch directly before position, constructing
+	 * the element in-place.
+	 *
+	 * By constructing the element in-place in the batch, an additional copy may
+	 * be prevented, as it would otherwise construct the element elsewhere and
+	 * copy it in if no move semantics are available.
+	 * \param position The position to insert the new element. The element will
+	 * be placed before this position. If the \ref end position is provided, the
+	 * element will be appended to the end of the batch.
+	 * \param args The arguments to forward to the constructor of the element.
+	 * \return An iterator referring to the newly constructed element.
+	 */
+	template<class... Args>
+	iterator emplace(const_iterator position, Args&&... args) {
+		return elements.emplace(args...);
 	}
 
 	/*!
