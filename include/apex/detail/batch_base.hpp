@@ -150,6 +150,24 @@ public:
 		elements.assign(initialiser_list);
 	}
 
+	/*!
+	 * Return a reference to the element in the batch at the specified position.
+	 * \return A reference to the element in the batch at the specified
+	 * position.
+	 */
+	Element& at(const size_t position) {
+		return elements.at(position);
+	}
+
+	/*!
+	 * Return a reference to the element in the batch at the specified position.
+	 * \return A reference to the element in the batch at the specified
+	 * position.
+	 */
+	const Element& at(const size_t position) const {
+		return elements.at(position);
+	}
+
 protected:
 	/*!
 	 * The main data contained in the batch.
