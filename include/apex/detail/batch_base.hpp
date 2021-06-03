@@ -285,7 +285,7 @@ public:
 	 * This iterator itself is beyond the range of the batch and not accessible.
 	 * \return An iterator marking the end of the elements in the batch.
 	 */
-	const_iterator cend() const {
+	const_iterator cend() const noexcept {
 		return elements.cend();
 	}
 
@@ -296,8 +296,18 @@ public:
 	 * the batch.
 	 * \return A reverse iterator to the first element of the reversed range.
 	 */
-	const_reverse_iterator crbegin() const {
+	const_reverse_iterator crbegin() const noexcept {
 		return elements.crbegin();
+	}
+
+	/*!
+	 * Return a reverse iterator marking the end of the reversed range.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return A reverse iterator marking the end of the reversed range.
+	 */
+	const_reverse_iterator crend() const noexcept {
+		return elements.crend();
 	}
 
 	/*!
@@ -330,7 +340,7 @@ public:
 	 * This iterator itself is beyond the range of the batch and not accessible.
 	 * \return An iterator marking the end of the elements in the batch.
 	 */
-	iterator end() {
+	iterator end() noexcept {
 		return elements.end();
 	}
 
@@ -340,7 +350,7 @@ public:
 	 * This iterator itself is beyond the range of the batch and not accessible.
 	 * \return An iterator marking the end of the elements in the batch.
 	 */
-	const_iterator end() const {
+	const_iterator end() const noexcept {
 		return elements.end();
 	}
 
@@ -371,7 +381,7 @@ public:
 	 * the batch.
 	 * \return A reverse iterator to the first element of the reversed range.
 	 */
-	reverse_iterator rbegin() {
+	reverse_iterator rbegin() noexcept {
 		return elements.rbegin();
 	}
 
@@ -382,8 +392,28 @@ public:
 	 * the batch.
 	 * \return A reverse iterator to the first element of the reversed range.
 	 */
-	const_reverse_iterator rbegin() const {
+	const_reverse_iterator rbegin() const noexcept {
 		return elements.rbegin();
+	}
+
+	/*!
+	 * Return a reverse iterator marking the end of the reversed range.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return A reverse iterator marking the end of the reversed range.
+	 */
+	reverse_iterator rend() noexcept {
+		return elements.rend();
+	}
+
+	/*!
+	 * Return a reverse iterator marking the end of the reversed range.
+	 *
+	 * This iterator itself is beyond the range of the batch and not accessible.
+	 * \return A reverse iterator marking the end of the reversed range.
+	 */
+	const_reverse_iterator rend() const noexcept {
+		return elements.rend();
 	}
 
 protected:
