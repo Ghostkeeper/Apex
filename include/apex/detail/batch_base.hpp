@@ -653,6 +653,34 @@ public:
 	}
 
 	/*!
+	 * Resize the batch to contain a certain number of elements.
+	 *
+	 * If this increases the size of the batch, default-constructed elements are
+	 * added to the end of the batch until the specified size is reached. If
+	 * this reduces the size of the batch, elements are removed from the end
+	 * instead.
+	 * \param count The number of elements that the batch should contain.
+	 */
+	void resize(const size_t count) {
+		elements.resize(count);
+	}
+
+	/*!
+	 * Resize the batch to contain a certain number of elements.
+	 *
+	 * If this increases the size of the batch, copies of the specified value
+	 * are added to the end of the batch until the specified size is reached. If
+	 * this reduces the size of the batch, elements are removed from the end
+	 * instead.
+	 * \param count The number of elements that the batch should contain.
+	 * \param value If the batch increases in size, insert copies of this
+	 * element.
+	 */
+	void resize(const size_t count, const Element& value) {
+		elements.resize(count, value);
+	}
+
+	/*!
 	 * Return the number of elements in the batch.
 	 * \return The number of elements in the batch.
 	 */
