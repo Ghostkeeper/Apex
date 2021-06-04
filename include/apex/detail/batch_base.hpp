@@ -169,6 +169,79 @@ public:
 	}
 
 	/*!
+	 * Checks if this batch is equal to another batch.
+	 *
+	 * The batches are equal if the element at each position in the batch equals
+	 * the element at the same position in the other batch. That is, the batches
+	 * contain the same elements in the same order.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if the batches are equal, or ``false`` if they are
+	 * inequal.
+	 */
+	bool operator ==(const BatchBase<Element>& other) const {
+		return elements == other.elements;
+	}
+
+	/*!
+	 * Checks if this batch is inequal to another batch.
+	 *
+	 * The batches are inequal if there is any element in this batch that is not
+	 * equal to the element in the same position in the other batch. They are
+	 * inequal if the batches have different sizes, contain different elements
+	 * or are in a different order.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if the batches are inequal, or ``false`` if they are
+	 * equal.
+	 */
+	bool operator !=(const BatchBase<Element>& other) const {
+		return elements != other.elements;
+	}
+
+	/*!
+	 * Checks if the batch is lexicographically before another batch.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if this batch occurs before the other batch in
+	 * lexicographic order, or ``false`` if it is equal or occurs after the
+	 * other batch.
+	 */
+	bool operator <(const BatchBase<Element>& other) const {
+		return elements < other.elements;
+	}
+
+	/*!
+	 * Checks if the batch is not lexicographically after another batch.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if this batch is equal to or occurs before the other
+	 * batch in lexicographic order, or ``false`` if it occurs after the other
+	 * batch.
+	 */
+	bool operator <=(const BatchBase<Element>& other) const {
+		return elements <= other.elements;
+	}
+
+	/*!
+	 * Checks if the batch is lexicographically after another batch.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if this batch occurs after the other batch in
+	 * lexicographic order, or ``false``if it is equal or occurs before the
+	 * other batch.
+	 */
+	bool operator >(const BatchBase<Element>& other) const {
+		return elements > other.elements;
+	}
+
+	/*!
+	 * Checks if the batch is not lexicographically before another batch.
+	 * \param other The batch to compare this batch to.
+	 * \return ``true`` if this batch is equal to or occurs after the other
+	 * batch in lexicographic order, or ``false`` if it occurs before the other
+	 * batch.
+	 */
+	bool operator >=(const BatchBase<Element>& other) const {
+		return elements >= other.elements;
+	}
+
+	/*!
 	 * Replace the contents of the batch with a number of copies of the
 	 * specified value.
 	 *
