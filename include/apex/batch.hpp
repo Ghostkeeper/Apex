@@ -11,6 +11,7 @@
 
 #include <vector> //As data structure and to type-specialise batches of vectors.
 
+#include "detail/batch_base.hpp" //Common implementation of many type-specialised Batch implementations.
 #include "point2.hpp" //To store the vertex data.
 #include "simple_polygon.hpp" //The default for the simple polygons in the batch.
 
@@ -58,7 +59,7 @@ namespace apex {
  * \tparam Element The type of element stored in this batch.
  */
 template<typename Element>
-class Batch : public std::vector<Element> {}; //For normal elements, batches are simply vectors.
+class Batch : BatchBase<Element> {};
 
 template<typename Element>
 class Batch<std::vector<Element>> { //Specialise batches of vectors.
