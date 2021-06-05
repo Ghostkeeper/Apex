@@ -56,6 +56,69 @@ class SimplePolygon :
 	friend class SimplePolygon; //Allow touching the privates of other instances of this template.
 public:
 	/*!
+	 * Construct an empty simple polygon.
+	 *
+	 * The empty simple polygon will be degenerate.
+	 */
+	SimplePolygon() noexcept : VertexStorage() {}
+
+	/*!
+	 * Construct a simple polygon consisting of a vertex repeated a number of
+	 * times.
+	 *
+	 * The simple polygon will be degenerate, since it will have all vertices in
+	 * the same point, leading to a shape without any area. However it might
+	 * still be useful to construct simple polygons more easily with a fallback
+	 * vertex.
+	 * \param count The amount of vertices to construct the simple polygon with.
+	 * \param vertex The vertex to repeatedly add to the simple polygon.
+	 */
+	SimplePolygon(const size_t count, const Point2& vertex = Point2()) : VertexStorage(count, vertex) {}
+
+	/*!
+	 * Construct a simple polygon consisting of a number of vertices in the
+	 * coordinate origin.
+	 *
+	 * The simple polygon will be degenerate, since it will have all vertices in
+	 * the same point, leading to a shape without any area. However it might
+	 * still be useful to construct simple polygons more easily with a fallback
+	 * vertex.
+	 * \param count The amount of vertices to construct the simple polygon with.
+	 */
+	SimplePolygon(const size_t count) : VertexStorage(count) {}
+
+	/*!
+	 * Construct a simple polygon with the contents of the range
+	 * ``[first, last)``.
+	 * \tparam InputIterator This constructor accepts any type of input
+	 * iterator.
+	 * \param first The iterator to start copying from.
+	 * \param last An iterator signalling that the range of vertices to copy has
+	 * ended.
+	 */
+	template<class InputIterator>
+	SimplePolygon(InputIterator first, InputIterator last) : VertexStorage(first, last) {}
+
+	/*!
+	 * Copy the specified simple polygon.
+	 * \param other The simple polygon to copy.
+	 */
+	SimplePolygon(const SimplePolygon& other) : VertexStorage(static_cast<const VertexStorage&>(other)) {}
+
+	/*!
+	 * Move the specified simple polygon to a new memory location.
+	 * \param other The simple polygon to move.
+	 */
+	SimplePolygon(SimplePolygon&& other) : VertexStorage(static_cast<VertexStorage&&>(other)) {}
+
+	/*!
+	 * Construct a simple polygon from the contents of an initialiser list.
+	 * \param initialiser_list The list of vertices to put in the simple
+	 * polygon.
+	 */
+	SimplePolygon(std::initializer_list<Point2> initializer_list) : VertexStorage(initializer_list) {}
+
+	/*!
 	 * Tests whether this simple polygon is equal to another.
 	 *
 	 * Two polygons are the same if they share the same set of vertices in the

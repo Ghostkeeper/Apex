@@ -59,7 +59,62 @@ namespace apex {
  * \tparam Element The type of element stored in this batch.
  */
 template<typename Element>
-class Batch : public BatchBase<Element> {};
+class Batch : public BatchBase<Element> {
+public:
+	/*!
+	 * Construct an empty batch.
+	 */
+	Batch() : BatchBase<Element>() {}
+
+	/*!
+	 * Construct a batch containing the specified element repeated a number of
+	 * times.
+	 * \param count The amount of elements to fill the batch with.
+	 * \param value The element to fill the batch with. This element gets
+	 * repeated a number of times.
+	 */
+	Batch(const size_t count, const Element& value = Element()) : BatchBase<Element>(count, value) {}
+
+	/*!
+	 * Construct a batch containing default-inserted instances of the element.
+	 * \param count The amount of elements to fill the batch with.
+	 */
+	Batch(const size_t count) : BatchBase<Element>(count) {}
+
+	/*!
+	 * Construct a batch with the contents of the range ``[first, last)``.
+	 * \tparam InputIterator This constructor accepts any type of input
+	 * iterator.
+	 * \param first The iterator to start copying from.
+	 * \param last An iterator signalling that the range of elements to copy has
+	 * ended.
+	 */
+	template<class InputIterator>
+	Batch(InputIterator first, InputIterator last) : BatchBase<Element>(first, last) {}
+
+	/*!
+	 * Construct a copy of the specified batch.
+	 *
+	 * All elements inside the batch will be copied as well.
+	 * \param other The batch to copy.
+	 */
+	Batch(const Batch<Element>& other) : BatchBase<Element>(static_cast<const BatchBase<Element>&>(other)) {}
+
+	/*!
+	 * Move constructor, moving one batch to another location using move
+	 * semantics.
+	 *
+	 * After the move, ``other`` is guaranteed to be empty.
+	 * \param other The batch to move into the new batch.
+	 */
+	Batch(Batch<Element>&& other) : BatchBase<Element>(static_cast<BatchBase<Element>&&>(other)) {}
+
+	/*!
+	 * Construct a batch from the contents of an initialiser list.
+	 * \param initialiser_list The list of elements to put in the new batch.
+	 */
+	Batch(std::initializer_list<Element> initializer_list) : BatchBase<Element>(initializer_list) {}
+};
 
 template<typename Element>
 class Batch<std::vector<Element>> { //Specialise batches of vectors.
