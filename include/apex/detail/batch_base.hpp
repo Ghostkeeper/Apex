@@ -57,7 +57,7 @@ public:
 	using const_reverse_iterator = typename std::vector<Element>::const_reverse_iterator;
 
 	/*!
-	 * Constructs an empty batch.
+	 * Construct an empty batch.
 	 */
 	BatchBase() noexcept {}
 
@@ -105,13 +105,13 @@ public:
 	BatchBase(BatchBase&& other) noexcept : elements(std::move(other.elements)) {}
 
 	/*!
-	 * Constructs a batch from the contents of an initialiser list.
+	 * Construct a batch from the contents of an initialiser list.
 	 * \param initialiser_list The list of elements to put in the new batch.
 	 */
 	BatchBase(std::initializer_list<Element> initialiser_list) : elements(initialiser_list) {}
 
 	/*!
-	 * Copies the contents of a different batch to the assigned batch.
+	 * Copy the contents of a different batch to the assigned batch.
 	 * \param other The batch to copy into this batch.
 	 * \return A reference to this batch itself.
 	 */
@@ -121,7 +121,7 @@ public:
 	}
 
 	/*!
-	 * Moves the contents of a different batch into the assigned batch.
+	 * Move the contents of a different batch into the assigned batch.
 	 *
 	 * The elements of the batch will not be copied.
 	 * \param other The batch to move into this batch.
@@ -133,7 +133,7 @@ public:
 	}
 
 	/*!
-	 * Copies the contents of an intialiser list into this batch.
+	 * Copy the contents of an intialiser list into this batch.
 	 * \param initialiser_list The list to copy into this batch.
 	 * \return A reference to this batch itself.
 	 */
