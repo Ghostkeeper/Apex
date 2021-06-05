@@ -59,7 +59,7 @@ namespace apex {
  * \tparam Element The type of element stored in this batch.
  */
 template<typename Element>
-class Batch : BatchBase<Element> {};
+class Batch : public BatchBase<Element> {};
 
 template<typename Element>
 class Batch<std::vector<Element>> { //Specialise batches of vectors.
