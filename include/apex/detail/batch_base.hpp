@@ -448,7 +448,7 @@ public:
 	 */
 	template<class... Args>
 	iterator emplace(const_iterator position, Args&&... args) {
-		return elements.emplace(args...);
+		return elements.emplace(position, args...);
 	}
 
 	/*!
