@@ -114,6 +114,17 @@ public:
 	 * \param initialiser_list The list of elements to put in the new batch.
 	 */
 	Batch(std::initializer_list<Element> initializer_list) : BatchBase<Element>(initializer_list) {}
+
+	/*!
+	 * Request to reduce the memory usage of this batch to fit just the current
+	 * data.
+	 *
+	 * This may cause the data to be reallocated. Or it may not. This depends on
+	 * the implementation of the underlying data structures.
+	 */
+	void shrink_to_fit() noexcept {
+		BatchBase<Element>::elements.shrink_to_fit();
+	}
 };
 
 template<typename Element>
