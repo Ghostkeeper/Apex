@@ -185,6 +185,30 @@ template<typename Element>
 class SubbatchView {
 	friend class Batch<Batch<Element>>; //The parent batch is a friend class, so that it can access the hidden constructor to create new views.
 
+	public:
+	//Using the iterator types of the element buffer.
+	/*!
+	 * The iterator type used to iterate over elements of the subbatch.
+	 */
+	using iterator = typename std::vector<Element>::iterator;
+
+	/*!
+	 * The iterator type used to iterate over elements of a const subbatch.
+	 */
+	using const_iterator = typename std::vector<Element>::const_iterator;
+
+	/*!
+	 * The iterator type used to iterate in reverse over elements of the
+	 * subbatch.
+	 */
+	using reverse_iterator = typename std::vector<Element>::reverse_iterator;
+
+	/*!
+	 * The iterator type used to iterate in reverse over elements of a const
+	 * subbatch.
+	 */
+	using const_reverse_iterator = typename std::vector<Element>::const_reverse_iterator;
+
 	protected:
 	/*!
 	 * The batch this view is a part of.
@@ -202,6 +226,9 @@ class SubbatchView {
 
 	/*!
 	 * The number of elements currently in the subbatch.
+	 *
+	 * This field can't just be called "size" since that is already an existing
+	 * member, which returns this field as per the vector footprint.
 	 */
 	size_t num_elements;
 
