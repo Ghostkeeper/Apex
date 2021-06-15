@@ -227,6 +227,14 @@ class SubbatchView {
 		return batch.subelements[start_index + index];
 	}
 
+	/*!
+	 * Return the number of elements in this subbatch.
+	 * \return The number of elements in this subbatch.
+	 */
+	size_t size() const {
+		return num_elements;
+	}
+
 	protected:
 	/*!
 	 * The batch this view is a part of.
