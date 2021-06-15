@@ -163,6 +163,15 @@ class Batch<Batch<Element>> : BatchBase<SubbatchView<Element>> { //Specialise ba
 	 * performance.
 	 */
 	std::vector<Element> subelements;
+
+	/*!
+	 * The starting index in the element buffer of the next subbatch, if a new
+	 * one would be added.
+	 *
+	 * This position effectively indicates where the currently allocated
+	 * data ends in the most recently allocated subbatch.
+	 */
+	size_t next_position;
 };
 
 /*!
@@ -296,6 +305,25 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Increase the capacity of the subbatch to ensure that it can contain at
+	 * least the specified number of elements, without reallocating to a new
+	 * strip of memory in the element buffer.
+	 *
+	 * The actual size or data is not changed. However if the capacity of the
+	 * view is increased, all current iterators to positions in the subbatch are
+	 * invalidated. They cannot be used any more since the place they refer to
+	 * is no longer where the data is held.
+	 * \param new_capacity The minimum capacity that the subbatch must have to
+	 * contain elements, without needing to reallocate.
+	 */
+	void reserve(const size_t new_capacity) {
+		if(new_capacity <= current_capacity) {
+			return; //Already have enough capacity for this requirement. No reallocation necessary.
+		}
+		reallocate(new_capacity);
+	}
+
+	/*!
 	 * Return the number of elements in this subbatch.
 	 * \return The number of elements in this subbatch.
 	 */
@@ -348,6 +376,38 @@ class SubbatchView {
 			start_index(start_index),
 			num_elements(size),
 			current_capacity(capacity) {};
+
+	/*!
+	 * Moves this subbatch to a new location inside the element buffer to make
+	 * more space for new elements.
+	 *
+	 * This copies all of the element data to a new location, making it a linear
+	 * operation. Much like the ArrayList data structure though, adding new
+	 * elements won't have to call this operation very often any more as the
+	 * subbatch grows bigger, resulting in an amortised constant time complexity
+	 * for adding elements.
+	 * \param new_capacity The amount of elements that can be stored without
+	 * allocating new memory, after this operation has been completed.
+	 */
+	void reallocate(const size_t new_capacity) {
+		const size_t new_place = batch.next_position;
+		batch.next_position += new_capacity;
+
+		//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
+		size_t buffer_capacity = batch.subelements.size();
+		while(buffer_capacity < new_place + new_capacity) {
+			buffer_capacity = buffer_capacity * 2 + 1;
+		}
+		batch.subelements.resize(buffer_capacity, Element());
+
+		//Copy all of the data over.
+		for(size_t index = 0; index < size(); ++index) {
+			batch.subelements[new_place + index] = batch.subelements[start_index + index];
+		}
+
+		start_index = new_place;
+		current_capacity = new_capacity;
+	}
 };
 
 template<typename Element>
