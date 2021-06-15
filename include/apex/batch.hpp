@@ -209,6 +209,24 @@ class SubbatchView {
 	 */
 	using const_reverse_iterator = typename std::vector<Element>::const_reverse_iterator;
 
+	/*!
+	 * Return the element in a specified position in the subbatch.
+	 * \param index The position of the element to retrieve.
+	 * \return The element in the specified position of the subbatch.
+	 */
+	const Element& operator [](const size_t index) const {
+		return batch.subelements[start_index + index];
+	}
+
+	/*!
+	 * Return the element in a specified position in the subbatch.
+	 * \param index The position of the element to retrieve.
+	 * \return The element in the specified position of the subbatch.
+	 */
+	Element& operator [](const size_t index) {
+		return batch.subelements[start_index + index];
+	}
+
 	protected:
 	/*!
 	 * The batch this view is a part of.
