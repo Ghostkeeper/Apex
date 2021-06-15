@@ -28,34 +28,10 @@ namespace apex {
  *
  * The class behaves externally like \ref std::vector in its interface. For most
  * types of elements, it behaves like a normal vector internally as well.
- * However if the element is itself a vector, this class specialises the data
- * structure as a vector-of-vectors. Instead of each vector having its own
- * allocation of memory, this batch will coalesce all data to a single array. It
- * then keeps track of where each vector starts and ends in an array of indices.
- * The purpose of that is that this single array can be transferred in one go,
- * and allocated on other devices in one go, improving performance.
- *
- * There are also disadvantages to this approach. It essentially operates as a
- * monotonic allocator, so if any of the elements have to grow in size, they
- * will need to be moved in their entirety to the end of the buffer. There is
- * also no tracking of where there might be gaps halfway in the buffer to move
- * them to, so the buffer will only grow unless it is optimised with a manual
- * call.
- *
- * If the batch is of a simple type, accessing elements of the batch behaves as
- * they would normally. However accessing elements of a batch of vectors will
- * result in a "view" on the batch. These view objects are not actual vectors,
- * but have a level of indirection so that they can keep working even if the
- * buffers are reallocated. They behave the same way as a vector, but they are
- * not actual vectors. If the elements of the batch have the correct
- * constructor, they can be made to behave identical in code (but memory
- * allocation may be different). Individually changing elements in a batch this
- * way is less efficient than group operations, and even marginally less
- * efficient than if the element would not be inside a batch.
- *
- * The data and views together form the complete state of the batch. They are
- * intended to be sent together as two buffers to the compute devices. This
- * allows all of the batch operations to be executed on the compute devices.
+ * However the template argument can be specialised for some types. This is of
+ * particular interest to complex data types which point to separately allocated
+ * contents. By specialising the data structure of those elements, the batch can
+ * be made more efficient with large data sets.
  * \tparam Element The type of element stored in this batch.
  */
 template<typename Element>
@@ -125,6 +101,132 @@ public:
 	void shrink_to_fit() noexcept {
 		BatchBase<Element>::elements.shrink_to_fit();
 	}
+};
+
+template<typename Element>
+class SubbatchView; //Forward declare this view here so we can use it as template argument below, but implement it later so we can use Batch's fields.
+
+/*!
+ * This is a specialisation of the Batch class that handles batches of batches
+ * more efficiently.
+ *
+ * The purpose of this batching is to improve performance. If some algorithm
+ * needs to be performed on many elements simultaneously, batching these all
+ * together allows them to be transferred to different compute devices in one
+ * go, which reduces the latency of the transfer.
+ *
+ * For simple data types this performs well when the data is placed in a vector,
+ * as long as the algorithm implementation knows about the vector in order to
+ * allocate it in one go on the compute device. However if the data type
+ * allocates additional memory on the heap, the individual allocations of each
+ * element would need to be transferred to the compute devices, which is very
+ * slow. That is what this template specialisation intends to solve.
+ *
+ * Instead of each subbatch having its own allocation of memory, this batch will
+ * coalesce all data to a single array. It then creates 'view' objects that
+ * point to segments of the array with a start index, a size and a capacity. The
+ * encompassing batch will behave externally like a batch of these views then.
+ * The views have the same interface as batches, but a different behaviour since
+ * they index into a single allocation, rather than their own little piece of
+ * memory. That way, if the batch as a whole needs to be processed, only that
+ * single allocation and the secondary index array need to be sent to the
+ * compute device. This is intended to improve performance.
+ *
+ * There are also disadvantages to this approach. It essentially operates as a
+ * monotonic allocator, so if any of the elements have to grow in size, they
+ * will need to be moved in their entirety to the end of the buffer. There is
+ * also no tracking of where there might be gaps halfway in the buffer to move
+ * them to, so the buffer will only grow unless it is optimised with a manual
+ * call. Consider frequent modifications of the batch to be inefficient, if the
+ * modifications cause the subbatches to grow.
+ *
+ * The subbatches introduce a level of indirection when accessing individual
+ * elements. That way they can keep working if the main element array needs to
+ * be reallocated. Individually accessing elements of the batch is inefficient.
+ * It is advised to modify the contents only with the batch's own methods, which
+ * have access to the element array and can therefore be efficient.
+ *
+ * The data and views together form the complete state of the batch. They are
+ * intended to be sent together as two buffers to the compute devices. This
+ * allows all of the batch operations to be executed on the compute devices.
+ * \tparam Element The type of element stored in the subbatches.
+ */
+template<typename Element>
+class Batch<Batch<Element>> : BatchBase<SubbatchView<Element>> { //Specialise batches of batches.
+	friend class SubbatchView<Element>; //Subbatches can access the coalesced data structure to get their own information.
+	protected:
+	/*!
+	 * Vector containing the actual data in the subbatches.
+	 *
+	 * This effectively coalesces all data of all batches into one single array,
+	 * which is easier to transfer to other devices in one allocation, improving
+	 * performance.
+	 */
+	std::vector<Element> subelements;
+};
+
+/*!
+ * A view on a batch of batches.
+ *
+ * This view replaces the standard implementation of a batch if that batch is
+ * contained within a different batch. The batch of batches will actually be
+ * transformed into a batch of ``SubbatchView``s. These views have exactly the
+ * same interface as a normal batch, so they can be used interchangeably in
+ * code. However the implementation is different. It allows the actual data to
+ * be coalesced with other subbatches in the batch, so that it requires fewer
+ * allocations on the compute devices, improving performance.
+ *
+ * A view consists of a start index in the element buffer, a size and a current
+ * capacity. It also tracks which batch it belongs to, so that the views can be
+ * used separately from the batches as long as the original batch is not moved
+ * or destroyed.
+ */
+template<typename Element>
+class SubbatchView {
+	friend class Batch<Batch<Element>>; //The parent batch is a friend class, so that it can access the hidden constructor to create new views.
+
+	protected:
+	/*!
+	 * The batch this view is a part of.
+	 *
+	 * Operations on the data of this view should be performed in the element
+	 * buffer of this batch.
+	 */
+	Batch<Batch<Element>>& batch;
+
+	/*!
+	 * The position in the element buffer where the data of this subbatch
+	 * starts.
+	 */
+	size_t start_index;
+
+	/*!
+	 * The number of elements currently in the subbatch.
+	 */
+	size_t num_elements;
+
+	/*!
+	 * How much space is available in this part of the element buffer for the
+	 * elements in this subbatch.
+	 */
+	size_t current_capacity;
+
+	/*!
+	 * Construct a new view on a subbatch.
+	 *
+	 * A new view should only be constructed by the batch this view is part of.
+	 * \param batch The batch this view is a part of.
+	 * \param start_index The index in that batch's element buffer where the
+	 * data of this subbatch starts.
+	 * \param size The number of elements currently in the subbatch.
+	 * \param capacity How much space is available in this part of the element
+	 * buffer for the elements in this subbatch.
+	 */
+	SubbatchView(Batch<Batch<Element>>& batch, const size_t start_index, const size_t size, const size_t capacity) :
+			batch(batch),
+			start_index(start_index),
+			num_elements(size),
+			current_capacity(capacity) {};
 };
 
 template<typename Element>
