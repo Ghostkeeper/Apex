@@ -228,6 +228,74 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Compare two subbatches for equality.
+	 *
+	 * The subbatches are equal if all of their elements are equal and in the
+	 * same order.
+	 * \param other The subbatch to compare this subbatch to.
+	 * \return ``true`` if this subbatch is equal to the other subbatch, or
+	 * ``false`` if at least one of the elements is different.
+	 */
+	bool operator ==(const SubbatchView<Element>& other) const {
+		if(size() != other.size()) {
+			return false; //If they have different sizes, not all elements can have an equal in the same position in the other batch.
+		}
+		for(size_t element = 0; element < size(); ++element) {
+			if((*this)[element] != other[element]) {
+				return false;
+			}
+		}
+		return true; //Found no element that was different in the other batch, so all elements must be the same.
+	}
+
+	/*!
+	 * Compare this subbatch with a different batch for equality.
+	 *
+	 * The subbatch equals the other batch if all of their elements are equal
+	 * and in the same order.
+	 * \param other The batch to compare this subbatch to.
+	 * \return ``true`` if this subbatch is equal to the other batch, or
+	 * ``false`` if at least one of the elements is different.
+	 */
+	bool operator ==(const Batch<Element>& other) const {
+		if(size() != other.size()) {
+			return false; //If they have different sizes, not all elements can have an equal in the same position in the other batch.
+		}
+		for(size_t element = 0; element < size(); ++element) {
+			if((*this)[element] != other[element]) {
+				return false;
+			}
+		}
+		return true; //Found no element that was different in the other batch, so all elements must be the same.
+	}
+
+	/*!
+	 * Compare two subbatches for inequality.
+	 *
+	 * The subbatches are inequal if at least one of their elements is
+	 * different, or in a different order.
+	 * \param other The subbatch to compare this subbatch to.
+	 * \return ``true`` if this subbatch is different from the other subbatch,
+	 * or ``false`` if they are equal.
+	 */
+	bool operator !=(const SubbatchView<Element>& other) const {
+		return !((*this) == other); //Inverse of equality operator.
+	}
+
+	/*!
+	 * Compare a subbatch to another batch for inequality.
+	 *
+	 * The subbatch is inequal to the batch if at least one of their elements is
+	 * different, or in a different order.
+	 * \param other The batch to compare this subbatch to.
+	 * \return ``true`` if this subbatch is different from the other batch, or
+	 * ``false`` if they are equal.
+	 */
+	bool operator !=(const Batch<Element>& other) const {
+		return !((*this) == other); //Inverse of equality operator.
+	}
+
+	/*!
 	 * Return the number of elements in this subbatch.
 	 * \return The number of elements in this subbatch.
 	 */
