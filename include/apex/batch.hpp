@@ -305,6 +305,13 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Removes all content from this subbatch.
+	 */
+	void clear() noexcept {
+		num_elements = 0; //If we just say the subbatch ends after 0 elements, it instantly behaves as if it's empty. The old data won't do any harm where it is.
+	}
+
+	/*!
 	 * Increase the capacity of the subbatch to ensure that it can contain at
 	 * least the specified number of elements, without reallocating to a new
 	 * strip of memory in the element buffer.
