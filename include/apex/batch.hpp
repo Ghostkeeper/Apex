@@ -321,6 +321,36 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Appends an element to the end of the subbatch.
+	 *
+	 * The element is copied in this case. This may cause a reallocation, which
+	 * will invalidate all iterators to elements in this batch.
+	 * \param value The element to add to the subbatch.
+	 */
+	void push_back(const Element& value) {
+		if(size() + 1 > capacity()) {
+			reallocate(capacity() * 2 + 1); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
+		}
+		(*this)[size()] = value;
+		++num_elements;
+	}
+
+	/*!
+	 * Appends an element at the end of the subbatch.
+	 *
+	 * The element is moved in this case. This may cause a reallocation, which
+	 * will invalidate all iterators to elements in this batch.
+	 * \param value The element to add to the subbatch.
+	 */
+	void push_back(Element&& element) {
+		if(size() + 1 > capacity()) {
+			reallocate(capacity() * 2 + 1); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
+		}
+		(*this)[size()] = std::move(element);
+		++num_elements;
+	}
+
+	/*!
 	 * Increase the capacity of the subbatch to ensure that it can contain at
 	 * least the specified number of elements, without reallocating to a new
 	 * strip of memory in the element buffer.
