@@ -305,6 +305,15 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Return the number of elements that this subbatch could contain without
+	 * needing to allocate more memory.
+	 * \return The capacity of this subbatch.
+	 */
+	size_t capacity() const noexcept {
+		return current_capacity;
+	}
+
+	/*!
 	 * Removes all content from this subbatch.
 	 */
 	void clear() noexcept {
