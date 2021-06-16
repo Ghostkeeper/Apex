@@ -618,6 +618,47 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Erases one element from the subbatch.
+	 *
+	 * The iterators pointing to positions at or after this element will be
+	 * invalidated. The iterators pointing to positions before this element will
+	 * not be invalidated.
+	 * \param position The position of the element to erase.
+	 * \return An iterator to the element after the removed element. If the last
+	 * element was removed, the ``end()`` iterator is returned.
+	 */
+	iterator erase(const const_iterator position) {
+		const size_t index = position - begin();
+		for(size_t i = index; i < size() - 1; ++i) { //Shift other elements over this one.
+			(*this)[i] = (*this)[i + 1];
+		}
+		--num_elements;
+		return begin() + index; //Convert iterator to non-const version by constructing a new one.
+	}
+
+	/*!
+	 * Erases a range of elements from a subbatch.
+	 *
+	 * The iterators pointing to positions within or after the range will be
+	 * invalidated. The iterators pointing to positions before the range will
+	 * not be invalidated.
+	 * \param first The beginning of the range of elements to remove.
+	 * \param end An iterator signalling the end of the range of elements to
+	 * remove.
+	 * \return An iterator pointing to the element after the last removed
+	 * element.
+	 */
+	iterator erase(const_iterator first, const const_iterator end) {
+		const size_t index = first - begin();
+		const size_t num_removed = end - first;
+		for(size_t i = index; i < size() - num_removed; ++i) { //Shift other elements over the range.
+			(*this)[i] = (*this)[i + num_removed];
+		}
+		num_elements -= num_removed;
+		return begin() + index; //Convert iterator to non-const version by constructing a new one.
+	}
+
+	/*!
 	 * Get the first element of the subbatch.
 	 *
 	 * Getting the front of an empty subbatch is undefined. It may return an
