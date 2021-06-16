@@ -379,6 +379,30 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Get the last element of the subbatch.
+	 *
+	 * Getting the back of an empty subbatch is undefined. It may return an
+	 * element of a different subbatch, or run out of range of the internal
+	 * memory which may cause a segfault.
+	 * \return A reference to the last element of the subbatch.
+	 */
+	const Element& back() const {
+		return (*this)[size() - 1];
+	}
+
+	/*!
+	 * Get the last element of the subbatch.
+	 *
+	 * Getting the back of an empty subbatch is undefined. It may return an
+	 * element of a different subbatch, or run out of range of the internal
+	 * memory which may cause a segfault.
+	 * \return A reference to the last element of the subbatch.
+	 */
+	Element& back() {
+		return (*this)[size() - 1];
+	}
+
+	/*!
 	 * Return the number of elements that this subbatch could contain without
 	 * needing to allocate more memory.
 	 * \return The capacity of this subbatch.
@@ -392,6 +416,30 @@ class SubbatchView {
 	 */
 	void clear() noexcept {
 		num_elements = 0; //If we just say the subbatch ends after 0 elements, it instantly behaves as if it's empty. The old data won't do any harm where it is.
+	}
+
+	/*!
+	 * Get the first element of the subbatch.
+	 *
+	 * Getting the front of an empty subbatch is undefined. It may return an
+	 * element of a different subbatch, or run out of range of the internal
+	 * memory which may cause a segfault.
+	 * \return A reference to the first element of the subbatch.
+	 */
+	const Element& front() const {
+		return (*this)[0];
+	}
+
+	/*!
+	 * Get the first element of the subbatch.
+	 *
+	 * Getting the front of an empty subbatch is undefined. It may return an
+	 * element of a different subbatch, or run out of range of the internal
+	 * memory which may cause a segfault.
+	 * \return A reference to the first element of the subbatch.
+	 */
+	Element& front() {
+		return (*this)[0];
 	}
 
 	/*!
