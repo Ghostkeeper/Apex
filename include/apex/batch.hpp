@@ -581,6 +581,15 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Return whether this subbatch is an empty batch.
+	 * \return ``true`` if there are no elements in this subbatch, or ``false``
+	 * if there are.
+	 */
+	bool empty() const {
+		return size() == 0;
+	}
+
+	/*!
 	 * Get an iterator signalling the end of the subbatch.
 	 *
 	 * This actually returns an iterator to the end of the view in the element
