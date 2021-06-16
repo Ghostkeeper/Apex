@@ -305,6 +305,50 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Replace the contents of the subbatch with a repeated instance of a given
+	 * element.
+	 * \param count How many times to repeat the element.
+	 * \param value The element to repeat.
+	 */
+	void assign(const size_t count, const Element& value) {
+		reserve(count);
+		for(size_t index = 0; index < count; ++index) {
+			(*this)[index] = value;
+		}
+		num_elements = count;
+	}
+
+	/*!
+	 * Replace the contents of the subbatch with the contents of a range between
+	 * two given iterators.
+	 * \param begin The beginning of the range to replace with.
+	 * \param end An iterator signalling the end of the range to replace with.
+	 * \tparam InputIterator The type of iterator to iterate with. The ``begin``
+	 * iterator needs to have the same type as the ``end`` iterator.
+	 */
+	template<class InputIterator>
+	void assign(InputIterator begin, InputIterator end) {
+		clear(); //Clear any old contents.
+		assign_iterator_dispatch<InputIterator>(begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+	}
+
+	/*!
+	 * Replace the contents of the subbatch with the contents of an initialiser
+	 * list.
+	 * \param initialiser_list The list of elements with which to replace the
+	 * contents of this subbatch.
+	 */
+	void assign(const std::initializer_list<Element> initialiser_list) {
+		clear(); //Clear contents first, so that they don't need to get copied if we need to reallocate.
+		reserve(initialiser_list.size());
+		size_t index = 0;
+		for(const Element& element : initialiser_list) {
+			(*this)[index++] = element;
+		}
+		num_elements = initialiser_list.size(); //Update the size, clearing any vertices that we didn't override if the original was bigger.
+	}
+
+	/*!
 	 * Return the number of elements that this subbatch could contain without
 	 * needing to allocate more memory.
 	 * \return The capacity of this subbatch.
@@ -422,6 +466,84 @@ class SubbatchView {
 			start_index(start_index),
 			num_elements(size),
 			current_capacity(capacity) {};
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by random
+	 * access iterators.
+	 *
+	 * Random access iterators have the property that the distance can be
+	 * calculated between them in constant time, without actually performing the
+	 * iteration. This helps to be able to reserve enough memory to contain the
+	 * contents of the range.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of random access
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::random_access_iterator_tag) {
+		const size_t new_size = end - begin;
+		reserve(new_size);
+
+		for(size_t index = 0; index < new_size; ++index) {
+			(*this)[index] = *begin;
+			begin++;
+		}
+		num_elements = new_size;
+	}
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by
+	 * forward iterators.
+	 *
+	 * Forward iterators have the property that they can safely be iterated over
+	 * multiple times. This helps to determine the size of the range before
+	 * copying the contents, which can reduce the number of times the memory for
+	 * this subbatch needs to be reallocated.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of forward
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::forward_iterator_tag) {
+		size_t new_size = 0;
+		//Iterate over the range once to determine its size. Then start reallocating with the guarantee that there will be enough space.
+		for(InputIterator it = begin; it != end; it++) {
+			++new_size;
+		}
+		reserve(new_size);
+
+		//Then a second time to actually assign the contents.
+		for(size_t index = 0; index < new_size; ++index) {
+			(*this)[index] = *begin;
+			begin++;
+		}
+		num_elements = new_size;
+	}
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by any
+	 * input iterators.
+	 *
+	 * If the specialised iterator dispatches for more strict types of iterators
+	 * are not applicable, the assign operation can fall back to this one. Since
+	 * the range can only be iterated over once, and the size can't be computed,
+	 * multiple reallocations may be necessary for this assignment to occur.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::input_iterator_tag) {
+		for(; begin != end; begin++) {
+			push_back(*begin); //Simply append all of them. This automatically implements the amortised reallocation.
+		}
+	}
 
 	/*!
 	 * Moves this subbatch to a new location inside the element buffer to make
