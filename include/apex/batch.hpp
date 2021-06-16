@@ -539,6 +539,48 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Construct a new element in-place in the subbatch.
+	 *
+	 * The new element is inserted in a specified position. All elements
+	 * following that position will shift by 1 place.
+	 * \param position The position within this subbatch to place the new
+	 * element.
+	 * \param arguments The constructor arguments of the element to add.
+	 * \tparam Args The types of the constructor arguments of the element.
+	 */
+	template<class... Args>
+	iterator emplace(const const_iterator position, Args&&... arguments) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		if(size() >= capacity()) { //Need to make sure we have enough capacity for the new element.
+			reallocate(capacity() * 2 + 1); //Double in size, so that repeated emplacing executes in amortised constant time.
+		}
+
+		for(size_t i = size(); i > index; --i) { //Move all elements beyond the specified position by one place, to make room.
+			(*this)[i] = (*this)[i - 1];
+		}
+
+		//Construct the element in-place.
+		(*this)[index] = Element(arguments...);
+		++num_elements; //This increased the size by 1.
+		return begin() + index;
+	}
+
+	/*!
+	 * Construct a new element in-place at the end of the subbatch.
+	 * \param arguments The constructor arguments of the element to add.
+	 * \tparam Args The types of the constructor arguments of the element.
+	 */
+	template<class... Args>
+	void emplace_back(Args&&... arguments) {
+		if(size() >= capacity()) { //Need to make sure we have enough capacity for the new element.
+			reallocate(capacity() * 2 + 1); //Double in size, so that repeated emplacing executes in amortised constant time.
+		}
+
+		(*this)[size()] = Element(arguments...); //Construct the element in-place.
+		++num_elements; //This increased the size by 1.
+	}
+
+	/*!
 	 * Get an iterator signalling the end of the subbatch.
 	 *
 	 * This actually returns an iterator to the end of the view in the element
