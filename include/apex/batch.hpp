@@ -505,6 +505,40 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Return a pointer to the underlying buffer serving as element storage for
+	 * this subbatch.
+	 *
+	 * This returns a pointer to the first element that is part of this view.
+	 * If the size of the element buffer is 0, this may return a pointer that is
+	 * not dereferenceable.
+	 * \return A pointer to the first element that is part of this view in the
+	 * underlying data structure of the view.
+	 */
+	const Element* data() const noexcept {
+		if(batch.subelements.empty()) {
+			return batch.subelements.data(); //Do whatever they do.
+		}
+		return &front();
+	}
+
+	/*!
+	 * Return a pointer to the underlying buffer serving as element storage for
+	 * this subbatch.
+	 *
+	 * This returns a pointer to the first element that is part of this view.
+	 * If the size of the element buffer is 0, this may return a pointer that is
+	 * not dereferenceable.
+	 * \return A pointer to the first element that is part of this view in the
+	 * underlying data structure of the view.
+	 */
+	Element* data() noexcept {
+		if(batch.subelements.empty()) {
+			return batch.subelements.data(); //Do whatever they do.
+		}
+		return &front();
+	}
+
+	/*!
 	 * Get an iterator signalling the end of the subbatch.
 	 *
 	 * This actually returns an iterator to the end of the view in the element
