@@ -403,6 +403,34 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Get an iterator to the first element in the subbatch.
+	 *
+	 * This actually returns an iterator to an element in the element buffer.
+	 * You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``end()``
+	 * iterator is not supported.
+	 * \return An iterator pointing to the first element of the subbatch.
+	 */
+	const_iterator begin() const {
+		return batch.subelements.begin() + start_index;
+	}
+
+	/*!
+	 * Get an iterator to the first element in the subbatch.
+	 *
+	 * This actually returns an iterator to an element in the element buffer.
+	 * You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``end()``
+	 * iterator is not supported.
+	 * \return An iterator pointing to the first element of the subbatch.
+	 */
+	iterator begin() {
+		return batch.subelements.begin() + start_index;
+	}
+
+	/*!
 	 * Return the number of elements that this subbatch could contain without
 	 * needing to allocate more memory.
 	 * \return The capacity of this subbatch.
@@ -412,10 +440,96 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Get an iterator to the first element in the subbatch.
+	 *
+	 * This actually returns an iterator to an element in the element buffer.
+	 * You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``cend()``
+	 * iterator is not supported.
+	 * \return An iterator pointing to the first element of the subbatch.
+	 */
+	const_iterator cbegin() const {
+		return begin(); //Calls the const version, which returns a const_iterator anyway.
+	}
+
+	/*!
+	 * Get an iterator signalling the end of the subbatch.
+	 *
+	 * This actually returns an iterator to the end of the view in the element
+	 * buffer. You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``cend()``
+	 * iterator is not supported.
+	 * \return An iterator marking the end of the subbatch.
+	 */
+	const_iterator cend() const {
+		return end(); //Calls the const version, which returns a const_iterator anyway.
+	}
+
+	/*!
 	 * Removes all content from this subbatch.
 	 */
 	void clear() noexcept {
 		num_elements = 0; //If we just say the subbatch ends after 0 elements, it instantly behaves as if it's empty. The old data won't do any harm where it is.
+	}
+
+	/*!
+	 * Get an iterator to the first element in the subbatch when iterating in
+	 * reverse (which would normally be the last element).
+	 *
+	 * This actually returns an iterator to the last element of the view in the
+	 * element buffer. You could theoretically keep iterating further, but that
+	 * accesses elements of different subbatches and uninitialised memory in
+	 * between the subbatches for expansion capacity. Iterating beyond the
+	 * ``crend()`` iterator is not supported.
+	 * \return A reverse iterator pointing to the last element of the subbatch.
+	 */
+	const_reverse_iterator crbegin() const {
+		return rbegin(); //Calls the const version, which returns a const_reverse_iterator anyway.
+	}
+
+	/*!
+	 * Get an iterator marking the end of the subbatch when iterating in reverse
+	 * (which would normally be before the first element).
+	 *
+	 * This actually returns an iterator to before the beginning of the view in
+	 * the element buffer. You could theoretically keep iterating further, but
+	 * that accesses elements of different subbatches and uninitialised memory
+	 * in between the subbatches for expansion capacity. Iterating beyond the
+	 * ``crend()`` iterator is not supported.
+	 * \return A reverse iterator marking the end of the reversed subbatch.
+	 */
+	const_reverse_iterator crend() const {
+		return rend(); //Calls the const version, which returns a const_reverse_iterator anyway.
+	}
+
+	/*!
+	 * Get an iterator signalling the end of the subbatch.
+	 *
+	 * This actually returns an iterator to the end of the view in the element
+	 * buffer. You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``end()``
+	 * iterator is not supported.
+	 * \return An iterator marking the end of the subbatch.
+	 */
+	const_iterator end() const {
+		return batch.subelements.begin() + (start_index + size());
+	}
+
+	/*!
+	 * Get an iterator signalling the end of the subbatch.
+	 *
+	 * This actually returns an iterator to the end of the view in the element
+	 * buffer. You could theoretically keep iterating further, but that accesses
+	 * elements of different subbatches and uninitialised memory in between the
+	 * subbatches for expansion capacity. Iterating beyond the ``cend()``
+	 * iterator is not supported.
+	 * \return An iterator marking the end of the subbatch.
+	 */
+	iterator end() {
+		return batch.subelements.begin() + (start_index + size());
 	}
 
 	/*!
@@ -470,6 +584,74 @@ class SubbatchView {
 		}
 		(*this)[size()] = std::move(element);
 		++num_elements;
+	}
+
+	/*!
+	 * Get an iterator to the first element in the subbatch when iterating in
+	 * reverse (which would normally be the last element).
+	 *
+	 * This actually returns an iterator to the last element of the view in the
+	 * element buffer. You could theoretically keep iterating further, but that
+	 * accesses elements of different subbatches and uninitialised memory in
+	 * between the subbatches for expansion capacity. Iterating beyond the
+	 * ``rend()`` iterator is not supported.
+	 * \return A reverse iterator pointing to the last element of the subbatch.
+	 */
+	const_reverse_iterator rbegin() const {
+		const_reverse_iterator beginning = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(beginning, batch.subelements.size() - start_index - size());
+		return beginning;
+	}
+
+	/*!
+	 * Get an iterator to the first element in the subbatch when iterating in
+	 * reverse (which would normally be the last element).
+	 *
+	 * This actually returns an iterator to the last element of the view in the
+	 * element buffer. You could theoretically keep iterating further, but that
+	 * accesses elements of different subbatches and uninitialised memory in
+	 * between the subbatches for expansion capacity. Iterating beyond the
+	 * ``rend()`` iterator is not supported.
+	 * \return A reverse iterator pointing to the last element of the subbatch.
+	 */
+	reverse_iterator rbegin() {
+		reverse_iterator beginning = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(beginning, batch.subelements.size() - start_index - size());
+		return beginning;
+	}
+
+	/*!
+	 * Get an iterator marking the end of the subbatch when iterating in reverse
+	 * (which would normally be before the first element).
+	 *
+	 * This actually returns an iterator to before the beginning of the view in
+	 * the element buffer. You could theoretically keep iterating further, but
+	 * that accesses elements of different subbatches and uninitialised memory
+	 * in between the subbatches for expansion capacity. Iterating beyond the
+	 * ``rend()`` iterator is not supported.
+	 * \return A reverse iterator marking the end of the reversed subbatch.
+	 */
+	const_reverse_iterator rend() const {
+		const_reverse_iterator ending = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(ending, batch.subelements.size() - start_index);
+		return ending;
+	}
+
+	/*!
+	 * Get an iterator marking the end of the subbatch when iterating in reverse
+	 * (which would normally be before the first element).
+	 *
+	 * This actually returns an iterator to before the beginning of the view in
+	 * the element buffer. You could theoretically keep iterating further, but
+	 * that accesses elements of different subbatches and uninitialised memory
+	 * in between the subbatches for expansion capacity. Iterating beyond the
+	 * ``rend()`` iterator is not supported.
+	 * \return A reverse iterator marking the end of the reversed subbatch.
+	 */
+	reverse_iterator rend() {
+		reverse_iterator ending = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(ending, batch.subelements.size() - start_index);
+		return ending;
 	}
 
 	/*!
