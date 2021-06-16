@@ -349,6 +349,36 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Return a reference to an element in a certain position in the subbatch.
+	 *
+	 * If the given position is out of range, an ``std::out_of_range`` exception
+	 * is thrown.
+	 * \param position The index of the element to return.
+	 * \return A reference to the element in the specified position.
+	 */
+	const Element& at(const size_t position) const {
+		if(position >= size()) {
+			throw std::out_of_range("Out of range for this view on a subbatch.");
+		}
+		return (*this)[position];
+	}
+
+	/*!
+	 * Return a reference to an element in a certain position in the subbatch.
+	 *
+	 * If the given position is out of range, an ``std::out_of_range`` exception
+	 * is thrown.
+	 * \param position The index of the element to return.
+	 * \return A reference to the element in the specified position.
+	 */
+	Element& at(const size_t position) {
+		if(position >= size()) {
+			throw std::out_of_range("Out of range for this view on a subbatch.");
+		}
+		return (*this)[position];
+	}
+
+	/*!
 	 * Return the number of elements that this subbatch could contain without
 	 * needing to allocate more memory.
 	 * \return The capacity of this subbatch.
