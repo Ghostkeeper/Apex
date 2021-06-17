@@ -810,6 +810,16 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Removes the last element from the subbatch.
+	 *
+	 * Calling ``pop_back`` on an empty subbatch is undefined. In fact, this
+	 * might just cause an underflow on the size.
+	 */
+	void pop_back() {
+		--num_elements; //Just reduce the size. This automatically causes the subbatch to pretend the last element isn't there.
+	}
+
+	/*!
 	 * Appends an element to the end of the subbatch.
 	 *
 	 * The element is copied in this case. This may cause a reallocation, which
