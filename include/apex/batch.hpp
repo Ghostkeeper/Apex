@@ -798,6 +798,18 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Returns the maximum number of elements that this subbatch is
+	 * theoretically able to hold due to the implementation.
+	 *
+	 * This maximum may be reduced if the batch also contains other subbatches.
+	 * \return The maximum number of elements that this subbatch is able to
+	 * hold.
+	 */
+	size_t max_size() const noexcept {
+		return batch.subelements.max_size(); //Should really subtract the total size of all other subbatches in the batch, but that would be linear.
+	}
+
+	/*!
 	 * Appends an element to the end of the subbatch.
 	 *
 	 * The element is copied in this case. This may cause a reallocation, which
