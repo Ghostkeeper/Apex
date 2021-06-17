@@ -552,7 +552,7 @@ class SubbatchView {
 	iterator emplace(const const_iterator position, Args&&... arguments) {
 		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
 		if(size() >= capacity()) { //Need to make sure we have enough capacity for the new element.
-			reallocate(capacity() * 2 + 1); //Double in size, so that repeated emplacing executes in amortised constant time.
+			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated emplacing executes in amortised linear time.
 		}
 
 		for(size_t i = size(); i > index; --i) { //Move all elements beyond the specified position by one place, to make room.
@@ -680,6 +680,121 @@ class SubbatchView {
 	 */
 	Element& front() {
 		return (*this)[0];
+	}
+
+	/*!
+	 * Insert a new element at the specified position in the subbatch.
+	 *
+	 * The new element is inserted \e before the specified position.
+	 * \param position The position before which the new element will be
+	 * inserted. To append it to the end, the \ref end iterator may be supplied
+	 * (but consider using \ref push_back instead).
+	 * \param value The element to insert.
+	 * \return An iterator pointing to the newly inserted element.
+	 */
+	iterator insert(const const_iterator position, const Element& value) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		if(size() >= capacity()) {
+			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated inserting executes in amortised linear time.
+		}
+
+		for(size_t i = size(); i > index; --i) { //Move all elements beyond the position by one place to make room.
+			(*this)[i] = (*this)[i - 1];
+		}
+		(*this)[index] = value; //Insert the new element.
+		++num_elements;
+		return begin() + index;
+	}
+
+	/*!
+	 * Insert a new element at the specified position in the subbatch.
+	 *
+	 * This version tries to move the element rather than reallocating it. A
+	 * compiler may be able to omit the move then.
+	 *
+	 * The new element is inserted \e before the specified position.
+	 * \param position The position before which the new element will be
+	 * inserted. To append it to the end, the \ref end iterator may be supplied
+	 * (but consider using \ref push_back instead).
+	 * \param value The element to insert.
+	 * \return An iterator pointing to the newly inserted element.
+	 */
+	iterator insert(const const_iterator position, Element&& value) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		if(size() >= capacity()) {
+			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated inserting executes in amortised linear time.
+		}
+
+		for(size_t i = size(); i > index; --i) { //Move all elements beyond the position by one place to make room.
+			(*this)[i] = (*this)[i - 1];
+		}
+		(*this)[index] = std::move(value); //Insert the new element.
+		++num_elements;
+		return begin() + index;
+	}
+
+	/*!
+	 * Insert a number of copies of an element at the specified position in the
+	 * subbatch.
+	 *
+	 * The new elements are inserted \e before the specified position.
+	 * \param position The position before which the new elements will be
+	 * inserted. To append them to the end, the \ref end iterator may be
+	 * supplied.
+	 * \param count How many copies of the element to insert.
+	 * \param value The element to insert repeatedly.
+	 * \return An iterator pointing to the first of the newly inserted elements.
+	 */
+	iterator insert(const const_iterator position, const size_t count, const Element& value) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		if(size() + count > capacity()) {
+			reallocate(capacity() * 2 + count); //Double the capacity, so that repeated inserting executes in amortised linear time.
+		}
+
+		for(size_t i = size() + count; i > index + count; --i) { //Move all elements beyond the position by multiple places to make room.
+			(*this)[i] = (*this)[i - count];
+		}
+		//Insert the new elements.
+		for(size_t i = 0; i < count; ++i) {
+			(*this)[index + i] = value;
+		}
+
+		num_elements += count;
+		return begin() + index;
+	}
+
+	/*!
+	 * Insert a range of elements at the specified position in the subbatch.
+	 *
+	 * The new elements are inserted \e before the specified position.
+	 * \param position The position before which the new elements will be
+	 * inserted. To append them to the end, the \ref end iterator may be
+	 * supplied.
+	 * \param begin The start of the range of elements to insert.
+	 * \param end An iterator signalling the end of the range of elements to
+	 * insert.
+	 * \return An iterator pointing to the first of the newly inserted elements.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert(const const_iterator position, InputIterator begin, const InputIterator end) {
+		//Dispatch to the most efficient implementation for the given iterator type.
+		return insert_iterator_dispatch<InputIterator>(position, begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+	}
+
+	/*!
+	 * Insert a list of elements at the specified position in the subbatch.
+	 *
+	 * The new elements are inserted \e before the specified position.
+	 * \param position The position before which the new elements will be
+	 * inserted. To append them to the end, the \ref end iterator may be
+	 * supplied.
+	 * \param initialiser_list The list of elements to insert.
+	 * \return An iterator pointing to the first of the newly inserted elements.
+	 */
+	iterator insert(const const_iterator position, const std::initializer_list<Element>& initialiser_list) {
+		return insert(position, initialiser_list.begin(), initialiser_list.end()); //Refer to the iterator-based implementation.
 	}
 
 	/*!
@@ -929,6 +1044,192 @@ class SubbatchView {
 		for(; begin != end; begin++) {
 			push_back(*begin); //Simply append all of them. This automatically implements the amortised reallocation.
 		}
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by random
+	 * access iterators.
+	 *
+	 * Random access iterators have the property that the distance can be
+	 * calculated between them in constant time, without actually performing the
+	 * iteration. This helps to be able to make enough space to contain the
+	 * contents of the range.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of random access
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::random_access_iterator_tag) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		const size_t count = end - start;
+		if(size() + count >= capacity()) {
+			reallocate(capacity() * 2 + count);
+		}
+
+		for(size_t i = size() + count; i > index + count; --i) { //Move all elements beyond the position by multiple places to make room.
+			(*this)[i] = (*this)[i - count];
+		}
+		//Insert the new elements.
+		for(size_t i = 0; start != end; ++i) {
+			(*this)[index + i] = *start++;
+		}
+
+		num_elements += count;
+		return begin() + index;
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by
+	 * forward iterators.
+	 *
+	 * Forward iterators have the property that they can safely be iterated over
+	 * multiple times. This helps to determine the size of the range before
+	 * copying the contents, which allows us to make enough space to insert all
+	 * of the contents at once.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of forward
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::forward_iterator_tag) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+		//Iterate over the range once to determine its size. Then start reallocating with the guarantee that there will be enough space.
+		size_t count = 0;
+		for(InputIterator it = start; it != end; it++) {
+			++count;
+		}
+		if(size() + count >= capacity()) {
+			reallocate(capacity() * 2 + count);
+		}
+
+		for(size_t i = size() + count; i > index + count; --i) { //Move all elements beyond the position by multiple places to make room.
+			(*this)[i] = (*this)[i - count];
+		}
+		//Insert the new elements.
+		for(size_t i = 0; start != end; ++i) {
+			(*this)[index + i] = *start++;
+		}
+
+		num_elements += count;
+		return begin() + index;
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by any
+	 * input iterators.
+	 *
+	 * If the specialised iterator dispatches for more strict types of iterators
+	 * are not applicable, the insert operation can fall back to this one. Since
+	 * the range can only be iterated over once, and the size can't be computed,
+	 * multiple reallocations may be necessary for this insertion to occur.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::input_iterator_tag) {
+		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
+
+		/* Since we can't know how many elements we'll get, there is a strategy
+		to inserting these elements.
+
+		Naively, one would insert a single element at a time, shifting all
+		following elements by one each time. Instead, we'll shift all following
+		elements all the way to the end of the capacity, storing them
+		temporarily there until the inserting is done. This gives maximum space
+		for the unknown amount of elements without needing to shift them again.
+
+		For instance, let's say you have the following elements within the
+		allocation for this subbatch, with 5 numbers stored, and capacity for 8:
+
+		``[ 1 2 3 4 5 _ _ _ ]``
+
+		If we now want to insert two letters before the third position, this
+		algorithm will first move the data after the insertion position to the
+		very end of the capacity:
+
+		``[ 1 2 _ _ _ 3 4 5 ]``
+
+		The letters can then be inserted in the new space, without needing to
+		move O(N) elements every time a new one is inserted:
+
+		``[ 1 2 A B _ 3 4 5 ]``
+
+		After inserting all the new elements, the trailing elements have to be
+		moved back to close up the excess capacity:
+
+		``[ 1 2 A B 3 4 5 _ ]``
+
+		If another two elements were to be inserted here, element C would be
+		inserted without problems, but there would not be any space for D. A new
+		segment of the element buffer would need to be allocated. All the data
+		is moved to the new segment, but the trailing elements get moved
+		immediately to the end of the capacity again to maximise space for new
+		elements again.*/
+
+		//So first move the trailing elements to the end of the capacity. Only happens once.
+		size_t remaining_space = capacity() - size();
+		for(size_t i = index; i < size(); ++i) {
+			(*this)[i + remaining_space] = (*this)[i];
+		}
+
+		size_t count = 0;
+		for(; start != end; start++, ++count) {
+			if(remaining_space == 0) { //Not enough space to add the next element. Allocate more.
+				//This reallocation is "manual". Instead of moving all elements, we'll immediately move the trailing end to the end of the capacity.
+				const size_t new_place = batch.next_position;
+				const size_t new_capacity = current_capacity * 2 + 1; //Doubling the capacity ensures that repeated insertion of a new element is done in amortised constant time.
+				batch.next_position += new_capacity;
+
+				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
+				size_t buffer_capacity = batch.subelements.size();
+				while(buffer_capacity < new_place + new_capacity) {
+					buffer_capacity = buffer_capacity * 2 + 1;
+				}
+				batch.subelements.resize(buffer_capacity, Element());
+
+				//Copy the leading elements to the start of the allocated space.
+				for(size_t i = 0; i < index + count; ++i) {
+					batch.subelements[new_place + i] = (*this)[i];
+				}
+				//Copy the trailing elements to the end of the allocated space.
+				remaining_space = new_capacity - current_capacity;
+				for(size_t i = index + count; i < current_capacity; ++i) {
+					batch.subelements[new_place + i + remaining_space] = (*this)[i];
+				}
+
+				start_index = new_place;
+				current_capacity = new_capacity;
+			}
+
+			(*this)[index + count] = *start; //Insert the new element in the now vacant space.
+			--remaining_space;
+		}
+
+		//Finally, close the remaining space, moving the trailing elements to their final positions too now that we have all elements.
+		if(remaining_space > 0) {
+			for(size_t i = index + count; i + remaining_space < current_capacity; ++i) {
+				(*this)[i] = (*this)[i + remaining_space];
+			}
+		}
+
+		num_elements += count;
+		return begin() + index;
 	}
 
 	/*!
