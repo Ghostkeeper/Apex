@@ -937,6 +937,27 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Resize the subbatch to a specific size.
+	 *
+	 * If the new size is smaller, elements are removed.
+	 *
+	 * If the new size is bigger, the default value is added until it has the
+	 * desired size.
+	 * \param new_size The new size for the subbatch.
+	 * \param default_value An element to insert if the subbatch needs to become
+	 * bigger.
+	 */
+	void resize(const size_t new_size, const Element& default_value = Element()) {
+		if(new_size > size()) {
+			reserve(new_size);
+			for(size_t i = size(); i < new_size; ++i) {
+				(*this)[i] = default_value;
+			}
+		}
+		num_elements = new_size; //Set the new size. This may drop some elements.
+	}
+
+	/*!
 	 * Return the number of elements in this subbatch.
 	 * \return The number of elements in this subbatch.
 	 */
