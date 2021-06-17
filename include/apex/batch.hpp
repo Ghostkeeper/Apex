@@ -958,6 +958,21 @@ class SubbatchView {
 	}
 
 	/*!
+	 * This function is a no-op for this implementation of the vector
+	 * specification.
+	 *
+	 * It would normally request the memory usage to be reduced to fit exactly
+	 * the amount of elements used by this subbatch. However since this subbatch
+	 * is part of a bigger batch, and the batch uses a monotonic allocation
+	 * algorithm to reserve memory for its members, the memory usage cannot
+	 * shrink for just one individual subbatch.
+	 *
+	 * To actually reduce memory usage here, call the \ref Batch::shrink_to_fit
+	 * function of the batch that contains this subbatch.
+	 */
+	inline void shrink_to_fit() noexcept {}
+
+	/*!
 	 * Return the number of elements in this subbatch.
 	 * \return The number of elements in this subbatch.
 	 */
