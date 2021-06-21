@@ -980,6 +980,156 @@ class SubbatchView {
 		return num_elements;
 	}
 
+	/*!
+	 * Exchange the contents of this subbatch with those of another.
+	 *
+	 * The membership of a parent batch or the position in it is not swapped.
+	 * This subbatch will still be in the same position in the same batch, but
+	 * it will have different contents.
+	 *
+	 * If the two subbatches are part of the same batch, this will only swap
+	 * indices around and complete in constant time. If the two views are not
+	 * part of the same parent batch, the data itself needs to be swapped, which
+	 * will take linear time and may cause reallocations in the batch with the
+	 * smaller subbatch.
+	 * \param other The subbatch with which to swap the contents.
+	 */
+	void swap(SubbatchView<Element>& other) {
+		if(&batch == &other.batch) {
+			//If we just swap which part of the element buffer they point to, that already works.
+			std::swap(start_index, other.start_index);
+			std::swap(num_elements, other.num_elements);
+			std::swap(current_capacity, other.current_capacity);
+		} else { //Different batches, so we need to swap the actual contents.
+			const size_t my_size = size();
+			const size_t other_size = other.size();
+
+			//Find out if we need to resize either of them.
+			//If so, move elements directly to the new allocation instead of moving them twice.
+			size_t my_destination = start_index;
+			if(other_size > capacity()) {
+				my_destination = batch.next_position;
+				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
+				size_t buffer_capacity = batch.subelements.size();
+				while(buffer_capacity < my_destination + other_size) {
+					buffer_capacity = buffer_capacity * 2 + 1;
+				}
+				batch.subelements.resize(buffer_capacity, Element());
+				current_capacity = other_size;
+				batch.next_position += current_capacity;
+			}
+			size_t other_destination = other.start_index;
+			if(my_size > other.capacity()) {
+				other_destination = other.batch.next_position;
+				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
+				size_t buffer_capacity = other.batch.subelements.size();
+				while(buffer_capacity < other_destination + my_size) {
+					buffer_capacity = buffer_capacity * 2 + 1;
+				}
+				other.batch.subelements.resize(buffer_capacity, Element());
+				other.current_capacity = my_size;
+				other.batch.next_position += other.current_capacity;
+			}
+
+			//Now swap all of the data, being careful not to overwrite important data.
+			if(start_index == my_destination && other.start_index == other_destination) { //Neither batch got reallocated. Use actual swaps.
+				size_t i = 0;
+				for(; i < std::min(my_size, other_size); ++i) {
+					std::swap((*this)[i], other[i]);
+				}
+				//If one is bigger than the other, move the rest.
+				for(; i < other_size; ++i) {
+					(*this)[i] = std::move(other[i]);
+				}
+				for(; i < my_size; ++i) {
+					other[i] = std::move((*this)[i]);
+				}
+			} else { //At least one got reallocated.
+				//Determine which to move first. If one batch didn't get reallocated, overwrite that one last so its data doesn't get lost.
+				//If both got reallocated, the order doesn't matter.
+				const bool to_me_first = start_index != my_destination;
+				if(to_me_first) {
+					for(size_t i = 0; i < other_size; ++i) {
+						batch.subelements[my_destination + i] = std::move(other[i]);
+					}
+				}
+				for(size_t i = 0; i < my_size; ++i) {
+					other.batch.subelements[other_destination + i] = std::move((*this)[i]);
+				}
+				if(!to_me_first) {
+					for(size_t i = 0; i < other_size; ++i) {
+						batch.subelements[my_destination + i] = std::move(other[i]);
+					}
+				}
+			}
+
+			//Update metadata.
+			start_index = my_destination;
+			other.start_index = other_destination;
+			std::swap(num_elements, other.num_elements); //Also swap the sizes.
+		}
+	}
+
+	/*!
+	 * Exchange the contents of this subbatch with those of a different batch.
+	 *
+	 * The membership of a parent batch or the position in it is not swapped.
+	 * This subbatch will still be in the same position in the same batch, but
+	 * it will have different contents.
+	 *
+	 * If one batch is bigger than the other, the other may get reallocated in
+	 * order to make space for the additional data.
+	 * \param other The batch with which to swap the contents.
+	 */
+	void swap(Batch<Element>& other) {
+		const size_t my_size = size();
+		const size_t other_size = other.size();
+
+		//Find out if we need to resize either of them.
+		//If the subbatch is resized, move elements directly to the reallocated place rather than moving them twice.
+		size_t my_destination = start_index;
+		if(other_size > capacity()) {
+			my_destination = batch.next_position;
+			//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
+			size_t buffer_capacity = batch.subelements.size();
+			while(buffer_capacity < my_destination + other_size) {
+				buffer_capacity = buffer_capacity * 2 + 1;
+			}
+			batch.subelements.resize(buffer_capacity, Element());
+			current_capacity = other_size;
+			batch.next_position += current_capacity;
+		}
+		other.reserve(my_size); //For the other batch, we can't really prevent it.
+
+		//Now swap all of the data.
+		if(start_index == my_destination) { //No reallocation. We can just swap the data.
+			size_t i = 0;
+			for(; i < std::min(my_size, other_size); ++i) {
+				std::swap((*this)[i], other[i]);
+			}
+			//If one is bigger than the other, move the rest.
+			for(; i < other_size; ++i) {
+				(*this)[i] = std::move(other[i]);
+			}
+			other.resize(i);
+			for(; i < my_size; ++i) {
+				other.push_back(std::move((*this)[i]));
+			}
+		} else { //We got reallocated. Move elements, making sure the order is correct to not lose data.
+			for(size_t i = 0; i < other_size; ++i) {
+				batch.subelements[my_destination + i] = std::move(other[i]);
+			}
+			other.clear();
+			for(size_t i = 0; i < my_size; ++i) {
+				other.push_back(std::move((*this)[i]));
+			}
+		}
+
+		//Update metadata.
+		start_index = my_destination;
+		num_elements = other_size;
+	}
+
 	protected:
 	/*!
 	 * The batch this view is a part of.
