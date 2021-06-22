@@ -79,8 +79,6 @@ if(BUILD_TESTS)
 		coordinate
 		point2
 		simple_polygon
-		simple_polygon_batch
-		simple_polygon_batch_view
 		detail.area
 		detail.translate
 	)
