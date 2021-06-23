@@ -150,7 +150,7 @@ class SubbatchView; //Forward declare this view here so we can use it as templat
  * \tparam Element The type of element stored in the subbatches.
  */
 template<typename Element>
-class Batch<Batch<Element>> : BatchBase<SubbatchView<Element>> { //Specialise batches of batches.
+class Batch<Batch<Element>> : public BatchBase<SubbatchView<Element>> { //Specialise batches of batches.
 	friend class SubbatchView<Element>; //Subbatches can access the coalesced data structure to get their own information.
 	protected:
 	/*!
