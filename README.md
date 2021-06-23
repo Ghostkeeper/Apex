@@ -18,7 +18,8 @@ The goal of eventually maybe having a usable library is only secondary, but it s
 Requirements
 ----
 Apex is a header-only library, meaning that there are no binaries to distribute. To use Apex, only the files in the `include` folder need to be included into your project. However some dependencies are required as well:
-* A C++17-compliant compiler. Apex is tested using GCC and MinGW-w64.
+* A C++17-compliant compiler. Apex is tested using Clang, GCC and MinGW-w64.
+  * GCC and MinGW don't sufficiently support OpenMP teams at the time of this writing to use GPUs or accelerators. I'm betting on that they will by the time this library is in a useable state.
   * When using GCC, use at GCC-8 or later. In GCC-7.4 there are still bugs that prevent this library from compiling.
 * OpenMP is used to distribute computation.
 
