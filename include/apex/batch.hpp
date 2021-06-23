@@ -152,6 +152,66 @@ class SubbatchView; //Forward declare this view here so we can use it as templat
 template<typename Element>
 class Batch<Batch<Element>> : public BatchBase<SubbatchView<Element>> { //Specialise batches of batches.
 	friend class SubbatchView<Element>; //Subbatches can access the coalesced data structure to get their own information.
+
+public:
+	/*!
+	 * Creates an empty batch.
+	 */
+	Batch() {}
+
+	/*!
+	 * Creates a batch with a number of copies of the same subbatch.
+	 * \param The number of copies to store in this batch.
+	 * \param value The subbatch to copy multiple times.
+	 */
+	Batch(const size_t count, const Batch<Element>& value = Batch<Element>()) {
+		assign(count, value);
+	}
+
+	/*!
+	 * Creates a batch, filling it immediately with a range of subbatches.
+	 * \param first The start of a range of subbatches to fill the batch with.
+	 * \param last An iterator marking the end of a range of subbatches to fill
+	 * the batch with.
+	 * \tparam InputIterator This constructor works with any type of iterator.
+	 */
+	template<class InputIterator>
+	Batch(InputIterator first, InputIterator last) {
+		assign(first, last);
+	}
+
+	/*!
+	 * Copy constructor, creating a copy of the specified batch.
+	 * \param other The batch to copy.
+	 */
+	Batch(const Batch<Batch<Element>>& other) {
+		//Don't simply copy the subelements buffer and subbatchviews.
+		//If we're copying the data anyway, we might as well shrink the subelements buffer to fit.
+		//This not only improves performance of the copy, but also of any subsequent algorithms on the batch.
+		assign(other.begin(), other.end()); //Assignment deals with proper reserving of memory, since batch iterators are random access.
+	}
+
+	/*!
+	 * Move constructor, moving the batch to a different location in memory.
+	 * \param other The batch to move into this batch.
+	 */
+	Batch(Batch<Batch<Element>>&& other) : Batch<SubbatchView<Element>>(other) {
+		//Don't optimise memory in this constructor.
+		//It's not always necessary to copy the data, so it's not always possible to shrink to fit.
+		//For cases where we can do a no-op move, allow that no-op move.
+		subelements = std::move(other.subelements);
+		next_position = other.next_position;
+	}
+
+	/*!
+	 * Constructs a batch of batches from a list of batches.
+	 * \param initialiser_list An initialiser list containing subbatches to put
+	 * in this batch.
+	 */
+	Batch(std::initializer_list<Batch<Element>>& initialiser_list) {
+		assign(initialiser_list.begin(), initialiser_list.end());
+	}
+
 	protected:
 	/*!
 	 * Vector containing the actual data in the subbatches.
