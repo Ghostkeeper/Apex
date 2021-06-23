@@ -12,10 +12,19 @@
 
 namespace apex {
 
+/*
+You might expect there to be some tests for batches of simple elements here.
+However the Batch<E> class simply passes all of its function calls on to an
+underlying vector data structure. These functions are so trivial that testing
+the batch can be considered transparently testing the vector implementation of
+your compiler. That is not in scope for this test, so those tests are left out
+in favour of testing the more interesting specialisations of batches.
+*/
+
 /*!
  * A fixture with a few pre-constructed batches for easy writing of tests.
  */
-class BatchBatchesFixture : public ::testing::Test {
+class BatchOfBatchesFixture : public ::testing::Test {
 public:
     /*!
      * A batch without any elements.
@@ -40,5 +49,16 @@ public:
         one_two.assign({1, 2});
     }
 };
+
+/*!
+ * Tests constructing a batch of batches without any batches.
+ *
+ * This also serves as a basic test for whether the class can be used at all.
+ */
+TEST(BatchOfBatches, ConstructEmpty) {
+    Batch<Batch<int>> empty;
+    EXPECT_EQ(empty.size(), 0) << "The batch is empty after its creation.";
+    EXPECT_TRUE(empty.empty()) << "The batch is empty after its creation.";
+}
 
 }
