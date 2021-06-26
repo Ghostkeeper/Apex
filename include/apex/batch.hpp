@@ -363,6 +363,149 @@ class SubbatchView {
 	}
 
 	/*!
+	 * Checks if this subbatch is lexicographically less than the other batch.
+	 *
+	 * This compares the elements of both batches element-wise. So it compares
+	 * the first elements of each batch, and returns if one is different from
+	 * the other. If they are equal, the second elements are compared on each
+	 * batch, and so on. If one batch is a prefix of the other, the shorter
+	 * batch is considered lexicographically less.
+	 * \param other The batch to compare this subbatch to.
+	 */
+	bool operator <(const Batch<Element>& other) const {
+		const size_t smallest_size = std::min(size(), other.size());
+		for(size_t index = 0; index < smallest_size; ++index) {
+			if((*this)[index] < other[index]) {
+				return true;
+			} else if((*this)[index] > other[index]) {
+				return false;
+			}
+			//Else, check the next element.
+		}
+		//One batch is a prefix of the other. So the shorter one is less.
+		return size() < other.size();
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically less than the other
+	 * subbatch.
+	 *
+	 * This compares the elements of both subbatches element-wise. So it
+	 * compares the first elements of each subbatch, and returns if one is
+	 * different from the other. If they are equal, the second elements are
+	 * compared on each subbatch, and so on. If one subbatch is a prefix of the
+	 * other, the shorter subbatch is considered lexicographically less.
+	 * \param other The subbatch to compare this subbatch to.
+	 */
+	bool operator <(const SubbatchView<Element>& other) const {
+		const size_t smallest_size = std::min(size(), other.size());
+		for(size_t index = 0; index < smallest_size; ++index) {
+			if((*this)[index] < other[index]) {
+				return true;
+			} else if((*this)[index] > other[index]) {
+				return false;
+			}
+			//Else, check the next element.
+		}
+		//One batch is a prefix of the other. So the shorter one is less.
+		return size() < other.size();
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically less than or equal to the
+	 * other batch.
+	 *
+	 * This compares the elements of both batches element-wise. So it compares
+	 * the first elements of each batch, and returns if one is different from
+	 * the other. If they are equal, the second elements are compared on each
+	 * batch, and so on. If one batch is a prefix of the other, the shorter
+	 * batch is considered lexicographically less.
+	 * \param other The batch to compare this subbatch to.
+	 */
+	bool operator <=(const Batch<Element>& other) const {
+		const size_t smallest_size = std::min(size(), other.size());
+		for(size_t index = 0; index < smallest_size; ++index) {
+			if((*this)[index] < other[index]) {
+				return true;
+			} else if((*this)[index] > other[index]) {
+				return false;
+			}
+			//Else, check next element.
+		}
+		//One batch is a prefix of the other. So the shorter one is less, or they could be equal.
+		return size() <= other.size();
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically less than or equal to the
+	 * other subbatch.
+	 *
+	 * This compares the elements of both subbatches element-wise. So it
+	 * compares the first elements of each subbatch, and returns if one is
+	 * different from the other. If they are equal, the second elements are
+	 * compared on each subbatch, and so on. If one subbatch is a prefix of the
+	 * other, the shorter subbatch is considered lexicographically less.
+	 * \param other The subbatch to compare this subbatch to.
+	 */
+	bool operator <=(const SubbatchView<Element>& other) const {
+		const size_t smallest_size = std::min(size(), other.size());
+		for(size_t index = 0; index < smallest_size; ++index) {
+			if((*this)[index] < other[index]) {
+				return true;
+			} else if((*this)[index] > other[index]) {
+				return false;
+			}
+			//Else, check next element.
+		}
+		//One batch is a prefix of the other. So the shorter one is less, or they could be equal.
+		return size() <= other.size();
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically greater than the other
+	 * batch.
+	 *
+	 * It is greater if it is not lexicographically less or equal.
+	 * \param other The batch to compare this subbatch to.
+	 */
+	bool operator >(const Batch<Element>& other) const {
+		return !(*this <= other); //Don't just swap them, because the other batch has a different type, and we wouldn't want a recursive loop that way.
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically greater than the other
+	 * subbatch.
+	 *
+	 * It is greater if it is not lexicographically less or equal.
+	 * \param other The subbatch to compare this subbatch to.
+	 */
+	bool operator >(const SubbatchView<Element>& other) const {
+		return !(*this <= other); //Don't just swap them, because the other batch has a different type, and we wouldn't want a recursive loop that way.
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically greater than or equal to the
+	 * other batch.
+	 *
+	 * It is greater or equal if it is not lexicographically less.
+	 * \param other The batch to compare this subbatch to.
+	 */
+	bool operator >=(const Batch<Element>& other) const {
+		return !(*this < other); //Don't just swap them, because the other batch has a different type, and we wouldn't want a recursive loop that way.
+	}
+
+	/*!
+	 * Checks if this subbatch is lexicographically greater than or equal to the
+	 * other subbatch.
+	 *
+	 * It is greater or equal if it is not lexicographically less.
+	 * \param other The subbatch to compare this subbatch to.
+	 */
+	bool operator >=(const SubbatchView<Element>& other) const {
+		return !(*this < other); //Don't just swap them, because the other batch has a different type, and we wouldn't want a recursive loop that way.
+	}
+
+	/*!
 	 * Replace the contents of the subbatch with a repeated instance of a given
 	 * element.
 	 * \param count How many times to repeat the element.
