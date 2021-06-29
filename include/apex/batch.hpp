@@ -212,6 +212,32 @@ public:
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
+	/*!
+	 * Copy-assignment operator, which copies the contents of the given batch
+	 * into this batch.
+	 * \param other The batch to assign to this batch.
+	 * \return A reference to this batch.
+	 */
+	Batch<Batch<Element>>& operator =(const Batch<Batch<Element>>& other) {
+		assign(other.begin(), other.end());
+		return (*this);
+	}
+
+	/*!
+	 * Move-assignment operator, which moves the data from the given batch into
+	 * this batch.
+	 *
+	 * This will normally not make a full copy of the data. The data stored on
+	 * the heap for the given batch will remain in place, but this batch will
+	 * now refer to it instead. The other batch should no longer be used.
+	 * \param other The batch to assign to this batch.
+	 * \return A reference to this batch.
+	 */
+	Batch<Batch<Element>>& operator =(Batch<Batch<Element>>&& other) noexcept {
+		subelements = std::move(other.subelements);
+		next_position = other.next_position;
+	}
+
 	protected:
 	/*!
 	 * Vector containing the actual data in the subbatches.
