@@ -238,6 +238,54 @@ public:
 		next_position = other.next_position;
 	}
 
+	/*!
+	 * Add a new subbatch to the end of this batch of batches.
+	 *
+	 * The batch is copied into this batch of batches, and added to the end.
+	 * \param value The batch to append to this batch of batches.
+	 */
+	void push_back(const Batch<Element>& value) {
+		size_t buffer_size = subelements.size();
+		while(buffer_size < next_position + value.size()) { //Not enough capacity in the element buffer.
+			buffer_size *= 2; //Always grow with factors of 2.
+		}
+		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
+
+		Batch<SubbatchView<Element>>::emplace_back(*this, next_position, value.size(), value.size()); //Create a new subbatch with exactly enough capacity.
+		next_position += value.size();
+		SubbatchView<Element>& subbatch = Batch<SubbatchView<Element>>::back();
+		//Copy all subelements.
+		for(size_t subelement = 0; subelement < value.size(); ++subelement) {
+			subbatch.push_back(value[subelement]);
+		}
+	}
+
+	/*!
+	 * Add a new subbatch to the end of this batch of batches.
+	 *
+	 * The batch itself needs to be copied because it is merged into the element
+	 * buffer of this batch of batches. However the individual elements in the
+	 * batch will be moved. If their move constructors are more efficient than
+	 * their copy constructors, this might save some data copies. For plain old
+	 * data, this will have no benefit over the copy-overload of this function.
+	 * \param value The batch to append to this batch of batches.
+	 */
+	void push_back(Batch<Element>&& value) {
+		size_t buffer_size = subelements.size();
+		while(buffer_size < next_position + value.size()) { //Not enough capacity in the element buffer.
+			buffer_size *= 2;
+		}
+		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
+
+		Batch<SubbatchView<Element>>::emplace_back(*this, next_position, value.size(), value.size()); //Create a new subbatch with exactly enough capacity.
+		next_position += value.size();
+		SubbatchView<Element>& subbatch = Batch<SubbatchView<Element>>::back();
+		//Move all subelements.
+		for(size_t subelement = 0; subelement < value.size(); ++subelement) {
+			subbatch.push_back(std::move(value[subelement]));
+		}
+	}
+
 	protected:
 	/*!
 	 * Vector containing the actual data in the subbatches.
