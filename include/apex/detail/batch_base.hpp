@@ -262,6 +262,28 @@ class BatchBase<BatchBase<Element>> : protected std::vector<SubbatchView<Element
 	friend class SubbatchView<Element>; //Subbatches can access the coalesced data structure to get their own information.
 
 public:
+	//Many functions can be taken over directly from the underlying vector class.
+	using std::vector<SubbatchView<Element>>::operator[];
+	using std::vector<SubbatchView<Element>>::at;
+	using std::vector<SubbatchView<Element>>::back;
+	using std::vector<SubbatchView<Element>>::begin;
+	using std::vector<SubbatchView<Element>>::capacity;
+	using std::vector<SubbatchView<Element>>::cbegin;
+	using std::vector<SubbatchView<Element>>::cend;
+	using std::vector<SubbatchView<Element>>::clear;
+	using std::vector<SubbatchView<Element>>::crbegin;
+	using std::vector<SubbatchView<Element>>::crend;
+	using std::vector<SubbatchView<Element>>::data; //Gets the data pointing to the subbatch views, not the subelement data.
+	using std::vector<SubbatchView<Element>>::empty;
+	using std::vector<SubbatchView<Element>>::erase;
+	using std::vector<SubbatchView<Element>>::end;
+	using std::vector<SubbatchView<Element>>::front;
+	using std::vector<SubbatchView<Element>>::max_size;
+	using std::vector<SubbatchView<Element>>::pop_back;
+	using std::vector<SubbatchView<Element>>::rbegin;
+	using std::vector<SubbatchView<Element>>::rend;
+	using std::vector<SubbatchView<Element>>::size;
+
 	/*!
 	 * Creates an empty batch.
 	 */
@@ -393,6 +415,8 @@ public:
 			subbatch.push_back(std::move(value[subelement]));
 		}
 	}
+
+	//TODO: Implement assign, a data function for subelements, insert, emplace, push_back, emplace_back, resize, swap, ==, !=, <, <=< > and >=.
 
 	protected:
 	/*!
