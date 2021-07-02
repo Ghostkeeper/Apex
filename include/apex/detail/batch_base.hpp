@@ -263,6 +263,10 @@ class BatchBase<BatchBase<Element>> : protected std::vector<SubbatchView<Element
 
 public:
 	//Many functions can be taken over directly from the underlying vector class.
+	using iterator = typename std::vector<SubbatchView<Element>>::iterator;
+	using const_iterator = typename std::vector<SubbatchView<Element>>::const_iterator;
+	using reverse_iterator = typename std::vector<SubbatchView<Element>>::reverse_iterator;
+	using const_reverse_iterator = typename std::vector<SubbatchView<Element>>::const_reverse_iterator;
 	using std::vector<SubbatchView<Element>>::operator[];
 	using std::vector<SubbatchView<Element>>::at;
 	using std::vector<SubbatchView<Element>>::back;
