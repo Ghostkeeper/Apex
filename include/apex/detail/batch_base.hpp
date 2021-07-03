@@ -453,12 +453,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(const BatchBase<Element>& value) {
-		size_t buffer_size = subelements.size();
-		while(buffer_size < next_position + value.size()) { //Not enough capacity in the element buffer.
-			buffer_size *= 2; //Always grow with factors of 2.
-		}
-		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
-
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -473,12 +468,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(BatchBase<Element>&& value) {
-		size_t buffer_size = subelements.size();
-		while(buffer_size < next_position + value.size()) { //Not enough capacity in the element buffer.
-			buffer_size *= 2;
-		}
-		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
-
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -633,6 +623,27 @@ public:
 			new_subbatch[subelement] = std::move(subbatch[subelement]); //Move every element individually to the new place. Might be a copy in the case of plain-old-data.
 		}
 		new_subbatch.num_elements = subbatch.size();
+	}
+
+	/*!
+	 * Make sure that the subelements buffer can contain at least a certain
+	 * number of subelements, but do so by doubling the subelement buffer in
+	 * size.
+	 *
+	 * This has the advantage that if this reserve function is called frequently
+	 * it will infrequently actually have to allocate new memory. If new memory
+	 * is needed a linear amount of time, each allocation will on average take
+	 * constant time.
+	 */
+	void reserve_subelements_doubling(const size_t minimum_capacity) {
+		size_t buffer_size = subelements.size();
+		if(buffer_size >= minimum_capacity) {
+			return; //No reallocation necessary.
+		}
+		while(buffer_size < minimum_capacity) { //Not enough capacity in the element buffer.
+			buffer_size *= 2;
+		}
+		subelements.resize(buffer_size); //Resize all at once.
 	}
 };
 
