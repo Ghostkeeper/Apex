@@ -286,6 +286,7 @@ public:
 	using std::vector<SubbatchView<Element>>::pop_back;
 	using std::vector<SubbatchView<Element>>::rbegin;
 	using std::vector<SubbatchView<Element>>::rend;
+	using std::vector<SubbatchView<Element>>::reserve;
 	using std::vector<SubbatchView<Element>>::size;
 
 	/*!
@@ -373,6 +374,51 @@ public:
 	}
 
 	/*!
+	 * Replaces the contents of the batch with a number of copies of a specified
+	 * subbatch.
+	 * \param count The number of copies to store in this batch of batches.
+	 * \param value The subbatch to store multiple copies of.
+	 */
+	void assign(const size_t count, const BatchBase<Element>& value) {
+		reserve_subelements(count * value.size());
+		reserve(count);
+		clear();
+
+		for(size_t index = 0; index < count; ++index) {
+			push_back_unsafe(value);
+		}
+	}
+
+	/*!
+	 * Replaces the contents of the batch with the contents of a specific range
+	 * of subbatches.
+	 *
+	 * The implementation depends on the type of iterator used. Forward
+	 * iterators greatly improve performance.
+	 * \param first The position of the first element in the range to store in
+	 * this batch.
+	 * \param last An iterator indicating the end of the range to store in this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		clear(); //Clear any old contents.
+		assign_iterator_dispatch<InputIterator>(begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+	}
+
+	/*!
+	 * Replaces the contents of the batch with the elements from the given
+	 * initialiser list.
+	 * \param initialiser_list A list of subbatches to store in this batch of
+	 * batches.
+	 */
+	void assign(const std::initializer_list<BatchBase<Element>>& initialiser_list) {
+		assign(initialiser_list.begin(), initialiser_list.end());
+	}
+
+	/*!
 	 * Add a new subbatch to the end of this batch of batches.
 	 *
 	 * The batch is copied into this batch of batches, and added to the end.
@@ -442,6 +488,90 @@ public:
 	 * data ends in the most recently allocated subbatch.
 	 */
 	size_t next_position;
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by random
+	 * access iterators.
+	 *
+	 * Random access iterators have the property that the distance can be
+	 * calculated between them in constant time, without actually performing the
+	 * iteration. This helps to be able to reserve enough memory to contain the
+	 * contents of the range.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of random access
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::random_access_iterator_tag) {
+		const size_t new_size = end - begin;
+		reserve(new_size);
+
+		//Count the total number of subelements too, to reserve enough memory there all at once.
+		size_t subelements_size = 0;
+		for(InputIterator iterator = begin; iterator != end; iterator++) {
+			subelements_size += iterator->size();
+		}
+		reserve_subelements(subelements_size);
+
+		for(InputIterator it = begin; it != end; it++) {
+			push_back_unsafe(*it);
+		}
+	}
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by
+	 * forward iterators.
+	 *
+	 * Forward iterators have the property that they can safely be iterated over
+	 * multiple times. This helps to determine the size of the range before
+	 * copying the contents, which can reduce the number of times the memory for
+	 * the subbatches or their elements needs to be copied.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of forward
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::forward_iterator_tag) {
+		size_t new_size = 0;
+		size_t subelements_size = 0;
+		//Iterate over the range once to determine its size and the number of subelements, to reserve enough memory there all at once.
+		for(InputIterator it = begin; it != end; it++) {
+			++new_size;
+			subelements_size += it->size();
+		}
+		reserve(new_size);
+		reserve_subelements(subelements_size);
+
+		//Then a second time to actually assign the contents.
+		for(InputIterator it = begin; it != end; it++) {
+			push_back_unsafe(*it);
+		}
+	}
+
+	/*!
+	 * Specialised assign operation for when assigning a range defined by any
+	 * input iterators.
+	 *
+	 * If the specialised iterator dispatches for more strict types of iterators
+	 * are not applicable, the assign operation can fall back to this one. Since
+	 * the range can only be iterated over once, and the size can't be computed,
+	 * multiple reallocations may be necessary for this assignment to occur.
+	 * \param begin The first element of the range to assign to this batch.
+	 * \param end An iterator marking the end of the range to assign to this
+	 * batch.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::input_iterator_tag) {
+		for(; begin != end; begin++) {
+			push_back(*begin); //Simply append all of them. This automatically implements the amortised reallocation.
+		}
+	}
 
 	/*!
 	 * Appends a copy of an element without checking for capacity in either the
