@@ -385,13 +385,7 @@ public:
 		}
 		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
 
-		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, value.size(), value.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += value.size();
-		SubbatchView<Element>& subbatch = BatchBase<SubbatchView<Element>>::back();
-		//Copy all subelements.
-		for(size_t subelement = 0; subelement < value.size(); ++subelement) {
-			subbatch.push_back(value[subelement]);
-		}
+		push_back_unsafe(value);
 	}
 
 	/*!
@@ -411,13 +405,7 @@ public:
 		}
 		subelements.resize(buffer_size); //If necessary, resize to the new buffer size (if buffer_size == subelements.size(), this is a no-op).
 
-		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, value.size(), value.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += value.size();
-		SubbatchView<Element>& subbatch = BatchBase<SubbatchView<Element>>::back();
-		//Move all subelements.
-		for(size_t subelement = 0; subelement < value.size(); ++subelement) {
-			subbatch.push_back(std::move(value[subelement]));
-		}
+		push_back_unsafe(value);
 	}
 
 	/*!
@@ -454,6 +442,40 @@ public:
 	 * data ends in the most recently allocated subbatch.
 	 */
 	size_t next_position;
+
+	/*!
+	 * Appends a copy of an element without checking for capacity in either the
+	 * subbatch view list or the subelement buffer.
+	 *
+	 * Use this function only after having checked or reserved enough memory to
+	 * contain a new element in the subbatch list, and the size of the subbatch
+	 * in the subelement list.
+	 * \param subbatch The subbatch to append to this batch of batches.
+	 */
+	void push_back_unsafe(const BatchBase<Element>& subbatch) {
+		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
+		next_position += subbatch.size();
+		back().assign(subbatch.begin(), subbatch.end()); //Copy all subelements.
+	}
+
+	/*!
+	 * Moves the subbatch to the end of this batch of batches without checking
+	 * for capacity in either the subbatch view list or the subelement buffer.
+	 *
+	 * Use this function only after having checked or reserved enough memory to
+	 * contain a new element in the subbatch list, and the size of the subbatch
+	 * in the subelement list.
+	 * \param subbatch The subbatch to move to the end of this batch of batches.
+	 */
+	void push_back_unsafe(BatchBase<Element>&& subbatch) {
+		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
+		next_position += subbatch.size();
+		SubbatchView<Element>& new_subbatch = back();
+		for(size_t subelement = 0; subelement < subbatch.size(); ++subelement) {
+			new_subbatch[subelement] = std::move(subbatch[subelement]); //Move every element individually to the new place. Might be a copy in the case of plain-old-data.
+		}
+		new_subbatch.num_elements = subbatch.size();
+	}
 };
 
 /*!
