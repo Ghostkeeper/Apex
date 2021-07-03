@@ -419,6 +419,34 @@ public:
 	}
 
 	/*!
+	 * Get a pointer to the internal data structure where this batch-of-batches
+	 * stores the data of all subbatches.
+	 *
+	 * All of the elements of all subbatches is coalesced into a single data
+	 * structure, to make them easier to move to compute devices all at once.
+	 * This function gives a pointer to the start of the data in the
+	 * subelements, which is necessary to access it directly.
+	 * \return A pointer to the start of the subelement buffer.
+	 */
+	const Element* data_subelements() const {
+		return subelements.data();
+	}
+
+	/*!
+	 * Get a pointer to the internal data structure where this batch-of-batches
+	 * stores the data of all subbatches.
+	 *
+	 * All of the elements of all subbatches is coalesced into a single data
+	 * structure, to make them easier to move to compute devices all at once.
+	 * This function gives a pointer to the start of the data in the
+	 * subelements, which is necessary to access it directly.
+	 * \return A pointer to the start of the subelement buffer.
+	 */
+	Element* data_subelements() {
+		return subelements.data();
+	}
+
+	/*!
 	 * Add a new subbatch to the end of this batch of batches.
 	 *
 	 * The batch is copied into this batch of batches, and added to the end.
