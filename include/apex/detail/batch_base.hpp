@@ -420,7 +420,21 @@ public:
 		}
 	}
 
-	//TODO: Implement assign, a data function for subelements, insert, emplace, push_back, emplace_back, resize, swap, ==, !=, <, <=< > and >=.
+	/*!
+	 * Reserve space for at least this many subelements to be stored without
+	 * needing to reallocate them.
+	 *
+	 * If the current capacity is already enough to store that many subelements,
+	 * this does nothing. If the capacity is insufficient, the data is moved to
+	 * a bigger container such that the buffer is capable of holding that many
+	 * subelements for the subbatches of this batch. In that case, iterators or
+	 * pointers pointing to the subelements will be invalidated.
+	 */
+	void reserve_subelements(const size_t count) {
+		if(subelements.size() < count) {
+			subelements.resize(count);
+		}
+	}
 
 	protected:
 	/*!
