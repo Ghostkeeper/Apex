@@ -447,6 +447,117 @@ public:
 	}
 
 	/*!
+	 * Insert a new batch at the specified position in this batch of batches.
+	 *
+	 * All subsequent batches are moved by one place to make space for the newly
+	 * inserted batch. This does not cause the actual element data to move for
+	 * those batches.
+	 * \param position The position in this batch to insert the new subbatch.
+	 * The new batch is inserted before this position.
+	 * \param value The new subbatch to insert in this batch of batches.
+	 * \return An iterator pointing to the newly inserted subbatch.
+	 */
+	iterator insert(const_iterator position, const BatchBase<Element>& value) {
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		SubbatchView<Element> subbatch(*this, next_position, 0, value.size()); //Create a subbatch pointing to the new data.
+		next_position += value.size();
+		subbatch.assign(value.begin(), value.end()); //Insert the data into that subbatch.
+		return std::vector<SubbatchView<Element>>::insert(position, subbatch);
+	}
+
+	/*!
+	 * Move a batch to the specified position in this batch of batches.
+	 *
+	 * All subsequent batches are moved by one place to make space for the newly
+	 * inserted batch. This does not cause the actual element data to move for
+	 * those batches.
+	 * \param position The position in this batch to insert the subbatch. The
+	 * subbatch is inserted before this position.
+	 * \param value The subbatch to insert into this batch of batches.
+	 * \return An iterator pointing to the newly inserted subbatch.
+	 */
+	iterator insert(const_iterator position, BatchBase<Element>&& value) {
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		SubbatchView<Element> subbatch(*this, next_position, 0, value.size()); //Create a subbatch pointing to the new data.
+		next_position += value.size();
+
+		//Move the data into that subbatch.
+		for(Element& subelement : value) {
+			subbatch.push_back(std::move(subelement));
+		}
+
+		return std::vector<SubbatchView<Element>>::insert(position, subbatch);
+	}
+
+	/*!
+	 * Insert repeated copies of a subbatch in a specified position in this
+	 * batch of batches.
+	 *
+	 * All subsequent batches are moved to make place for the newly inserted
+	 * subbatches. This does not cause the actual element data to move for those
+	 * batches.
+	 * \param position The position in this batch to insert the subbatches. The
+	 * subbatches are inserted before this position.
+	 * \param count How often to repeat the subbatch here.
+	 * \param value The subbatch to insert repeatedly into this batch of
+	 * batches.
+	 * \return An iterator pointing to the first of the newly inserted
+	 * subbatches.
+	 */
+	iterator insert(const_iterator position, const size_t count, const BatchBase<Element>& value) {
+		reserve_subelements(next_position + value.size() * count);
+
+		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, count, SubbatchView(*this, next_position, 0, value.size()));
+		for(size_t repeat = 0; repeat < count; ++repeat) {
+			SubbatchView<Element>& new_subbatch = *(position + repeat);
+			new_subbatch.start_index = next_position + repeat * value.size();
+			new_subbatch.assign(value.begin(), value.end());
+		}
+		next_position += count * value.size();
+		return result;
+	}
+
+	/*!
+	 * Insert a range of subbatches at a specified position into this batch of
+	 * batches.
+	 *
+	 * All subsequent batches are moved to make place for the newly inserted
+	 * subbatches. This does not cause the actual element data to move for these
+	 * batches.
+	 * \param position The position in this batch to insert the subbatches. The
+	 * subbatches are inserted before this position.
+	 * \param first The first of the range of subbatches to insert.
+	 * \param last An iterator signalling the end of the range of subbatches to
+	 * insert.
+	 * \return An iterator pointing to the first of the newly inserted
+	 * subbatches.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert(const_iterator position, InputIterator first, InputIterator last) {
+		return insert_iterator_dispatch<InputIterator>(position, begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+	}
+
+	/*!
+	 * Insert a list of subbatches at a specified position into this batch of
+	 * batches.
+	 *
+	 * All subsequent batches are moved to make place for the newly inserted
+	 * subbatches. This does not cause the actual element data to move for these
+	 * subbatches.
+	 * \param position The position in this batch to insert the subbatches. The
+	 * subbatches are inserted before this position.
+	 * \param initialiser_list A list of subbatches to insert into this batch.
+	 * \return An iterator pointing to the first of the newly inserted
+	 * subbatches.
+	 */
+	iterator insert(const_iterator position, std::initializer_list<BatchBase<Element>>& initialiser_list) {
+		return insert(initialiser_list.begin(), initialiser_list.end());
+	}
+
+	/*!
 	 * Add a new subbatch to the end of this batch of batches.
 	 *
 	 * The batch is copied into this batch of batches, and added to the end.
@@ -589,6 +700,131 @@ public:
 		for(; begin != end; begin++) {
 			push_back(*begin); //Simply append all of them. This automatically implements the amortised reallocation.
 		}
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by random
+	 * access iterators.
+	 *
+	 * Random access iterators have the property that the distance can be
+	 * calculated between them in constant time, without actually performing the
+	 * iteration. This helps to be able to make enough space to contain the
+	 * contents of the range.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of random access
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::random_access_iterator_tag) {
+		const size_t subbatch_count = end - start;
+		if(subbatch_count == 0) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
+			return;
+		}
+		//Measure total number of subelements to prevent having to reallocate the element buffer multiple times.
+		size_t subelement_count = 0;
+		for(InputIterator it = start; it != end; it++) {
+			subelement_count += it->size();
+		}
+		reserve_subelements(next_position + subelement_count);
+
+		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, start->size()));
+		const_iterator subbatch = position;
+		for(InputIterator it = start; it != end; it++) {
+			SubbatchView<Element>& new_subbatch = *(position + index);
+			subbatch->start_index = next_position;
+			next_position += it->size();
+			subbatch->assign(it->begin(), it->end()); //Copy data from original batch into subelement array.
+			subbatch++;
+		}
+		return result;
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by
+	 * forward iterators.
+	 *
+	 * Forward iterators have the property that they can safely be iterated over
+	 * multiple times. This helps to determine the size of the range before
+	 * copying the contents, which allows us to make enough space to insert all
+	 * of the contents at once.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of forward
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::forward_iterator_tag) {
+		if(start == end) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
+			return;
+		}
+		//Measure total number of subbatches and subelements to prevent having to reallocate the element buffer multiple times.
+		size_t subbatch_count = 0;
+		size_t subelement_count = 0;
+		for(InputIterator it = start; it != end; it++) {
+			subbatch_count++;
+			subelement_count += it->size();
+		}
+		reserve_subelements(next_position + subelement_count);
+
+		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, start->size()));
+		const_iterator subbatch = position;
+		for(InputIterator it = start; it != end; it++) {
+			SubbatchView<Element>& new_subbatch = *(position + index);
+			subbatch->start_index = next_position;
+			next_position += it->size();
+			subbatch->assign(it->begin(), it->end()); //Copy data from original batch into subelement array.
+			subbatch++;
+		}
+		return result;
+	}
+
+	/*!
+	 * Specialised insert operation for when inserting a range defined by any
+	 * input iterators.
+	 *
+	 * If the specialised iterator dispatches for more strict types of iterators
+	 * are not applicable, the insert operation can fall back to this one. Since
+	 * the range can only be iterated over once, and the size can't be computed,
+	 * multiple reallocations may be necessary for this insertion to occur.
+	 * \param position The position before which the new elements will be
+	 * inserted.
+	 * \param start The first element of the range to insert into this batch.
+	 * \param end An iterator marking the end of the range to insert into this
+	 * batch.
+	 * \return An iterator to the beginning of the newly inserted range.
+	 * \tparam InputIterator This function works with any type of input
+	 * iterator.
+	 */
+	template<class InputIterator>
+	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::input_iterator_tag) {
+		/* The actual subelement data can simply be appended at the end rather
+		than inserted in the middle. For the views however we don't know how
+		many will be inserted and we don't have control to place elements
+		outside of bounds but within the capacity like we do for
+		SubbatchView::insert_iterator_dispatch. So instead take a simpler
+		approach: Keep the views in a separate array and then insert them all at
+		once once iteration is completed. */
+
+		std::vector<SubbatchView<Element>> views;
+		for(; start != end; start++) {
+			const size_t subbatch_size = start->size();
+			views.emplace_back(*this, next_position, subbatch_size, subbatch_size);
+			reserve_subelements_doubling(next_position + subbatch_size);
+			views.back().assign(start->begin(), start->end()); //Copy data from the original batch into subelement array.
+		}
+		//Now insert the new views directly into the views array.
+		return std::vector<SubbatchView<Element>>::insert(views.begin(), views.end());
 	}
 
 	/*!
