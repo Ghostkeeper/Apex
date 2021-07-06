@@ -446,6 +446,89 @@ public:
 		return subelements.data();
 	}
 
+	//Since we don't actually want to call the BatchBase constructor for subbatches, we have to re-implement all of its constructor overloads for emplace and emplace_back:
+
+	/*!
+	 * Insert an empty subbatch at the specified position in the batch of
+	 * batches.
+	 * \param position The position to insert the new subbatch.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 */
+	iterator emplace(const_iterator position) {
+		return std::vector<SubbatchView<Element>>::emplace(*this, next_position, 0, 0);
+	}
+
+	/*!
+	 * Insert a new subbatch at the specified position, filled with a number of
+	 * copies of a value.
+	 * \param position The position to insert the new subbatch.
+	 * \param count The number of subelements to fill the new subbatch with.
+	 * \param value The subelement to copy multiple times into the new subbatch.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 */
+	iterator emplace(const_iterator position, const size_t count, Element& value = Element()) {
+		reserve_subelements_doubling(next_position + count);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, count, count);
+		next_position += count;
+		result->assign(count, value);
+		return result;
+	}
+
+	/*!
+	 * Insert a new subbatch at the specified position, filled with the contents
+	 * of a specified range of elements.
+	 * \param position The position to insert the new subbatch.
+	 * \param first The start of a range of elements to place in the subbatch.
+	 * \param last An iterator signalling the end of a range of elements to
+	 * place in the subbatch.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 * \tparam InputIterator This function works with any type of iterator.
+	 */
+	template<class InputIterator>
+	iterator emplace(const_iterator position, InputIterator first, InputIterator last) {
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, 0, 0);
+		result->assign(first, last);
+		return result;
+	}
+
+	/*!
+	 * Insert a new subbatch at the specified position, filled with a copy of
+	 * the specified batch.
+	 * \param position The position to insert the new subbatch.
+	 * \param original The batch to copy into the new subbatch.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 */
+	iterator emplace(const_iterator position, const BatchBase<Element>& original) {
+		return insert(position, original); //We're just going to have to make a complete copy here.
+	}
+
+	/*!
+	 * Move the specified subbatch into the specified position in this batch.
+	 * \param position The position to insert the subbatch.
+	 * \param original The batch to move into this batch.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 */
+	iterator emplace(const_iterator position, BatchBase<Element>&& original) {
+		return insert(position, original); //We're just going to have to move the whole thing here.
+	}
+
+	/*!
+	 * Insert a new subbatch at the specified position, filled with the contents
+	 * of the specified list.
+	 * \param position The position to insert the subbatch.
+	 * \param initialiser_list The list of elements to fill the new subbatch
+	 * with.
+	 * \return An iterator pointing to the newly emplaced subbatch.
+	 */
+	iterator emplace(const_iterator position, const std::initializer_list<Element>& initialiser_list) {
+		const size_t list_size = initialiser_list.size();
+		reserve_subelements_doubling(next_position + list_size);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, list_size, list_size);
+		next_position += list_size;
+		result->assign(initialiser_list);
+		return result;
+	}
+
 	/*!
 	 * Insert a new batch at the specified position in this batch of batches.
 	 *
