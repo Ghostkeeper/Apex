@@ -455,7 +455,7 @@ public:
 	 * \return An iterator pointing to the newly emplaced subbatch.
 	 */
 	iterator emplace(const_iterator position) {
-		return std::vector<SubbatchView<Element>>::emplace(*this, next_position, 0, 0);
+		return std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 0);
 	}
 
 	/*!
@@ -468,7 +468,7 @@ public:
 	 */
 	iterator emplace(const_iterator position, const size_t count, Element& value = Element()) {
 		reserve_subelements_doubling(next_position + count);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, count, count);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, count, count);
 		next_position += count;
 		result->assign(count, value);
 		return result;
@@ -486,7 +486,7 @@ public:
 	 */
 	template<class InputIterator>
 	iterator emplace(const_iterator position, InputIterator first, InputIterator last) {
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, 0, 0);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 0);
 		result->assign(first, last);
 		return result;
 	}
@@ -523,7 +523,7 @@ public:
 	iterator emplace(const_iterator position, const std::initializer_list<Element>& initialiser_list) {
 		const size_t list_size = initialiser_list.size();
 		reserve_subelements_doubling(next_position + list_size);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(*this, next_position, list_size, list_size);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, list_size, list_size);
 		next_position += list_size;
 		result->assign(initialiser_list);
 		return result;
