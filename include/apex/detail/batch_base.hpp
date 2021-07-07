@@ -781,6 +781,19 @@ public:
 		}
 	}
 
+	/*!
+	 * Exchange the contents of this batch of batches with that of another.
+	 *
+	 * For this type of swap, the element data itself doesn't need to move.
+	 * Iterators and pointers to the element and views data will remain valid.
+	 * \param other The batch of batches to swap with.
+	 */
+	void swap(BatchBase<BatchBase<Element>>& other) noexcept {
+		subelements.swap(other.subelements);
+		std::swap(next_position, other.next_position);
+		std::vector<SubbatchView<Element>>::swap(static_cast<std::vector<SubbatchView<Element>>>(other)); //Swap all the views on that data too.
+	}
+
 	protected:
 	/*!
 	 * Vector containing the actual data in the subbatches.
