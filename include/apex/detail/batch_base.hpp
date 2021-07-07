@@ -374,6 +374,99 @@ public:
 	}
 
 	/*!
+	 * Compares two batches of batches for equality.
+	 *
+	 * Two batches of batches are considered equal if all of their subbatches
+	 * are pairwise equal. In turn, the subbatches are equal if each of their
+	 * elements are pairwise equal.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if the two batches of batches are equal, or ``false``
+	 * otherwise.
+	 */
+	bool operator ==(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) == static_cast<std::vector<SubbatchView<Element>>&>(other); //The base vector knows its size and lets all subbatches compare too.
+	}
+
+	/*!
+	 * Compares two batches of batches for inequality.
+	 *
+	 * Two batches of batches are considered inequal if at least one subbatch is
+	 * different from the subbatch in the same position in the other batch. In
+	 * turn, the subbatches are inequal if at least one subelement is different
+	 * from the subelement in the same position in the other subbatch.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if the two batches of batches are inequal, or ``false``
+	 * otherwise.
+	 */
+	bool operator !=(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) != static_cast<std::vector<SubbatchView<Element>>&>(other);
+	}
+
+	/*!
+	 * Compares the lexicographic order of this batch of batches with another.
+	 *
+	 * A batch is lexicographically less if its first subbatch is less than the
+	 * first subbatch of the other batch. If the first elements are equal, the
+	 * second subbatches are compared, and so on. If one batch is a prefix of
+	 * another, the shorter batch is considered lesser. The subbatches are in
+	 * turn also lexicographically compared.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if this batch is lexicographically less than or equal to
+	 * the other batch, or ``false`` if it is greater.
+	 */
+	bool operator <=(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) <= static_cast<std::vector<SubbatchView<Element>>&>(other);
+	}
+
+	/*!
+	 * Compares the lexicographic order of this batch of batches with another.
+	 *
+	 * A batch is lexicographically less if its first subbatch is less than the
+	 * first subbatch of the other batch. If the first elements are equal, the
+	 * second subbatches are compared, and so on. If one batch is a prefix of
+	 * another, the shorter batch is considered lesser. The subbatches are in
+	 * turn also lexicographically compared.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if this batch is lexicographically less than the other
+	 * batch, or ``false`` if it is greater or equal.
+	 */
+	bool operator <(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) < static_cast<std::vector<SubbatchView<Element>>&>(other);
+	}
+
+	/*!
+	 * Compares the lexicographic order of this batch of batches with another.
+	 *
+	 * A batch is lexicographically less if its first subbatch is less than the
+	 * first subbatch of the other batch. If the first elements are equal, the
+	 * second subbatches are compared, and so on. If one batch is a prefix of
+	 * another, the shorter batch is considered lesser. The subbatches are in
+	 * turn also lexicographically compared.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if this batch is lexicographically greater than or equal
+	 * to the other batch, or ``false`` if it is less.
+	 */
+	bool operator >=(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) >= static_cast<std::vector<SubbatchView<Element>>&>(other);
+	}
+
+	/*!
+	 * Compares the lexicographic order of this batch of batches with another.
+	 *
+	 * A batch is lexicographically less if its first subbatch is less than the
+	 * first subbatch of the other batch. If the first elements are equal, the
+	 * second subbatches are compared, and so on. If one batch is a prefix of
+	 * another, the shorter batch is considered lesser. The subbatches are in
+	 * turn also lexicographically compared.
+	 * \param other The batch to compare with.
+	 * \return ``true`` if this batch is lexicographically greater than the
+	 * other batch, or ``false`` if it is less or equal.
+	 */
+	bool operator >(const BatchBase<BatchBase<Element>>& other) const {
+		return static_cast<std::vector<SubbatchView<Element>>&>(*this) > static_cast<std::vector<SubbatchView<Element>>&>(other);
+	}
+
+	/*!
 	 * Replaces the contents of the batch with a number of copies of a specified
 	 * subbatch.
 	 * \param count The number of copies to store in this batch of batches.
@@ -791,7 +884,7 @@ public:
 	void swap(BatchBase<BatchBase<Element>>& other) noexcept {
 		subelements.swap(other.subelements);
 		std::swap(next_position, other.next_position);
-		std::vector<SubbatchView<Element>>::swap(static_cast<std::vector<SubbatchView<Element>>>(other)); //Swap all the views on that data too.
+		std::vector<SubbatchView<Element>>::swap(static_cast<std::vector<SubbatchView<Element>>&>(other)); //Swap all the views on that data too.
 	}
 
 	protected:
