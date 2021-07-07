@@ -747,6 +747,40 @@ public:
 		}
 	}
 
+	/*!
+	 * Resize this batch such that it contains a specified number of subbatches.
+	 *
+	 * If the size is increased, empty subbatches will be appended to the end to
+	 * pad the size of the batch of batches. If the size is reduced, subbatches
+	 * at the end will be erased.
+	 * \param count The new size of the batch of batches.
+	 */
+	void resize(const size_t count) {
+		std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 0));
+	}
+
+	/*!
+	 * Resize this batch such that it contains a specified number of subbatches.
+	 *
+	 * If the size is increased, the specified subbatch will be copied a number
+	 * of times to pad the size of the batch of batches. If the size is reduced,
+	 * subbatches at the end will be erased.
+	 * \param count The new size of the batch of batches.
+	 * \param value The subbatch to repeatedly copy at the end to pad the size
+	 * of the batch.
+	 */
+	void resize(const size_t count, const BatchBase<Element>& value) {
+		if(count < size()) {
+			std::vector<SubbatchView<Element>>::resize(count);
+		} else if(count > size()) {
+			reserve(size() + count);
+			reserve_subelements(next_position + (count - size()) * value.size());
+			while(size() < count) {
+				push_back_unsafe(value); //Append a number of copies of the given subbatch.
+			}
+		}
+	}
+
 	protected:
 	/*!
 	 * Vector containing the actual data in the subbatches.
