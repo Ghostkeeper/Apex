@@ -468,7 +468,7 @@ public:
 	 */
 	iterator emplace(const_iterator position, const size_t count, Element& value = Element()) {
 		reserve_subelements_doubling(next_position + count);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, count, count);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, count);
 		next_position += count;
 		result->assign(count, value);
 		return result;
@@ -523,10 +523,75 @@ public:
 	iterator emplace(const_iterator position, const std::initializer_list<Element>& initialiser_list) {
 		const size_t list_size = initialiser_list.size();
 		reserve_subelements_doubling(next_position + list_size);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, list_size, list_size);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, list_size);
 		next_position += list_size;
 		result->assign(initialiser_list);
 		return result;
+	}
+
+	/*!
+	 * Append an empty subbatch at the end of this batch of batches.
+	 */
+	void emplace_back() {
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 0);
+	}
+
+	/*!
+	 * Append a new subbatch at the end of this batch of batches, filled with a
+	 * number of copies of a value.
+	 * \param count The number of subelements to fill the new subbatch with.
+	 * \param value The element to copy multiple times into the new subbatch.
+	 */
+	void emplace_back(const size_t count, const Element& value = Element()) {
+		reserve_subelements_doubling(next_position + count);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, count, count);
+		next_position += count;
+		back().assign(count, value);
+	}
+
+	/*!
+	 * Append a new subbatch at the end of this batch of batches, filled with
+	 * the contents of a specified range of elements.
+	 * \param first The start of a range of elements to place in the subbatch.
+	 * \param last An iterator signalling the end of a range of elements to
+	 * place in the subbatch.
+	 * \tparam InputIterator This function works with any type of iterator.
+	 */
+	template<class InputIterator>
+	void emplace_back(InputIterator first, InputIterator last) {
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 0);
+		back().assign(first, last);
+	}
+
+	/*!
+	 * Append a new subbatch at the end of this batch, filled with a copy of the
+	 * specified batch.
+	 * \param original The batch to copy into the new subbatch.
+	 */
+	void emplace_back(const BatchBase<Element>& original) {
+		push_back(original);
+	}
+
+	/*!
+	 * Move the specified subbatch to the end of this batch.
+	 * \param The batch to move into this batch.
+	 */
+	void emplace_back(BatchBase<Element>&& original) {
+		push_back(original);
+	}
+
+	/*!
+	 * Append a new subbatch to the end of this batch, filled with the contents
+	 * of the specified list.
+	 * \param initialiser_list The list of elements to fill the new subbatch
+	 * with.
+	 */
+	void emplace_back(const std::initializer_list<Element>& initialiser_list) {
+		const size_t list_size = initialiser_list.size();
+		reserve_subelements_doubling(next_position + list_size);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, list_size, list_size);
+		next_position += list_size;
+		back().assign(initialiser_list);
 	}
 
 	/*!
