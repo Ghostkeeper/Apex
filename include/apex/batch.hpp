@@ -30,6 +30,15 @@ namespace apex {
  * particular interest to complex data types which point to separately allocated
  * contents. By specialising the data structure of those elements, the batch can
  * be made more efficient with large data sets.
+ *
+ * The default implementation of batches works for any type of data, but does
+ * not always call the destructors of the elements it contains. It may call
+ * constructors internally when moving. As such, it is not suitable for data
+ * types that produce side effects in its constructor or destructor. For some
+ * types a class template specialisation exists that does make it work properly
+ * (in particular the Batch class itself is made to work well as elements in
+ * other batches). In general though, only plain old data types can be used in
+ * these batches.
  * \tparam Element The type of element stored in this batch.
  */
 template<typename Element>

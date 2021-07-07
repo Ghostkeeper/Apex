@@ -2623,9 +2623,9 @@ namespace std {
  *
  * This swap is made by reference and can be executed in constant time, without
  * needing to copy or move the individual elements of the batches.
- * \tparam Element The type of elements contained in the batches.
  * \param left The batch to swap with \ref right.
  * \param right The batch to swap with \ref left.
+ * \tparam Element The type of elements contained in the batches.
  */
 template<typename Element>
 void swap(apex::BatchBase<Element>& left, apex::BatchBase<Element>& right) noexcept {
@@ -2635,4 +2635,3 @@ void swap(apex::BatchBase<Element>& left, apex::BatchBase<Element>& right) noexc
 }
 
 #endif //APEX_BATCH_BASE
-
