@@ -61,4 +61,21 @@ TEST(BatchOfBatches, ConstructEmpty) {
 	EXPECT_TRUE(empty.empty()) << "The batch is empty after its creation.";
 }
 
+/*!
+ * Tests constructing a batch of batches with the default constructor for
+ * subbatches.
+ */
+TEST(BatchOfBatches, ConstructDefault) {
+	BatchBase<BatchBase<int>> batch1(1);
+	EXPECT_EQ(batch1.size(), 1) << "We added one empty subbatch.";
+	EXPECT_TRUE(batch1[0].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
+
+	BatchBase<BatchBase<int>> batch4(4);
+	EXPECT_EQ(batch4.size(), 4) << "We added 4 default-constructed subbatches.";
+	EXPECT_TRUE(batch4[0].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
+	EXPECT_TRUE(batch4[1].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
+	EXPECT_TRUE(batch4[2].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
+	EXPECT_TRUE(batch4[3].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
+}
+
 }
