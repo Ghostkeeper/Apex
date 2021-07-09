@@ -1125,7 +1125,7 @@ public:
 	 * \param subbatch The subbatch to append to this batch of batches.
 	 */
 	void push_back_unsafe(const BatchBase<Element>& subbatch) {
-		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
 		next_position += subbatch.size();
 		back().assign(subbatch.begin(), subbatch.end()); //Copy all subelements.
 	}
@@ -1140,7 +1140,7 @@ public:
 	 * \param subbatch The subbatch to move to the end of this batch of batches.
 	 */
 	void push_back_unsafe(BatchBase<Element>&& subbatch) {
-		BatchBase<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
 		next_position += subbatch.size();
 		SubbatchView<Element>& new_subbatch = back();
 		for(size_t subelement = 0; subelement < subbatch.size(); ++subelement) {
@@ -1189,8 +1189,6 @@ public:
  */
 template<typename Element>
 class SubbatchView {
-	friend class BatchBase<BatchBase<Element>>; //The parent batch is a friend class, so that it can access the hidden constructor to create new views.
-
 	public:
 	//Using the iterator types of the element buffer.
 	/*!
@@ -1214,6 +1212,23 @@ class SubbatchView {
 	 * subbatch.
 	 */
 	using const_reverse_iterator = typename std::vector<Element>::const_reverse_iterator;
+
+	/*!
+	 * Construct a new view on a subbatch.
+	 *
+	 * A new view should only be constructed by the batch this view is part of.
+	 * \param batch The batch this view is a part of.
+	 * \param start_index The index in that batch's element buffer where the
+	 * data of this subbatch starts.
+	 * \param size The number of elements currently in the subbatch.
+	 * \param capacity How much space is available in this part of the element
+	 * buffer for the elements in this subbatch.
+	 */
+	SubbatchView(BatchBase<BatchBase<Element>>& batch, const size_t start_index, const size_t size, const size_t capacity) :
+			batch(batch),
+			start_index(start_index),
+			num_elements(size),
+			current_capacity(capacity) {};
 
 	/*!
 	 * Return the element in a specified position in the subbatch.
@@ -2299,23 +2314,6 @@ class SubbatchView {
 	 * elements in this subbatch.
 	 */
 	size_t current_capacity;
-
-	/*!
-	 * Construct a new view on a subbatch.
-	 *
-	 * A new view should only be constructed by the batch this view is part of.
-	 * \param batch The batch this view is a part of.
-	 * \param start_index The index in that batch's element buffer where the
-	 * data of this subbatch starts.
-	 * \param size The number of elements currently in the subbatch.
-	 * \param capacity How much space is available in this part of the element
-	 * buffer for the elements in this subbatch.
-	 */
-	SubbatchView(BatchBase<BatchBase<Element>>& batch, const size_t start_index, const size_t size, const size_t capacity) :
-			batch(batch),
-			start_index(start_index),
-			num_elements(size),
-			current_capacity(capacity) {};
 
 	/*!
 	 * Specialised assign operation for when assigning a range defined by random
