@@ -8,17 +8,17 @@
 
 #include <gtest/gtest.h> //To run the test.
 
-#include "apex/batch.hpp" //The code under test.
+#include "apex/detail/batch_base.hpp" //The code under test.
 
 namespace apex {
 
 /*
 You might expect there to be some tests for batches of simple elements here.
-However the Batch<E> class simply passes all of its function calls on to an
-underlying vector data structure. These functions are so trivial that testing
-the batch can be considered transparently testing the vector implementation of
-your compiler. That is not in scope for this test, so those tests are left out
-in favour of testing the more interesting specialisations of batches.
+However the BatchBase<E> class simply inherits all of its functions from
+std::vector<E>. Writing tests for this then is effectively like writing tests
+for the vector implementation of your compiler. Since std::vector can be
+considered stable, writing tests for it is not effective. The tests below only
+apply to class template specialisations with more interesting behaviour.
 */
 
 /*!
@@ -26,28 +26,28 @@ in favour of testing the more interesting specialisations of batches.
  */
 class BatchOfBatchesFixture : public ::testing::Test {
 public:
-    /*!
-     * A batch without any elements.
-     */
-    Batch<int> empty;
+	/*!
+	 * A batch without any elements.
+	 */
+	BatchBase<int> empty;
 
-    /*!
-     * A batch with a single element, the number 1.
-     */
-    Batch<int> one;
+	/*!
+	 * A batch with a single element, the number 1.
+	 */
+	BatchBase<int> one;
 
-    /*!
-     * A batch with numbers 1 and 2.
-     */
-    Batch<int> one_two;
+	/*!
+	 * A batch with numbers 1 and 2.
+	 */
+	BatchBase<int> one_two;
 
-    /*!
-     * Constructs the fixture batches.
-     */
-    void SetUp() {
-        one.assign({1});
-        one_two.assign({1, 2});
-    }
+	/*!
+	 * Constructs the fixture batches.
+	 */
+	void SetUp() {
+		one.assign({1});
+		one_two.assign({1, 2});
+	}
 };
 
 /*!
@@ -56,9 +56,9 @@ public:
  * This also serves as a basic test for whether the class can be used at all.
  */
 TEST(BatchOfBatches, ConstructEmpty) {
-    Batch<Batch<int>> empty;
-    EXPECT_EQ(empty.size(), 0) << "The batch is empty after its creation.";
-    EXPECT_TRUE(empty.empty()) << "The batch is empty after its creation.";
+	const BatchBase<BatchBase<int>> empty;
+	EXPECT_EQ(empty.size(), 0) << "The batch is empty after its creation.";
+	EXPECT_TRUE(empty.empty()) << "The batch is empty after its creation.";
 }
 
 }

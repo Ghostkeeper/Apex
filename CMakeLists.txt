@@ -76,11 +76,11 @@ if(BUILD_TESTS)
 	#The names of all tests. Each must have a file called "test/<name>.cpp" as the source file.
 	#Instead of slashes for the directories, use periods.
 	set(test_names
-		batch
 		coordinate
 		point2
 		simple_polygon
 		detail.area
+		detail.batch_base
 		detail.translate
 	)
 
