@@ -371,6 +371,7 @@ public:
 	BatchBase<BatchBase<Element>>& operator =(BatchBase<BatchBase<Element>>&& other) noexcept {
 		subelements = std::move(other.subelements);
 		next_position = other.next_position;
+		return (*this);
 	}
 
 	/*!
