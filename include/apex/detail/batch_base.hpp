@@ -292,14 +292,14 @@ public:
 	/*!
 	 * Creates an empty batch.
 	 */
-	BatchBase() {}
+	BatchBase() : next_position(0) {}
 
 	/*!
 	 * Creates a batch with a number of copies of the same subbatch.
 	 * \param The number of copies to store in this batch.
 	 * \param value The subbatch to copy multiple times.
 	 */
-	BatchBase(const size_t count, const BatchBase<Element>& value = BatchBase<Element>()) {
+	BatchBase(const size_t count, const BatchBase<Element>& value = BatchBase<Element>()) : next_position(0) {
 		assign(count, value);
 	}
 
@@ -311,7 +311,7 @@ public:
 	 * \tparam InputIterator This constructor works with any type of iterator.
 	 */
 	template<class InputIterator>
-	BatchBase(InputIterator first, InputIterator last) {
+	BatchBase(InputIterator first, InputIterator last) : next_position(0) {
 		assign(first, last);
 	}
 
@@ -319,7 +319,7 @@ public:
 	 * Copy constructor, creating a copy of the specified batch.
 	 * \param other The batch to copy.
 	 */
-	BatchBase(const BatchBase<BatchBase<Element>>& other) {
+	BatchBase(const BatchBase<BatchBase<Element>>& other) : next_position(0) {
 		//Don't simply copy the subelements buffer and subbatchviews.
 		//If we're copying the data anyway, we might as well shrink the subelements buffer to fit.
 		//This not only improves performance of the copy, but also of any subsequent algorithms on the batch.
@@ -343,7 +343,7 @@ public:
 	 * \param initialiser_list An initialiser list containing subbatches to put
 	 * in this batch.
 	 */
-	BatchBase(std::initializer_list<BatchBase<Element>>& initialiser_list) {
+	BatchBase(std::initializer_list<BatchBase<Element>>& initialiser_list) : next_position(0) {
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
