@@ -385,7 +385,7 @@ public:
 	 * otherwise.
 	 */
 	bool operator ==(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) == static_cast<std::vector<SubbatchView<Element>>&>(other); //The base vector knows its size and lets all subbatches compare too.
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) == static_cast<const std::vector<SubbatchView<Element>>&>(other); //The base vector knows its size and lets all subbatches compare too.
 	}
 
 	/*!
@@ -400,7 +400,7 @@ public:
 	 * otherwise.
 	 */
 	bool operator !=(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) != static_cast<std::vector<SubbatchView<Element>>&>(other);
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) != static_cast<const std::vector<SubbatchView<Element>>&>(other);
 	}
 
 	/*!
@@ -416,7 +416,7 @@ public:
 	 * the other batch, or ``false`` if it is greater.
 	 */
 	bool operator <=(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) <= static_cast<std::vector<SubbatchView<Element>>&>(other);
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) <= static_cast<const std::vector<SubbatchView<Element>>&>(other);
 	}
 
 	/*!
@@ -432,7 +432,7 @@ public:
 	 * batch, or ``false`` if it is greater or equal.
 	 */
 	bool operator <(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) < static_cast<std::vector<SubbatchView<Element>>&>(other);
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) < static_cast<const std::vector<SubbatchView<Element>>&>(other);
 	}
 
 	/*!
@@ -448,7 +448,7 @@ public:
 	 * to the other batch, or ``false`` if it is less.
 	 */
 	bool operator >=(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) >= static_cast<std::vector<SubbatchView<Element>>&>(other);
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) >= static_cast<const std::vector<SubbatchView<Element>>&>(other);
 	}
 
 	/*!
@@ -464,7 +464,7 @@ public:
 	 * other batch, or ``false`` if it is less or equal.
 	 */
 	bool operator >(const BatchBase<BatchBase<Element>>& other) const {
-		return static_cast<std::vector<SubbatchView<Element>>&>(*this) > static_cast<std::vector<SubbatchView<Element>>&>(other);
+		return static_cast<const std::vector<SubbatchView<Element>>&>(*this) > static_cast<const std::vector<SubbatchView<Element>>&>(other);
 	}
 
 	/*!
