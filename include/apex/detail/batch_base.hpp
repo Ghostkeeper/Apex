@@ -499,7 +499,7 @@ public:
 	template<class InputIterator>
 	void assign(InputIterator first, InputIterator last) {
 		clear(); //Clear any old contents.
-		assign_iterator_dispatch<InputIterator>(begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+		assign_iterator_dispatch<InputIterator>(first, last, typename std::iterator_traits<InputIterator>::iterator_category());
 	}
 
 	/*!
