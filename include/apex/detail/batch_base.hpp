@@ -274,7 +274,6 @@ public:
 	using std::vector<SubbatchView<Element>>::capacity;
 	using std::vector<SubbatchView<Element>>::cbegin;
 	using std::vector<SubbatchView<Element>>::cend;
-	using std::vector<SubbatchView<Element>>::clear;
 	using std::vector<SubbatchView<Element>>::crbegin;
 	using std::vector<SubbatchView<Element>>::crend;
 	using std::vector<SubbatchView<Element>>::data; //Gets the data pointing to the subbatch views, not the subelement data.
@@ -510,6 +509,16 @@ public:
 	 */
 	void assign(const std::initializer_list<BatchBase<Element>>& initialiser_list) {
 		assign(initialiser_list.begin(), initialiser_list.end());
+	}
+
+	/*!
+	 * Erases all contents from this batch of batches.
+	 *
+	 * All subbatches will be eliminated.
+	 */
+	void clear() noexcept {
+		std::vector<SubbatchView<Element>>::clear();
+		next_position = 0;
 	}
 
 	/*!
