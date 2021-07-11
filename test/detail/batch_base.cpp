@@ -47,12 +47,24 @@ public:
 	BatchBase<int> one_through_nine;
 
 	/*!
+	 * A batch of batches with increasing sizes: 1, 2, 4, 8, 16, 32 elements.
+	 */
+	BatchBase<BatchBase<int>> power_increases;
+
+	/*!
 	 * Constructs the fixture batches.
 	 */
 	void SetUp() {
 		one.assign({1});
 		one_two.assign({1, 2});
 		one_through_nine.assign({1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+		for(size_t subbatch = 0; subbatch < 6; ++subbatch) { //Up to 2^5 (32) elements in each subbatch.
+			power_increases.emplace_back();
+			for(size_t element = 0; element < (1 << subbatch); ++element) {
+				power_increases.back().push_back(element + 1);
+			}
+		}
 	}
 };
 
@@ -112,6 +124,28 @@ TEST_F(BatchOfBatchesFixture, ConstructCopies) {
 	EXPECT_EQ(batch4_19[1], one_through_nine) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_19[2], one_through_nine) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_19[3], one_through_nine) << "The subbatches are copies of the original.";
+}
+
+/*!
+ * Tests constructing a batch of batches from a range defined by iterators.
+ *
+ * In this test, the iterators are random access, so it's possible to know
+ * beforehand how many subbatches will be stored.
+ */
+TEST_F(BatchOfBatchesFixture, ConstructRandomAccessIterator) {
+	const BatchBase<BatchBase<int>> batch_full(power_increases.begin(), power_increases.end()); //power_increases is also a batch, which has a random-access iterator.
+	EXPECT_EQ(batch_full, power_increases) << "Using the random-access iterator of power_increases, a complete copy of that batch was made.";
+
+	const BatchBase<BatchBase<int>> batch_partial(power_increases.begin(), power_increases.begin() + 3); //Construct from a part of the range of the original.
+	EXPECT_EQ(batch_partial.size(), 3) << "The range this batch was constructed with contained only 3 elements. Not the entire power_increases batch.";
+	EXPECT_EQ(batch_partial[0], power_increases[0]) << "The first subbatch was copied.";
+	EXPECT_EQ(batch_partial[1], power_increases[1]) << "The second subbatch was copied.";
+	EXPECT_EQ(batch_partial[2], power_increases[2]) << "The third subbatch was copied.";
+
+	const BatchBase<BatchBase<int>> batch_last_third(power_increases.begin() + 4, power_increases.end()); //Construct from the last part of the range of the original.
+	EXPECT_EQ(batch_last_third.size(), 2) << "The range this batch was constructed with contained only 2 elements. Not the entire power_increases batch.";
+	EXPECT_EQ(batch_last_third[0], power_increases[4]) << "The fifth subbatch was copied.";
+	EXPECT_EQ(batch_last_third[1], power_increases[5]) << "The last subbatch was copied.";
 }
 
 }
