@@ -39,7 +39,7 @@ public:
 	 * Wrap the limiter around an existing iterator.
 	 * \param original_iterator The iterator that must be limited.
 	 */
-	InputIteratorLimiter(InputIterator original_iterator);
+	InputIteratorLimiter(InputIterator original_iterator) : original(original_iterator) {}
 
 	/*!
 	 * Compares two iterators for equality.
@@ -49,7 +49,9 @@ public:
 	 * \return ``true`` if the two iterators reference the same memory, or
 	 * ``false`` if they don't.
 	 */
-	bool operator ==(const InputIteratorLimiter other) const;
+	bool operator ==(const InputIteratorLimiter other) const {
+		return original == other.original;
+	}
 
 	/*!
 	 * Compares two iterators for inequality.
@@ -60,19 +62,25 @@ public:
 	 * \return ``true`` if the two iterators reference different memory, or
 	 * ``false`` if they don't.
 	 */
-	bool operator !=(const InputIteratorLimiter other) const;
+	bool operator !=(const InputIteratorLimiter other) const {
+		return !((*this) == other); //Implement in terms of the equality operator.
+	}
 
 	/*!
 	 * Reference the value pointed to by the iterator.
 	 * \return A reference to the value pointed to by the iterator.
 	 */
-	value_type& operator *() const;
+	value_type& operator *() {
+		return *original;
+	}
 
 	/*!
 	 * Access a member of the value pointed to by the iterator.
 	 * \return A pointer of an object of which the member access will be taken.
 	 */
-	value_type* operator ->() const;
+	value_type* operator ->() {
+		return &(*original);
+	}
 
 	/*!
 	 * Increments the iterator, causing it to point to the next element in a
@@ -81,7 +89,10 @@ public:
 	 * This is the pre-increment operator, causing it to first increment and
 	 * then return the result.
 	 */
-	InputIteratorLimiter& operator ++();
+	InputIteratorLimiter& operator ++() {
+		++original;
+		return *this;
+	}
 
 	/*!
 	 * Increments the iterator, causing it to point to the next element in a
@@ -90,7 +101,11 @@ public:
 	 * This is the post-increment operator, which needs to return a copy of the
 	 * state of the iterator before incrementing it.
 	 */
-	InputIteratorLimiter operator ++(int);
+	InputIteratorLimiter operator ++(int) {
+		InputIteratorLimiter<InputIterator> previous(original); //Make a copy, wrapping again around the iterator we currently have.
+		original++;
+		return previous;
+	}
 
 protected:
 	/*!

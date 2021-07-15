@@ -63,7 +63,6 @@ if(BUILD_TESTS)
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
-		input_iterator_limiter.cpp
 		mock_simple_polygon.cpp
 		mock_simple_polygon_batch.cpp
 	)
