@@ -103,4 +103,25 @@ protected:
 
 }
 
+namespace std {
+
+/*!
+ * Specialises the type traits of the InputIteratorLimiter class.
+ *
+ * This makes it possible to derive the sub-types of the limited iterator, and
+ * implements the input_iterator_tag so that algorithms can recognise this
+ * iterator as a limited input iterator.
+ */
+template<typename InputIterator>
+struct iterator_traits<apex::InputIteratorLimiter<InputIterator>> {
+	using difference_type = typename iterator_traits<InputIterator>::difference_type;
+	using value_type = typename iterator_traits<InputIterator>::value_type;
+	using pointer = typename iterator_traits<InputIterator>::pointer;
+	using reference = typename iterator_traits<InputIterator>::reference;
+
+	using iterator_category = std::input_iterator_tag; //This defines the limiter as an input iterator!
+};
+
+}
+
 #endif //APEX_INPUT_ITERATOR_LIMITER
