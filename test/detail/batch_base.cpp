@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <list> //For linked lists, a data structure with inherently limited iterators, from which batches must be able to copy.
 
 #include "apex/detail/batch_base.hpp" //The code under test.
 
@@ -146,6 +147,36 @@ TEST_F(BatchOfBatchesFixture, ConstructRandomAccessIterator) {
 	EXPECT_EQ(batch_last_third.size(), 2) << "The range this batch was constructed with contained only 2 elements. Not the entire power_increases batch.";
 	EXPECT_EQ(batch_last_third[0], power_increases[4]) << "The fifth subbatch was copied.";
 	EXPECT_EQ(batch_last_third[1], power_increases[5]) << "The last subbatch was copied.";
+}
+
+/*!
+ * Tests constructing a batch of batches from a range defined by iterators.
+ *
+ * In this test, the iterators are forward, so it's possible to iterate over it
+ * multiple times to find out how many subbatches will be stored.
+ */
+TEST_F(BatchOfBatchesFixture, ConstructForwardIterator) {
+	//A linked list offers a bidirectional iterator, which is a forward iterator but not random access.
+	const std::list<BatchBase<int>> batches = {empty, one, one_two, one_through_nine};
+
+	const BatchBase<BatchBase<int>> batch_full(batches.begin(), batches.end());
+	EXPECT_EQ(batch_full.size(), 4) << "We put 4 subbatches in the list.";
+	EXPECT_EQ(batch_full[0], empty) << "The first element is the empty subbatch.";
+	EXPECT_EQ(batch_full[1], one) << "The second element is the subbatch with one element.";
+	EXPECT_EQ(batch_full[2], one_two) << "The third element is the subbatch with two elements.";
+	EXPECT_EQ(batch_full[3], one_through_nine) << "The fourth element is the subbatch with 9 digits.";
+
+	std::list<BatchBase<int>>::const_iterator third = batches.begin();
+	std::advance(third, 2);
+	const BatchBase<BatchBase<int>> batch_partial(batches.begin(), third);
+	EXPECT_EQ(batch_partial.size(), 2) << "We iterated up until the third element. Everything before that should be included, not including the third element.";
+	EXPECT_EQ(batch_partial[0], empty) << "The first element is the empty subbatch.";
+	EXPECT_EQ(batch_partial[1], one) << "The second element is the subbatch with one element.";
+
+	const BatchBase<BatchBase<int>> batch_second_half(third, batches.end());
+	EXPECT_EQ(batch_second_half.size(), 2) << "Starting from the third subbatch, there's only the third and fourth elements left.";
+	EXPECT_EQ(batch_second_half[0], one_two) << "The third item in the list is the first in this batch.";
+	EXPECT_EQ(batch_second_half[1], one_through_nine) << "The fourth item in the list is the second in this batch.";
 }
 
 }
