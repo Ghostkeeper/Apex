@@ -1235,7 +1235,7 @@ public:
 			return; //No reallocation necessary.
 		}
 		while(buffer_size < minimum_capacity) { //Not enough capacity in the element buffer.
-			buffer_size *= 2;
+			buffer_size = buffer_size * 2 + 1;
 		}
 		subelements.resize(buffer_size); //Resize all at once.
 	}
