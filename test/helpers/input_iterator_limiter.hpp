@@ -70,7 +70,7 @@ public:
 	 * Reference the value pointed to by the iterator.
 	 * \return A reference to the value pointed to by the iterator.
 	 */
-	value_type& operator *() {
+	const value_type& operator *() const {
 		return *original;
 	}
 
@@ -78,7 +78,7 @@ public:
 	 * Access a member of the value pointed to by the iterator.
 	 * \return A pointer of an object of which the member access will be taken.
 	 */
-	value_type* operator ->() {
+	const value_type* operator ->() const {
 		return &(*original);
 	}
 
