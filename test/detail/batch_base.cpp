@@ -224,4 +224,21 @@ TEST_F(BatchOfBatchesFixture, ConstructCopy) {
 	EXPECT_EQ(copy_filled, power_increases);
 }
 
+/*!
+ * Tests the move constructor of batches of batches.
+ *
+ * This test includes the constraint that the actual element data didn't change
+ * position, to give more certainty that the data wasn't actually copied.
+ */
+TEST_F(BatchOfBatchesFixture, ConstructMove) {
+	const BatchBase<BatchBase<int>> original_batch(power_increases); //Make a copy so that we can compare the data in the batch without using the decommissioned moved batch.
+
+	const int* original_position = &power_increases[5][5]; //Grab an arbitrary element in the array, noting its position in memory.
+	const BatchBase<BatchBase<int>> moved_batch(std::move(power_increases));
+	const int* new_position = &moved_batch[5][5];
+
+	EXPECT_EQ(moved_batch, original_batch) << "After the move, all element data and subelement data is still unchanged.";
+	EXPECT_EQ(original_position, new_position) << "The actual subelement data has not moved in the memory, eliding a copy for better performance.";
+}
+
 }
