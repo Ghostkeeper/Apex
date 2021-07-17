@@ -369,6 +369,11 @@ public:
 	 * \return A reference to this batch.
 	 */
 	BatchBase<BatchBase<Element>>& operator =(BatchBase<BatchBase<Element>>&& other) noexcept {
+		std::vector<SubbatchView<Element>>::operator=(std::move(other));
+		//Change all back-references to the batch-of-batches in all subbatches.
+		for(SubbatchView<Element>& subbatch : *this) {
+			subbatch.batch = this;
+		}
 		subelements = std::move(other.subelements);
 		next_position = other.next_position;
 		return (*this);
@@ -1260,6 +1265,7 @@ public:
  */
 template<typename Element>
 class SubbatchView {
+	friend class BatchBase<BatchBase<Element>>; //The batch base class can modify members, e.g. for move assignment.
 	public:
 	//Using the iterator types of the element buffer.
 	/*!
