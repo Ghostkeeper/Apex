@@ -835,6 +835,32 @@ public:
 	}
 
 	/*!
+	 * Add a new subbatch to the end of this batch of batches.
+	 *
+	 * The batch is copied into this batch of batches, and added to the end.
+	 * \param value The batch to append to this batch of batches.
+	 */
+	void push_back(const SubbatchView<Element>& value) {
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		push_back_unsafe(value);
+	}
+
+	/*!
+	 * Add a new subbatch to the end of this batch of batches.
+	 *
+	 * The batch itself needs to be copied because it is merged into the element
+	 * buffer of this batch of batches. However the individual elements in the
+	 * batch will be moved. If their move constructors are more efficient than
+	 * their copy constructors, this might save some data copies. For plain old
+	 * data, this will have no benefit over the copy-overload of this function.
+	 * \param value The batch to append to this batch of batches.
+	 */
+	void push_back(SubbatchView<Element>&& value) {
+		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		push_back_unsafe(value);
+	}
+
+	/*!
 	 * Reserve space for at least this many subelements to be stored without
 	 * needing to reallocate them.
 	 *
