@@ -34,6 +34,11 @@ public:
 	BatchBase<int> empty;
 
 	/*!
+	 * A batch without any subbatches.
+	 */
+	BatchBase<BatchBase<int>> empty_batch;
+
+	/*!
 	 * A batch with a single element, the number 1.
 	 */
 	BatchBase<int> one;
@@ -206,6 +211,17 @@ TEST_F(BatchOfBatchesFixture, ConstructInputIterator) {
 	EXPECT_EQ(batch_second_half[1], power_increases[3]) << "The fourth subbatch got placed in second place.";
 	EXPECT_EQ(batch_second_half[2], power_increases[4]) << "The fifth subbatch got placed in third place.";
 	EXPECT_EQ(batch_second_half[3], power_increases[5]) << "The last subbatch got placed in fourth place.";
+}
+
+/*!
+ * Tests the copy constructor of batches of batches.
+ */
+TEST_F(BatchOfBatchesFixture, ConstructCopy) {
+	const BatchBase<BatchBase<int>> copy_empty(empty_batch);
+	EXPECT_EQ(copy_empty, empty_batch);
+
+	const BatchBase<BatchBase<int>> copy_filled(power_increases);
+	EXPECT_EQ(copy_filled, power_increases);
 }
 
 }
