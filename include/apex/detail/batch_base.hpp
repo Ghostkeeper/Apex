@@ -1296,7 +1296,7 @@ class SubbatchView {
 	 * buffer for the elements in this subbatch.
 	 */
 	SubbatchView(BatchBase<BatchBase<Element>>& batch, const size_t start_index, const size_t size, const size_t capacity) :
-			batch(batch),
+			batch(&batch),
 			start_index(start_index),
 			num_elements(size),
 			current_capacity(capacity) {};
@@ -1307,7 +1307,7 @@ class SubbatchView {
 	 * \return The element in the specified position of the subbatch.
 	 */
 	const Element& operator [](const size_t index) const {
-		return batch.subelements[start_index + index];
+		return batch->subelements[start_index + index];
 	}
 
 	/*!
@@ -1316,7 +1316,7 @@ class SubbatchView {
 	 * \return The element in the specified position of the subbatch.
 	 */
 	Element& operator [](const size_t index) {
-		return batch.subelements[start_index + index];
+		return batch->subelements[start_index + index];
 	}
 
 	/*!
@@ -1639,7 +1639,7 @@ class SubbatchView {
 	 * \return An iterator pointing to the first element of the subbatch.
 	 */
 	const_iterator begin() const {
-		return batch.subelements.begin() + start_index;
+		return batch->subelements.begin() + start_index;
 	}
 
 	/*!
@@ -1653,7 +1653,7 @@ class SubbatchView {
 	 * \return An iterator pointing to the first element of the subbatch.
 	 */
 	iterator begin() {
-		return batch.subelements.begin() + start_index;
+		return batch->subelements.begin() + start_index;
 	}
 
 	/*!
@@ -1741,8 +1741,8 @@ class SubbatchView {
 	 * underlying data structure of the view.
 	 */
 	const Element* data() const noexcept {
-		if(batch.subelements.empty()) {
-			return batch.subelements.data(); //Do whatever they do.
+		if(batch->subelements.empty()) {
+			return batch->subelements.data(); //Do whatever they do.
 		}
 		return &front();
 	}
@@ -1758,8 +1758,8 @@ class SubbatchView {
 	 * underlying data structure of the view.
 	 */
 	Element* data() noexcept {
-		if(batch.subelements.empty()) {
-			return batch.subelements.data(); //Do whatever they do.
+		if(batch->subelements.empty()) {
+			return batch->subelements.data(); //Do whatever they do.
 		}
 		return &front();
 	}
@@ -1826,7 +1826,7 @@ class SubbatchView {
 	 * \return An iterator marking the end of the subbatch.
 	 */
 	const_iterator end() const {
-		return batch.subelements.begin() + (start_index + size());
+		return batch->subelements.begin() + (start_index + size());
 	}
 
 	/*!
@@ -1840,7 +1840,7 @@ class SubbatchView {
 	 * \return An iterator marking the end of the subbatch.
 	 */
 	iterator end() {
-		return batch.subelements.begin() + (start_index + size());
+		return batch->subelements.begin() + (start_index + size());
 	}
 
 	/*!
@@ -2032,7 +2032,7 @@ class SubbatchView {
 	 * hold.
 	 */
 	size_t max_size() const noexcept {
-		return batch.subelements.max_size(); //Should really subtract the total size of all other subbatches in the batch, but that would be linear.
+		return batch->subelements.max_size(); //Should really subtract the total size of all other subbatches in the batch, but that would be linear.
 	}
 
 	/*!
@@ -2087,8 +2087,8 @@ class SubbatchView {
 	 * \return A reverse iterator pointing to the last element of the subbatch.
 	 */
 	const_reverse_iterator rbegin() const {
-		const_reverse_iterator beginning = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
-		std::advance(beginning, batch.subelements.size() - start_index - size());
+		const_reverse_iterator beginning = batch->subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(beginning, batch->subelements.size() - start_index - size());
 		return beginning;
 	}
 
@@ -2104,8 +2104,8 @@ class SubbatchView {
 	 * \return A reverse iterator pointing to the last element of the subbatch.
 	 */
 	reverse_iterator rbegin() {
-		reverse_iterator beginning = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
-		std::advance(beginning, batch.subelements.size() - start_index - size());
+		reverse_iterator beginning = batch->subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(beginning, batch->subelements.size() - start_index - size());
 		return beginning;
 	}
 
@@ -2121,8 +2121,8 @@ class SubbatchView {
 	 * \return A reverse iterator marking the end of the reversed subbatch.
 	 */
 	const_reverse_iterator rend() const {
-		const_reverse_iterator ending = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
-		std::advance(ending, batch.subelements.size() - start_index);
+		const_reverse_iterator ending = batch->subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(ending, batch->subelements.size() - start_index);
 		return ending;
 	}
 
@@ -2138,8 +2138,8 @@ class SubbatchView {
 	 * \return A reverse iterator marking the end of the reversed subbatch.
 	 */
 	reverse_iterator rend() {
-		reverse_iterator ending = batch.subelements.rbegin(); //So pointing to the very last element in the buffer.
-		std::advance(ending, batch.subelements.size() - start_index);
+		reverse_iterator ending = batch->subelements.rbegin(); //So pointing to the very last element in the buffer.
+		std::advance(ending, batch->subelements.size() - start_index);
 		return ending;
 	}
 
@@ -2235,27 +2235,27 @@ class SubbatchView {
 			//If so, move elements directly to the new allocation instead of moving them twice.
 			size_t my_destination = start_index;
 			if(other_size > capacity()) {
-				my_destination = batch.next_position;
+				my_destination = batch->next_position;
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
-				size_t buffer_capacity = batch.subelements.size();
+				size_t buffer_capacity = batch->subelements.size();
 				while(buffer_capacity < my_destination + other_size) {
 					buffer_capacity = buffer_capacity * 2 + 1;
 				}
-				batch.subelements.resize(buffer_capacity, Element());
+				batch->subelements.resize(buffer_capacity, Element());
 				current_capacity = other_size;
-				batch.next_position += current_capacity;
+				batch->next_position += current_capacity;
 			}
 			size_t other_destination = other.start_index;
 			if(my_size > other.capacity()) {
-				other_destination = other.batch.next_position;
+				other_destination = other.batch->next_position;
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
-				size_t buffer_capacity = other.batch.subelements.size();
+				size_t buffer_capacity = other.batch->subelements.size();
 				while(buffer_capacity < other_destination + my_size) {
 					buffer_capacity = buffer_capacity * 2 + 1;
 				}
-				other.batch.subelements.resize(buffer_capacity, Element());
+				other.batch->subelements.resize(buffer_capacity, Element());
 				other.current_capacity = my_size;
-				other.batch.next_position += other.current_capacity;
+				other.batch->next_position += other.current_capacity;
 			}
 
 			//Now swap all of the data, being careful not to overwrite important data.
@@ -2277,15 +2277,15 @@ class SubbatchView {
 				const bool to_me_first = start_index != my_destination;
 				if(to_me_first) {
 					for(size_t i = 0; i < other_size; ++i) {
-						batch.subelements[my_destination + i] = std::move(other[i]);
+						batch->subelements[my_destination + i] = std::move(other[i]);
 					}
 				}
 				for(size_t i = 0; i < my_size; ++i) {
-					other.batch.subelements[other_destination + i] = std::move((*this)[i]);
+					other.batch->subelements[other_destination + i] = std::move((*this)[i]);
 				}
 				if(!to_me_first) {
 					for(size_t i = 0; i < other_size; ++i) {
-						batch.subelements[my_destination + i] = std::move(other[i]);
+						batch->subelements[my_destination + i] = std::move(other[i]);
 					}
 				}
 			}
@@ -2316,15 +2316,15 @@ class SubbatchView {
 		//If the subbatch is resized, move elements directly to the reallocated place rather than moving them twice.
 		size_t my_destination = start_index;
 		if(other_size > capacity()) {
-			my_destination = batch.next_position;
+			my_destination = batch->next_position;
 			//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
-			size_t buffer_capacity = batch.subelements.size();
+			size_t buffer_capacity = batch->subelements.size();
 			while(buffer_capacity < my_destination + other_size) {
 				buffer_capacity = buffer_capacity * 2 + 1;
 			}
-			batch.subelements.resize(buffer_capacity, Element());
+			batch->subelements.resize(buffer_capacity, Element());
 			current_capacity = other_size;
-			batch.next_position += current_capacity;
+			batch->next_position += current_capacity;
 		}
 		other.reserve(my_size); //For the other batch, we can't really prevent it.
 
@@ -2344,7 +2344,7 @@ class SubbatchView {
 			}
 		} else { //We got reallocated. Move elements, making sure the order is correct to not lose data.
 			for(size_t i = 0; i < other_size; ++i) {
-				batch.subelements[my_destination + i] = std::move(other[i]);
+				batch->subelements[my_destination + i] = std::move(other[i]);
 			}
 			other.clear();
 			for(size_t i = 0; i < my_size; ++i) {
@@ -2364,7 +2364,7 @@ class SubbatchView {
 	 * Operations on the data of this view should be performed in the element
 	 * buffer of this batch.
 	 */
-	BatchBase<BatchBase<Element>>& batch;
+	BatchBase<BatchBase<Element>>* batch;
 
 	/*!
 	 * The position in the element buffer where the data of this subbatch
@@ -2610,25 +2610,25 @@ class SubbatchView {
 		for(; start != end; start++, ++count) {
 			if(remaining_space == 0) { //Not enough space to add the next element. Allocate more.
 				//This reallocation is "manual". Instead of moving all elements, we'll immediately move the trailing end to the end of the capacity.
-				const size_t new_place = batch.next_position;
+				const size_t new_place = batch->next_position;
 				const size_t new_capacity = current_capacity * 2 + 1; //Doubling the capacity ensures that repeated insertion of a new element is done in amortised constant time.
-				batch.next_position += new_capacity;
+				batch->next_position += new_capacity;
 
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
-				size_t buffer_capacity = batch.subelements.size();
+				size_t buffer_capacity = batch->subelements.size();
 				while(buffer_capacity < new_place + new_capacity) {
 					buffer_capacity = buffer_capacity * 2 + 1;
 				}
-				batch.subelements.resize(buffer_capacity, Element());
+				batch->subelements.resize(buffer_capacity, Element());
 
 				//Copy the leading elements to the start of the allocated space.
 				for(size_t i = 0; i < index + count; ++i) {
-					batch.subelements[new_place + i] = (*this)[i];
+					batch->subelements[new_place + i] = (*this)[i];
 				}
 				//Copy the trailing elements to the end of the allocated space.
 				remaining_space = new_capacity - current_capacity;
 				for(size_t i = index + count; i < current_capacity; ++i) {
-					batch.subelements[new_place + i + remaining_space] = (*this)[i];
+					batch->subelements[new_place + i + remaining_space] = (*this)[i];
 				}
 
 				start_index = new_place;
@@ -2663,19 +2663,19 @@ class SubbatchView {
 	 * allocating new memory, after this operation has been completed.
 	 */
 	void reallocate(const size_t new_capacity) {
-		const size_t new_place = batch.next_position;
-		batch.next_position += new_capacity;
+		const size_t new_place = batch->next_position;
+		batch->next_position += new_capacity;
 
 		//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
-		size_t buffer_capacity = batch.subelements.size();
+		size_t buffer_capacity = batch->subelements.size();
 		while(buffer_capacity < new_place + new_capacity) {
 			buffer_capacity = buffer_capacity * 2 + 1;
 		}
-		batch.subelements.resize(buffer_capacity, Element());
+		batch->subelements.resize(buffer_capacity, Element());
 
 		//Copy all of the data over.
 		for(size_t index = 0; index < size(); ++index) {
-			batch.subelements[new_place + index] = batch.subelements[start_index + index];
+			batch->subelements[new_place + index] = batch->subelements[start_index + index];
 		}
 
 		start_index = new_place;
