@@ -957,7 +957,7 @@ public:
 	 * iterator.
 	 */
 	template<class InputIterator>
-	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::random_access_iterator_tag) {
+	void assign_iterator_dispatch(const InputIterator begin, const InputIterator end, const std::random_access_iterator_tag) {
 		const size_t new_size = end - begin;
 		reserve(new_size);
 
@@ -988,7 +988,7 @@ public:
 	 * iterator.
 	 */
 	template<class InputIterator>
-	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::forward_iterator_tag) {
+	void assign_iterator_dispatch(const InputIterator begin, const InputIterator end, const std::forward_iterator_tag) {
 		size_t new_size = 0;
 		size_t subelements_size = 0;
 		//Iterate over the range once to determine its size and the number of subelements, to reserve enough memory there all at once.
@@ -1020,9 +1020,9 @@ public:
 	 * iterator.
 	 */
 	template<class InputIterator>
-	void assign_iterator_dispatch(InputIterator begin, InputIterator end, const std::input_iterator_tag) {
-		for(; begin != end; begin++) {
-			push_back(*begin); //Simply append all of them. This automatically implements the amortised reallocation.
+	void assign_iterator_dispatch(const InputIterator begin, const InputIterator end, const std::input_iterator_tag) {
+		for(InputIterator it = begin; it != end; it++) {
+			push_back(*it); //Simply append all of them. This automatically implements the amortised reallocation.
 		}
 	}
 
