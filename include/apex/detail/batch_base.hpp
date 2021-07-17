@@ -327,14 +327,15 @@ public:
 
 	/*!
 	 * Move constructor, moving the batch to a different location in memory.
+	 *
+	 * Unlike the copy constructor, this move doesn't optimise the memory usage
+	 * of the subelement data. The subelement data is not moved at all, and the
+	 * memory usage can only be optimised by moving it, which would defeat the
+	 * purpose of the move constructor.
 	 * \param other The batch to move into this batch.
 	 */
-	BatchBase(BatchBase<BatchBase<Element>>&& other) : BatchBase<SubbatchView<Element>>(other) {
-		//Don't optimise memory in this constructor.
-		//It's not always necessary to copy the data, so it's not always possible to shrink to fit.
-		//For cases where we can do a no-op move, allow that no-op move.
-		subelements = std::move(other.subelements);
-		next_position = other.next_position;
+	BatchBase(BatchBase<BatchBase<Element>>&& other) {
+		(*this) = std::move(other); //Same as move assignment operator.
 	}
 
 	/*!
