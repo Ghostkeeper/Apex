@@ -9,6 +9,7 @@
 #include <gtest/gtest.h> //To run the test.
 #include <list> //For linked lists, a data structure with inherently limited iterators, from which batches must be able to copy.
 
+#include "../helpers/input_iterator_limiter.hpp" //To test with very limited iterator types.
 #include "apex/detail/batch_base.hpp" //The code under test.
 
 namespace apex {
@@ -177,6 +178,34 @@ TEST_F(BatchOfBatchesFixture, ConstructForwardIterator) {
 	EXPECT_EQ(batch_second_half.size(), 2) << "Starting from the third subbatch, there's only the third and fourth elements left.";
 	EXPECT_EQ(batch_second_half[0], one_two) << "The third item in the list is the first in this batch.";
 	EXPECT_EQ(batch_second_half[1], one_through_nine) << "The fourth item in the list is the second in this batch.";
+}
+
+/*!
+ * Tests constructing a batch of batches from a range defined by iterators.
+ *
+ * In this test, the iterators are limited to simple input iterators. We can't
+ * iterate over it multiple times nor know beforehand how many items we'll
+ * encounter.
+ */
+TEST_F(BatchOfBatchesFixture, ConstructInputIterator) {
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> third(power_increases.begin() + 2);
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+
+	const BatchBase<BatchBase<int>> batch_full(begin, end); //Construct with very limited type of iterator.
+	EXPECT_EQ(batch_full.size(), power_increases.size()) << "We added the entire batch of batches to this batch.";
+
+	const BatchBase<BatchBase<int>> batch_partial(begin, third);
+	EXPECT_EQ(batch_partial.size(), 2) << "The first and second subbatches are in, but the third marked the end.";
+	EXPECT_EQ(batch_partial[0], power_increases[0]) << "The first subbatch got placed in first place.";
+	EXPECT_EQ(batch_partial[1], power_increases[1]) << "The second subbatch got placed in second place.";
+
+	const BatchBase<BatchBase<int>> batch_second_half(third, end);
+	EXPECT_EQ(batch_second_half.size(), 4) << "The third batch marks the start, and then the fourth, fifth and sixth are also in.";
+	EXPECT_EQ(batch_second_half[0], power_increases[2]) << "The third subbatch got placed in first place.";
+	EXPECT_EQ(batch_second_half[1], power_increases[3]) << "The fourth subbatch got placed in second place.";
+	EXPECT_EQ(batch_second_half[2], power_increases[4]) << "The fifth subbatch got placed in third place.";
+	EXPECT_EQ(batch_second_half[3], power_increases[5]) << "The last subbatch got placed in fourth place.";
 }
 
 }
