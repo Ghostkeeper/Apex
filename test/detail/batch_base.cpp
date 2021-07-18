@@ -39,6 +39,12 @@ public:
 	BatchBase<BatchBase<int>> empty_batch;
 
 	/*!
+	 * A batch of batches with linearly increasing sizes: 1, 2, 3, 4, 5
+	 * elements.
+	 */
+	BatchBase<BatchBase<int>> linear_increases;
+
+	/*!
 	 * A batch with a single element, the number 1.
 	 */
 	BatchBase<int> one;
@@ -66,6 +72,12 @@ public:
 		one_two.assign({1, 2});
 		one_through_nine.assign({1, 2, 3, 4, 5, 6, 7, 8, 9});
 
+		for(size_t subbatch = 0; subbatch < 5; ++subbatch) {
+			linear_increases.emplace_back();
+			for(size_t element = 0; element < subbatch; ++element) {
+				linear_increases.back().push_back(element + 1);
+			}
+		}
 		for(size_t subbatch = 0; subbatch < 6; ++subbatch) { //Up to 2^5 (32) elements in each subbatch.
 			power_increases.emplace_back();
 			for(size_t element = 0; element < (1 << subbatch); ++element) {
@@ -253,6 +265,40 @@ TEST(BatchOfBatches, ConstructInitialiserList) {
 	EXPECT_EQ(batch[0], BatchBase<int>({1, 2, 3})) << "The first subbatch.";
 	EXPECT_EQ(batch[1], BatchBase<int>({4, 5, 6, 7})) << "The second subbatch.";
 	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
+}
+
+/*!
+ * Tests assigning empty batches to other batches with copy-assignment.
+ */
+TEST_F(BatchOfBatchesFixture, AssignCopyEmpty) {
+	BatchBase<BatchBase<int>> assign_empty_to_empty(empty_batch);
+	assign_empty_to_empty = empty_batch; //Assign the empty batch again.
+	EXPECT_EQ(assign_empty_to_empty, empty_batch) << "After assigning the empty batch, this batch is still empty.";
+
+	BatchBase<BatchBase<int>> assign_empty_to_singular({one});
+	assign_empty_to_singular = empty_batch;
+	EXPECT_EQ(assign_empty_to_singular, empty_batch) << "After assigning the empty batch, this batch is empty.";
+
+	BatchBase<BatchBase<int>> assign_empty_to_filled(power_increases);
+	assign_empty_to_filled = empty_batch;
+	EXPECT_EQ(assign_empty_to_filled, empty_batch) << "After assigning the empty batch, this batch is empty.";
+}
+
+/*!
+ * Tests assigning filled batches to other batches with copy-assignment.
+ */
+TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
+	BatchBase<BatchBase<int>> assign_empty(empty_batch);
+	assign_empty = power_increases; //Assign a filled batch to this empty batch.
+	EXPECT_EQ(assign_empty, power_increases) << "After assigning this batch to the batch, it must be equal to the new batch.";
+
+	BatchBase<BatchBase<int>> assign_singular({one});
+	assign_singular = power_increases;
+	EXPECT_EQ(assign_singular, power_increases) << "After assigning this batch, it must be equal to this batch.";
+
+	BatchBase<BatchBase<int>> assign_filled(linear_increases);
+	assign_filled = power_increases;
+	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
 }
 
 }
