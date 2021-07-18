@@ -301,4 +301,44 @@ TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
 	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
 }
 
+/*!
+ * Tests assigning empty batches to other batches with move-assignment.
+ */
+TEST_F(BatchOfBatchesFixture, AssignMoveEmpty) {
+	BatchBase<BatchBase<int>> empty_copy_1(empty_batch); //Make a copy of the empty batch we're about to move, so we can still compare with the original.
+	BatchBase<BatchBase<int>> assign_empty_to_empty(empty_batch);
+	assign_empty_to_empty = std::move(empty_copy_1); //Assign the empty batch again.
+	EXPECT_EQ(assign_empty_to_empty, empty_batch) << "After assigning the empty batch, this batch is still empty.";
+
+	BatchBase<BatchBase<int>> empty_copy_2(empty_batch); //Don't re-use the moved batch ever again!
+	BatchBase<BatchBase<int>> assign_empty_to_singular({one});
+	assign_empty_to_singular = std::move(empty_copy_2);
+	EXPECT_EQ(assign_empty_to_singular, empty_batch) << "After assigning the empty batch, this batch is empty.";
+
+	BatchBase<BatchBase<int>> empty_copy_3(empty_batch); //Don't re-use the moved batch ever again!
+	BatchBase<BatchBase<int>> assign_empty_to_filled(power_increases);
+	assign_empty_to_filled = std::move(empty_copy_3);
+	EXPECT_EQ(assign_empty_to_filled, empty_batch) << "After assigning the empty batch, this batch is empty.";
+}
+
+/*!
+ * Tests assigning filled batches to other batches with move-assignment.
+ */
+TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
+	BatchBase<BatchBase<int>> powers_copy_1(power_increases); //Make a copy of the batch we're about to move, so we can still compare with the original.
+	BatchBase<BatchBase<int>> assign_empty(empty_batch);
+	assign_empty = std::move(powers_copy_1); //Assign a filled batch to this empty batch.
+	EXPECT_EQ(assign_empty, power_increases) << "After assigning this batch to the batch, it must be equal to the new batch.";
+
+	BatchBase<BatchBase<int>> powers_copy_2(power_increases); //Don't re-use the moved batch ever again!
+	BatchBase<BatchBase<int>> assign_singular({one});
+	assign_singular = std::move(powers_copy_2);
+	EXPECT_EQ(assign_singular, power_increases) << "After assigning this batch, it must be equal to this batch.";
+
+	BatchBase<BatchBase<int>> powers_copy_3(power_increases); //Don't re-use the moved batch ever again!
+	BatchBase<BatchBase<int>> assign_filled(linear_increases);
+	assign_filled = std::move(powers_copy_3);
+	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
+}
+
 }
