@@ -341,4 +341,28 @@ TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
 	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
 }
 
+/*!
+ * Tests equality of various types of batches of batches that are in fact equal.
+ */
+TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
+	//Empty containers are always equal.
+	const BatchBase<BatchBase<int>> empty;
+	EXPECT_TRUE(empty == empty_batch);
+	EXPECT_FALSE(empty != empty_batch);
+
+	//Comparing against itself is always equal.
+	EXPECT_TRUE(empty_batch == empty_batch);
+	EXPECT_FALSE(empty_batch != empty_batch);
+	EXPECT_TRUE(power_increases == power_increases);
+	EXPECT_FALSE(power_increases != power_increases);
+	EXPECT_TRUE(linear_increases == linear_increases);
+	EXPECT_FALSE(linear_increases != linear_increases);
+
+	//Now test with different instances that happen to be the same.
+	const BatchBase<BatchBase<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const BatchBase<BatchBase<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	EXPECT_TRUE(left == right);
+	EXPECT_FALSE(left != right);
+}
+
 }
