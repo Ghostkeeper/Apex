@@ -343,7 +343,7 @@ public:
 	 * \param initialiser_list An initialiser list containing subbatches to put
 	 * in this batch.
 	 */
-	BatchBase(std::initializer_list<BatchBase<Element>>& initialiser_list) : next_position(0) {
+	BatchBase(std::initializer_list<BatchBase<Element>> initialiser_list) : next_position(0) {
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
@@ -513,7 +513,7 @@ public:
 	 * \param initialiser_list A list of subbatches to store in this batch of
 	 * batches.
 	 */
-	void assign(const std::initializer_list<BatchBase<Element>>& initialiser_list) {
+	void assign(const std::initializer_list<BatchBase<Element>> initialiser_list) {
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
