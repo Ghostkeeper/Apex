@@ -241,4 +241,18 @@ TEST_F(BatchOfBatchesFixture, ConstructMove) {
 	EXPECT_EQ(original_position, new_position) << "The actual subelement data has not moved in the memory, eliding a copy for better performance.";
 }
 
+/*!
+ * Tests constructing batches of batches from initialiser lists.
+ */
+TEST(BatchOfBatches, ConstructInitialiserList) {
+	const BatchBase<BatchBase<int>> empty({});
+	EXPECT_EQ(empty.size(), 0) << "We constructed this from an empty initialiser list, so the batch must be empty too.";
+	
+	const BatchBase<BatchBase<int>> batch({{1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11, 12}});
+	EXPECT_EQ(batch.size(), 3) << "The initialiser list had 3 members.";
+	EXPECT_EQ(batch[0], BatchBase<int>({1, 2, 3})) << "The first subbatch.";
+	EXPECT_EQ(batch[1], BatchBase<int>({4, 5, 6, 7})) << "The second subbatch.";
+	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
+}
+
 }
