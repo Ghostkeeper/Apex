@@ -347,22 +347,52 @@ TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
 TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
 	//Empty containers are always equal.
 	const BatchBase<BatchBase<int>> empty;
-	EXPECT_TRUE(empty == empty_batch);
-	EXPECT_FALSE(empty != empty_batch);
+	EXPECT_TRUE(empty == empty_batch) << "Both batches are empty, so they are equal.";
+	EXPECT_FALSE(empty != empty_batch) << "Both batches are empty, so they are equal.";
 
 	//Comparing against itself is always equal.
-	EXPECT_TRUE(empty_batch == empty_batch);
-	EXPECT_FALSE(empty_batch != empty_batch);
-	EXPECT_TRUE(power_increases == power_increases);
-	EXPECT_FALSE(power_increases != power_increases);
-	EXPECT_TRUE(linear_increases == linear_increases);
-	EXPECT_FALSE(linear_increases != linear_increases);
+	EXPECT_TRUE(empty_batch == empty_batch) << "A batch is always equal to itself.";
+	EXPECT_FALSE(empty_batch != empty_batch) << "A batch is always equal to itself.";
+	EXPECT_TRUE(power_increases == power_increases) << "A batch is always equal to itself.";
+	EXPECT_FALSE(power_increases != power_increases) << "A batch is always equal to itself.";
+	EXPECT_TRUE(linear_increases == linear_increases) << "A batch is always equal to itself.";
+	EXPECT_FALSE(linear_increases != linear_increases) << "A batch is always equal to itself.";
 
 	//Now test with different instances that happen to be the same.
 	const BatchBase<BatchBase<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
 	const BatchBase<BatchBase<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
-	EXPECT_TRUE(left == right);
-	EXPECT_FALSE(left != right);
+	EXPECT_TRUE(left == right) << "These batches are constructed from the same initialiser lists, so they must be equal.";
+	EXPECT_FALSE(left != right) << "These batches are constructed from the same initialiser lists, so they must be equal.";
+}
+
+/*!
+ * Test equality of batches that have different numbers of subbatches.
+ */
+TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSize) {
+	const BatchBase<BatchBase<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
+	EXPECT_FALSE(empty_batch == empty_subbatch) << "empty_subbatch contains one subbatch, while the other does not.";
+	EXPECT_FALSE(empty_subbatch == empty_batch) << "empty_subbatch contains one subbatch, while the other does not.";
+	EXPECT_TRUE(empty_batch != empty_subbatch) << "empty_subbatch contains one subbatch, while the other does not.";
+	EXPECT_TRUE(empty_subbatch != empty_batch) << "empty_subbatch contains one subbatch, while the other does not.";
+
+	const BatchBase<BatchBase<int>> two_empty_subbatches({{}, {}});
+	EXPECT_FALSE(empty_subbatch == two_empty_subbatches) << "One batch has one empty subbatch, while the other has two empty subbatches.";
+	EXPECT_FALSE(two_empty_subbatches == empty_subbatch) << "One batch has one empty subbatch, while the other has two empty subbatches.";
+	EXPECT_TRUE(empty_subbatch != two_empty_subbatches) << "One batch has one empty subbatch, while the other has two empty subbatches.";
+	EXPECT_TRUE(two_empty_subbatches != empty_subbatch) << "One batch has one empty subbatch, while the other has two empty subbatches.";
+
+	const BatchBase<BatchBase<int>> just_one({one});
+	const BatchBase<BatchBase<int>> just_one_twice({{one}, {one}});
+	EXPECT_FALSE(just_one == just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
+	EXPECT_FALSE(just_one_twice == just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
+	EXPECT_TRUE(just_one != just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
+	EXPECT_TRUE(just_one_twice != just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
+
+	const BatchBase<BatchBase<int>> just_one_many({{one}, {one_through_nine}});
+	EXPECT_FALSE(just_one == just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
+	EXPECT_FALSE(just_one_many == just_one) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
+	EXPECT_TRUE(just_one != just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
+	EXPECT_TRUE(just_one_many != just_one) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 }
 
 }
