@@ -415,4 +415,23 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSubsize) {
 	EXPECT_TRUE(one_many != one_onetwo) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
 }
 
+/*!
+ * Test equality of batches where only the subvalues are different.
+ */
+TEST(BatchOfBatches, CompareEqualityDifferentValues) {
+	const BatchBase<BatchBase<int>> just_one({{1}});
+	const BatchBase<BatchBase<int>> just_two({{2}});
+	EXPECT_FALSE(just_one == just_two) << "One subbatch has the number 1, the other has the number 2.";
+	EXPECT_FALSE(just_two == just_one) << "One subbatch has the number 1, the other has the number 2.";
+	EXPECT_TRUE(just_one != just_two) << "One subbatch has the number 1, the other has the number 2.";
+	EXPECT_TRUE(just_two != just_one) << "One subbatch has the number 1, the other has the number 2.";
+
+	const BatchBase<BatchBase<int>> onetwo_threefour({{1, 2}, {3, 4}});
+	const BatchBase<BatchBase<int>> onetwo_fourthree({{1, 2}, {4, 3}});
+	EXPECT_FALSE(onetwo_threefour == onetwo_fourthree) << "The second subbatch is in a different order.";
+	EXPECT_FALSE(onetwo_fourthree == onetwo_threefour) << "The second subbatch is in a different order.";
+	EXPECT_TRUE(onetwo_threefour != onetwo_fourthree) << "The second subbatch is in a different order.";
+	EXPECT_TRUE(onetwo_fourthree != onetwo_threefour) << "The second subbatch is in a different order.";
+}
+
 }
