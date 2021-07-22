@@ -382,17 +382,37 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSize) {
 	EXPECT_TRUE(two_empty_subbatches != empty_subbatch) << "One batch has one empty subbatch, while the other has two empty subbatches.";
 
 	const BatchBase<BatchBase<int>> just_one({one});
-	const BatchBase<BatchBase<int>> just_one_twice({{one}, {one}});
+	const BatchBase<BatchBase<int>> just_one_twice({one, one});
 	EXPECT_FALSE(just_one == just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_FALSE(just_one_twice == just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_TRUE(just_one != just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_TRUE(just_one_twice != just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 
-	const BatchBase<BatchBase<int>> just_one_many({{one}, {one_through_nine}});
+	const BatchBase<BatchBase<int>> just_one_many({one, one_through_nine});
 	EXPECT_FALSE(just_one == just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 	EXPECT_FALSE(just_one_many == just_one) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 	EXPECT_TRUE(just_one != just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 	EXPECT_TRUE(just_one_many != just_one) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
+}
+
+/*!
+ * Test equality of batches that have the same number of subbatches, but those
+ * subbatches have different sizes.
+ */
+TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSubsize) {
+	const BatchBase<BatchBase<int>> just_one({one});
+	const BatchBase<BatchBase<int>> just_one_two({one_two});
+	EXPECT_FALSE(just_one == just_one_two) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
+	EXPECT_FALSE(just_one_two == just_one) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
+	EXPECT_TRUE(just_one != just_one_two) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
+	EXPECT_TRUE(just_one_two != just_one) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
+
+	const BatchBase<BatchBase<int>> one_onetwo({one, one_two});
+	const BatchBase<BatchBase<int>> one_many({one, one_through_nine});
+	EXPECT_FALSE(one_onetwo == one_many) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
+	EXPECT_FALSE(one_many == one_onetwo) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
+	EXPECT_TRUE(one_onetwo != one_many) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
+	EXPECT_TRUE(one_many != one_onetwo) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
 }
 
 }
