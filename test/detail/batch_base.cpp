@@ -434,4 +434,40 @@ TEST(BatchOfBatches, CompareEqualityDifferentValues) {
 	EXPECT_TRUE(onetwo_fourthree != onetwo_threefour) << "The second subbatch is in a different order.";
 }
 
+/*!
+ * Tests ordering of various types of batches of batches when they are equal.
+ *
+ * If they are equal, <= and >= operators should always return ``true`` and
+ * < and > operators should always return ``false``.
+ */
+TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
+	const BatchBase<BatchBase<int>> empty;
+	EXPECT_TRUE(empty <= empty_batch) << "Both batches are empty, so they are equal.";
+	EXPECT_TRUE(empty >= empty_batch) << "Both batches are empty, so they are equal.";
+	EXPECT_FALSE(empty < empty_batch) << "Both batches are empty, one is not greater or less than the other.";
+	EXPECT_FALSE(empty > empty_batch) << "Both batches are empty, one is not greater or less than the other.";
+
+	//Comparisons against itself.
+	EXPECT_TRUE(empty_batch <= empty_batch) << "The batch is equal to itself.";
+	EXPECT_TRUE(empty_batch >= empty_batch) << "The batch is equal to itself.";
+	EXPECT_FALSE(empty_batch < empty_batch) << "The batch is not greater or less than itself.";
+	EXPECT_FALSE(empty_batch > empty_batch) << "The batch is not greater or less than itself.";
+	EXPECT_TRUE(power_increases <= power_increases) << "The batch is equal to itself.";
+	EXPECT_TRUE(power_increases >= power_increases) << "The batch is equal to itself.";
+	EXPECT_FALSE(power_increases < power_increases) << "The batch is not greater or less than itself.";
+	EXPECT_FALSE(power_increases > power_increases) << "The batch is not greater or less than itself.";
+	EXPECT_TRUE(linear_increases <= linear_increases) << "The batch is equal to itself.";
+	EXPECT_TRUE(linear_increases >= linear_increases) << "The batch is equal to itself.";
+	EXPECT_FALSE(linear_increases < linear_increases) << "The batch is not greater or less than itself.";
+	EXPECT_FALSE(linear_increases > linear_increases) << "The batch is not greater or less than itself.";
+
+	//Now test with different instances that happen to be the same.
+	const BatchBase<BatchBase<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const BatchBase<BatchBase<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	EXPECT_TRUE(left <= right) << "Both batches have the same contents, so they are equal.";
+	EXPECT_TRUE(left >= right) << "Both batches have the same contents, so they are equal.";
+	EXPECT_FALSE(left < right) << "Both batches have the same contents, so one is not greater or less than the other.";
+	EXPECT_FALSE(left > right) << "Both batches have the same contents, so one is not greater or less than the other.";
+}
+
 }
