@@ -470,4 +470,73 @@ TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
 	EXPECT_FALSE(left > right) << "Both batches have the same contents, so one is not greater or less than the other.";
 }
 
+/*!
+ * Test ordering of batches when one batch is a prefix of the other.
+ *
+ * This has various tests of prefixes of the main batch as well as prefixes in
+ * subbatches.
+ */
+TEST_F(BatchOfBatchesFixture, CompareEqualityPrefix) {
+	const BatchBase<BatchBase<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
+	EXPECT_TRUE(empty_batch < empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_TRUE(empty_batch <= empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_FALSE(empty_batch > empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_FALSE(empty_batch >= empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_FALSE(empty_subbatch < empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_FALSE(empty_subbatch <= empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_TRUE(empty_subbatch > empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+	EXPECT_TRUE(empty_subbatch >= empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
+
+	const BatchBase<BatchBase<int>> two_empty_subbatches({{}, {}});
+	EXPECT_TRUE(empty_subbatch < two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_TRUE(empty_subbatch <= two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_FALSE(empty_subbatch > two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_FALSE(empty_subbatch >= two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_FALSE(two_empty_subbatches < empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_FALSE(two_empty_subbatches <= empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_TRUE(two_empty_subbatches > empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+	EXPECT_TRUE(two_empty_subbatches >= empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
+
+	const BatchBase<BatchBase<int>> just_one({one});
+	const BatchBase<BatchBase<int>> just_one_twice({one, one});
+	EXPECT_TRUE(just_one < just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one <= just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one > just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one >= just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one_twice < just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one_twice <= just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one_twice > just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one_twice >= just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
+
+	const BatchBase<BatchBase<int>> just_one_many({one, one_through_nine});
+	EXPECT_TRUE(just_one < just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one <= just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one > just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one >= just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one_many < just_one) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_FALSE(just_one_many <= just_one) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one_many > just_one) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+	EXPECT_TRUE(just_one_many >= just_one) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
+
+	EXPECT_TRUE(just_one_twice < just_one_many) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_TRUE(just_one_twice <= just_one_many) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_FALSE(just_one_twice > just_one_many) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_FALSE(just_one_twice >= just_one_many) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_FALSE(just_one_many < just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_FALSE(just_one_many <= just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_TRUE(just_one_many > just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+	EXPECT_TRUE(just_one_many >= just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
+
+	const BatchBase<BatchBase<int>> just_one_thrice({one, one, one});
+	const BatchBase<BatchBase<int>> one_onetwo_zero({one, one_two, {0}});
+	EXPECT_TRUE(just_one_thrice < one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_TRUE(just_one_thrice <= one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_FALSE(just_one_thrice > one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_FALSE(just_one_thrice >= one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_FALSE(one_onetwo_zero < just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_FALSE(one_onetwo_zero <= just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_TRUE(one_onetwo_zero > just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+	EXPECT_TRUE(one_onetwo_zero >= just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+}
+
 }
