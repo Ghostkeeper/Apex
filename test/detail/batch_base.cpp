@@ -476,7 +476,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
  * This has various tests of prefixes of the main batch as well as prefixes in
  * subbatches.
  */
-TEST_F(BatchOfBatchesFixture, CompareEqualityPrefix) {
+TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 	const BatchBase<BatchBase<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
 	EXPECT_TRUE(empty_batch < empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
 	EXPECT_TRUE(empty_batch <= empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
@@ -537,6 +537,34 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityPrefix) {
 	EXPECT_FALSE(one_onetwo_zero <= just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
 	EXPECT_TRUE(one_onetwo_zero > just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
 	EXPECT_TRUE(one_onetwo_zero >= just_one_thrice) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
+}
+
+/*!
+ * Tests the ordering of batches when the subelements of subbatches contain
+ * different values, but the batches are otherwise the same.
+ */
+TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
+	const BatchBase<BatchBase<int>> just_one({{1}});
+	const BatchBase<BatchBase<int>> just_two({{2}});
+	EXPECT_TRUE(just_one < just_two) << "The number 1 is lower than the number 2.";
+	EXPECT_TRUE(just_one <= just_two) << "The number 1 is lower than the number 2.";
+	EXPECT_FALSE(just_one > just_two) << "The number 1 is lower than the number 2.";
+	EXPECT_FALSE(just_one >= just_two) << "The number 1 is lower than the number 2.";
+	EXPECT_FALSE(just_two < just_one) << "The number 1 is lower than the number 2.";
+	EXPECT_FALSE(just_two <= just_one) << "The number 1 is lower than the number 2.";
+	EXPECT_TRUE(just_two > just_one) << "The number 1 is lower than the number 2.";
+	EXPECT_TRUE(just_two >= just_one) << "The number 1 is lower than the number 2.";
+
+	const BatchBase<BatchBase<int>> onetwo_threefour({{1, 2}, {3, 4}});
+	const BatchBase<BatchBase<int>> onetwo_fourthree({{1, 2}, {4, 3}});
+	EXPECT_TRUE(onetwo_threefour < onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_TRUE(onetwo_threefour <= onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_FALSE(onetwo_threefour > onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_FALSE(onetwo_threefour >= onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_FALSE(onetwo_fourthree < onetwo_threefour) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_FALSE(onetwo_fourthree <= onetwo_threefour) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_TRUE(onetwo_fourthree > onetwo_threefour) << "In the second subbatch, the number 3 is lower than the number 4.";
+	EXPECT_TRUE(onetwo_fourthree >= onetwo_threefour) << "In the second subbatch, the number 3 is lower than the number 4.";
 }
 
 }
