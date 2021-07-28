@@ -567,4 +567,25 @@ TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
 	EXPECT_TRUE(onetwo_fourthree >= onetwo_threefour) << "In the second subbatch, the number 3 is lower than the number 4.";
 }
 
+/*!
+ * Tests whether the ordering of batches properly compares in lexicographic
+ * order.
+ *
+ * For these tests the outcome would be different if later subelements or
+ * subbatches were compared first, but due to the subelements being compared
+ * front to back their order is as it is.
+ */
+TEST_F(BatchOfBatchesFixture, CompareOrderLexicographic) {
+	const BatchBase<BatchBase<int>> one_two_three({{1}, {2}, {3}});
+	const BatchBase<BatchBase<int>> one_three_two({{1}, {3}, {2}});
+	EXPECT_TRUE(one_two_three < one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_TRUE(one_two_three <= one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_FALSE(one_two_three > one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_FALSE(one_two_three >= one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_FALSE(one_three_two < one_two_three) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_FALSE(one_three_two <= one_two_three) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_TRUE(one_three_two > one_two_three) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+	EXPECT_TRUE(one_three_two >= one_two_three) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
+}
+
 }
