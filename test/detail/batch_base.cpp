@@ -588,4 +588,31 @@ TEST_F(BatchOfBatchesFixture, CompareOrderLexicographic) {
 	EXPECT_TRUE(one_three_two >= one_two_three) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
 }
 
+/*!
+ * Test the assign method to assign multiple copies of a subbatch.
+ */
+TEST_F(BatchOfBatchesFixture, AssignCopies) {
+	BatchBase<BatchBase<int>> batch; //Start off empty.
+
+	batch.assign(20, one_two);
+	EXPECT_EQ(batch.size(), 20);
+	for(SubbatchView<int>& subbatch : batch) {
+		EXPECT_EQ(subbatch, one_two);
+	}
+
+	//In this same batch, assign something else, confirming that the old content is erased.
+	batch.assign(10, one);
+	EXPECT_EQ(batch.size(), 10);
+	for(SubbatchView<int>& subbatch : batch) {
+		EXPECT_EQ(subbatch, one);
+	}
+
+	//Now assign something bigger.
+	batch.assign(30, one_through_nine);
+	EXPECT_EQ(batch.size(), 30);
+	for(SubbatchView<int>& subbatch : batch) {
+		EXPECT_EQ(subbatch, one_through_nine);
+	}
+}
+
 }
