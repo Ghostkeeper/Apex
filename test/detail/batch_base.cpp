@@ -615,4 +615,29 @@ TEST_F(BatchOfBatchesFixture, AssignCopies) {
 	}
 }
 
+/*!
+ * Tests assigning a range to the batch of batches defined by iterators.
+ *
+ * In this test, the iterators are random access, so it's possible to know
+ * beforehand how many subbatches will be stored.
+ */
+TEST_F(BatchOfBatchesFixture, AssignRandomAccessIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+
+	batch.assign(power_increases.begin(), power_increases.end()); //power_increases is also a batch, which has a random-access iterator.
+	EXPECT_EQ(batch, power_increases) << "Using the random-access iterator of power_increases, a complete copy of that batch was made.";
+
+	batch.assign(power_increases.begin(), power_increases.begin() + 3); //Assign a part of the range of the original.
+	EXPECT_EQ(batch.size(), 3) << "The range assigned to this batch contained only 3 elements. Not the entire power_increases batch.";
+	EXPECT_EQ(batch[0], power_increases[0]) << "The first subbatch was copied.";
+	EXPECT_EQ(batch[1], power_increases[1]) << "The second subbatch was copied.";
+	EXPECT_EQ(batch[2], power_increases[2]) << "The third subbatch was copied.";
+
+	batch.assign(linear_increases.begin() + 2, linear_increases.end()); //Assign the second half of this batch.
+	EXPECT_EQ(batch.size(), linear_increases.size() - 2) << "The range assigned to this batch was everything except the first two elements (should be 3).";
+	EXPECT_EQ(batch[0], linear_increases[2]) << "The third subbatch was copied.";
+	EXPECT_EQ(batch[1], linear_increases[3]) << "The fourth subbatch was copied.";
+	EXPECT_EQ(batch[2], linear_increases[4]) << "The fifth subbatch was copied.";
+}
+
 }
