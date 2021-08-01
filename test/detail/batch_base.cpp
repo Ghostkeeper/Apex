@@ -640,4 +640,36 @@ TEST_F(BatchOfBatchesFixture, AssignRandomAccessIterator) {
 	EXPECT_EQ(batch[2], linear_increases[4]) << "The fifth subbatch was copied.";
 }
 
+/*!
+ * Tests assigning a range to the batch of batches defined by iterators.
+ *
+ * In this test, the iterators are forward iterators, so it's impossible to know
+ * beforehand how many items will be added, but we can iterate multiple times in
+ * order to count how much.
+ */
+TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+
+	//A linked list offers a bidirectional iterator, which is a forward iterator but not random access.
+	const std::list<BatchBase<int>> batches = {empty, one, one_two, one_through_nine};
+	batch.assign(batches.begin(), batches.end());
+	EXPECT_EQ(batch.size(), 4) << "We put 4 subbatches in the list.";
+	EXPECT_EQ(batch[0], empty) << "The first element is the empty subbatch.";
+	EXPECT_EQ(batch[1], one) << "The second element is the subbatch with one element.";
+	EXPECT_EQ(batch[2], one_two) << "The third element is the subbatch with two elements.";
+	EXPECT_EQ(batch[3], one_through_nine) << "The fourth element is the subbatch with 9 digits.";
+
+	std::list<BatchBase<int>>::const_iterator third = batches.begin();
+	std::advance(third, 2);
+	batch.assign(batches.begin(), third);
+	EXPECT_EQ(batch.size(), 2) << "We iterated up until the third element. Everything before that should be included, not including the third element.";
+	EXPECT_EQ(batch[0], empty) << "The first element is the empty subbatch.";
+	EXPECT_EQ(batch[1], one) << "The second element is the subbatch with one element.";
+
+	batch.assign(third, batches.end());
+	EXPECT_EQ(batch.size(), 2) << "Starting from the third subbatch, there's only the third and fourth elements left.";
+	EXPECT_EQ(batch[0], one_two) << "The third item in the list is the first in this batch.";
+	EXPECT_EQ(batch[1], one_through_nine) << "The fourth item in the list is the second in this batch.";
+}
+
 }
