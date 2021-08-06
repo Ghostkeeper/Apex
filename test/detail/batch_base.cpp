@@ -672,4 +672,34 @@ TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
 	EXPECT_EQ(batch[1], one_through_nine) << "The fourth item in the list is the second in this batch.";
 }
 
+/*!
+ * Tests assigning a range to the batch of batches defined by iterators.
+ *
+ * In this test, the iterators are input iterators, so it's impossible to know
+ * beforehand how many items will be added, and we can only iterate over it
+ * once, which also makes it impossible to go over it once to determine its
+ * size.
+ */
+TEST_F(BatchOfBatchesFixture, AssignInputIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> third(power_increases.begin() + 2);
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+
+	batch.assign(begin, end); //Assign with this very limited type of iterator.
+	EXPECT_EQ(batch, power_increases) << "We added the entire batch of batches to this batch.";
+
+	batch.assign(begin, third);
+	EXPECT_EQ(batch.size(), 2) << "The first and second subbatches are in, but the third marked the end.";
+	EXPECT_EQ(batch[0], power_increases[0]) << "The first subbatch got placed in first place.";
+	EXPECT_EQ(batch[1], power_increases[1]) << "The second subbatch got placed in second place.";
+
+	batch.assign(third, end);
+	EXPECT_EQ(batch.size(), 4) << "The third batch marks the start, and then the fourth, fifth and sixth are also in.";
+	EXPECT_EQ(batch[0], power_increases[2]) << "The third subbatch got placed in first place.";
+	EXPECT_EQ(batch[1], power_increases[3]) << "The fourth subbatch got placed in second place.";
+	EXPECT_EQ(batch[2], power_increases[4]) << "The fifth subbatch got placed in third place.";
+	EXPECT_EQ(batch[3], power_increases[5]) << "The last subbatch got placed in fourth place.";
+}
+
 }
