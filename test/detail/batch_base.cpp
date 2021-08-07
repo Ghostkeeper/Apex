@@ -702,4 +702,26 @@ TEST_F(BatchOfBatchesFixture, AssignInputIterator) {
 	EXPECT_EQ(batch[3], power_increases[5]) << "The last subbatch got placed in fourth place.";
 }
 
+/*!
+ * Tests assigning an initialiser list to the batch of batches.
+ */
+TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
+	BatchBase<BatchBase<int>> batch = power_increases;
+
+	batch.assign({one, one_through_nine, one_two});
+	EXPECT_EQ(batch.size(), 3) << "We assigned a list of 3 subbatches to this batch.";
+	EXPECT_EQ(batch[0], one) << "The first subbatch in the initialiser list was the \"one\" batch.";
+	EXPECT_EQ(batch[1], one_through_nine) << "The second subbatch in the initialiser list was one_through_nine.";
+	EXPECT_EQ(batch[2], one_two) << "The third subbatch in the initialiser list was one_two.";
+
+	batch.assign({});
+	EXPECT_EQ(batch.size(), 0) << "We assigned an empty initialiser list to this batch.";
+
+	batch.assign({{1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11, 12}});
+	EXPECT_EQ(batch.size(), 3) << "The initialiser list had 3 members.";
+	EXPECT_EQ(batch[0], BatchBase<int>({1, 2, 3})) << "The first subbatch.";
+	EXPECT_EQ(batch[1], BatchBase<int>({4, 5, 6, 7})) << "The second subbatch.";
+	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
+}
+
 }
