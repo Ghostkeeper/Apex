@@ -508,7 +508,7 @@ public:
 	}
 
 	/*!
-	 * Replaces the contents of the batch with the elements from the given
+	 * Replace the contents of the batch with the elements from the given
 	 * initialiser list.
 	 * \param initialiser_list A list of subbatches to store in this batch of
 	 * batches.
@@ -518,7 +518,7 @@ public:
 	}
 
 	/*!
-	 * Erases all contents from this batch of batches.
+	 * Erase all contents from this batch of batches.
 	 *
 	 * All subbatches will be eliminated.
 	 */
@@ -914,6 +914,24 @@ public:
 				push_back_unsafe(value); //Append a number of copies of the given subbatch.
 			}
 		}
+	}
+
+	/*!
+	 * Get the total range of the subelements that are contained in the
+	 * subbatches of this batch.
+	 *
+	 * Subelements are scattered in the subelement data referred to by
+	 * \ref data_subelements since there can be free spaces leftover from
+	 * removing subelements or subbatches. This function returns the position
+	 * past the last slot of subelements that is actually occupied.
+	 *
+	 * When starting an iteration from \ref data_subelements for this many
+	 * steps, it is guaranteed that all subelements will have been seen, but
+	 * also some elements which were not actually valid data. Which elements are
+	 * valid and which are not can be derived from the subbatch views.
+	 */
+	size_t size_subelements() const {
+		return next_position; //The next_position indicates the first open space we have, thus also the end of the occupied and formerly occupied spaces.
 	}
 
 	/*!
