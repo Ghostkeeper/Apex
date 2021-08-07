@@ -724,4 +724,22 @@ TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
 	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
 }
 
+/*!
+ * Tests clearing batches of batches.
+ */
+TEST_F(BatchOfBatchesFixture, Clear) {
+	linear_increases.clear();
+	EXPECT_EQ(linear_increases.size(), 0) << "After clearing the batch, it should no longer have any items.";
+
+	empty_batch.clear();
+	EXPECT_EQ(empty_batch.size(), 0) << "The empty batch must stay empty after clearing it.";
+
+	power_increases.clear();
+	EXPECT_EQ(power_increases.size(), 0) << "After clearing the batch, it should no longer have any items.";
+
+	BatchBase<BatchBase<int>> batch({one_two}); //A batch with a single item inside.
+	batch.clear();
+	EXPECT_EQ(batch.size(), 0) << "The one item in this batch must be erased by the clearing.";
+}
+
 }
