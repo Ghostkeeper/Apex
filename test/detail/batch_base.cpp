@@ -742,4 +742,22 @@ TEST_F(BatchOfBatchesFixture, Clear) {
 	EXPECT_EQ(batch.size(), 0) << "The one item in this batch must be erased by the clearing.";
 }
 
+/*!
+ * Tests getting an array of data for the subelements.
+ *
+ * This test looks whether the data contains all subelements in the batch.
+ */
+TEST_F(BatchOfBatchesFixture, DataSubelements) {
+	std::vector<size_t> histogram; //Make a histogram of how often each element occurs in the subelement buffer.
+	histogram.resize(6);
+	for(size_t subelement_index = 0; subelement_index < linear_increases.size_subelements(); ++subelement_index) {
+		histogram[*(linear_increases.data_subelements() + subelement_index)]++;
+	}
+	EXPECT_GE(histogram[1], 5) << "There were 5 subelements containing the number 1. More are allowed since the buffer can have dead spaces.";
+	EXPECT_GE(histogram[2], 4) << "There were 4 subelements containing the number 2. More are allowed since the buffer can have dead spaces.";
+	EXPECT_GE(histogram[3], 3) << "There were 3 subelements containing the number 3. More are allowed since the buffer can have dead spaces.";
+	EXPECT_GE(histogram[4], 2) << "There were 2 subelements containing the number 4. More are allowed since the buffer can have dead spaces.";
+	EXPECT_GE(histogram[5], 1) << "There was 1 subelement containing the number 5. More are allowed since the buffer can have dead spaces.";
+}
+
 }
