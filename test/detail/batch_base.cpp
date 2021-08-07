@@ -74,7 +74,7 @@ public:
 
 		for(size_t subbatch = 0; subbatch < 5; ++subbatch) {
 			linear_increases.emplace_back();
-			for(size_t element = 0; element < subbatch; ++element) {
+			for(size_t element = 0; element <= subbatch; ++element) {
 				linear_increases.back().push_back(element + 1);
 			}
 		}
