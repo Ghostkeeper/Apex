@@ -2683,12 +2683,20 @@ class SubbatchView {
 	 * elements won't have to call this operation very often any more as the
 	 * subbatch grows bigger, resulting in an amortised constant time complexity
 	 * for adding elements.
+	 *
+	 * If the subbatch is currently the last subbatch in the batch, it will not
+	 * get moved unless capacity needs to be expanded. This prevents the need to
+	 * move elements often, for the common case where data is initially entered
+	 * in a linear fashion.
 	 * \param new_capacity The amount of elements that can be stored without
 	 * allocating new memory, after this operation has been completed.
 	 */
 	void reallocate(const size_t new_capacity) {
-		const size_t new_place = batch->next_position;
-		batch->next_position += new_capacity;
+		size_t new_place = start_index;
+		if(start_index + current_capacity != batch->next_position) { //If we're currently the last subbatch in the buffer, don't change the start index.
+			new_place = batch->next_position;
+		}
+		batch->next_position = new_place + new_capacity;
 
 		//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 		size_t buffer_capacity = batch->subelements.size();
@@ -2697,12 +2705,14 @@ class SubbatchView {
 		}
 		batch->subelements.resize(buffer_capacity, Element());
 
-		//Copy all of the data over.
-		for(size_t index = 0; index < size(); ++index) {
-			batch->subelements[new_place + index] = batch->subelements[start_index + index];
+		if(new_place != start_index) {
+			//If we've moved, copy all of the data over.
+			for(size_t index = 0; index < size(); ++index) {
+				batch->subelements[new_place + index] = batch->subelements[start_index + index];
+			}
+			start_index = new_place;
 		}
 
-		start_index = new_place;
 		current_capacity = new_capacity;
 	}
 };
