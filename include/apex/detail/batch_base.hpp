@@ -291,7 +291,9 @@ public:
 	/*!
 	 * Creates an empty batch.
 	 */
-	BatchBase() : next_position(0) {}
+	BatchBase() : next_position(0) {
+		subelements.resize(8);
+	}
 
 	/*!
 	 * Creates a batch with a number of copies of the same subbatch.
@@ -299,6 +301,7 @@ public:
 	 * \param value The subbatch to copy multiple times.
 	 */
 	BatchBase(const size_t count, const BatchBase<Element>& value = BatchBase<Element>()) : next_position(0) {
+		subelements.resize(8);
 		assign(count, value);
 	}
 
@@ -311,6 +314,7 @@ public:
 	 */
 	template<class InputIterator>
 	BatchBase(InputIterator first, InputIterator last) : next_position(0) {
+		subelements.resize(8);
 		assign(first, last);
 	}
 
@@ -319,6 +323,7 @@ public:
 	 * \param other The batch to copy.
 	 */
 	BatchBase(const BatchBase<BatchBase<Element>>& other) : next_position(0) {
+		subelements.resize(8);
 		//Don't simply copy the subelements buffer and subbatchviews.
 		//If we're copying the data anyway, we might as well shrink the subelements buffer to fit.
 		//This not only improves performance of the copy, but also of any subsequent algorithms on the batch.
@@ -344,6 +349,7 @@ public:
 	 * in this batch.
 	 */
 	BatchBase(std::initializer_list<BatchBase<Element>> initialiser_list) : next_position(0) {
+		subelements.resize(8);
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
@@ -354,6 +360,7 @@ public:
 	 * \return A reference to this batch.
 	 */
 	BatchBase<BatchBase<Element>>& operator =(const BatchBase<BatchBase<Element>>& other) {
+		subelements.resize(8);
 		assign(other.begin(), other.end());
 		return (*this);
 	}
@@ -479,7 +486,7 @@ public:
 	 * \param value The subbatch to store multiple copies of.
 	 */
 	void assign(const size_t count, const BatchBase<Element>& value) {
-		reserve_subelements(count * value.size());
+		reserve_subelements(count * std::max(size_t(1), value.size()));
 		reserve(count);
 		clear();
 
@@ -564,7 +571,9 @@ public:
 	 * \return An iterator pointing to the newly emplaced subbatch.
 	 */
 	iterator emplace(const_iterator position) {
-		return std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 0);
+		reserve_subelements_doubling(next_position + 1);
+		return std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 1);
+		next_position += 1;
 	}
 
 	/*!
@@ -576,9 +585,10 @@ public:
 	 * \return An iterator pointing to the newly emplaced subbatch.
 	 */
 	iterator emplace(const_iterator position, const size_t count, Element& value = Element()) {
-		reserve_subelements_doubling(next_position + count);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, count);
-		next_position += count;
+		const size_t capacity = std::max(size_t(1), count);
+		reserve_subelements_doubling(next_position + capacity);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, capacity);
+		next_position += capacity;
 		result->assign(count, value);
 		return result;
 	}
@@ -595,7 +605,7 @@ public:
 	 */
 	template<class InputIterator>
 	iterator emplace(const_iterator position, InputIterator first, InputIterator last) {
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 0);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 1);
 		result->assign(first, last);
 		return result;
 	}
@@ -630,10 +640,10 @@ public:
 	 * \return An iterator pointing to the newly emplaced subbatch.
 	 */
 	iterator emplace(const_iterator position, const std::initializer_list<Element>& initialiser_list) {
-		const size_t list_size = initialiser_list.size();
-		reserve_subelements_doubling(next_position + list_size);
-		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, list_size);
-		next_position += list_size;
+		const size_t capacity = std::max(size_t(1), initialiser_list.size());
+		reserve_subelements_doubling(next_position + capacity);
+		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, capacity);
+		next_position += capacity;
 		result->assign(initialiser_list);
 		return result;
 	}
@@ -642,7 +652,9 @@ public:
 	 * Append an empty subbatch at the end of this batch of batches.
 	 */
 	void emplace_back() {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 0);
+		reserve_subelements_doubling(next_position + 1);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 1);
+		next_position += 1;
 	}
 
 	/*!
@@ -652,9 +664,10 @@ public:
 	 * \param value The element to copy multiple times into the new subbatch.
 	 */
 	void emplace_back(const size_t count, const Element& value = Element()) {
-		reserve_subelements_doubling(next_position + count);
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, count, count);
-		next_position += count;
+		const size_t capacity = std::max(size_t(1), count);
+		reserve_subelements_doubling(next_position + capacity);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, capacity);
+		next_position += capacity;
 		back().assign(count, value);
 	}
 
@@ -668,7 +681,7 @@ public:
 	 */
 	template<class InputIterator>
 	void emplace_back(InputIterator first, InputIterator last) {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 0);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 1);
 		back().assign(first, last);
 	}
 
@@ -696,10 +709,10 @@ public:
 	 * with.
 	 */
 	void emplace_back(const std::initializer_list<Element>& initialiser_list) {
-		const size_t list_size = initialiser_list.size();
-		reserve_subelements_doubling(next_position + list_size);
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, list_size, list_size);
-		next_position += list_size;
+		const size_t capacity = initialiser_list.size();
+		reserve_subelements_doubling(next_position + capacity);
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, capacity);
+		next_position += capacity;
 		back().assign(initialiser_list);
 	}
 
@@ -715,9 +728,10 @@ public:
 	 * \return An iterator pointing to the newly inserted subbatch.
 	 */
 	iterator insert(const_iterator position, const BatchBase<Element>& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
-		SubbatchView<Element> subbatch(*this, next_position, 0, value.size()); //Create a subbatch pointing to the new data.
-		next_position += value.size();
+		const size_t capacity = std::max(size_t(1), value.size()); //Capacity of the subbatch needs to be at least 1.
+		reserve_subelements_doubling(next_position + capacity); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		SubbatchView<Element> subbatch(*this, next_position, 0, capacity); //Create a subbatch pointing to the new data.
+		next_position += capacity;
 		subbatch.assign(value.begin(), value.end()); //Insert the data into that subbatch.
 		return std::vector<SubbatchView<Element>>::insert(position, subbatch);
 	}
@@ -734,9 +748,10 @@ public:
 	 * \return An iterator pointing to the newly inserted subbatch.
 	 */
 	iterator insert(const_iterator position, BatchBase<Element>&& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
-		SubbatchView<Element> subbatch(*this, next_position, 0, value.size()); //Create a subbatch pointing to the new data.
-		next_position += value.size();
+		const size_t capacity = std::max(size_t(1), value.size()); //Capacity of the subbatch needs to be at least 1.
+		reserve_subelements_doubling(next_position + capacity); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		SubbatchView<Element> subbatch(*this, next_position, 0, capacity); //Create a subbatch pointing to the new data.
+		next_position += capacity;
 
 		//Move the data into that subbatch.
 		for(Element& subelement : value) {
@@ -762,16 +777,17 @@ public:
 	 * subbatches.
 	 */
 	iterator insert(const_iterator position, const size_t count, const BatchBase<Element>& value) {
-		reserve_subelements(next_position + value.size() * count);
+		const size_t capacity = std::max(size_t(1), value.size()); //Capacity per subbatch needs to be at least 1.
+		reserve_subelements(next_position + capacity * count);
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
-		iterator result = std::vector<SubbatchView<Element>>::insert(position, count, SubbatchView(*this, next_position, 0, value.size()));
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, count, SubbatchView(*this, next_position, 0, capacity));
 		for(size_t repeat = 0; repeat < count; ++repeat) {
 			SubbatchView<Element>& new_subbatch = *(position + repeat);
-			new_subbatch.start_index = next_position + repeat * value.size();
+			new_subbatch.start_index = next_position + repeat * capacity;
 			new_subbatch.assign(value.begin(), value.end());
 		}
-		next_position += count * value.size();
+		next_position += count * capacity;
 		return result;
 	}
 
@@ -821,7 +837,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(const BatchBase<Element>& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		reserve_subelements_doubling(next_position + std::max(size_t(1), value.size())); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -836,7 +852,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(BatchBase<Element>&& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		reserve_subelements_doubling(next_position + std::max(size_t(1), value.size())); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -847,7 +863,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(const SubbatchView<Element>& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		reserve_subelements_doubling(next_position + std::max(size_t(1), value.size())); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -862,7 +878,7 @@ public:
 	 * \param value The batch to append to this batch of batches.
 	 */
 	void push_back(SubbatchView<Element>&& value) {
-		reserve_subelements_doubling(next_position + value.size()); //Grow by doubling to reduce amortised cost of repeated push_backs.
+		reserve_subelements_doubling(next_position + std::max(size_t(1), value.size())); //Grow by doubling to reduce amortised cost of repeated push_backs.
 		push_back_unsafe(value);
 	}
 
@@ -891,7 +907,7 @@ public:
 	 * \param count The new size of the batch of batches.
 	 */
 	void resize(const size_t count) {
-		std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 0));
+		std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 1));
 	}
 
 	/*!
@@ -909,7 +925,7 @@ public:
 			std::vector<SubbatchView<Element>>::resize(count);
 		} else if(count > size()) {
 			reserve(size() + count);
-			reserve_subelements(next_position + (count - size()) * value.size());
+			reserve_subelements(next_position + (count - size()) * std::max(size_t(1), value.size()));
 			while(size() < count) {
 				push_back_unsafe(value); //Append a number of copies of the given subbatch.
 			}
@@ -988,7 +1004,7 @@ public:
 		//Count the total number of subelements too, to reserve enough memory there all at once.
 		size_t subelements_size = 0;
 		for(InputIterator iterator = begin; iterator != end; iterator++) {
-			subelements_size += iterator->size();
+			subelements_size += std::max(size_t(1), iterator->size()); //At least 1 for every subbatch.
 		}
 		reserve_subelements(subelements_size);
 
@@ -1018,7 +1034,7 @@ public:
 		//Iterate over the range once to determine its size and the number of subelements, to reserve enough memory there all at once.
 		for(InputIterator it = begin; it != end; it++) {
 			++new_size;
-			subelements_size += it->size();
+			subelements_size += std::max(size_t(1), it->size()); //At least 1 for every subbatch.
 		}
 		reserve(new_size);
 		reserve_subelements(subelements_size);
@@ -1076,17 +1092,16 @@ public:
 		//Measure total number of subelements to prevent having to reallocate the element buffer multiple times.
 		size_t subelement_count = 0;
 		for(InputIterator it = start; it != end; it++) {
-			subelement_count += it->size();
+			subelement_count += std::max(size_t(1), it->size()); //At least 1 for every subbatch.
 		}
 		reserve_subelements(next_position + subelement_count);
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
-		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, start->size()));
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
 		const_iterator subbatch = position;
 		for(InputIterator it = start; it != end; it++) {
-			SubbatchView<Element>& new_subbatch = *(position + index);
 			subbatch->start_index = next_position;
-			next_position += it->size();
+			next_position += std::max(size_t(1), it->size());
 			subbatch->assign(it->begin(), it->end()); //Copy data from original batch into subelement array.
 			subbatch++;
 		}
@@ -1120,17 +1135,16 @@ public:
 		size_t subelement_count = 0;
 		for(InputIterator it = start; it != end; it++) {
 			subbatch_count++;
-			subelement_count += it->size();
+			subelement_count += std::max(size_t(1), it->size());
 		}
 		reserve_subelements(next_position + subelement_count);
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
-		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, start->size()));
+		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
 		const_iterator subbatch = position;
 		for(InputIterator it = start; it != end; it++) {
-			SubbatchView<Element>& new_subbatch = *(position + index);
 			subbatch->start_index = next_position;
-			next_position += it->size();
+			next_position += std::max(size_t(1), it->size());
 			subbatch->assign(it->begin(), it->end()); //Copy data from original batch into subelement array.
 			subbatch++;
 		}
@@ -1166,9 +1180,9 @@ public:
 
 		std::vector<SubbatchView<Element>> views;
 		for(; start != end; start++) {
-			const size_t subbatch_size = start->size();
-			views.emplace_back(*this, next_position, subbatch_size, subbatch_size);
-			reserve_subelements_doubling(next_position + subbatch_size);
+			const size_t capacity = std::max(size_t(1), start->size());
+			views.emplace_back(*this, next_position, 0, capacity);
+			reserve_subelements_doubling(next_position + capacity);
 			views.back().assign(start->begin(), start->end()); //Copy data from the original batch into subelement array.
 		}
 		//Now insert the new views directly into the views array.
@@ -1185,8 +1199,9 @@ public:
 	 * \param subbatch The subbatch to append to this batch of batches.
 	 */
 	void push_back_unsafe(const BatchBase<Element>& subbatch) {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += subbatch.size();
+		const size_t capacity = std::max(size_t(1), subbatch.size());
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, capacity); //Create a new subbatch with exactly enough capacity.
+		next_position += capacity;
 		back().assign(subbatch.begin(), subbatch.end()); //Copy all subelements.
 	}
 
@@ -1200,13 +1215,13 @@ public:
 	 * \param subbatch The subbatch to move to the end of this batch of batches.
 	 */
 	void push_back_unsafe(BatchBase<Element>&& subbatch) {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += subbatch.size();
+		const size_t capacity = std::max(size_t(1), subbatch.size());
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), capacity); //Create a new subbatch with exactly enough capacity.
+		next_position += capacity;
 		SubbatchView<Element>& new_subbatch = back();
 		for(size_t subelement = 0; subelement < subbatch.size(); ++subelement) {
 			new_subbatch[subelement] = std::move(subbatch[subelement]); //Move every element individually to the new place. Might be a copy in the case of plain-old-data.
 		}
-		new_subbatch.num_elements = subbatch.size();
 	}
 
 	/*!
@@ -1219,8 +1234,9 @@ public:
 	 * \param subbatch The subbatch to append to this batch of batches.
 	 */
 	void push_back_unsafe(const SubbatchView<Element>& subbatch) {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += subbatch.size();
+		const size_t capacity = std::max(size_t(1), subbatch.size());
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, capacity); //Create a new subbatch with exactly enough capacity.
+		next_position += capacity;
 		back().assign(subbatch.begin(), subbatch.end()); //Copy all subelements.
 	}
 
@@ -1234,13 +1250,13 @@ public:
 	 * \param subbatch The subbatch to move to the end of this batch of batches.
 	 */
 	void push_back_unsafe(SubbatchView<Element>&& subbatch) {
-		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), subbatch.size()); //Create a new subbatch with exactly enough capacity.
-		next_position += subbatch.size();
+		const size_t capacity = std::max(size_t(1), subbatch.size());
+		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, subbatch.size(), capacity); //Create a new subbatch with exactly enough capacity.
+		next_position += capacity;
 		SubbatchView<Element>& new_subbatch = back();
 		for(size_t subelement = 0; subelement < subbatch.size(); ++subelement) {
 			new_subbatch[subelement] = std::move(subbatch[subelement]); //Move every element individually to the new place. Might be a copy in the case of plain-old-data.
 		}
-		new_subbatch.num_elements = subbatch.size();
 	}
 
 	/*!
@@ -1259,7 +1275,7 @@ public:
 			return; //No reallocation necessary.
 		}
 		while(buffer_size < minimum_capacity) { //Not enough capacity in the element buffer.
-			buffer_size = buffer_size * 2 + 1;
+			buffer_size = buffer_size * 2;
 		}
 		subelements.resize(buffer_size); //Resize all at once.
 	}
@@ -1802,7 +1818,7 @@ class SubbatchView {
 	iterator emplace(const const_iterator position, Args&&... arguments) {
 		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
 		if(size() >= capacity()) { //Need to make sure we have enough capacity for the new element.
-			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated emplacing executes in amortised linear time.
+			reallocate(capacity() * 2); //Double the capacity, so that repeated emplacing executes in amortised linear time.
 		}
 
 		for(size_t i = size(); i > index; --i) { //Move all elements beyond the specified position by one place, to make room.
@@ -1823,7 +1839,7 @@ class SubbatchView {
 	template<class... Args>
 	void emplace_back(Args&&... arguments) {
 		if(size() >= capacity()) { //Need to make sure we have enough capacity for the new element.
-			reallocate(capacity() * 2 + 1); //Double in size, so that repeated emplacing executes in amortised constant time.
+			reallocate(capacity() * 2); //Double in size, so that repeated emplacing executes in amortised constant time.
 		}
 
 		(*this)[size()] = Element(arguments...); //Construct the element in-place.
@@ -1945,7 +1961,7 @@ class SubbatchView {
 	iterator insert(const const_iterator position, const Element& value) {
 		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
 		if(size() >= capacity()) {
-			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated inserting executes in amortised linear time.
+			reallocate(capacity() * 2); //Double the capacity, so that repeated inserting executes in amortised linear time.
 		}
 
 		for(size_t i = size(); i > index; --i) { //Move all elements beyond the position by one place to make room.
@@ -1972,7 +1988,7 @@ class SubbatchView {
 	iterator insert(const const_iterator position, Element&& value) {
 		const size_t index = position - begin(); //Get the index before possibly reallocating (which would invalidate the iterator).
 		if(size() >= capacity()) {
-			reallocate(capacity() * 2 + 1); //Double the capacity, so that repeated inserting executes in amortised linear time.
+			reallocate(capacity() * 2); //Double the capacity, so that repeated inserting executes in amortised linear time.
 		}
 
 		for(size_t i = size(); i > index; --i) { //Move all elements beyond the position by one place to make room.
@@ -2078,7 +2094,7 @@ class SubbatchView {
 	 */
 	void push_back(const Element& value) {
 		if(size() + 1 > capacity()) {
-			reallocate(capacity() * 2 + 1); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
+			reallocate(capacity() * 2); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
 		}
 		(*this)[size()] = value;
 		++num_elements;
@@ -2093,7 +2109,7 @@ class SubbatchView {
 	 */
 	void push_back(Element&& element) {
 		if(size() + 1 > capacity()) {
-			reallocate(capacity() * 2 + 1); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
+			reallocate(capacity() * 2); //Doubling the capacity (or multiplying with any scalar, really) guarantees an amortised constant execution time.
 		}
 		(*this)[size()] = std::move(element);
 		++num_elements;
@@ -2263,7 +2279,7 @@ class SubbatchView {
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 				size_t buffer_capacity = batch->subelements.size();
 				while(buffer_capacity < my_destination + other_size) {
-					buffer_capacity = buffer_capacity * 2 + 1;
+					buffer_capacity = buffer_capacity * 2;
 				}
 				batch->subelements.resize(buffer_capacity, Element());
 				current_capacity = other_size;
@@ -2275,7 +2291,7 @@ class SubbatchView {
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 				size_t buffer_capacity = other.batch->subelements.size();
 				while(buffer_capacity < other_destination + my_size) {
-					buffer_capacity = buffer_capacity * 2 + 1;
+					buffer_capacity = buffer_capacity * 2;
 				}
 				other.batch->subelements.resize(buffer_capacity, Element());
 				other.current_capacity = my_size;
@@ -2344,7 +2360,7 @@ class SubbatchView {
 			//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 			size_t buffer_capacity = batch->subelements.size();
 			while(buffer_capacity < my_destination + other_size) {
-				buffer_capacity = buffer_capacity * 2 + 1;
+				buffer_capacity = buffer_capacity * 2;
 			}
 			batch->subelements.resize(buffer_capacity, Element());
 			current_capacity = other_size;
@@ -2635,13 +2651,13 @@ class SubbatchView {
 			if(remaining_space == 0) { //Not enough space to add the next element. Allocate more.
 				//This reallocation is "manual". Instead of moving all elements, we'll immediately move the trailing end to the end of the capacity.
 				const size_t new_place = batch->next_position;
-				const size_t new_capacity = current_capacity * 2 + 1; //Doubling the capacity ensures that repeated insertion of a new element is done in amortised constant time.
+				const size_t new_capacity = current_capacity * 2; //Doubling the capacity ensures that repeated insertion of a new element is done in amortised constant time.
 				batch->next_position += new_capacity;
 
 				//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 				size_t buffer_capacity = batch->subelements.size();
 				while(buffer_capacity < new_place + new_capacity) {
-					buffer_capacity = buffer_capacity * 2 + 1;
+					buffer_capacity = buffer_capacity * 2;
 				}
 				batch->subelements.resize(buffer_capacity, Element());
 
@@ -2701,7 +2717,7 @@ class SubbatchView {
 		//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 		size_t buffer_capacity = batch->subelements.size();
 		while(buffer_capacity < new_place + new_capacity) {
-			buffer_capacity = buffer_capacity * 2 + 1;
+			buffer_capacity = buffer_capacity * 2;
 		}
 		batch->subelements.resize(buffer_capacity, Element());
 
