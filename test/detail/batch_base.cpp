@@ -779,4 +779,24 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], {}, linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "There's still an empty subbatch at the start and end, and a new one in 4th place.";
 }
 
+/*!
+ * Tests emplacing a subbatch into the parent batch with the constructor that
+ * makes copies of a subvalue.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace(batch.end(), size_t(4), 1); //Add a subbatch with four 1's at the end.
+	EXPECT_EQ(batch.size(), power_increases.size() + 1) << "The number of subbatches grew by 1.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], {1, 1, 1, 1}})) << "There is a subbatch with four 1's appended to the end.";
+
+	batch.emplace(batch.begin(), size_t(3), 2); //Add a subbatch with three 2's in the beginning.
+	EXPECT_EQ(batch.size(), power_increases.size() + 2) << "This is the second time we added one.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{2, 2, 2}, power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], {1, 1, 1, 1}})) << "We added a subbatch with three 2's at the start.";
+
+	batch.emplace(batch.begin() + 2, size_t(2), 3); //Add a subbatch with two 3's in the middle.
+	EXPECT_EQ(batch.size(), power_increases.size() + 3) << "This is the third time we added one.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{2, 2, 2}, power_increases[0], {3, 3}, power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], {1, 1, 1, 1}})) << "We added a subbatch with two 3's in the third place.";
+}
+
 }
