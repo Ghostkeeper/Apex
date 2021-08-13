@@ -13,6 +13,9 @@
 
 namespace apex {
 
+template<typename Element>
+class SubbatchView;
+
 /*!
  * This class forms the basis of all batch implementations.
  *
@@ -99,6 +102,21 @@ public:
 	BatchBase(InputIterator first, InputIterator last) : std::vector<Element>(first, last) {}
 
 	/*!
+	 * Construct a batch from the contents of an initialiser list.
+	 * \param initialiser_list The list of elements to put in the new batch.
+	 */
+	BatchBase(std::initializer_list<Element> initialiser_list) : std::vector<Element>(initialiser_list) {}
+
+	/*!
+	 * Convert a subbatch into a real, normal batch.
+	 *
+	 * This way, the subbatch can be used in any place where a normal batch gets
+	 * used. However, this does create a copy of the data in the subbatch.
+	 * \param subbatch The subbatch to convert to a normal batch.
+	 */
+	BatchBase(const SubbatchView<Element>& subbatch) : std::vector<Element>(subbatch.begin(), subbatch.end()) {}
+
+	/*!
 	 * Construct a copy of the specified batch.
 	 *
 	 * All elements inside the batch will be copied as well.
@@ -114,12 +132,6 @@ public:
 	 * \param other The batch to move into the new batch.
 	 */
 	BatchBase(BatchBase&& other) noexcept : std::vector<Element>(other) {}
-
-	/*!
-	 * Construct a batch from the contents of an initialiser list.
-	 * \param initialiser_list The list of elements to put in the new batch.
-	 */
-	BatchBase(std::initializer_list<Element> initialiser_list) : std::vector<Element>(initialiser_list) {}
 
 	//Vector doesn't implement these comparison operators itself. They are defined as loose functions in line with the STL design.
 	//However this doesn't allow us to inherit from them. We need to redefine them.
