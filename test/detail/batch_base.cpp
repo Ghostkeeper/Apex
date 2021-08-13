@@ -760,4 +760,23 @@ TEST_F(BatchOfBatchesFixture, DataSubelements) {
 	EXPECT_GE(histogram[5], 1) << "There was 1 subelement containing the number 5. More are allowed since the buffer can have dead spaces.";
 }
 
+/*!
+ * Tests emplacing an empty subbatch into the parent batch.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace(batch.end()); //Emplace at the end.
+	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "The number of subbatches grew by 1.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "There's an empty subbatch at the end now.";
+
+	batch.emplace(batch.begin()); //Emplace another one at the beginning.
+	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added two batches to it, so it should have grown by 2.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "There's an empty subbatch at the start and end now.";
+
+	batch.emplace(batch.begin() + 3); //Emplace another one somewhere in the middle.
+	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added three batches to it now.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], {}, linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "There's still an empty subbatch at the start and end, and a new one in 4th place.";
+}
+
 }
