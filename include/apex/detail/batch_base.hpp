@@ -596,7 +596,7 @@ public:
 	 * \param value The subelement to copy multiple times into the new subbatch.
 	 * \return An iterator pointing to the newly emplaced subbatch.
 	 */
-	iterator emplace(const_iterator position, const size_t count, Element& value = Element()) {
+	iterator emplace(const_iterator position, const size_t count, const Element& value = Element()) {
 		const size_t capacity = std::max(size_t(1), count);
 		reserve_subelements_doubling(next_position + capacity);
 		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, capacity);
