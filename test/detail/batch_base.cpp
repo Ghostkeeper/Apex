@@ -799,4 +799,27 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{2, 2, 2}, power_increases[0], {3, 3}, power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], {1, 1, 1, 1}})) << "We added a subbatch with two 3's in the third place.";
 }
 
+/*!
+ * Tests emplacing a subbatch into the parent batch with the constructor that
+ * takes iterators.
+ *
+ * The iterators provided in this test are random access, meaning that the
+ * distance between them can be obtained in constant time.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace(batch.end(), one_through_nine.begin(), one_through_nine.begin() + 4); //Append a subbatch with 4 elements at the end.
+	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "The number of subbatches grew by 1.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "There is a part of the one_through_nine batch at the end.";
+
+	batch.emplace(batch.begin(), batch[3].begin(), batch[3].end()); //Re-add a part of itself. Does the index get invalidated prematurely?
+	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "This is the second time we added a subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[3], linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "A part of the batch itself was added again. This should not invalidate the index in the batch until it's completed.";
+
+	batch.emplace(batch.begin() + 4, one.begin(), one.begin()); //Add an empty subbatch through random access iterators.
+	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "Even though the subbatch was empty, we still added a third extra subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[3], linear_increases[0], linear_increases[1], linear_increases[2], {}, linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "We added an empty subbatch in the middle (no distance between start and end iterators).";
+}
+
 }
