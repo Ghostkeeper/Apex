@@ -923,6 +923,11 @@ public:
 	 * \param count The new size of the batch of batches.
 	 */
 	void resize(const size_t count) {
+		if(count > size()) { //We need to add subbatches, then we need to also reserve at least 1 subelement for each of them.
+			const size_t missing = count - size();
+			next_position += missing;
+			reserve_subelements(next_position);
+		}
 		std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 1));
 	}
 
@@ -2733,7 +2738,7 @@ class SubbatchView {
 		//Make sure we have enough capacity in the element buffer itself. Grow by doubling there too.
 		size_t buffer_capacity = batch->subelements.size();
 		while(buffer_capacity < new_place + new_capacity) {
-			buffer_capacity = buffer_capacity * 2;
+			buffer_capacity *= 2;
 		}
 		batch->subelements.resize(buffer_capacity, Element());
 
