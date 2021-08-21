@@ -826,7 +826,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
  * Tests emplacing a subbatch into the parent batch with the constructor that
  * takes iterators.
  *
- * The iterators provided in this tests are forward, meaning that you can't
+ * The iterators provided in this test are forward, meaning that you can't
  * easily calculate the distance between them, but you can iterate over it
  * multiple times.
  */
@@ -849,6 +849,32 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	batch.emplace(batch.begin() + 4, second, fifth); //Insert a subbatch in the middle too.
 	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "This is the third time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{1, 2, 3, 4}, linear_increases[0], linear_increases[1], linear_increases[2], {2, 3, 4}, linear_increases[3], linear_increases[4], {}})) << "We added a new subbatch in the middle.";
+}
+
+/*!
+ * Tests emplacing a subbatch into the parent batch with the constructor that
+ * takes iterators.
+ *
+ * The iterators provided in this test are input iterators only, meaning that we
+ * can't calculate the number of items beforehand.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	InputIteratorLimiter<BatchBase<int>::const_iterator> begin(one_through_nine.begin()); //Create some very limited input iterators to test with.
+	InputIteratorLimiter<BatchBase<int>::const_iterator> fifth(one_through_nine.begin() + 4);
+	InputIteratorLimiter<BatchBase<int>::const_iterator> end(one_through_nine.end());
+
+	batch.emplace(batch.end(), begin, fifth);
+	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a subbatch, so it's one larger now.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "There is a new subbatch at the end.";
+
+	batch.emplace(batch.begin(), fifth, fifth); //Empty range!
+	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "Even though the subbatch was empty, we still added a new subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "We added an empty subbatch at the start.";
+
+	batch.emplace(batch.begin() + 4, fifth, end);
+	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "This is the third time we added a subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], linear_increases[2], {5, 6, 7, 8, 9}, linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "We added the second half of one_through_nine in the middle.";
 }
 
 }
