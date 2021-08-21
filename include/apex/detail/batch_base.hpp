@@ -617,7 +617,9 @@ public:
 	 */
 	template<class InputIterator>
 	iterator emplace(const_iterator position, InputIterator first, InputIterator last) {
+		reserve_subelements_doubling(next_position + 1);
 		const iterator result = std::vector<SubbatchView<Element>>::emplace(position, *this, next_position, 0, 1);
+		next_position += 1; //Capacity is 1.
 		result->assign(first, last);
 		return result;
 	}
@@ -693,7 +695,9 @@ public:
 	 */
 	template<class InputIterator>
 	void emplace_back(InputIterator first, InputIterator last) {
+		reserve_subelements_doubling(next_position + 1);
 		std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 1);
+		next_position += 1;
 		back().assign(first, last);
 	}
 
