@@ -88,7 +88,7 @@ public:
 };
 
 /*!
- * Tests constructing a batch of batches without any batches.
+ * Test constructing a batch of batches without any batches.
  *
  * This also serves as a basic test for whether the class can be used at all.
  */
@@ -99,7 +99,7 @@ TEST(BatchOfBatches, ConstructEmpty) {
 }
 
 /*!
- * Tests constructing a batch of batches with the default constructor for
+ * Test constructing a batch of batches with the default constructor for
  * subbatches.
  */
 TEST(BatchOfBatches, ConstructDefault) {
@@ -116,7 +116,7 @@ TEST(BatchOfBatches, ConstructDefault) {
 }
 
 /*!
- * Tests constructing a batch of batches by making copies of one subbatch.
+ * Test constructing a batch of batches by making copies of one subbatch.
  */
 TEST_F(BatchOfBatchesFixture, ConstructCopies) {
 	const BatchBase<BatchBase<int>> batch1_1(1, one);
@@ -146,7 +146,7 @@ TEST_F(BatchOfBatchesFixture, ConstructCopies) {
 }
 
 /*!
- * Tests constructing a batch of batches from a range defined by iterators.
+ * Test constructing a batch of batches from a range defined by iterators.
  *
  * In this test, the iterators are random access, so it's possible to know
  * beforehand how many subbatches will be stored.
@@ -168,7 +168,7 @@ TEST_F(BatchOfBatchesFixture, ConstructRandomAccessIterator) {
 }
 
 /*!
- * Tests constructing a batch of batches from a range defined by iterators.
+ * Test constructing a batch of batches from a range defined by iterators.
  *
  * In this test, the iterators are forward, so it's possible to iterate over it
  * multiple times to find out how many subbatches will be stored.
@@ -198,7 +198,7 @@ TEST_F(BatchOfBatchesFixture, ConstructForwardIterator) {
 }
 
 /*!
- * Tests constructing a batch of batches from a range defined by iterators.
+ * Test constructing a batch of batches from a range defined by iterators.
  *
  * In this test, the iterators are limited to simple input iterators. We can't
  * iterate over it multiple times nor know beforehand how many items we'll
@@ -226,7 +226,7 @@ TEST_F(BatchOfBatchesFixture, ConstructInputIterator) {
 }
 
 /*!
- * Tests the copy constructor of batches of batches.
+ * Test the copy constructor of batches of batches.
  */
 TEST_F(BatchOfBatchesFixture, ConstructCopy) {
 	const BatchBase<BatchBase<int>> copy_empty(empty_batch);
@@ -237,7 +237,7 @@ TEST_F(BatchOfBatchesFixture, ConstructCopy) {
 }
 
 /*!
- * Tests the move constructor of batches of batches.
+ * Test the move constructor of batches of batches.
  *
  * This test includes the constraint that the actual element data didn't change
  * position, to give more certainty that the data wasn't actually copied.
@@ -254,7 +254,7 @@ TEST_F(BatchOfBatchesFixture, ConstructMove) {
 }
 
 /*!
- * Tests constructing batches of batches from initialiser lists.
+ * Test constructing batches of batches from initialiser lists.
  */
 TEST(BatchOfBatches, ConstructInitialiserList) {
 	const BatchBase<BatchBase<int>> empty({});
@@ -268,7 +268,7 @@ TEST(BatchOfBatches, ConstructInitialiserList) {
 }
 
 /*!
- * Tests assigning empty batches to other batches with copy-assignment.
+ * Test assigning empty batches to other batches with copy-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignCopyEmpty) {
 	BatchBase<BatchBase<int>> assign_empty_to_empty(empty_batch);
@@ -285,7 +285,7 @@ TEST_F(BatchOfBatchesFixture, AssignCopyEmpty) {
 }
 
 /*!
- * Tests assigning filled batches to other batches with copy-assignment.
+ * Test assigning filled batches to other batches with copy-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
 	BatchBase<BatchBase<int>> assign_empty(empty_batch);
@@ -302,7 +302,7 @@ TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
 }
 
 /*!
- * Tests assigning empty batches to other batches with move-assignment.
+ * Test assigning empty batches to other batches with move-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignMoveEmpty) {
 	BatchBase<BatchBase<int>> empty_copy_1(empty_batch); //Make a copy of the empty batch we're about to move, so we can still compare with the original.
@@ -322,7 +322,7 @@ TEST_F(BatchOfBatchesFixture, AssignMoveEmpty) {
 }
 
 /*!
- * Tests assigning filled batches to other batches with move-assignment.
+ * Test assigning filled batches to other batches with move-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
 	BatchBase<BatchBase<int>> powers_copy_1(power_increases); //Make a copy of the batch we're about to move, so we can still compare with the original.
@@ -342,7 +342,7 @@ TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
 }
 
 /*!
- * Tests equality of various types of batches of batches that are in fact equal.
+ * Test equality of various types of batches of batches that are in fact equal.
  */
 TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
 	//Empty containers are always equal.
@@ -435,7 +435,7 @@ TEST(BatchOfBatches, CompareEqualityDifferentValues) {
 }
 
 /*!
- * Tests ordering of various types of batches of batches when they are equal.
+ * Test ordering of various types of batches of batches when they are equal.
  *
  * If they are equal, <= and >= operators should always return ``true`` and
  * < and > operators should always return ``false``.
@@ -540,7 +540,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 }
 
 /*!
- * Tests the ordering of batches when the subelements of subbatches contain
+ * Test the ordering of batches when the subelements of subbatches contain
  * different values, but the batches are otherwise the same.
  */
 TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
@@ -568,7 +568,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
 }
 
 /*!
- * Tests whether the ordering of batches properly compares in lexicographic
+ * Test whether the ordering of batches properly compares in lexicographic
  * order.
  *
  * For these tests the outcome would be different if later subelements or
@@ -616,7 +616,7 @@ TEST_F(BatchOfBatchesFixture, AssignCopies) {
 }
 
 /*!
- * Tests assigning a range to the batch of batches defined by iterators.
+ * Test assigning a range to the batch of batches defined by iterators.
  *
  * In this test, the iterators are random access, so it's possible to know
  * beforehand how many subbatches will be stored.
@@ -641,7 +641,7 @@ TEST_F(BatchOfBatchesFixture, AssignRandomAccessIterator) {
 }
 
 /*!
- * Tests assigning a range to the batch of batches defined by iterators.
+ * Test assigning a range to the batch of batches defined by iterators.
  *
  * In this test, the iterators are forward iterators, so it's impossible to know
  * beforehand how many items will be added, but we can iterate multiple times in
@@ -673,7 +673,7 @@ TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
 }
 
 /*!
- * Tests assigning a range to the batch of batches defined by iterators.
+ * Test assigning a range to the batch of batches defined by iterators.
  *
  * In this test, the iterators are input iterators, so it's impossible to know
  * beforehand how many items will be added, and we can only iterate over it
@@ -703,7 +703,7 @@ TEST_F(BatchOfBatchesFixture, AssignInputIterator) {
 }
 
 /*!
- * Tests assigning an initialiser list to the batch of batches.
+ * Test assigning an initialiser list to the batch of batches.
  */
 TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
 	BatchBase<BatchBase<int>> batch = power_increases;
@@ -725,7 +725,7 @@ TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
 }
 
 /*!
- * Tests clearing batches of batches.
+ * Test clearing batches of batches.
  */
 TEST_F(BatchOfBatchesFixture, Clear) {
 	linear_increases.clear();
@@ -743,7 +743,7 @@ TEST_F(BatchOfBatchesFixture, Clear) {
 }
 
 /*!
- * Tests getting an array of data for the subelements.
+ * Test getting an array of data for the subelements.
  *
  * This test looks whether the data contains all subelements in the batch.
  */
@@ -761,7 +761,7 @@ TEST_F(BatchOfBatchesFixture, DataSubelements) {
 }
 
 /*!
- * Tests emplacing an empty subbatch into the parent batch.
+ * Test emplacing an empty subbatch into the parent batch.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
@@ -780,7 +780,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 }
 
 /*!
- * Tests emplacing a subbatch into the parent batch with the constructor that
+ * Test emplacing a subbatch into the parent batch with the constructor that
  * makes copies of a subvalue.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
@@ -800,7 +800,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 }
 
 /*!
- * Tests emplacing a subbatch into the parent batch with the constructor that
+ * Test emplacing a subbatch into the parent batch with the constructor that
  * takes iterators.
  *
  * The iterators provided in this test are random access, meaning that the
@@ -823,7 +823,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 }
 
 /*!
- * Tests emplacing a subbatch into the parent batch with the constructor that
+ * Test emplacing a subbatch into the parent batch with the constructor that
  * takes iterators.
  *
  * The iterators provided in this test are forward, meaning that you can't
@@ -852,7 +852,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 }
 
 /*!
- * Tests emplacing a subbatch into the parent batch with the constructor that
+ * Test emplacing a subbatch into the parent batch with the constructor that
  * takes iterators.
  *
  * The iterators provided in this test are input iterators only, meaning that we
@@ -875,6 +875,27 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	batch.emplace(batch.begin() + 4, fifth, end);
 	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "This is the third time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{}, linear_increases[0], linear_increases[1], linear_increases[2], {5, 6, 7, 8, 9}, linear_increases[3], linear_increases[4], {1, 2, 3, 4}})) << "We added the second half of one_through_nine in the middle.";
+}
+
+/*!
+ * Test emplacing a subbatch into the parent batch with the copy constructor.
+ *
+ * Behaviourally this should be identical to just inserting the copy.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace(batch.begin(), one_through_nine);
+	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4]})) << "We added the one_through_nine batch at the front.";
+
+	batch.emplace(batch.end(), one);
+	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one batch at the end.";
+
+	batch.emplace(batch.begin() + 2, one_two);
+	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], one_two, linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one_two batch in the middle.";
 }
 
 }
