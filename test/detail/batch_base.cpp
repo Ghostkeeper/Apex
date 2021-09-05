@@ -898,4 +898,28 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], one_two, linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one_two batch in the middle.";
 }
 
+/*!
+ * Test emplacing a subbatch into the parent batch with the move constructor.
+ *
+ * Behaviourally this should be identical to just inserting the subbatch.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceMove) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy of each input, so that we can compare with the original.
+	BatchBase<int> one_through_nine_copy = one_through_nine;
+	BatchBase<int> one_copy = one;
+	BatchBase<int> one_two_copy = one_two;
+
+	batch.emplace(batch.begin(), std::move(one_through_nine_copy));
+	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4]})) << "We added the one_through_nine batch at the front.";
+
+	batch.emplace(batch.end(), std::move(one_copy));
+	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one batch at the end.";
+
+	batch.emplace(batch.begin() + 2, std::move(one_two_copy));
+	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], one_two, linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one_two batch in the middle.";
+}
+
 }
