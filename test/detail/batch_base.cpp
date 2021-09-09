@@ -922,4 +922,28 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], one_two, linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one_two batch in the middle.";
 }
 
+/*!
+ * Test emplacing a subbatch into the parent batch with the constructor that
+ * takes an initialiser list.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace(batch.begin(), {9, 8, 7});
+	EXPECT_EQ(batch.size(), power_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{9, 8, 7}, power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5]})) << "We added {9, 8, 7} at the front.";
+
+	batch.emplace(batch.end(), {6});
+	EXPECT_EQ(batch.size(), power_increases.size() + 2) << "We added another subbatch, so the size grew again.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{9, 8, 7}, power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], {6}})) << "We added {6} at the end.";
+
+	batch.emplace(batch.begin() + 3, {});
+	EXPECT_EQ(batch.size(), power_increases.size() + 3) << "We added a third subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{9, 8, 7}, power_increases[0], power_increases[1], {}, power_increases[2], power_increases[3], power_increases[4], power_increases[5], {6}})) << "We added an empty subbatch in the middle.";
+
+	batch.emplace(batch.begin() + 4, {5, 4, 3, 2, 1});
+	EXPECT_EQ(batch.size(), power_increases.size() + 4) << "We added a fourth subbatch.";
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{9, 8, 7}, power_increases[0], power_increases[1], {}, {5, 4, 3, 2, 1}, power_increases[2], power_increases[3], power_increases[4], power_increases[5], {6}})) << "We added {5, 4, 3, 2, 1} in the middle, just after the empty batch we added earlier.";
+}
+
 }
