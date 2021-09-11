@@ -946,4 +946,20 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({{9, 8, 7}, power_increases[0], power_increases[1], {}, {5, 4, 3, 2, 1}, power_increases[2], power_increases[3], power_increases[4], power_increases[5], {6}})) << "We added {5, 4, 3, 2, 1} in the middle, just after the empty batch we added earlier.";
 }
 
+/*!
+ * Test emplacing an empty subbatch onto the back.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+
+	batch.emplace_back();
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "We added an empty subbatch at the end.";
+
+	batch.emplace_back();
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {}, {}})) << "We added a second empty subbatch at the end.";
+
+	empty_batch.emplace_back(); //Test starting from an empty batch.
+	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty subbatch to the previously empty batch.";
+}
+
 }
