@@ -950,7 +950,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
  * Test emplacing an empty subbatch onto the back.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace_back();
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {}})) << "We added an empty subbatch at the end.";
@@ -967,13 +967,33 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
  * subelement.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackCopies) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace_back(size_t(4), 1);
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 1, 1, 1}})) << "We constructed a subbatch containing four 1's at the end.";
 
 	empty_batch.emplace_back(size_t(5), 2);
 	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{2, 2, 2, 2, 2}})) << "We constructed a subbatch containing five 2's at the end of the previously empty batch.";
+}
+
+/*!
+ * Test emplacing a new subbatch onto the back from a pair of iterators defining
+ * the contents of that subbatch.
+ *
+ * The iterators used in this test are random access, meaning we can directly
+ * measure how many items are in that range.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackRandomAccessIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+
+	batch.emplace_back(one_through_nine.begin() + 4, one_through_nine.end());
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {5, 6, 7, 8, 9}})) << "We constructed the second half of one_through_nine as a new subbatch at the end.";
+
+	empty_batch.emplace_back(one_through_nine.begin() + 3, one_through_nine.begin() + 3); //Try an empty range.
+	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
+
+	empty_batch.emplace_back(one_through_nine.begin(), one_through_nine.begin() + 4);
+	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
 }
 
 }
