@@ -962,4 +962,18 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
 	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty subbatch to the previously empty batch.";
 }
 
+/*!
+ * Test emplacing a new subbatch onto the back containing copies of a specific
+ * subelement.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackCopies) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+
+	batch.emplace_back(size_t(4), 1);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {1, 1, 1, 1}})) << "We constructed a subbatch containing four 1's at the end.";
+
+	empty_batch.emplace_back(size_t(5), 2);
+	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{2, 2, 2, 2, 2}})) << "We constructed a subbatch containing five 2's at the end of the previously empty batch.";
+}
+
 }
