@@ -10,6 +10,7 @@
 #define APEX_BATCH_BASE
 
 #include <vector> //Providing the base data structure to store elements in.
+#include <numeric> //For std::accumulate.
 
 namespace apex {
 
@@ -954,6 +955,50 @@ public:
 	}
 
 	/*!
+	 * Attempts to reduce memory usage by to the minimum possible by rearranging
+	 * the data inside of the buffers held by this batch.
+	 *
+	 * The external behaviour of this batch is unchanged. Elements are not
+	 * actually rearranged as far as can be seen by accessing the batch and
+	 * batches. However pointers and iterators referring to subbatches or
+	 * subelements will be invalidated.
+	 *
+	 * This function has three intended outcomes:
+	 * - All subbatches will have their capacity shrunk to their size, occupying
+	 *   a minimal amount of space in the subelement buffer. The minimum
+	 *   capacity still holds though and is the only exception.
+	 * - All subelements are rearranged so that each range is in the order again
+	 *   in which it appears in the subbatch list. This improves memory locality
+	 *   which improves practical performance, especially in the GPU.
+	 * - The list of subbatches itself and the element buffer are shrunk to fit
+	 *   the data. This actually frees up memory usage.
+	 */
+	void shrink_to_fit() {
+		//Figure out how much space to allocate for our optimised buffer.
+		const size_t num_subelements = std::accumulate(cbegin(), cend(), [](const SubbatchView<Element>& a, const SubbatchView<Element>& b) {
+			return std::max(a.size(), 1) + std::max(b.size(), 1);
+		});
+		std::vector<Element> optimised(num_subelements); //Allocate the necessary memory. We'll move this on top of our old buffer once all data is moved.
+
+		//Move the data into the optimised buffer.
+		size_t optimised_position = 0; //Position in the optimised buffer where to place next subelement.
+		for(SubbatchView<Element>& subbatch : *this) { //Iterate over subbatches in order, so that they'll appear in order in the new buffer.
+			for(size_t i = 0; i < subbatch.size(); ++i) {
+				optimised[optimised_position + i] = std::move(subelements[subbatch.start_index + i]);
+			}
+			subbatch.start_index = optimised_position;
+			subbatch.current_capacity = std::max(subbatch.size(), 1);
+			optimised_position += subbatch.capacity();
+		}
+
+		//Once optimised, swap out the new subelement buffer with the old one.
+		subelements = std::move(optimised);
+		next_position = optimised_position;
+
+		std::vector<SubbatchView<Element>>::shrink_to_fit(); //Also shrink the table of subbatches.
+	}
+
+	/*!
 	 * Get the total range of the subelements that are contained in the
 	 * subbatches of this batch.
 	 *
@@ -965,7 +1010,9 @@ public:
 	 * When starting an iteration from \ref data_subelements for this many
 	 * steps, it is guaranteed that all subelements will have been seen, but
 	 * also some elements which were not actually valid data. Which elements are
-	 * valid and which are not can be derived from the subbatch views.
+	 * valid and which are not can be derived from the subbatch views. This size
+	 * can thus be greater than the total number of subelements if you were to
+	 * sum all sizes of the subbatches, but will never be smaller.
 	 */
 	size_t size_subelements() const {
 		return next_position; //The next_position indicates the first open space we have, thus also the end of the occupied and formerly occupied spaces.
