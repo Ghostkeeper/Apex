@@ -1062,4 +1062,18 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one, one_through_nine})) << "We added a copy of one_through_nine to the end.";
 }
 
+/*!
+ * Test emplacing a new subbatch onto the back using the move constructor.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
+	BatchBase<BatchBase<int>> batch = power_increases;
+
+	batch.emplace_back(std::move(one_two));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two})) << "We moved one_two onto the end.";
+	batch.emplace_back(std::move(one));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one})) << "We moved one onto the end.";
+	batch.emplace_back(std::move(one_through_nine));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one, one_through_nine})) << "We moved one_through_nine onto the end.";
+}
+
 }
