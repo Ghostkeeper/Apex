@@ -1044,4 +1044,22 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInputIterator) {
 	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
 }
 
+/*!
+ * Test emplacing a new subbatch onto the back using the copy constructor.
+ *
+ * A bit pointless, since the copy constructor makes a copy anyway so why going
+ * through the trouble of using emplace rather than push_back, but it keeps the
+ * interface consistent.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
+	BatchBase<BatchBase<int>> batch = power_increases;
+
+	batch.emplace_back(one_two);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two})) << "We added a copy of one_two to the end.";
+	batch.emplace_back(one);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one})) << "We added a copy of one to the end.";
+	batch.emplace_back(one_through_nine);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one, one_through_nine})) << "We added a copy of one_through_nine to the end.";
+}
+
 }
