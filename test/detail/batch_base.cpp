@@ -1076,4 +1076,19 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], power_increases[3], power_increases[4], power_increases[5], one_two, one, one_through_nine})) << "We moved one_through_nine onto the end.";
 }
 
+/*!
+ * Test emplacing a new subbatch onto the back using the constructor that takes
+ * an initialiser list.
+ */
+TEST_F(BatchOfBatchesFixture, EmplaceBackInitialiserList) {
+	BatchBase<BatchBase<int>> batch = linear_increases;
+
+	batch.emplace_back({6, 5, 4});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {6, 5, 4}})) << "We added {6, 5, 4} to the end.";
+	batch.emplace_back({});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {6, 5, 4}, {}})) << "We added an empty initialiser list to the end.";
+	batch.emplace_back({1});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({linear_increases[0], linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], {6, 5, 4}, {}, {1}})) << "We added {1} to the end.";
+}
+
 }
