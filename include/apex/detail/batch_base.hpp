@@ -798,9 +798,10 @@ public:
 		reserve_subelements(next_position + capacity * count);
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
+		const size_t first_index = position - cbegin(); //Insert may invalidate the iterator we give it, so use indices afterwards.
 		iterator result = std::vector<SubbatchView<Element>>::insert(position, count, SubbatchView(*this, next_position, 0, capacity));
 		for(size_t repeat = 0; repeat < count; ++repeat) {
-			SubbatchView<Element>& new_subbatch = *(position + repeat);
+			SubbatchView<Element>& new_subbatch = (*this)[first_index + repeat];
 			new_subbatch.start_index = next_position + repeat * capacity;
 			new_subbatch.assign(value.begin(), value.end());
 		}
