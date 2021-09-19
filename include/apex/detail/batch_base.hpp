@@ -845,7 +845,7 @@ public:
 	 * subbatches.
 	 */
 	iterator insert(const_iterator position, std::initializer_list<BatchBase<Element>>& initialiser_list) {
-		return insert(initialiser_list.begin(), initialiser_list.end());
+		return insert(position, initialiser_list.begin(), initialiser_list.end());
 	}
 
 	/*!
