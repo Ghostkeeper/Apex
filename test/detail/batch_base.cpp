@@ -1132,4 +1132,20 @@ TEST_F(BatchOfBatchesFixture, InsertMove) {
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_through_nine, linear_increases[0], one_two, linear_increases[1], linear_increases[2], linear_increases[3], linear_increases[4], one})) << "We added the one_two batch in the middle.";
 }
 
+/*!
+ * Test inserting repeated copies of a subbatch into the batch.
+ */
+TEST_F(BatchOfBatchesFixture, InsertCopies) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+
+	batch.insert(batch.begin() + 3, 3, one_two);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], one_two, one_two, one_two, power_increases[3], power_increases[4], power_increases[5]})) << "We inserted three copies of one_two in the middle.";
+
+	batch.insert(batch.begin() + 2, 0, one_through_nine);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], one_two, one_two, one_two, power_increases[3], power_increases[4], power_increases[5]})) << "We inserted zero copies, so the batch is unchanged.";
+
+	batch.insert(batch.end(), 4, one);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[0], power_increases[1], power_increases[2], one_two, one_two, one_two, power_increases[3], power_increases[4], power_increases[5], one, one, one, one})) << "We appended four copies of one to the end.";
+}
+
 }
