@@ -1155,8 +1155,9 @@ public:
 	template<class InputIterator>
 	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::random_access_iterator_tag) {
 		const size_t subbatch_count = end - start;
+		iterator nonconst_position = begin() + (position - cbegin());
 		if(subbatch_count == 0) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
-			return;
+			return nonconst_position;
 		}
 		//Measure total number of subelements to prevent having to reallocate the element buffer multiple times.
 		size_t subelement_count = 0;
