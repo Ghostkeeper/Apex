@@ -828,7 +828,7 @@ public:
 	 */
 	template<class InputIterator>
 	iterator insert(const_iterator position, InputIterator first, InputIterator last) {
-		return insert_iterator_dispatch<InputIterator>(position, begin, end, typename std::iterator_traits<InputIterator>::iterator_category());
+		return insert_iterator_dispatch<InputIterator>(position, first, last, typename std::iterator_traits<InputIterator>::iterator_category());
 	}
 
 	/*!
