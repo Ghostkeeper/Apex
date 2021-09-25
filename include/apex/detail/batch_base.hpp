@@ -1168,7 +1168,7 @@ public:
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
 		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
-		const_iterator subbatch = position;
+		iterator subbatch = nonconst_position;
 		for(InputIterator it = start; it != end; it++) {
 			subbatch->start_index = next_position;
 			next_position += std::max(size_t(1), it->size());
