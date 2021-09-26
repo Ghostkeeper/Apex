@@ -1154,10 +1154,10 @@ public:
 	 */
 	template<class InputIterator>
 	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::random_access_iterator_tag) {
+		const size_t index = position - cbegin(); //Convert input position to index immediately, since inserting may invalidate iterators.
 		const size_t subbatch_count = end - start;
-		iterator nonconst_position = begin() + (position - cbegin());
 		if(subbatch_count == 0) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
-			return nonconst_position;
+			return begin() + index;
 		}
 		//Measure total number of subelements to prevent having to reallocate the element buffer multiple times.
 		size_t subelement_count = 0;
@@ -1168,7 +1168,7 @@ public:
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
 		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
-		iterator subbatch = nonconst_position;
+		iterator subbatch = begin() + index;
 		for(InputIterator it = start; it != end; it++) {
 			subbatch->start_index = next_position;
 			next_position += std::max(size_t(1), it->size());
@@ -1197,6 +1197,7 @@ public:
 	 */
 	template<class InputIterator>
 	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::forward_iterator_tag) {
+		const size_t index = position - cbegin(); //Convert input position to index immediately, since inserting may invalidate iterators.
 		if(start == end) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
 			return;
 		}
@@ -1211,7 +1212,7 @@ public:
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
 		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
-		const_iterator subbatch = position;
+		iterator subbatch = begin() + index;
 		for(InputIterator it = start; it != end; it++) {
 			subbatch->start_index = next_position;
 			next_position += std::max(size_t(1), it->size());
