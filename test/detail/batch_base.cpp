@@ -1210,7 +1210,7 @@ TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
 		linear_increases[4]
 	})) << "We inserted two elements of power_increases at the start.";
 
-	batch.insert(batch.begin() + 4, subbatches.begin(), partway);
+	batch.insert(batch.begin() + 4, subbatches.cbegin(), partway);
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		power_increases[2],
 		power_increases[3],
