@@ -1199,7 +1199,7 @@ public:
 	iterator insert_iterator_dispatch(const const_iterator position, InputIterator start, const InputIterator end, const std::forward_iterator_tag) {
 		const size_t index = position - cbegin(); //Convert input position to index immediately, since inserting may invalidate iterators.
 		if(start == end) { //We'll use the first element in special-casing below, which would fail if the range is empty. So early out before then.
-			return;
+			return begin() + index;
 		}
 		//Measure total number of subbatches and subelements to prevent having to reallocate the element buffer multiple times.
 		size_t subbatch_count = 0;
