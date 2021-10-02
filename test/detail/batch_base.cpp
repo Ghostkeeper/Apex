@@ -767,7 +767,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end()); //Emplace at the end.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "The number of subbatches grew by 1.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[0],
 		linear_increases[1],
@@ -778,7 +777,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	})) << "There's an empty subbatch at the end now.";
 
 	batch.emplace(batch.begin()); //Emplace another one at the beginning.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added two batches to it, so it should have grown by 2.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{},
 		linear_increases[0],
@@ -790,7 +788,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	})) << "There's an empty subbatch at the start and end now.";
 
 	batch.emplace(batch.begin() + 3); //Emplace another one somewhere in the middle.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added three batches to it now.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{},
 		linear_increases[0],
@@ -811,7 +808,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end(), size_t(4), 1); //Add a subbatch with four 1's at the end.
-	EXPECT_EQ(batch.size(), power_increases.size() + 1) << "The number of subbatches grew by 1.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		power_increases[0],
 		power_increases[1],
@@ -822,7 +818,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 		{1, 1, 1, 1}})) << "There is a subbatch with four 1's appended to the end.";
 
 	batch.emplace(batch.begin(), size_t(3), 2); //Add a subbatch with three 2's in the beginning.
-	EXPECT_EQ(batch.size(), power_increases.size() + 2) << "This is the second time we added one.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{2, 2, 2},
 		power_increases[0],
@@ -835,7 +830,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 	})) << "We added a subbatch with three 2's at the start.";
 
 	batch.emplace(batch.begin() + 2, size_t(2), 3); //Add a subbatch with two 3's in the middle.
-	EXPECT_EQ(batch.size(), power_increases.size() + 3) << "This is the third time we added one.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{2, 2, 2},
 		power_increases[0],
@@ -860,7 +854,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end(), one_through_nine.begin(), one_through_nine.begin() + 4); //Append a subbatch with 4 elements at the end.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "The number of subbatches grew by 1.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[0],
 		linear_increases[1],
@@ -871,7 +864,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 	})) << "There is a part of the one_through_nine batch at the end.";
 
 	batch.emplace(batch.begin(), batch[3].begin(), batch[3].end()); //Re-add a part of itself. Does the index get invalidated prematurely?
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "This is the second time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[3],
 		linear_increases[0],
@@ -883,7 +875,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 	})) << "A part of the batch itself was added again. This should not invalidate the index in the batch until it's completed.";
 
 	batch.emplace(batch.begin() + 4, one.begin(), one.begin()); //Add an empty subbatch through random access iterators.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "Even though the subbatch was empty, we still added a third extra subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[3],
 		linear_increases[0],
@@ -909,7 +900,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	std::list<int> numbers(one_through_nine.begin(), one_through_nine.end()); //A linked list has bidirectional iterators, which is a forward iterator but not random access.
 
 	batch.emplace(batch.end(), numbers.begin(), numbers.begin()); //Append an empty subbatch at the end.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "Even though the subbatch was empty, we still added a new subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[0],
 		linear_increases[1],
@@ -922,7 +912,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	std::list<int>::const_iterator fifth = numbers.begin();
 	std::advance(fifth, 4);
 	batch.emplace(batch.begin(), numbers.cbegin(), fifth); //Prepend part of this list at the start.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "This is the second time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{1, 2, 3, 4},
 		linear_increases[0],
@@ -936,7 +925,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	std::list<int>::const_iterator second = numbers.begin();
 	std::advance(second, 1);
 	batch.emplace(batch.begin() + 4, second, fifth); //Insert a subbatch in the middle too.
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "This is the third time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{1, 2, 3, 4},
 		linear_increases[0],
@@ -963,7 +951,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	InputIteratorLimiter<BatchBase<int>::const_iterator> end(one_through_nine.end());
 
 	batch.emplace(batch.end(), begin, fifth);
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a subbatch, so it's one larger now.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		linear_increases[0],
 		linear_increases[1],
@@ -974,7 +961,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	})) << "There is a new subbatch at the end.";
 
 	batch.emplace(batch.begin(), fifth, fifth); //Empty range!
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "Even though the subbatch was empty, we still added a new subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{},
 		linear_increases[0],
@@ -986,7 +972,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	})) << "We added an empty subbatch at the start.";
 
 	batch.emplace(batch.begin() + 4, fifth, end);
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "This is the third time we added a subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{},
 		linear_increases[0],
@@ -1008,7 +993,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.begin(), one_through_nine);
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1019,7 +1003,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	})) << "We added the one_through_nine batch at the front.";
 
 	batch.emplace(batch.end(), one);
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1031,7 +1014,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	})) << "We added the one batch at the end.";
 
 	batch.emplace(batch.begin() + 2, one_two);
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1056,7 +1038,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	BatchBase<int> one_two_copy = one_two;
 
 	batch.emplace(batch.begin(), std::move(one_through_nine_copy));
-	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1067,7 +1048,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	})) << "We added the one_through_nine batch at the front.";
 
 	batch.emplace(batch.end(), std::move(one_copy));
-	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1079,7 +1059,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	})) << "We added the one batch at the end.";
 
 	batch.emplace(batch.begin() + 2, std::move(one_two_copy));
-	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		one_through_nine,
 		linear_increases[0],
@@ -1100,7 +1079,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.begin(), {9, 8, 7});
-	EXPECT_EQ(batch.size(), power_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{9, 8, 7},
 		power_increases[0],
@@ -1112,7 +1090,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added {9, 8, 7} at the front.";
 
 	batch.emplace(batch.end(), {6});
-	EXPECT_EQ(batch.size(), power_increases.size() + 2) << "We added another subbatch, so the size grew again.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{9, 8, 7},
 		power_increases[0],
@@ -1125,7 +1102,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added {6} at the end.";
 
 	batch.emplace(batch.begin() + 3, {});
-	EXPECT_EQ(batch.size(), power_increases.size() + 3) << "We added a third subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{9, 8, 7},
 		power_increases[0],
@@ -1139,7 +1115,6 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added an empty subbatch in the middle.";
 
 	batch.emplace(batch.begin() + 4, {5, 4, 3, 2, 1});
-	EXPECT_EQ(batch.size(), power_increases.size() + 4) << "We added a fourth subbatch.";
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
 		{9, 8, 7},
 		power_increases[0],
