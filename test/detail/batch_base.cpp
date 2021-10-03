@@ -1614,4 +1614,48 @@ TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
 	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
 }
 
+/*!
+ * Test inserting a range of subbatches into the batch.
+ *
+ * This range is defined by input iterators, meaning we can't directly measure
+ * the size of the range nor iterate multiple times over it. These are the most
+ * limited type of iterators.
+ */
+TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> middle(power_increases.begin() + 4);
+	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+
+	batch.insert(batch.begin(), middle, end);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		power_increases[4],
+		power_increases[5],
+		linear_increases[0],
+		linear_increases[1],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4]
+	})) << "We inserted two elements of power_increases at the start.";
+
+	batch.insert(batch.begin() + 4, begin, middle);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		power_increases[4],
+		power_increases[5],
+		linear_increases[0],
+		linear_increases[1],
+		power_increases[0],
+		power_increases[1],
+		power_increases[2],
+		power_increases[3],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4]
+	})) << "We inserted the first four subbatches of power_increases in the middle.";
+
+	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	batch.insert(batch.begin() + 7, middle, middle);
+	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
+}
+
 }
