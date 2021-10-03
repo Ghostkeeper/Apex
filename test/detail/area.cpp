@@ -222,9 +222,9 @@ TEST(SimplePolygonArea, ZeroWidth) {
  * 1/2 * n * r^2 * sin(2*pi / n)
  */
 TEST(SimplePolygonArea, Circle) {
-	constexpr size_t num_vertices = 1000000;
-	constexpr coord_t radius = 1000000;
 	MockSimplePolygon circle(MockSimplePolygon::Shape::CIRCLE);
+	const size_t num_vertices = circle.size();
+	const coord_t radius = circle[0].x;
 
 	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
@@ -347,9 +347,9 @@ TEST(SimplePolygonBatchArea, EdgeCases) {
  */
 TEST(SimplePolygonBatchArea, TwoCircles) {
 	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::TWO_CIRCLES);
+	const size_t num_vertices = batch[0].size();
+	const coord_t radius = batch[0][0].x;
 
-	constexpr size_t num_vertices = 1000000;
-	constexpr coord_t radius = 1000000;
 	const area_t true_area = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
