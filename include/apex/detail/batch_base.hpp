@@ -1257,7 +1257,7 @@ public:
 			views.back().assign(start->begin(), start->end()); //Copy data from the original batch into subelement array.
 		}
 		//Now insert the new views directly into the views array.
-		return std::vector<SubbatchView<Element>>::insert(views.begin(), views.end());
+		return std::vector<SubbatchView<Element>>::insert(position, views.begin(), views.end());
 	}
 
 	/*!
