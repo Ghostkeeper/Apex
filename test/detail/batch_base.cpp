@@ -1658,4 +1658,58 @@ TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
 	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
 }
 
+/*!
+ * Test inserting a list of subbatches into the batch via initialiser lists.
+ */
+TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+
+	batch.insert(batch.begin(), {one_two, one});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		one_two,
+		one,
+		power_increases[0],
+		power_increases[1],
+		power_increases[2],
+		power_increases[3],
+		power_increases[4],
+		power_increases[5]
+	})) << "We inserted a list of two subbatches at the start.";
+
+	batch.insert(batch.begin() + 3, {one_through_nine, one, one});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		one_two,
+		one,
+		power_increases[0],
+		one_through_nine,
+		one,
+		one,
+		power_increases[1],
+		power_increases[2],
+		power_increases[3],
+		power_increases[4],
+		power_increases[5]
+	})) << "We inserted three more subbatches in the middle.";
+
+	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	batch.insert(batch.begin() + 8, {});
+	EXPECT_EQ(batch, original) << "We inserted an empty initialiser list, so the batch should remain unchanged.";
+
+	batch.insert(batch.end(), {one_two});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		one_two,
+		one,
+		power_increases[0],
+		one_through_nine,
+		one,
+		one,
+		power_increases[1],
+		power_increases[2],
+		power_increases[3],
+		power_increases[4],
+		power_increases[5],
+		one_two
+	})) << "We inserted a subbatch at the end.";
+}
+
 }
