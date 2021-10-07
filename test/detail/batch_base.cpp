@@ -1712,4 +1712,30 @@ TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
 	})) << "We inserted a subbatch at the end.";
 }
 
+/*!
+ * Test appending a new subbatch to the end by making a copy of it.
+ */
+TEST_F(BatchOfBatchesFixture, PushBackCopy) {
+	BatchBase<BatchBase<int>> batch;
+	batch.push_back(one_two);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+
+	batch.push_back({});
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		one_two,
+		{}
+	})) << "We added an empty subbatch at the end.";
+
+	batch = linear_increases; //Make a copy so that we can compare with the original.
+	batch.push_back(one_through_nine);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		linear_increases[0],
+		linear_increases[1],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4],
+		one_through_nine
+	})) << "We appended one_through_nine to the end of it.";
+}
+
 }
