@@ -1738,4 +1738,33 @@ TEST_F(BatchOfBatchesFixture, PushBackCopy) {
 	})) << "We appended one_through_nine to the end of it.";
 }
 
+/*!
+ * Test appending a new subbatch to the end by moving it.
+ */
+TEST_F(BatchOfBatchesFixture, PushBackMove) {
+	BatchBase<BatchBase<int>> batch;
+	BatchBase<int> one_two_copy = one_two; //Make a copy that we can move while leaving the original intact to compare with.
+	batch.push_back(std::move(one_two_copy));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+
+	BatchBase<int> empty;
+	batch.push_back(std::move(empty));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		one_two,
+		{}
+	})) << "We added an empty subbatch at the end.";
+
+	batch = linear_increases; //Make a copy so that we can compare with the original.
+	BatchBase<int> one_through_nine_copy = one_through_nine;
+	batch.push_back(std::move(one_through_nine_copy));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		linear_increases[0],
+		linear_increases[1],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4],
+		one_through_nine
+	})) << "We appended one_through_nine to the end of it.";
+}
+
 }
