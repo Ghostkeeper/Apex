@@ -1767,4 +1767,45 @@ TEST_F(BatchOfBatchesFixture, PushBackMove) {
 	})) << "We appended one_through_nine to the end of it.";
 }
 
+/*!
+ * Test appending a new subbatch view to the end by making a copy of it.
+ */
+TEST_F(BatchOfBatchesFixture, PushBackCopyView) {
+	BatchBase<BatchBase<int>> batch;
+	batch.push_back(power_increases[3]);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[3]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+
+	batch = linear_increases; //Make a copy so that we can compare with the original.
+	batch.push_back(power_increases[2]);
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		linear_increases[0],
+		linear_increases[1],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4],
+		power_increases[2]
+	})) << "We appended power_increases[2] to the end of it.";
+}
+
+/*!
+ * Test appending a new subbatch view to the end by moving it.
+ */
+TEST_F(BatchOfBatchesFixture, PushBackMoveView) {
+	BatchBase<BatchBase<int>> batch;
+	BatchBase<BatchBase<int>> power_increases_copy = power_increases; //Make a copy that we can move while leaving the original intact to compare with.
+	batch.push_back(std::move(power_increases_copy[5]));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[5]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+
+	batch = linear_increases; //Make a copy so that we can compare with the original.
+	batch.push_back(std::move(power_increases[3]));
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		linear_increases[0],
+		linear_increases[1],
+		linear_increases[2],
+		linear_increases[3],
+		linear_increases[4],
+		power_increases[3]
+	})) << "We appended power_increases[3] to the end of it.";
+}
+
 }
