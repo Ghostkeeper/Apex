@@ -1868,4 +1868,23 @@ TEST_F(BatchOfBatchesFixture, ResizeGrow) {
 	})) << "We grew from 5 to 8 subbatches, so there must now be 3 empty subbatches at the end.";
 }
 
+/*!
+ * Test resizing the batch of batches to a smaller size while passing a default
+ * element to fill in empty spots with.
+ *
+ * The default element should not get used.
+ */
+TEST_F(BatchOfBatchesFixture, ResizeShrinkWithDefault) {
+	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we have something to compare with.
+
+	batch.resize(2, one); //Shrink to 2 subbatches.
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		linear_increases[0],
+		linear_increases[1],
+	})) << "The first two subbatches must have been retained, while the rest has been dropped.";
+
+	batch.resize(0, one_through_nine); //Shrink to 0 subbatches.
+	EXPECT_TRUE(batch.empty()) << "We shrank to 0 subbatches, so it must now be an empty batch of batches.";
+}
+
 }
