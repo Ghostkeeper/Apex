@@ -18,13 +18,15 @@ The goal of eventually maybe having a usable library is only secondary, but it s
 Requirements
 ----
 Apex is a header-only library, meaning that there are no binaries to distribute. To use Apex, only the files in the `include` folder need to be included into your project. However some dependencies are required as well:
-* A C++17-compliant compiler. Apex is tested using Clang, GCC and MinGW-w64.
-  * GCC and MinGW don't sufficiently support OpenMP teams at the time of this writing to use GPUs or accelerators. I'm betting on that they will by the time this library is in a useable state.
+* A C++17-compliant compiler. Apex is tested using Clang 12 and GCC 9.3.
+  * GCC and MinGW don't sufficiently support OpenMP teams at the time of this writing to use GPUs or accelerators. I'm betting on that they will by the time this library is in a useable state. Currently these are limited to use only the CPU versions of algorithms.
   * When using GCC, use at GCC-8 or later. In GCC-7.4 there are still bugs that prevent this library from compiling.
+  * To use GPU acceleration, you will need to build a compiler with bindings to the drivers of the graphics card you will be compiling for. This involves compiling your own compiler, such as described [here](https://hpc-wiki.info/hpc/Building_LLVM/Clang_with_OpenMP_Offloading_to_NVIDIA_GPUs). It is sadly not currently possible to compile one binary that works on all common graphics cards. You would have to load libraries dynamically based on the graphics card in use.
 * OpenMP is used to distribute computation.
 
-To build the tests, some additional dependencies are required:
+To build the tests and documentation, some additional dependencies are required:
 * GTest, a C++ unit testing suite.
+* Doxygen, a system to compile documentation into a human-readable form.
 
 Usage
 ----
