@@ -925,12 +925,16 @@ public:
 	 * \param count The new size of the batch of batches.
 	 */
 	void resize(const size_t count) {
-		if(count > size()) { //We need to add subbatches, then we need to also reserve at least 1 subelement for each of them.
-			const size_t missing = count - size();
-			next_position += missing;
-			reserve_subelements(next_position);
+		if(count < size()) {
+			std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 1));
+		} else if(count > size()) { //If the size increases, we need to allocate memory in the subelements and assign spots for each subbatch.
+			reserve(count);
+			reserve_subelements(next_position + count - size());
+			while(size() < count) {
+				std::vector<SubbatchView<Element>>::emplace_back(*this, next_position, 0, 1);
+				next_position += 1;
+			}
 		}
-		std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 1));
 	}
 
 	/*!
