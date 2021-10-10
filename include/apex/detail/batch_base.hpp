@@ -949,7 +949,7 @@ public:
 	 */
 	void resize(const size_t count, const BatchBase<Element>& value) {
 		if(count < size()) {
-			std::vector<SubbatchView<Element>>::resize(count);
+			std::vector<SubbatchView<Element>>::resize(count, SubbatchView<Element>(*this, next_position, 0, 1));
 		} else if(count > size()) {
 			reserve(count);
 			reserve_subelements(next_position + (count - size()) * std::max(size_t(1), value.size()));
