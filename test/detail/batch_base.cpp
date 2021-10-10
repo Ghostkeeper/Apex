@@ -1887,4 +1887,25 @@ TEST_F(BatchOfBatchesFixture, ResizeShrinkWithDefault) {
 	EXPECT_TRUE(batch.empty()) << "We shrank to 0 subbatches, so it must now be an empty batch of batches.";
 }
 
+/*!
+ * Test resizing the batch of batches to a bigger size, while passing a default
+ * element to fill in empty spots with.
+ */
+TEST_F(BatchOfBatchesFixture, ResizeGrowWithDefault) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare to the original.
+
+	batch.resize(9, one_two); //Grow to 9 subbatches.
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		power_increases[0],
+		power_increases[1],
+		power_increases[2],
+		power_increases[3],
+		power_increases[4],
+		power_increases[5],
+		one_two,
+		one_two,
+		one_two
+	})) << "We grew from 6 to 9 subbatches, so the provided default subbatch must be appended 3 times at the end.";
+}
+
 }
