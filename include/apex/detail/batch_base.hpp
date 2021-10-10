@@ -951,7 +951,7 @@ public:
 		if(count < size()) {
 			std::vector<SubbatchView<Element>>::resize(count);
 		} else if(count > size()) {
-			reserve(size() + count);
+			reserve(count);
 			reserve_subelements(next_position + (count - size()) * std::max(size_t(1), value.size()));
 			while(size() < count) {
 				push_back_unsafe(value); //Append a number of copies of the given subbatch.
