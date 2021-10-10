@@ -1809,7 +1809,7 @@ TEST_F(BatchOfBatchesFixture, PushBackMoveView) {
 }
 
 /*!
- * Tests reserving memory for the subelements, by looking if iterators for
+ * Test reserving memory for the subelements, by looking if iterators for
  * subelements are not invalidated for at least the reserved number of
  * subelements.
  */
@@ -1827,6 +1827,26 @@ TEST_F(BatchOfBatchesFixture, ReserveSubelementsRetainsIterators) {
 	EXPECT_EQ(*first, one[0]) << "We must still be able to read the contents in this iterator.";
 	EXPECT_EQ(*second, one_two[0]) << "We must still be able to read the contents in this iterator.";
 	EXPECT_EQ(*third, one_two[1]) << "We must still be able to read the contents in this iterator.";
+}
+
+/*!
+ * Test resizing the batch of batches to a smaller size.
+ *
+ * The data at the start of the batch has to be retained, while subbatches at
+ * the end are dropped then.
+ */
+TEST_F(BatchOfBatchesFixture, ResizeShrink) {
+	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we have something to compare with.
+
+	batch.resize(3); //Shrink to 3 subbatches.
+	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+		power_increases[0],
+		power_increases[1],
+		power_increases[2]
+	})) << "The first three subbatches must have been retained, while the rest has been dropped.";
+
+	batch.resize(0); //Shrink to 0 subbatches.
+	EXPECT_TRUE(batch.empty()) << "We shrank to 0 subbatches, so it must now be an empty batch of batches.";
 }
 
 }
