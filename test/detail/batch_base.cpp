@@ -1808,4 +1808,25 @@ TEST_F(BatchOfBatchesFixture, PushBackMoveView) {
 	})) << "We appended power_increases[3] to the end of it.";
 }
 
+/*!
+ * Tests reserving memory for the subelements, by looking if iterators for
+ * subelements are not invalidated for at least the reserved number of
+ * subelements.
+ */
+TEST_F(BatchOfBatchesFixture, ReserveSubelementsRetainsIterators) {
+	BatchBase<BatchBase<int>> batch = {one, one_two}; //Have something that we can refer to before reserving more subelements.
+	batch.reserve_subelements(one.size() + one_two.size() + one_through_nine.size()); //Reserve enough to contain all data we'll put in it.
+
+	//Now store iterators to the current data. They must not get invalidated when we add more data.
+	BatchBase<int>::const_iterator first = batch[0].begin();
+	BatchBase<int>::const_iterator second = batch[1].begin();
+	BatchBase<int>::const_iterator third = batch[1].begin() + 1;
+
+	batch.push_back(one_through_nine); //Much bigger array. This would normally cause reallocation, invalidating the iterators. But not now!
+
+	EXPECT_EQ(*first, one[0]) << "We must still be able to read the contents in this iterator.";
+	EXPECT_EQ(*second, one_two[0]) << "We must still be able to read the contents in this iterator.";
+	EXPECT_EQ(*third, one_two[1]) << "We must still be able to read the contents in this iterator.";
+}
+
 }
