@@ -1908,4 +1908,27 @@ TEST_F(BatchOfBatchesFixture, ResizeGrowWithDefault) {
 	})) << "We grew from 6 to 9 subbatches, so the provided default subbatch must be appended 3 times at the end.";
 }
 
+/*!
+ * Test whether ``shrink_to_fit`` reduces the reported memory usage (via
+ * ``size_subelements``) to match the minimum used memory needed to store the
+ * data.
+ */
+TEST_F(BatchOfBatchesFixture, ShrinkToFit) {
+	//Find how many elements are stored in total.
+	size_t minimum_memory = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const SubbatchView<int>& subbatch) {
+		return current + subbatch.size();
+	});
+	//Now add a few extra elements. This causes the subbatches to reallocate with doubling, adding superfluous extra capacity.
+	power_increases[3].push_back(100);
+	power_increases[4].push_back(101);
+	power_increases[1].push_back(102);
+	minimum_memory += 3; //Because we added 3 elements.
+	BatchBase<BatchBase<int>> before_shrinking = power_increases; //Store a copy of this state. Shrinking shouldn't change the data, so we can compare to this.
+
+	power_increases.shrink_to_fit();
+
+	EXPECT_EQ(power_increases, before_shrinking) << "The data in the batch should not be changed by shrinking.";
+	EXPECT_EQ(power_increases.size_subelements(), minimum_memory) << "The size of the subelement array should now equal the number of elements, since that is the minimum size needed to store the data.";
+}
+
 }
