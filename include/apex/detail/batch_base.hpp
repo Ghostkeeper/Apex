@@ -980,8 +980,8 @@ public:
 	 */
 	void shrink_to_fit() {
 		//Figure out how much space to allocate for our optimised buffer.
-		const size_t num_subelements = std::accumulate(cbegin(), cend(), [](const SubbatchView<Element>& a, const SubbatchView<Element>& b) {
-			return std::max(a.size(), 1) + std::max(b.size(), 1);
+		const size_t num_subelements = std::accumulate(cbegin(), cend(), size_t(0), [](const size_t current, const SubbatchView<Element>& subbatch) {
+			return current + std::max(subbatch.size(), size_t(1));
 		});
 		std::vector<Element> optimised(num_subelements); //Allocate the necessary memory. We'll move this on top of our old buffer once all data is moved.
 
@@ -992,7 +992,7 @@ public:
 				optimised[optimised_position + i] = std::move(subelements[subbatch.start_index + i]);
 			}
 			subbatch.start_index = optimised_position;
-			subbatch.current_capacity = std::max(subbatch.size(), 1);
+			subbatch.current_capacity = std::max(subbatch.size(), size_t(1));
 			optimised_position += subbatch.capacity();
 		}
 
