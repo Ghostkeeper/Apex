@@ -1931,4 +1931,29 @@ TEST_F(BatchOfBatchesFixture, ShrinkToFit) {
 	EXPECT_EQ(power_increases.size_subelements(), minimum_memory) << "The size of the subelement array should now equal the number of elements, since that is the minimum size needed to store the data.";
 }
 
+/*!
+ * Test counting the size of the subelement array.
+ */
+TEST_F(BatchOfBatchesFixture, SizeSubelements) {
+	size_t power_subelement_count = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const SubbatchView<int>& subbatch) {
+		return current + subbatch.size();
+	});
+	EXPECT_GE(power_increases.size_subelements(), power_subelement_count) << "The size of the subelement array must be at least as big as the number of subelements (but may be larger if there are dead spots).";
+	//Check for each subelement if it occurs somewhere in the subelement buffer. If it does, remove it so we also properly count doubles.
+	std::vector<int> subelement_buffer(power_increases.size_subelements());
+	for(size_t i = 0; i < power_increases.size_subelements(); ++i) {
+		subelement_buffer.push_back(power_increases.data_subelements()[i]);
+	}
+
+	for(SubbatchView<int>& subbatch : power_increases) {
+		for(int subelement : subbatch) {
+			std::vector<int>::iterator found_element = std::find(subelement_buffer.begin(), subelement_buffer.end(), subelement);
+			EXPECT_NE(found_element, subelement_buffer.end()) << "Every subelement of the batch of batches must be somewhere within the range [0, size_subelements()] in the subelement array.";
+			if(found_element != subelement_buffer.end()) {
+				(*found_element) = -1; //Remove this element so that we don't find it again if we're looking for the same integer.
+			}
+		}
+	}
+}
+
 }
