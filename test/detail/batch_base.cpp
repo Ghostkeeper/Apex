@@ -1956,4 +1956,25 @@ TEST_F(BatchOfBatchesFixture, SizeSubelements) {
 	}
 }
 
+/*!
+ * Test swapping the contents of batches of batches.
+ */
+TEST_F(BatchOfBatchesFixture, Swap) {
+	BatchBase<BatchBase<int>> batch_a = linear_increases; //Make copies so that we can compare with their original contents.
+	BatchBase<BatchBase<int>> batch_b = power_increases;
+
+	batch_a.swap(batch_b);
+	ASSERT_EQ(batch_a, power_increases) << "Batch A was swapped with Batch B, which contained power_increases at the time, so now Batch A must contain power_increases.";
+	ASSERT_EQ(batch_b, linear_increases) << "Batch A, which contained linear_increases at the time, was swapped with Batch B, so now Batch B must contain linear_increases.";
+
+	batch_a.swap(batch_b);
+	ASSERT_EQ(batch_a, linear_increases) << "We're swapping them back, so now Batch A contains linear_increases again.";
+	ASSERT_EQ(batch_b, power_increases) << "We're swapping them back, so now Batch B contains power_increases again.";
+
+	batch_a = empty_batch;
+	batch_b.swap(batch_a);
+	ASSERT_EQ(batch_a, power_increases) << "Batch A was made empty and then swapped with the non-empty Batch B, so now Batch A must contain power_increases.";
+	ASSERT_EQ(batch_b, empty_batch) << "Batch A was made empty and then swapped with Batch B, so now Batch B must be the empty one.";
+}
+
 }
