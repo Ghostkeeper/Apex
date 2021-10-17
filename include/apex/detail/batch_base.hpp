@@ -1031,9 +1031,15 @@ public:
 	 * \param other The batch of batches to swap with.
 	 */
 	void swap(BatchBase<BatchBase<Element>>& other) noexcept {
-		subelements.swap(other.subelements);
+		std::swap(subelements, other.subelements);
 		std::swap(next_position, other.next_position);
 		std::vector<SubbatchView<Element>>::swap(static_cast<std::vector<SubbatchView<Element>>&>(other)); //Swap all the views on that data too.
+		for(SubbatchView<Element>& subbatch : *this) { //Update the pointers to the parent batch in each subbatch.
+			subbatch.batch = this;
+		}
+		for(SubbatchView<Element>& subbatch : other) {
+			subbatch.batch = &other;
+		}
 	}
 
 	protected:
