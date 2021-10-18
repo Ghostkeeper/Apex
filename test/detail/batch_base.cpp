@@ -9,6 +9,7 @@
 #include <gtest/gtest.h> //To run the test.
 #include <list> //For linked lists, a data structure with inherently limited iterators, from which batches must be able to copy.
 
+#include "../helpers/fuzz_equal_behaviour.hpp" //To test whether batches behave equally to vectors.
 #include "../helpers/input_iterator_limiter.hpp" //To test with very limited iterator types.
 #include "apex/detail/batch_base.hpp" //The code under test.
 
@@ -1975,6 +1976,33 @@ TEST_F(BatchOfBatchesFixture, Swap) {
 	batch_b.swap(batch_a);
 	ASSERT_EQ(batch_a, power_increases) << "Batch A was made empty and then swapped with the non-empty Batch B, so now Batch A must contain power_increases.";
 	ASSERT_EQ(batch_b, empty_batch) << "Batch A was made empty and then swapped with Batch B, so now Batch B must be the empty one.";
+}
+
+/*!
+ * Fuzz test that applies equivalent actions to a batch of batches and a vector
+ * of vectors.
+ *
+ * This is effectively an integration test that tests the whole class. It
+ * verifies that a batch of batches behaves the same way as a vector of vectors,
+ * even though the implementation is very different.
+ */
+TEST(BatchOfBatches, VectorEquivalenceFuzz) {
+	FuzzEqualBehaviour<BatchBase<BatchBase<int>>, std::vector<std::vector<int>>> fuzzer([](const BatchBase<BatchBase<int>>& batch, const std::vector<std::vector<int>>& vec) {
+		if(batch.size() != vec.size()) { //If they have a different number of subbatches, they are not equal.
+			return false;
+		}
+		for(size_t i = 0; i < batch.size(); ++i) {
+			if(batch[i].size() != vec[i].size()) { //If a subbatch has a different number of subelements, they are not equal.
+				return false;
+			}
+			for(size_t j = 0; j < batch[i].size(); ++i) {
+				if(batch[i][j] != vec[i][j]) { //If the subelement in the same position has a different value, they are not equal.
+					return false;
+				}
+			}
+		}
+		return true; //Everything checked. They are equal.
+	});
 }
 
 }
