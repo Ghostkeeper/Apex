@@ -54,6 +54,13 @@ template<typename A, typename B>
 class FuzzEqualBehaviour {
 public:
 	/*!
+	 * Construct a new fuzz tester.
+	 * \param is_equivalent A function that evaluates whether an instance of
+	 * class A is equivalent to an instance of class B.
+	 */
+	FuzzEqualBehaviour(const std::function<bool(const A&, const B&)> is_equivalent) : is_equivalent(is_equivalent) {}
+
+	/*!
 	 * The function that determines whether two instances of the classes are in
 	 * an equivalent state.
 	 *
