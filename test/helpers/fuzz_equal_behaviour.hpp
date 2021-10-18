@@ -83,8 +83,12 @@ public:
 	 * probability for this transformation by dividing this chance by the total
 	 * summed chances of all transformations.
 	 */
-	void add_transformation(std::function<void(A&)>& a_transformation, std::function<void(B&)>& b_transformation, double chance) {
-		//TODO.
+	void add_transformation(std::function<void(A&)> a_transformation, std::function<void(B&)> b_transformation, double chance) {
+		double cumulative = chance;
+		if(!transformations.empty()) {
+			cumulative += transformations.back().cumulative_chance;
+		}
+		transformations.emplace_back(a_transformation, b_transformation, cumulative);
 	}
 
 	/*!
@@ -110,6 +114,18 @@ protected:
 	 * when both of them are transformed.
 	 */
 	struct TransformationOption {
+		/*!
+		 * Construct a new option.
+		 * \param transform_a The function that transforms instances of class A.
+		 * \param transform_b The function that transforms instances of class B.
+		 * \param cumulative_chance The cumulative chance of all options up to
+		 * and including this option.
+		 */
+		TransformationOption(std::function<void(A&)> transform_a, std::function<void(B&)> transform_b, double cumulative_chance) :
+			transform_a(transform_a),
+			transform_b(transform_b),
+			cumulative_chance(cumulative_chance) {}
+
 		/*!
 		 * The function that transforms instances of class A.
 		 */
