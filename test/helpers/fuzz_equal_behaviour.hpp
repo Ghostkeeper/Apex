@@ -9,6 +9,9 @@
 #ifndef APEX_FUZZ_EQUAL_BEHAVIOUR
 #define APEX_FUZZ_EQUAL_BEHAVIOUR
 
+#include <gtest/gtest.h> //To assert equivalence.
+#include <random> //Pseudo-random fuzz testing.
+
 namespace apex {
 
 /*!
@@ -101,7 +104,28 @@ public:
 	 * test to take longer, but will also improve the coverage of the test.
 	 */
 	void run(A& a_start, B& b_start, const size_t steps) {
-		//TODO.
+		//Some pre-checks to verify the validity of the test.
+		ASSERT_GT(transformations.size(), 0) << "We must have at least 1 transformation to repeatedly apply to these instances.";
+		ASSERT_TRUE(is_equivalent(a_start, b_start)) << "The two instances must start off equivalent.";
+
+		//Random number generator.
+		std::default_random_engine random_engine(transformations.size()); //Seed with the number of transformations.
+		std::uniform_real_distribution rng(0.0, transformations.back().cumulative_chance); //We'll generate random numbers in the range of the sum of all chances.
+
+		for(size_t step = 0; step < steps; ++step) {
+			//Choose a random transformation, based on the pseudo-random number generator and the weighted chances of each transformation.
+			const double random_number = rng(random_engine);
+			size_t chosen_index = 0;
+			while(random_number > transformations[chosen_index].cumulative_chance) {
+				++chosen_index;
+			}
+
+			//Execute the chosen transformation.
+			transformations[chosen_index].transform_a(a_start);
+			transformations[chosen_index].transform_b(b_start);
+
+			ASSERT_TRUE(is_equivalent(a_start, b_start)) << "After transforming with option " << chosen_index << ", the two instances must remain equivalent.";
+		}
 	}
 
 protected:
