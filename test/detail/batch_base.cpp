@@ -1995,7 +1995,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			if(batch[i].size() != vec[i].size()) { //If a subbatch has a different number of subelements, they are not equal.
 				return false;
 			}
-			for(size_t j = 0; j < batch[i].size(); ++i) {
+			for(size_t j = 0; j < batch[i].size(); ++j) {
 				if(batch[i][j] != vec[i][j]) { //If the subelement in the same position has a different value, they are not equal.
 					return false;
 				}
