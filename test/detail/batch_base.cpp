@@ -1991,12 +1991,12 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		if(batch.size() != vec.size()) { //If they have a different number of subbatches, they are not equal.
 			return false;
 		}
-		for(size_t i = 0; i < batch.size(); ++i) {
-			if(batch[i].size() != vec[i].size()) { //If a subbatch has a different number of subelements, they are not equal.
+		for(size_t subbatch = 0; subbatch < batch.size(); ++subbatch) {
+			if(batch[subbatch].size() != vec[subbatch].size()) { //If a subbatch has a different number of subelements, they are not equal.
 				return false;
 			}
-			for(size_t j = 0; j < batch[i].size(); ++j) {
-				if(batch[i][j] != vec[i][j]) { //If the subelement in the same position has a different value, they are not equal.
+			for(size_t subelement = 0; subelement < batch[subbatch].size(); ++subelement) {
+				if(batch[subbatch][subelement] != vec[subbatch][subelement]) { //If the subelement in the same position has a different value, they are not equal.
 					return false;
 				}
 			}
