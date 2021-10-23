@@ -2038,6 +2038,10 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin()); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin()); },
 		10.0);
+	fuzzer.add_transformation("emplace_empty_mid",
+		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2); },
+		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2); },
+		10.0);
 	fuzzer.add_transformation("emplace_empty_end",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end()); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.end()); },
@@ -2045,6 +2049,10 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 	fuzzer.add_transformation("emplace_copies_begin",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin(), size_t(8), 42); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin(), size_t(8), 42); },
+		10.0);
+	fuzzer.add_transformation("emplace_copies_mid",
+		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, size_t(8), 42); },
+		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2, size_t(8), 42); },
 		10.0);
 	fuzzer.add_transformation("emplace_copies_end",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end(), size_t(6), 69); },
@@ -2058,6 +2066,16 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		[](std::vector<std::vector<int>>& vec) {
 			const std::list<int> source({4, 3, 2, 1});
 			vec.emplace(vec.cbegin(), source.cbegin(), source.cend());
+		},
+		10.0);
+	fuzzer.add_transformation("emplace_iterator_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const std::list<int> source({4, 3, 2, 1});
+			batch.emplace(batch.cbegin() + batch.size() / 2, source.cbegin(), source.cend());
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::list<int> source({4, 3, 2, 1});
+			vec.emplace(vec.cbegin() + vec.size() / 2, source.cbegin(), source.cend());
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_iterator_end",
@@ -2080,6 +2098,16 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			vec.emplace(vec.cbegin(), source);
 		},
 		10.0);
+	fuzzer.add_transformation("emplace_copy_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({99});
+			batch.emplace(batch.cbegin() + batch.size() / 2, source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({99});
+			vec.emplace(vec.cbegin() + vec.size() / 2, source);
+		},
+		10.0);
 	fuzzer.add_transformation("emplace_copy_end",
 		[](BatchBase<BatchBase<int>>& batch) {
 			const BatchBase<int> source({88});
@@ -2100,6 +2128,16 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			vec.emplace(vec.cbegin(), std::move(source));
 		},
 		10.0);
+	fuzzer.add_transformation("emplace_move_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({77});
+			batch.emplace(batch.cbegin() + batch.size() / 2, std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({77});
+			vec.emplace(vec.cbegin() + vec.size() / 2, std::move(source));
+		},
+		10.0);
 	fuzzer.add_transformation("emplace_move_end",
 		[](BatchBase<BatchBase<int>>& batch) {
 			BatchBase<int> source({66});
@@ -2113,6 +2151,10 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 	fuzzer.add_transformation("emplace_initializer_list_begin",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin(), {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin(), std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
+		10.0);
+	fuzzer.add_transformation("emplace_initializer_list_mid",
+		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, {1, 2, 3, 4, 5}); },
+		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2, std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("emplace_initializer_list_end",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end(), {1, 2, 3, 4, 5}); },
