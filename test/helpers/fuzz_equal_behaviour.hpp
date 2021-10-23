@@ -79,6 +79,8 @@ public:
 	 * two instances start out in an equivalent state, then applying the
 	 * respective transformations to the two instances will keep them in
 	 * equivalent states.
+	 * \param label A programmer-readable name to show in error messages if this
+	 * transformation caused the test to fail.
 	 * \param a_transformation The transformation applied to class A.
 	 * \param b_transformation The transformation applied to class B.
 	 * \param chance The relative chance for this transformation to be applied.
@@ -86,12 +88,12 @@ public:
 	 * probability for this transformation by dividing this chance by the total
 	 * summed chances of all transformations.
 	 */
-	void add_transformation(std::function<void(A&)> a_transformation, std::function<void(B&)> b_transformation, double chance) {
+	void add_transformation(const std::string label, std::function<void(A&)> a_transformation, std::function<void(B&)> b_transformation, double chance) {
 		double cumulative = chance;
 		if(!transformations.empty()) {
 			cumulative += transformations.back().cumulative_chance;
 		}
-		transformations.emplace_back(a_transformation, b_transformation, cumulative);
+		transformations.emplace_back(label, a_transformation, b_transformation, cumulative);
 	}
 
 	/*!
@@ -124,7 +126,7 @@ public:
 			transformations[chosen_index].transform_a(a_start);
 			transformations[chosen_index].transform_b(b_start);
 
-			ASSERT_TRUE(is_equivalent(a_start, b_start)) << "After transforming with option " << chosen_index << ", the two instances must remain equivalent.";
+			ASSERT_TRUE(is_equivalent(a_start, b_start)) << "After transforming with option " << transformations[chosen_index].label << ", the two instances must remain equivalent.";
 		}
 	}
 
@@ -145,10 +147,16 @@ protected:
 		 * \param cumulative_chance The cumulative chance of all options up to
 		 * and including this option.
 		 */
-		TransformationOption(std::function<void(A&)> transform_a, std::function<void(B&)> transform_b, double cumulative_chance) :
+		TransformationOption(const std::string label, const std::function<void(A&)> transform_a, const std::function<void(B&)> transform_b, const double cumulative_chance) :
+			label(label),
 			transform_a(transform_a),
 			transform_b(transform_b),
 			cumulative_chance(cumulative_chance) {}
+
+		/*!
+		 * Label to show in error messages if this transformation failed.
+		 */
+		std::string label;
 
 		/*!
 		 * The function that transforms instances of class A.

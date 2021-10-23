@@ -2004,13 +2004,13 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		return true; //Everything checked. They are equal.
 	});
 
-	fuzzer.add_transformation(
+	fuzzer.add_transformation("assign_empty",
 		[](BatchBase<BatchBase<int>>& batch) { batch.assign({}); },
 		[](std::vector<std::vector<int>>& vec) { vec.assign({}); },
 		1.0);
-	fuzzer.add_transformation(
+	fuzzer.add_transformation("assign_singular",
 		[](BatchBase<BatchBase<int>>& batch) { batch.assign({{1}}); },
-		[](std::vector<std::vector<int>>& vec) { vec.assign({{1}}); },
+		[](std::vector<std::vector<int>>& vec) { vec.assign({{2}}); },
 		1.0);
 
 	BatchBase<BatchBase<int>> batch;
