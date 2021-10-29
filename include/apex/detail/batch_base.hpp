@@ -1177,10 +1177,11 @@ public:
 		reserve_subelements(next_position + subelement_count);
 
 		//Since we can't directly adjust the size of the views list, we'll have to insert repeated counts of the first view and adjust its fields afterwards.
-		iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
+		const iterator result = std::vector<SubbatchView<Element>>::insert(position, subbatch_count, SubbatchView(*this, next_position, 0, std::max(size_t(1), start->size())));
 		iterator subbatch = begin() + index;
 		for(InputIterator it = start; it != end; it++) {
 			subbatch->start_index = next_position;
+			subbatch->current_capacity = std::max(size_t(1), it->size());
 			next_position += std::max(size_t(1), it->size());
 			subbatch->assign(it->begin(), it->end()); //Copy data from original batch into subelement array.
 			subbatch++;
