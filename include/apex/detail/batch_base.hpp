@@ -1265,6 +1265,7 @@ public:
 			const size_t capacity = std::max(size_t(1), start->size());
 			views.emplace_back(*this, next_position, 0, capacity);
 			reserve_subelements_doubling(next_position + capacity);
+			next_position += capacity;
 			views.back().assign(start->begin(), start->end()); //Copy data from the original batch into subelement array.
 		}
 		//Now insert the new views directly into the views array.
