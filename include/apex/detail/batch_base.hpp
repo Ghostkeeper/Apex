@@ -9,8 +9,9 @@
 #ifndef APEX_BATCH_BASE
 #define APEX_BATCH_BASE
 
-#include <vector> //Providing the base data structure to store elements in.
 #include <numeric> //For std::accumulate.
+#include <stdexcept> //For std::out_of_range.
+#include <vector> //Providing the base data structure to store elements in.
 
 namespace apex {
 
