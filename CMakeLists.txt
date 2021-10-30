@@ -118,3 +118,9 @@ if(BUILD_DOCUMENTATION)
 		COMMENT "Generating API documentation."
 	)
 endif()
+
+#Benchmark application.
+option(BUILD_BENCHMARK "Build an application that performs benchmarks for the library." OFF)
+if(BUILD_BENCHMARK)
+	add_subdirectory("benchmarking")
+endif()
