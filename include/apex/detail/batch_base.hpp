@@ -983,7 +983,7 @@ public:
 		const size_t num_subelements = std::accumulate(cbegin(), cend(), size_t(0), [](const size_t current, const SubbatchView<Element>& subbatch) {
 			return current + std::max(subbatch.size(), size_t(1));
 		});
-		std::vector<Element> optimised(num_subelements); //Allocate the necessary memory. We'll move this on top of our old buffer once all data is moved.
+		std::vector<Element> optimised(std::max(num_subelements, size_t(8))); //Allocate the necessary memory. We'll move this on top of our old buffer once all data is moved.
 
 		//Move the data into the optimised buffer.
 		size_t optimised_position = 0; //Position in the optimised buffer where to place next subelement.
