@@ -11,4 +11,5 @@ set(source_files
 	"main.cpp"
 )
 
-add_executable("ApexBenchmark" ${source_files})
+add_executable(apex_benchmark ${source_files})
+target_link_libraries(apex_benchmark PRIVATE apex)
