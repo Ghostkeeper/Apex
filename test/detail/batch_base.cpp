@@ -2198,6 +2198,78 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			vec.emplace_back(std::move(source));
 		},
 		3.0);
+	fuzzer.add_transformation("erase_begin",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(!batch.empty()) {
+				batch.erase(batch.cbegin());
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(!vec.empty()) {
+				vec.erase(vec.cbegin());
+			}
+		},
+		10.0);
+	fuzzer.add_transformation("erase_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(!batch.empty()) {
+				batch.erase(batch.cbegin() + batch.size() / 2);
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(!vec.empty()) {
+				vec.erase(vec.cbegin() + vec.size() / 2);
+			}
+		},
+		10.0);
+	fuzzer.add_transformation("erase_last",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(!batch.empty()) {
+				batch.erase(batch.cend() - 1);
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(!vec.empty()) {
+				vec.erase(vec.cend() - 1);
+			}
+		},
+		10.0);
+	fuzzer.add_transformation("erase_first_half",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(batch.size() >= 2) {
+				batch.erase(batch.cbegin(), batch.cbegin() + batch.size() / 2);
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(vec.size() >= 2) {
+				vec.erase(vec.cbegin(), vec.cbegin() + vec.size() / 2);
+			}
+		},
+		10.0);
+	fuzzer.add_transformation("erase_mid_half",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(batch.size() >= 2) {
+				batch.erase(batch.cbegin() + batch.size() / 4, batch.cbegin() + batch.size() * 3 / 4);
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(vec.size() >= 2) {
+				vec.erase(vec.cbegin() + vec.size() / 4, vec.cbegin() + vec.size() * 3 / 4);
+			}
+		},
+		10.0);
+	fuzzer.add_transformation("erase_last_half",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(batch.size() >= 2) {
+				batch.erase(batch.cbegin() + batch.size() / 2, batch.cend());
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(vec.size() >= 2) {
+				vec.erase(vec.cbegin() + vec.size() / 2, vec.cend());
+			}
+		},
+		10.0);
 	fuzzer.add_transformation("insert_copy_begin",
 		[](BatchBase<BatchBase<int>>& batch) {
 			const BatchBase<int> source({1, 4, 9, 16, 25});
@@ -2334,6 +2406,18 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		[](BatchBase<BatchBase<int>>& batch) { batch.push_back({1001, 2002}); },
 		[](std::vector<std::vector<int>>& vec) { vec.push_back({1001, 2002}); },
 		25.0);
+	fuzzer.add_transformation("pop_back",
+		[](BatchBase<BatchBase<int>>& batch) {
+			if(!batch.empty()) {
+				batch.pop_back();
+			}
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			if(!vec.empty()) {
+				vec.pop_back();
+			}
+		},
+		50.0);
 	fuzzer.add_transformation("push_back_move",
 		[](BatchBase<BatchBase<int>>& batch) {
 			BatchBase<int> source({2003, 3004});
@@ -2344,6 +2428,14 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			vec.push_back(std::move(source));
 		},
 		25.0);
+	fuzzer.add_transformation("reserve_small",
+		[](BatchBase<BatchBase<int>>& batch) { batch.reserve(10); },
+		[](std::vector<std::vector<int>>& vec) { vec.reserve(10); },
+		5.0);
+	fuzzer.add_transformation("reserve_large",
+		[](BatchBase<BatchBase<int>>& batch) { batch.reserve(100); },
+		[](std::vector<std::vector<int>>& vec) { vec.reserve(100); },
+		5.0);
 	fuzzer.add_transformation("resize_empty",
 		[](BatchBase<BatchBase<int>>& batch) { batch.resize(0); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(0); },
