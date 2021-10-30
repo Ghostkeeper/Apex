@@ -2148,18 +2148,236 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 			vec.emplace(vec.cend(), std::move(source));
 		},
 		10.0);
-	fuzzer.add_transformation("emplace_initializer_list_begin",
+	fuzzer.add_transformation("emplace_initialiser_list_begin",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin(), {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin(), std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
-	fuzzer.add_transformation("emplace_initializer_list_mid",
+	fuzzer.add_transformation("emplace_initialiser_list_mid",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2, std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
-	fuzzer.add_transformation("emplace_initializer_list_end",
+	fuzzer.add_transformation("emplace_initialiser_list_end",
 		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end(), {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.end(), std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
+	fuzzer.add_transformation("emplace_back_empty",
+		[](BatchBase<BatchBase<int>>& batch) { batch.emplace_back(); },
+		[](std::vector<std::vector<int>>& vec) { vec.emplace_back(); },
+		3.0);
+	fuzzer.add_transformation("emplace_back_copies",
+		[](BatchBase<BatchBase<int>>& batch) { batch.emplace_back(size_t(4), 1337); },
+		[](std::vector<std::vector<int>>& vec) { vec.emplace_back(size_t(4), 1337); },
+		3.0);
+	fuzzer.add_transformation("emplace_back_iterator",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const std::list<int> source({1, 2, 3, 5, 8, 13, 21});
+			batch.emplace_back(source.cbegin(), source.cend());
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::list<int> source({1, 2, 3, 5, 8, 13, 21});
+			vec.emplace_back(source.cbegin(), source.cend());
+		},
+		3.0);
+	fuzzer.add_transformation("emplace_back_copy",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({3, 1, 4, 1, 5, 9});
+			batch.emplace_back(source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({3, 1, 4, 1, 5, 9});
+			vec.emplace_back(source);
+		},
+		3.0);
+	fuzzer.add_transformation("emplace_back_move",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({1, 2, 4, 8, 16, 32, 64});
+			batch.emplace_back(std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({1, 2, 4, 8, 16, 32, 64});
+			vec.emplace_back(std::move(source));
+		},
+		3.0);
+	fuzzer.add_transformation("insert_copy_begin",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({1, 4, 9, 16, 25});
+			batch.insert(batch.cbegin(), source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({1, 4, 9, 16, 25});
+			vec.insert(vec.cbegin(), source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_copy_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({1, 3, 6, 10});
+			batch.insert(batch.cbegin() + batch.size() / 2, source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({1, 3, 6, 10});
+			vec.insert(vec.cbegin() + vec.size() / 2, source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_copy_end",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({1, 5, 12, 22});
+			batch.insert(batch.cend(), source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({1, 5, 12, 22});
+			vec.insert(vec.cend(), source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_move_begin",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({1, 11, 21, 1211, 111221, 13112221});
+			batch.insert(batch.cbegin(), std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({1, 11, 21, 1211, 111221, 13112221});
+			vec.insert(vec.cbegin(), std::move(source));
+		},
+		10.0);
+	fuzzer.add_transformation("insert_move_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({11, 121, 12321, 1234321});
+			batch.insert(batch.cbegin() + batch.size() / 2, std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({11, 121, 12321, 1234321});
+			vec.insert(vec.cbegin() + vec.size() / 2, std::move(source));
+		},
+		10.0);
+	fuzzer.add_transformation("insert_move_end",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({44, 33, 22, 11});
+			batch.insert(batch.cend(), std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({44, 33, 22, 11});
+			vec.insert(vec.cend(), std::move(source));
+		},
+		10.0);
+	fuzzer.add_transformation("insert_copies_begin",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({1, -1, 1, -1, 2});
+			batch.insert(batch.cbegin(), 3, source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({1, -1, 1, -1, 2});
+			vec.insert(vec.cbegin(), 3, source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_copies_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({1, -1, 2, -1, 2});
+			batch.insert(batch.cbegin() + batch.size() / 2, 3, source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({1, -1, 2, -1, 2});
+			vec.insert(vec.cbegin() + vec.size() / 2, 3, source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_copies_end",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<int> source({2, -1, 1, -1, 2});
+			batch.insert(batch.cend(), 3, source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<int> source({2, -1, 1, -1, 2});
+			vec.insert(vec.cend(), 3, source);
+		},
+		10.0);
+	fuzzer.add_transformation("insert_iterator_begin",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<BatchBase<int>> source({{1, 2}, {3, 4}, {4, 5}, {}, {}});
+			batch.insert(batch.cbegin(), source.cbegin(), source.cend());
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<std::vector<int>> source({{1, 2}, {3, 4}, {4, 5}, {}, {}});
+			vec.insert(vec.cbegin(), source.cbegin(), source.cend());
+		},
+		10.0);
+	fuzzer.add_transformation("insert_iterator_mid",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<BatchBase<int>> source({{1}, {}, {2, 3}, {}, {4, 5, 6}});
+			batch.insert(batch.cbegin() + batch.size() / 2, source.cbegin(), source.cend());
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<std::vector<int>> source({{1}, {}, {2, 3}, {}, {4, 5, 6}});
+			vec.insert(vec.cbegin() + vec.size() / 2, source.cbegin(), source.cend());
+		},
+		10.0);
+	fuzzer.add_transformation("insert_iterator_end",
+		[](BatchBase<BatchBase<int>>& batch) {
+			const BatchBase<BatchBase<int>> source({{}, {1, 2, 3}, {2, 3, 4}, {}});
+			batch.insert(batch.cend(), source.cbegin(), source.cend());
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			const std::vector<std::vector<int>> source({{}, {1, 2, 3}, {2, 3, 4}, {}});
+			vec.insert(vec.cend(), source.cbegin(), source.cend());
+		},
+		10.0);
+	fuzzer.add_transformation("insert_initialiser_list_begin",
+		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.begin(), {{2, 2}, {3, 3, 3}, {1}}); },
+		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.begin(), std::initializer_list<std::vector<int>>({{2, 2}, {3, 3, 3}, {1}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
+		10.0);
+	fuzzer.add_transformation("insert_initialiser_list_mid",
+		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.begin() + batch.size() / 2, {{5, 0, -5}, {}, {4, 0, -4}}); },
+		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.begin() + vec.size() / 2, std::initializer_list<std::vector<int>>({{5, 0, -5}, {}, {4, 0, -4}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
+		10.0);
+	fuzzer.add_transformation("insert_initialiser_list_end",
+		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.end(), {{12, 23, 34, 45}, {}}); },
+		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.end(), std::initializer_list<std::vector<int>>({{12, 23, 34, 45}, {}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
+		10.0);
+	fuzzer.add_transformation("push_back_copy",
+		[](BatchBase<BatchBase<int>>& batch) { batch.push_back({1001, 2002}); },
+		[](std::vector<std::vector<int>>& vec) { vec.push_back({1001, 2002}); },
+		25.0);
+	fuzzer.add_transformation("push_back_move",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<int> source({2003, 3004});
+			batch.push_back(std::move(source));
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<int> source({2003, 3004});
+			vec.push_back(std::move(source));
+		},
+		25.0);
+	fuzzer.add_transformation("resize_empty",
+		[](BatchBase<BatchBase<int>>& batch) { batch.resize(0); },
+		[](std::vector<std::vector<int>>& vec) { vec.resize(0); },
+		1.0);
+	fuzzer.add_transformation("resize_small",
+		[](BatchBase<BatchBase<int>>& batch) { batch.resize(4); },
+		[](std::vector<std::vector<int>>& vec) { vec.resize(4); },
+		4.0);
+	fuzzer.add_transformation("resize_large",
+		[](BatchBase<BatchBase<int>>& batch) { batch.resize(40); },
+		[](std::vector<std::vector<int>>& vec) { vec.resize(40); },
+		4.0);
+	fuzzer.add_transformation("resize_default_small",
+		[](BatchBase<BatchBase<int>>& batch) { batch.resize(4, {666, 66, 6}); },
+		[](std::vector<std::vector<int>>& vec) { vec.resize(4, {666, 66, 6}); },
+		4.0);
+	fuzzer.add_transformation("resize_default_large",
+		[](BatchBase<BatchBase<int>>& batch) { batch.resize(40, {31337, 1337, 5318008}); },
+		[](std::vector<std::vector<int>>& vec) { vec.resize(40, {31337, 1337, 5318008}); },
+		4.0);
+	fuzzer.add_transformation("shrink_to_fit",
+		[](BatchBase<BatchBase<int>>& batch) { batch.shrink_to_fit(); },
+		[](std::vector<std::vector<int>>& vec) { vec.shrink_to_fit(); },
+		10.0);
+	fuzzer.add_transformation("swap",
+		[](BatchBase<BatchBase<int>>& batch) {
+			BatchBase<BatchBase<int>> source({{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}});
+			batch.swap(source);
+		},
+		[](std::vector<std::vector<int>>& vec) {
+			std::vector<std::vector<int>> source({{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}});
+			vec.swap(source);
+		},
+		1.0);
 
 	BatchBase<BatchBase<int>> batch;
 	std::vector<std::vector<int>> vec;
