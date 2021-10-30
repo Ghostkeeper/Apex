@@ -31,6 +31,12 @@ if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
 	message(FATAL_ERROR "GCC version must be at least 8.0 due to fixes in const overload selection!")
 endif()
 
+#Dependencies.
+option(WITH_OPENMP "Use OpenMP to parallelise computation." ON)
+if(WITH_OPENMP)
+	find_package(OpenMP REQUIRED)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
 
 #Only compile GPU implementation if GPU bindings are present in the OpenMP library and basic operations are supported.
 #E.g. on some computers parallel distribution works, but reductions don't. So include a reduction in the test.
@@ -39,13 +45,6 @@ try_run(gpu_supported gpu_compile_result "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe"
 if(gpu_supported EQUAL 1)
 	message(STATUS "Found GPU support on this computer. Building GPU implementations.")
 	add_definitions(-DGPU)
-endif()
-
-#Dependencies.
-option(WITH_OPENMP "Use OpenMP to parallelise computation." ON)
-if(WITH_OPENMP)
-	find_package(OpenMP REQUIRED)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
 #Tests.
