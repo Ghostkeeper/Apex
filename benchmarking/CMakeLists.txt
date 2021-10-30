@@ -9,7 +9,9 @@ project(ApexBenchmark)
 
 set(source_files
 	"main.cpp"
+	"benchmarker.cpp"
 )
 
 add_executable(apex_benchmark ${source_files})
 target_link_libraries(apex_benchmark PRIVATE apex)
+target_include_directories(apex_benchmark INTERFACE "${CMAKE_SOURCE_DIR}/include")

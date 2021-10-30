@@ -6,18 +6,27 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include "benchmarker.hpp" //To execute tests.
-#include <apex/simple_polygon.hpp> //The library under test.
-#include <iostream> //To print out some progress/metadata information.
+#ifndef BENCHMARKER
+#define BENCHMARKER
 
-int main(int argc, char** argv) {
-	std::cout << "Apex benchmarking application.\n" << std::endl;
+#include <functional>
+#include <string>
 
-	benchmarker::Benchmarker::bench_sized("area_st", [](size_t size) {
-		apex::SimplePolygon poly;
-		for(size_t i = 0; i < size; ++i) {
-			poly.emplace_back(i, i);
-		}
-		poly.area();
-	}, {0, 1, 10, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10000});
+namespace benchmarker {
+
+class Benchmarker {
+public:
+	/*!
+	 * Benchmark a function that performs differently based on the size of the
+	 * input, with just 1 size parameter.
+	 * \param name A human-readable name for the function to test.
+	 * \param target A function to test the performance of. This function needs
+	 * to accept a size and run a test of that size.
+	 * \param sizes The size of inputs to the function to test with.
+	 */
+	static void bench_sized(const std::string name, const std::function<void(size_t)> target, const std::vector<size_t>& sizes);
+};
+
 }
+
+#endif //BENCHMARKER
