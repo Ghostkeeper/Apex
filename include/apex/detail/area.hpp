@@ -45,11 +45,13 @@ public:
 		//The choice here of implementation is roughly optimised based on performance measurements. Not scientific at all though.
 		if(base().size() < 400) {
 			return area_st();
-		} else if(base().size() < 3000) {
-			return area_mt();
-		} else {
+		}
+#ifdef GPU
+		if(base().size() >= 3000) {
 			return area_gpu();
 		}
+#endif
+		return area_mt();
 	}
 
 protected:

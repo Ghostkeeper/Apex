@@ -31,6 +31,16 @@ if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
 	message(FATAL_ERROR "GCC version must be at least 8.0 due to fixes in const overload selection!")
 endif()
 
+
+#Only compile GPU implementation if GPU bindings are present in the OpenMP library and basic operations are supported.
+#E.g. on some computers parallel distribution works, but reductions don't. So include a reduction in the test.
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" "#include <omp.h>\nint main() {\nint x = 0;\n#pragma omp teams distribute parallel for reduction(+:x)\nfor(int i = 0; i < 1; ++i) {x += 1;}\nreturn x;}")
+try_run(gpu_supported gpu_compile_result "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe" "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" CMAKE_FLAGS "-DCMAKE_CXX_FLAGS:string=${OpenMP_CXX_FLAGS}")
+if(gpu_supported EQUAL 1)
+	message(STATUS "Found GPU support on this computer. Building GPU implementations.")
+	add_definitions(-DGPU)
+endif()
+
 #Dependencies.
 option(WITH_OPENMP "Use OpenMP to parallelise computation." ON)
 if(WITH_OPENMP)
@@ -51,15 +61,6 @@ if(BUILD_TESTS)
 	target_include_directories(apex INTERFACE ${GOOGLETEST_INCLUDE_DIRS})
 	target_link_libraries(apex INTERFACE ${GOOGLETEST_BOTH_LIBRARIES})
 	add_dependencies(apex GoogleTest)
-
-	#Only perform GPU tests if we have a GPU and basic operations are supported.
-	#E.g. on some computers parallel distribution works, but reductions don't. So include a reduction in the test.
-	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" "#include <omp.h>\nint main() {\nint x = 0;\n#pragma omp teams distribute parallel for reduction(+:x)\nfor(int i = 0; i < 1; ++i) {x += 1;}\nreturn x;}")
-	try_run(gpu_supported gpu_compile_result "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe" "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" CMAKE_FLAGS "-DCMAKE_CXX_FLAGS:string=${OpenMP_CXX_FLAGS}")
-	if(gpu_supported EQUAL 1)
-		message(STATUS "Found GPU support on this computer. Building GPU tests.")
-		add_definitions(-DGPU_TESTS)
-	endif()
 
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
