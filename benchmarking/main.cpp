@@ -13,11 +13,5 @@
 int main(int argc, char** argv) {
 	std::cout << "Apex benchmarking application.\n" << std::endl;
 
-	benchmarker::Benchmarker::bench_sized("area_st", [](size_t size) {
-		apex::SimplePolygon poly;
-		for(size_t i = 0; i < size; ++i) {
-			poly.emplace_back(i, i);
-		}
-		poly.area();
-	}, {0, 1, 10, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10000});
+	benchmarker::Benchmarker::bench_area();
 }

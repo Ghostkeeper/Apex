@@ -17,14 +17,12 @@ namespace benchmarker {
 class Benchmarker {
 public:
 	/*!
-	 * Benchmark a function that performs differently based on the size of the
-	 * input, with just 1 size parameter.
-	 * \param name A human-readable name for the function to test.
-	 * \param target A function to test the performance of. This function needs
-	 * to accept a size and run a test of that size.
-	 * \param sizes The size of inputs to the function to test with.
+	 * Benchmark functions that calculate the area of a shape.
 	 */
-	static void bench_sized(const std::string name, const std::function<void(size_t)> target, const std::vector<size_t>& sizes);
+	static void bench_area();
+
+protected:
+	constexpr static size_t repeats = 10000; //How often to repeat each test. Increase for more accurate results.
 };
 
 }
