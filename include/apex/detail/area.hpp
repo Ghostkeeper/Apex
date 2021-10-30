@@ -42,7 +42,14 @@ public:
 	 * \return The surface area of the simple polygon.
 	 */
 	area_t area() const {
-		return area_st();
+		//The choice here of implementation is roughly optimised based on performance measurements. Not scientific at all though.
+		if(base().size() < 400) {
+			return area_st();
+		} else if(base().size() < 3000) {
+			return area_mt();
+		} else {
+			return area_gpu();
+		}
 	}
 
 protected:
