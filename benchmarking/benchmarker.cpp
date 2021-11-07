@@ -28,24 +28,25 @@ void Benchmarker::bench_area() {
 	for(size_t i = 0; i < 10000; i += 100) {
 		sizes.push_back(i);
 	}
+	//Pre-generate the polygons.
+	std::vector<apex::SimplePolygon<>> polys;
+	for(size_t size : sizes) {
+		polys.emplace_back(size, apex::Point2(0, 0));
+		for(size_t i = 0; i < size; ++i) {
+			polys.back()[i] = apex::Point2(i, i);
+		}
+	}
 
 	//First do a dry run with the largest size, to get more accurate results without system calls to allocate more memory.
 	{
-		apex::SimplePolygon poly(sizes.back(), apex::Point2(0, 0));
-		for(size_t i = 0; i < sizes.back(); ++i) {
-			poly[i] = apex::Point2(i, i);
-		}
-		poly.area_st();
-		poly.area_mt();
-		poly.area_gpu();
+		polys.back().area_st();
+		polys.back().area_mt();
+		polys.back().area_gpu();
 	}
 
-	for(size_t size : sizes) {
-		//Create a polygon of the appropriate size to test on.
-		apex::SimplePolygon poly(size, apex::Point2(0, 0));
-		for(size_t i = 0; i < size; ++i) {
-			poly[i] = apex::Point2(i, i);
-		}
+	for(size_t i = 0; i < sizes.size(); ++i) {
+		apex::SimplePolygon<>& poly = polys[i];
+		size_t size = sizes[i];
 
 		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.
 		std::chrono::time_point start = std::chrono::steady_clock::now();
