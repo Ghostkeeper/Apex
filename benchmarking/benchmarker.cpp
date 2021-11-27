@@ -39,9 +39,9 @@ void Benchmarker::bench_area() {
 
 	//First do a dry run with the largest size, to get more accurate results without system calls to allocate more memory.
 	{
-		polys.back().area_st();
-		polys.back().area_mt();
-		polys.back().area_gpu();
+		apex::detail::area_st(polys.back());
+		apex::detail::area_mt(polys.back());
+		apex::detail::area_gpu(polys.back());
 	}
 
 	for(size_t i = 0; i < sizes.size(); ++i) {
@@ -51,21 +51,21 @@ void Benchmarker::bench_area() {
 		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.
 		std::chrono::time_point start = std::chrono::steady_clock::now();
 		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += poly.area_st();
+			sum += apex::detail::area_st(poly);
 		}
 		std::chrono::time_point end = std::chrono::steady_clock::now();
 		std::chrono::duration st_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
 
 		start = std::chrono::steady_clock::now();
 		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += poly.area_mt();
+			sum += apex::detail::area_mt(poly);
 		}
 		end = std::chrono::steady_clock::now();
 		std::chrono::duration mt_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
 
 		start = std::chrono::steady_clock::now();
 		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += poly.area_gpu();
+			sum += apex::detail::area_gpu(poly);
 		}
 		end = std::chrono::steady_clock::now();
 		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);

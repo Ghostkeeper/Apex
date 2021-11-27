@@ -49,7 +49,6 @@ template<class VertexStorage = Batch<Point2>>
 class SimplePolygon :
 		public VertexStorage,
 		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
-		public SimplePolygonArea<SimplePolygon<VertexStorage>>,
 		public SimplePolygonTranslate<SimplePolygon<VertexStorage>> {
 
 	template<class OtherVertexStorage>
@@ -171,6 +170,23 @@ public:
 	 */
 	bool operator !=(const SimplePolygon& other) const {
 		return !((*this) == other); //Implemented in terms of ==.
+	}
+
+	/*!
+	 * Computes the surface area of the simple polygon.
+	 *
+	 * The sign of the area is linked to the polygon winding order. If the
+	 * polygon is positive, the area will be positive too, and vice versa. If
+	 * the polygon intersects itself, parts of the polygon will be subtracting
+	 * from the area while other parts add up to the area.
+	 *
+	 * The area of the polygon is counted differently from the nonzero or
+	 * even-odd fill rules. If a zone is looped around multiple times by the
+	 * polygon, it will count to the total area multiple times as well.
+	 * \return The surface area of the simple polygon.
+	 */
+	area_t area() const {
+		return apex::area(*this);
 	}
 };
 
