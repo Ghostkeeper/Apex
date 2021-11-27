@@ -20,11 +20,14 @@ namespace apex {
 
 namespace detail {
 
-template<class SimplePolygon>
+//Declare the detail functions so that we can reference them from the public ones.
+template<polygonal SimplePolygon>
 area_t area_st(const SimplePolygon& polygon);
-template<class SimplePolygon>
+template<multi_polygonal SimplePolygonBatch>
+std::vector<area_t> area_st(const SimplePolygonBatch& polygon);
+template<polygonal SimplePolygon>
 area_t area_mt(const SimplePolygon& polygon);
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 area_t area_gpu(const SimplePolygon& polygon);
 
 };
@@ -55,6 +58,11 @@ area_t area(const SimplePolygon& polygon) {
 	}
 #endif
 	return detail::area_mt(polygon);
+}
+
+template<multi_polygonal SimplePolygonBatch>
+std::vector<area_t> area(const SimplePolygonBatch& batch) {
+	return detail::area_st(batch);
 }
 
 namespace detail {
@@ -112,6 +120,16 @@ area_t area_st(const SimplePolygon& polygon) {
 	   previous = vertex;
    }
    return area / 2; //Instead of dividing each triangle's area by 2, simply divide the total by 2 afterwards.
+}
+
+template<multi_polygonal SimplePolygonBatch>
+std::vector<area_t> area_st(const SimplePolygonBatch& batch) {
+	std::vector<area_t> result;
+	result.reserve(batch.size());
+	for(typename SimplePolygonBatch::const_iterator it = batch.begin(); it != batch.end(); ++it) {
+		result.push_back(detail::area_st(*it));
+	}
+	return result;
 }
 
 /*!
