@@ -4,7 +4,7 @@
 #This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10) #Oldest version it was tested with.
+cmake_minimum_required(VERSION 3.18) #Oldest version it was tested with.
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules") #Finding dependencies.
 
 #Release configuration.
@@ -19,14 +19,16 @@ add_library(apex INTERFACE)
 target_include_directories(apex INTERFACE "${CMAKE_SOURCE_DIR}/include")
 
 #Make sure the compiler is up to the task.
-set(CMAKE_CXX_STANDARD 17)
-target_compile_features(apex INTERFACE cxx_std_17)
+set(CMAKE_CXX_STANDARD 20)
+target_compile_features(apex INTERFACE cxx_std_20)
 target_compile_features(apex INTERFACE cxx_constexpr)
 target_compile_features(apex INTERFACE cxx_generalized_initializers)
 target_compile_features(apex INTERFACE cxx_noexcept)
+target_compile_features(apex INTERFACE cxx_range_for)
 target_compile_features(apex INTERFACE cxx_relaxed_constexpr)
 target_compile_features(apex INTERFACE cxx_rvalue_references)
 target_compile_features(apex INTERFACE cxx_right_angle_brackets)
+target_compile_features(apex INTERFACE cxx_template_template_parameters)
 if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
 	message(FATAL_ERROR "GCC version must be at least 8.0 due to fixes in const overload selection!")
 endif()
