@@ -12,6 +12,7 @@
 #include <apex/point2.hpp>
 
 #include <chrono> //To measure execution time.
+#include <iomanip> //For std::setw.
 #include <iostream> //To output the benchmark results to stdcout.
 #include <vector>
 
