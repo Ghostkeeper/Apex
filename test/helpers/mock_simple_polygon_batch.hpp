@@ -12,7 +12,7 @@
 #include <vector> //Provides the base mock implementation.
 
 #include "apex/point2.hpp" //The coordinates of the polygons.
-#include "apex/detail/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
+#include "apex/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
 #include "mock_simple_polygon.hpp" //The contents of the batch are themselves mocked.
 
 namespace apex {

@@ -15,7 +15,7 @@
 #include "point2.hpp" //The vertices of the polygon are 2D points.
 
 //Implementations separated out for readability using the Curiously Recurring Template Pattern.
-#include "detail/area.hpp"
+#include "area.hpp"
 #include "detail/translate.hpp"
 
 namespace apex {
