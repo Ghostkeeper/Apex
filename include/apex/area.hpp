@@ -13,6 +13,7 @@
 #include <vector> //Returning the results of batch operations.
 
 #include "coordinate.hpp" //To return area_t.
+#include "detail/geometry_concepts.hpp" //To disambiguate overloads.
 #include "point2.hpp" //To access coordinates of vertices.
 
 namespace apex {
@@ -43,7 +44,7 @@ area_t area_gpu(const SimplePolygon& polygon);
  * \param polygon The simple polygon to calculate the area of.
  * \return The surface area of the simple polygon.
  */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 area_t area(const SimplePolygon& polygon) {
 	if(polygon.size() < 400) {
 		return detail::area_st(polygon);
@@ -103,7 +104,7 @@ namespace detail {
  * \param polygon The simple polygon to calculate the area of.
  * \return The surface area of the simple polygon.
 */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 area_t area_st(const SimplePolygon& polygon) {
    area_t area = 0;
    for(size_t vertex = 0, previous = polygon.size() - 1; vertex < polygon.size(); vertex++) {
@@ -159,7 +160,7 @@ area_t area_st(const SimplePolygon& polygon) {
  * \param polygon The simple polygon to calculate the area of.
  * \return The surface area of the simple polygon.
  */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 area_t area_mt(const SimplePolygon& polygon) {
 	area_t area = 0;
 	const size_t size = polygon.size();
@@ -216,7 +217,7 @@ area_t area_mt(const SimplePolygon& polygon) {
  * \param polygon The simple polygon to calculate the area of.
  * \return The surface area of the simple polygon.
  */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 area_t area_gpu(const SimplePolygon& polygon) {
 	area_t area = 0;
 	const size_t size = polygon.size();
