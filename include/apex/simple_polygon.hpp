@@ -187,8 +187,8 @@ public:
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
-	 * \param delta The distance by which to move, representing both dimensions to
-	 * move through as a single 2D vector.
+	 * \param delta The distance by which to move, representing both dimensions
+	 * to move through as a single 2D vector.
 	 */
 	void translate(const Point2& delta) {
 		apex::translate(*this, delta);

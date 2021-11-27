@@ -12,8 +12,6 @@
 #include <vector> //Provides the base mock implementation.
 
 #include "apex/point2.hpp" //The coordinates of the polygon.
-#include "apex/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
-#include "apex/translate.hpp"
 
 namespace apex {
 
@@ -27,8 +25,7 @@ namespace apex {
  * with. This way, it's much easier to construct a polygon with a simple shape
  * by way of a fixture.
  */
-class MockSimplePolygon : public std::vector<Point2>,
-		public SimplePolygonTranslate<MockSimplePolygon> {
+class MockSimplePolygon : public std::vector<Point2> {
 public:
 	/*!
 	 * Basic shapes to initialise the polygon as.
