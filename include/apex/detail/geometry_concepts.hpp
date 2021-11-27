@@ -26,6 +26,18 @@ concept polygonal = requires(T object) {
 	{ object[1] } -> std::convertible_to<Point2>;
 };
 
+/*!
+ * A concept for objects that are like collections of polygons or complex
+ * polygons.
+ *
+ * These are lists of polygons, be it batches of them or a complex polygon.
+ */
+template<typename T>
+concept multi_polygonal = requires(T object) {
+	{ object.size() } -> std::unsigned_integral;
+	{ object[1] } -> polygonal;
+};
+
 }
 
 #endif //APEX_GEOMETRY_CONCEPTS
