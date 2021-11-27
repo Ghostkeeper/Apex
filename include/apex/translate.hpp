@@ -11,6 +11,47 @@
 
 namespace apex {
 
+namespace detail {
+
+template<class SimplePolygon>
+void translate_st(SimplePolygon& polygon, const Point2& delta);
+
+}
+
+/*!
+ * Moves a polygon with a certain offset.
+ *
+ * The polygon is moved in-place.
+ * \tparam SimplePolygon A class that behaves like a simple polygon.
+ * \param polygon The polygon to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<class SimplePolygon>
+void translate(SimplePolygon& polygon, const Point2& delta) {
+	detail::translate_st(polygon, delta);
+}
+
+namespace detail {
+
+/*!
+ * Single-threaded implementation of \ref translate.
+ *
+ * This implementation simply adds the delta vector to each vertex in turn.
+ * \tparam SimplePolygon A class that behaves like a simple polygon.
+ * \param polygon The polygon to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<class SimplePolygon>
+void translate_st(SimplePolygon& polygon, const Point2& delta) {
+	for(Point2& vertex : polygon) {
+		vertex += delta;
+	}
+}
+
+}
+
 /*!
  * Implements the Curiously Recurring Template Pattern to separate out the
  * private functions to translate a simple polygon.

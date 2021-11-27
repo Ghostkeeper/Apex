@@ -13,7 +13,7 @@
 
 #include "apex/point2.hpp" //The coordinates of the polygon.
 #include "apex/area.hpp" //To implement the CRTP to allow these classes to be cast to the mock.
-#include "apex/detail/translate.hpp"
+#include "apex/translate.hpp"
 
 namespace apex {
 

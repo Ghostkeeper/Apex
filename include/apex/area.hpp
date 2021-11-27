@@ -10,6 +10,7 @@
 #define APEX_AREA
 
 #include <omp.h> //To do parallel processing.
+#include <vector> //Returning the results of batch operations.
 
 #include "coordinate.hpp" //To return area_t.
 #include "point2.hpp" //To access coordinates of vertices.

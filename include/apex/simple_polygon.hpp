@@ -11,12 +11,10 @@
 
 #include <utility> //For std::forward.
 
+#include "area.hpp" //To allow calculating the area of this shape.
 #include "batch.hpp" //The vertex storage is by batch.
 #include "point2.hpp" //The vertices of the polygon are 2D points.
-
-//Implementations separated out for readability using the Curiously Recurring Template Pattern.
-#include "area.hpp"
-#include "detail/translate.hpp"
+#include "translate.hpp" //To allow moving this shape.
 
 namespace apex {
 
@@ -46,11 +44,7 @@ namespace apex {
  * implements the signature of a ``vector`` of ``Point2``s will do.
  */
 template<class VertexStorage = Batch<Point2>>
-class SimplePolygon :
-		public VertexStorage,
-		//Implementing the private functions in separate classes with Curiously Recurring Template Pattern.
-		public SimplePolygonTranslate<SimplePolygon<VertexStorage>> {
-
+class SimplePolygon : public VertexStorage {
 	template<class OtherVertexStorage>
 	friend class SimplePolygon; //Allow touching the privates of other instances of this template.
 public:
@@ -187,6 +181,17 @@ public:
 	 */
 	area_t area() const {
 		return apex::area(*this);
+	}
+
+	/*!
+	 * Moves this polygon with a certain offset.
+	 *
+	 * The polygon is moved in-place.
+	 * \param delta The distance by which to move, representing both dimensions to
+	 * move through as a single 2D vector.
+	 */
+	void translate(const Point2& delta) {
+		apex::translate(*this, delta);
 	}
 };
 
