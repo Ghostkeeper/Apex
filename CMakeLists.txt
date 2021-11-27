@@ -79,7 +79,7 @@ if(BUILD_TESTS)
 		coordinate
 		point2
 		simple_polygon
-		detail.area
+		area
 		detail.batch_base
 		detail.translate
 	)

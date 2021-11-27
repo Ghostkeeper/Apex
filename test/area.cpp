@@ -10,8 +10,8 @@
 #include <gtest/gtest.h> //To run the test.
 
 #include "apex/area.hpp"
-#include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
-#include "../helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
+#include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
+#include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
 
