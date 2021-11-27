@@ -42,7 +42,7 @@ endif()
 
 #Only compile GPU implementation if GPU bindings are present in the OpenMP library and basic operations are supported.
 #E.g. on some computers parallel distribution works, but reductions don't. So include a reduction in the test.
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" "#include <omp.h>\nint main() {\nint x = 0;\n#pragma omp teams distribute parallel for reduction(+:x)\nfor(int i = 0; i < 1; ++i) {x += 1;}\nreturn x;}")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" "#include <omp.h>\nint main() {\nint x = 0;\n#pragma omp teams distribute parallel for reduction(+:x) map(tofrom:x)\nfor(int i = 0; i < 1; ++i) {x += 1;}\nreturn x;}")
 try_run(gpu_supported gpu_compile_result "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe" "${CMAKE_CURRENT_BINARY_DIR}/gpu_probe/gpu_probe.cpp" CMAKE_FLAGS "-DCMAKE_CXX_FLAGS:string=${OpenMP_CXX_FLAGS}")
 if(gpu_supported EQUAL 1)
 	message(STATUS "Found GPU support on this computer. Building GPU implementations.")
