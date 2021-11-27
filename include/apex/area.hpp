@@ -27,8 +27,10 @@ template<multi_polygonal SimplePolygonBatch>
 std::vector<area_t> area_st(const SimplePolygonBatch& polygon);
 template<polygonal SimplePolygon>
 area_t area_mt(const SimplePolygon& polygon);
+#ifdef GPU
 template<polygonal SimplePolygon>
 area_t area_gpu(const SimplePolygon& polygon);
+#endif //GPU
 
 };
 
@@ -56,7 +58,7 @@ area_t area(const SimplePolygon& polygon) {
 	if(polygon.size() >= 3000) {
 		return detail::area_gpu(polygon);
 	}
-#endif
+#endif //GPU
 	return detail::area_mt(polygon);
 }
 
@@ -190,6 +192,7 @@ area_t area_mt(const SimplePolygon& polygon) {
 	return area / 2;
 }
 
+#ifdef GPU
 /*!
  * Implementation of ``area`` that runs on the graphics card, if available.
  *
@@ -247,6 +250,7 @@ area_t area_gpu(const SimplePolygon& polygon) {
 	}
 	return area / 2;
 }
+#endif //GPU
 
 }
 
