@@ -62,6 +62,23 @@ area_t area(const SimplePolygon& polygon) {
 	return detail::area_mt(polygon);
 }
 
+/*!
+ * Computes the surface areas of each simple polygon in a batch.
+ *
+ * The sign of the area is linked to the polygon winding order. If the polygon
+ * is positive, the area will be positive too, and vice versa. If the polygon
+ * intersects itself, parts of the polygon will be subtracting from the area
+ * while other parts add up to the area.
+ *
+ * The area of the polygon is counted differently from the nonzero or even-odd
+ * fill rules. If a zone is looped around multiple times by the polygon, it will
+ * count to the total area multiple times as well.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch A batch of simple polygons to calculate the areas of.
+ * \return A list of areas, one for each simple polygon, in the same order as
+ * the order of those polygons in the batch.
+ */
 template<multi_polygonal SimplePolygonBatch>
 std::vector<area_t> area(const SimplePolygonBatch& batch) {
 	return detail::area_st(batch);
@@ -124,6 +141,17 @@ area_t area_st(const SimplePolygon& polygon) {
    return area / 2; //Instead of dividing each triangle's area by 2, simply divide the total by 2 afterwards.
 }
 
+/*!
+ * Single-threaded implementation of ``area``.
+ *
+ * This single-threaded implementation simply computes the area for each simple
+ * polygon in the batch in sequence, and adds them to the resulting vector.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch The batch of simple polygons to compute the areas of.
+ * \return A list of areas, one for each simple polygon, in the same order as
+ * the order of those polygons in the batch.
+ */
 template<multi_polygonal SimplePolygonBatch>
 std::vector<area_t> area_st(const SimplePolygonBatch& batch) {
 	std::vector<area_t> result;
