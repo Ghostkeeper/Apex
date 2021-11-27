@@ -9,7 +9,8 @@
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h> //To run the test.
 
-#include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class. Also provides the area function under test.
+#include "apex/area.hpp"
+#include "../helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
 #include "../helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
@@ -22,11 +23,11 @@ namespace apex {
 TEST(SimplePolygonArea, InitialAreaIsZero) {
 	const MockSimplePolygon empty_polygon;
 	constexpr area_t true_area = 0;
-	EXPECT_EQ(empty_polygon.area(), true_area);
-	EXPECT_EQ(empty_polygon.area_st(), true_area);
-	EXPECT_EQ(empty_polygon.area_mt(), true_area);
+	EXPECT_EQ(area(empty_polygon), true_area);
+	EXPECT_EQ(detail::area_st(empty_polygon), true_area);
+	EXPECT_EQ(detail::area_mt(empty_polygon), true_area);
 #ifdef GPU
-	EXPECT_EQ(empty_polygon.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(empty_polygon), true_area);
 #endif
 }
 
@@ -36,11 +37,11 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
 TEST(SimplePolygonArea, Square1000) {
 	const MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(square_1000.area(), true_area);
-	EXPECT_EQ(square_1000.area_st(), true_area);
-	EXPECT_EQ(square_1000.area_mt(), true_area);
+	EXPECT_EQ(area(square_1000), true_area);
+	EXPECT_EQ(detail::area_st(square_1000), true_area);
+	EXPECT_EQ(detail::area_mt(square_1000), true_area);
 #ifdef GPU
-	EXPECT_EQ(square_1000.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(square_1000), true_area);
 #endif
 }
 
@@ -50,11 +51,11 @@ TEST(SimplePolygonArea, Square1000) {
 TEST(SimplePolygonArea, Square1000NegativeX) {
 	const MockSimplePolygon negative_x(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_X);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(negative_x.area(), true_area);
-	EXPECT_EQ(negative_x.area_st(), true_area);
-	EXPECT_EQ(negative_x.area_mt(), true_area);
+	EXPECT_EQ(area(negative_x), true_area);
+	EXPECT_EQ(detail::area_st(negative_x), true_area);
+	EXPECT_EQ(detail::area_mt(negative_x), true_area);
 #ifdef GPU
-	EXPECT_EQ(negative_x.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(negative_x), true_area);
 #endif
 }
 
@@ -64,11 +65,11 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
 TEST(SimplePolygonArea, Square1000NegativeY) {
 	const MockSimplePolygon negative_y(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_Y);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(negative_y.area(), true_area);
-	EXPECT_EQ(negative_y.area_st(), true_area);
-	EXPECT_EQ(negative_y.area_mt(), true_area);
+	EXPECT_EQ(area(negative_y), true_area);
+	EXPECT_EQ(detail::area_st(negative_y), true_area);
+	EXPECT_EQ(detail::area_mt(negative_y), true_area);
 #ifdef GPU
-	EXPECT_EQ(negative_y.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(negative_y), true_area);
 #endif
 }
 
@@ -79,11 +80,11 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
 TEST(SimplePolygonArea, Square1000NegativeXY) {
 	const MockSimplePolygon negative_xy(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_XY);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(negative_xy.area(), true_area);
-	EXPECT_EQ(negative_xy.area_st(), true_area);
-	EXPECT_EQ(negative_xy.area_mt(), true_area);
+	EXPECT_EQ(area(negative_xy), true_area);
+	EXPECT_EQ(detail::area_st(negative_xy), true_area);
+	EXPECT_EQ(detail::area_mt(negative_xy), true_area);
 #ifdef GPU
-	EXPECT_EQ(negative_xy.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(negative_xy), true_area);
 #endif
 }
 
@@ -93,11 +94,11 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
 TEST(SimplePolygonArea, Square1000Centred) {
 	const MockSimplePolygon centred(MockSimplePolygon::Shape::SQUARE_1000_CENTRED);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(centred.area(), true_area);
-	EXPECT_EQ(centred.area_st(), true_area);
-	EXPECT_EQ(centred.area_mt(), true_area);
+	EXPECT_EQ(area(centred), true_area);
+	EXPECT_EQ(detail::area_st(centred), true_area);
+	EXPECT_EQ(detail::area_mt(centred), true_area);
 #ifdef GPU
-	EXPECT_EQ(centred.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(centred), true_area);
 #endif
 }
 
@@ -107,11 +108,11 @@ TEST(SimplePolygonArea, Square1000Centred) {
 TEST(SimplePolygonArea, Triangle1000) {
 	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
 	constexpr area_t true_area = 1000 * 1000 / 2;
-	EXPECT_EQ(triangle.area(), true_area);
-	EXPECT_EQ(triangle.area_st(), true_area);
-	EXPECT_EQ(triangle.area_mt(), true_area);
+	EXPECT_EQ(area(triangle), true_area);
+	EXPECT_EQ(detail::area_st(triangle), true_area);
+	EXPECT_EQ(detail::area_mt(triangle), true_area);
 #ifdef GPU
-	EXPECT_EQ(triangle.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(triangle), true_area);
 #endif
 }
 
@@ -123,11 +124,11 @@ TEST(SimplePolygonArea, Triangle1000) {
 TEST(SimplePolygonArea, ThinRectangle) {
 	const MockSimplePolygon thin_rectangle(MockSimplePolygon::Shape::THIN_RECTANGLE);
 	constexpr area_t true_area = 1000 * 1;
-	EXPECT_EQ(thin_rectangle.area(), true_area);
-	EXPECT_EQ(thin_rectangle.area_st(), true_area);
-	EXPECT_EQ(thin_rectangle.area_mt(), true_area);
+	EXPECT_EQ(area(thin_rectangle), true_area);
+	EXPECT_EQ(detail::area_st(thin_rectangle), true_area);
+	EXPECT_EQ(detail::area_mt(thin_rectangle), true_area);
 #ifdef GPU
-	EXPECT_EQ(thin_rectangle.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(thin_rectangle), true_area);
 #endif
 }
 
@@ -137,11 +138,11 @@ TEST(SimplePolygonArea, ThinRectangle) {
 TEST(SimplePolygonArea, Concave) {
 	const MockSimplePolygon arrowhead(MockSimplePolygon::Shape::ARROWHEAD);
 	constexpr area_t true_area = 1000 * 1000 / 2 - 1000 * 500 / 2;
-	EXPECT_EQ(arrowhead.area(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
-	EXPECT_EQ(arrowhead.area_st(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
-	EXPECT_EQ(arrowhead.area_mt(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(area(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_st(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_mt(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 #ifdef GPU
-	EXPECT_EQ(arrowhead.area_gpu(), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_gpu(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 #endif
 }
 
@@ -152,11 +153,11 @@ TEST(SimplePolygonArea, Concave) {
 TEST(SimplePolygonArea, Negative) {
 	const MockSimplePolygon negative(MockSimplePolygon::Shape::NEGATIVE_SQUARE);
 	constexpr area_t true_area = -1000 * 1000;
-	EXPECT_EQ(negative.area(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
-	EXPECT_EQ(negative.area_st(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
-	EXPECT_EQ(negative.area_mt(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(area(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_st(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_mt(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 #ifdef GPU
-	EXPECT_EQ(negative.area_gpu(), -1000 * 1000) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_gpu(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 #endif
 }
 
@@ -166,11 +167,11 @@ TEST(SimplePolygonArea, Negative) {
 TEST(SimplePolygonArea, SelfIntersecting) {
 	const MockSimplePolygon hourglass(MockSimplePolygon::Shape::HOURGLASS);
 	constexpr area_t true_area = 1000 * 500 / 2 - 1000 * 500 / 2;
-	EXPECT_EQ(hourglass.area(), true_area);
-	EXPECT_EQ(hourglass.area_st(), true_area);
-	EXPECT_EQ(hourglass.area_mt(), true_area);
+	EXPECT_EQ(area(hourglass), true_area);
+	EXPECT_EQ(detail::area_st(hourglass), true_area);
+	EXPECT_EQ(detail::area_mt(hourglass), true_area);
 #ifdef GPU
-	EXPECT_EQ(hourglass.area_gpu(), true_area);
+	EXPECT_EQ(detail::area_gpu(hourglass), true_area);
 #endif
 }
 
@@ -179,11 +180,11 @@ TEST(SimplePolygonArea, SelfIntersecting) {
  */
 TEST(SimplePolygonArea, Point) {
 	const MockSimplePolygon point(MockSimplePolygon::Shape::POINT);
-	EXPECT_EQ(point.area(), 0) << "Points don't have any surface area.";
-	EXPECT_EQ(point.area_st(), 0) << "Points don't have any surface area.";
-	EXPECT_EQ(point.area_mt(), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(area(point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_st(point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_mt(point), 0) << "Points don't have any surface area.";
 #ifdef GPU
-	EXPECT_EQ(point.area_gpu(), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_gpu(point), 0) << "Points don't have any surface area.";
 #endif
 }
 
@@ -192,11 +193,11 @@ TEST(SimplePolygonArea, Point) {
  */
 TEST(SimplePolygonArea, Line) {
 	const MockSimplePolygon line(MockSimplePolygon::Shape::LINE);
-	EXPECT_EQ(line.area(), 0) << "Lines don't have any surface area.";
-	EXPECT_EQ(line.area_st(), 0) << "Lines don't have any surface area.";
-	EXPECT_EQ(line.area_mt(), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(area(line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_st(line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_mt(line), 0) << "Lines don't have any surface area.";
 #ifdef GPU
-	EXPECT_EQ(line.area_gpu(), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_gpu(line), 0) << "Lines don't have any surface area.";
 #endif
 }
 
@@ -205,11 +206,11 @@ TEST(SimplePolygonArea, Line) {
  */
 TEST(SimplePolygonArea, ZeroWidth) {
 	const MockSimplePolygon zero_width(MockSimplePolygon::Shape::ZERO_WIDTH);
-	EXPECT_EQ(zero_width.area(), 0) << "The shape has no width, so no surface area.";
-	EXPECT_EQ(zero_width.area_st(), 0) << "The shape has no width, so no surface area.";
-	EXPECT_EQ(zero_width.area_mt(), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(area(zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_st(zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_mt(zero_width), 0) << "The shape has no width, so no surface area.";
 #ifdef GPU
-	EXPECT_EQ(zero_width.area_gpu(), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_gpu(zero_width), 0) << "The shape has no width, so no surface area.";
 #endif
 }
 
@@ -229,11 +230,11 @@ TEST(SimplePolygonArea, Circle) {
 	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
-	EXPECT_NEAR(circle.area(), ground_truth, error_margin);
-	EXPECT_NEAR(circle.area_st(), ground_truth, error_margin);
-	EXPECT_NEAR(circle.area_mt(), ground_truth, error_margin);
+	EXPECT_NEAR(area(circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_st(circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_mt(circle), ground_truth, error_margin);
 #ifdef GPU
-	EXPECT_NEAR(circle.area_gpu(), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_gpu(circle), ground_truth, error_margin);
 #endif
 }
 

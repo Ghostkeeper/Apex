@@ -28,7 +28,6 @@ namespace apex {
  * by way of a fixture.
  */
 class MockSimplePolygon : public std::vector<Point2>,
-		public SimplePolygonArea<MockSimplePolygon>,
 		public SimplePolygonTranslate<MockSimplePolygon> {
 public:
 	/*!

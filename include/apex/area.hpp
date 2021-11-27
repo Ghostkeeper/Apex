@@ -15,6 +15,7 @@
 #endif
 
 #include "coordinate.hpp" //To return area_t.
+#include "point2.hpp" //To access coordinates of vertices.
 
 namespace apex {
 
@@ -508,7 +509,7 @@ protected:
 		std::vector<area_t> result;
 		result.reserve(base().size());
 		for(typename SimplePolygonBatchBase::const_iterator it = base().begin(); it != base().end(); ++it) {
-			result.push_back(it->area_st());
+			result.push_back(detail::area_st(*it));
 		}
 		return result;
 	}
