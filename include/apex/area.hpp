@@ -415,7 +415,6 @@ std::vector<area_t> area_gpu(const SimplePolygonBatch& batch) {
 	result.resize(batch.size()); //Resize, so that all threads can enter their data in parallel.
 
 	const Point2* vertices = batch.subelement_data();
-	const size_t vertices_size = batch.size_subelements();
 	#pragma omp target teams distribute parallel for map(to:vertices) map(from:result)
 	for(size_t polygon_index = 0; polygon_index < batch.size(); ++polygon_index) {
 		area_t area = 0;
