@@ -352,7 +352,7 @@ area_t area_gpu(const SimplePolygon& polygon) {
 	area_t area = 0;
 	const size_t size = polygon.size();
 	const Point2* vertices = polygon.data();
-	#pragma omp target teams distribute parallel for map(to:vertices) map(tofrom:area) reduction(+:area)
+	#pragma omp target teams distribute parallel for map(to:vertices[0:size]) map(tofrom:area) reduction(+:area)
 	for(size_t vertex = 0; vertex < size; ++vertex) {
 		size_t previous = (vertex - 1 + size) % size;
 		area += static_cast<area_t>(vertices[previous].x) * vertices[vertex].y - static_cast<area_t>(vertices[previous].y) * vertices[vertex].x;
@@ -415,7 +415,8 @@ std::vector<area_t> area_gpu(const SimplePolygonBatch& batch) {
 	result.resize(batch.size()); //Resize, so that all threads can enter their data in parallel.
 
 	const Point2* vertices = batch.subelement_data();
-	#pragma omp target teams distribute parallel for map(to:vertices) map(from:result)
+	const size_t vertices_size = batch.size_subelements();
+	#pragma omp target teams distribute parallel for map(to:vertices[0:vertices_size]) map(from:result)
 	for(size_t polygon_index = 0; polygon_index < batch.size(); ++polygon_index) {
 		area_t area = 0;
 		const auto& polygon = batch[polygon_index];
