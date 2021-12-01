@@ -31,7 +31,7 @@ namespace apex {
  * \param name The name of the test case to load.
  * \return A SimplePolygon with the loaded test data.
  */
-SimplePolygon load_simple_polygon(const std::string& name);
+SimplePolygon<> load_simple_polygon(const std::string& name);
 
 /*!
  * Load a file and return its entire contents as a string.
@@ -40,7 +40,8 @@ SimplePolygon load_simple_polygon(const std::string& name);
  *
  * If the file could not be loaded, an empty string is returned.
  *
- * The file is interpreted as UTF-8.
+ * The file is interpreted using the system default encoding. Using special
+ * characters in the file should be considered unreliable.
  * \param path The path to the file to load.
  * \return The contents of the file at that location.
  */
