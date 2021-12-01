@@ -33,20 +33,6 @@ namespace apex {
  */
 SimplePolygon<> load_simple_polygon(const std::string& name);
 
-/*!
- * Load a file and return its entire contents as a string.
- *
- * This is a helper function for other loaders.
- *
- * If the file could not be loaded, an empty string is returned.
- *
- * The file is interpreted using the system default encoding. Using special
- * characters in the file should be considered unreliable.
- * \param path The path to the file to load.
- * \return The contents of the file at that location.
- */
-std::string load_string(const std::string& path);
-
 }
 
 #endif //APEX_TEST_CASE_LOADER

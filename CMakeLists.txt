@@ -63,6 +63,8 @@ if(BUILD_TESTS)
 	target_link_libraries(apex INTERFACE ${GOOGLETEST_BOTH_LIBRARIES})
 	add_dependencies(apex GoogleTest)
 
+	add_subdirectory("${CMAKE_SOURCE_DIR}/test/data")
+
 	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
 	set(test_helpers_sources
 		mock_simple_polygon.cpp
