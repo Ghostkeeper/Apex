@@ -16,22 +16,21 @@
 namespace apex {
 
 /*!
- * Load a test case from a file as a simple polygon.
+ * Load a test case as a simple polygon.
  *
- * This will search through the ``simple_polygon`` folder in the test cases for
- * an SVG file with the given name, followed by .svg. In that SVG file it will
- * look for a ``<polygon>`` tag and parse its coordinates. Those coordinates are
- * used to construct a simple polygon. This way, the easy-to-visualise SVG files
- * can be used to create test cases.
+ * This will take the contents of an SVG file and look for a ``<polygon>`` tag
+ * and parse its coordinates. Those coordinates are used to construct a simple
+ * polygon. This way, the easy-to-visualise SVG files can be used to create test
+ * cases.
  *
  * Only the first polygon in the file is used. No transformations or CSS is
  * applied. Other SVG elements such as ``<path>`` are not parsed. The parser in
  * this loader is extremely simple and naive. This prevents needing a whole new
  * library just to read test cases.
- * \param name The name of the test case to load.
+ * \param svg The contents of an SVG file containing the polygon to load.
  * \return A SimplePolygon with the loaded test data.
  */
-SimplePolygon<> load_simple_polygon(const std::string& name);
+SimplePolygon<> load_simple_polygon(const char* svg);
 
 }
 
