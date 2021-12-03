@@ -16,12 +16,21 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 
 	size_t position = 0;
 	position = svg.find("<polygon ", position) + 9;
+	if(position == std::string::npos) { //There is no polygon in this SVG file.
+		return result;
+	}
 	position = svg.find("points=\"", position) + 8;
+	if(position == std::string::npos) { //There is no points in this polygon (or maybe whitespace is not as we expect here).
+		return result;
+	}
 	const size_t points_end = svg.find("\"", position);
+	if(points_end == std::string::npos) { //The points never end. Malformed file or incomplete.
+		return result;
+	}
 
 	std::vector<coord_t> coordinates; //Until we paired them up, store all single coordinates.
 	while(position < points_end) {
-		while(svg[position] == ',' || svg[position] == ' ') {
+		while((svg[position] == ',' || svg[position] == ' ') && position < points_end) {
 			++position; //Skip over delimiter(s).
 		}
 		//We are now at the start of the coordinate. Find the end.
@@ -29,7 +38,11 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 
 		//Turn this substring into a coordinate and store it.
 		const std::string coordinate_str = svg.substr(position, coordinate_end - position);
-		coordinates.push_back(std::stoll(coordinate_str));
+		try {
+			coordinates.push_back(std::stoll(coordinate_str));
+		} catch(const std::invalid_argument exception) { //Not a valid numerical coordinate here.
+			//Ignore. Just continue setting the position to the end of this coordinate and parse the next one.
+		}
 
 		//Continue from the end with finding the next coordinate.
 		position = coordinate_end;
