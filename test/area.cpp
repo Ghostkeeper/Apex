@@ -10,8 +10,11 @@
 #include <gtest/gtest.h> //To run the test.
 
 #include "apex/area.hpp"
+#include "apex/simple_polygon.hpp"
 #include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
 #include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
+#include "helpers/test_case_loader.hpp" //To load testing polygons to compute the area of.
+#include "helpers/test_files.hpp" //To load testing polygons to compute the area of.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
 
@@ -35,7 +38,7 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
  * Tests the area of a basic 1000 by 1000 square.
  */
 TEST(SimplePolygonArea, Square1000) {
-	const MockSimplePolygon square_1000(MockSimplePolygon::Shape::SQUARE_1000);
+	const SimplePolygon<> square_1000 = load_simple_polygon(data::simple_polygon_square_1000);
 	constexpr area_t true_area = 1000 * 1000;
 	EXPECT_EQ(area(square_1000), true_area);
 	EXPECT_EQ(detail::area_st(square_1000), true_area);
