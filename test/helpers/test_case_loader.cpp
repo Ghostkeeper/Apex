@@ -6,12 +6,41 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include <fstream> //To read files with test cases.
-
+#include "apex/coordinate.hpp" //To store coordinates until we create testing polygons out of them.
 #include "test_case_loader.hpp" //The functions we're implementing.
 
 namespace apex {
 
+SimplePolygon<> load_simple_polygon(const char* svg) {
+	const std::string contents(svg);
+	SimplePolygon<> result;
 
+	size_t position = 0;
+	position = contents.find("<polygon ", position) + 9;
+	position = contents.find("points=\"", position) + 8;
+	const size_t points_end = contents.find("\"", position);
+
+	std::vector<coord_t> coordinates; //Until we paired them up, store all single coordinates.
+	while(position < points_end) {
+		while(contents[position] == ',' || contents[position] == ' ') {
+			++position; //Skip over delimiter(s).
+		}
+		//We are now at the start of the coordinate. Find the end.
+		const size_t coordinate_end = std::min(contents.find(","), contents.find(" "));
+
+		//Turn this substring into a coordinate and store it.
+		const std::string coordinate_str = contents.substr(position, coordinate_end - position);
+		coordinates.push_back(std::stoll(coordinate_str));
+
+		//Continue from the end with finding the next coordinate.
+		position = coordinate_end;
+	}
+
+	for(size_t coordinate = 0; coordinate < coordinates.size() - 1; coordinate += 2) {
+		result.emplace_back(coordinates[coordinate], coordinates[coordinate + 1]); //Combine each pair of coordinates into a point.
+	}
+
+	return result;
+}
 
 }
