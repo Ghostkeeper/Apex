@@ -24,8 +24,44 @@ namespace apex {
 
 namespace data {
 
+const std::string simple_polygon_point =
+#include "test/data/simple_polygon/point.svg"
+;
+const std::string simple_polygon_line =
+#include "test/data/simple_polygon/line.svg"
+;
 const std::string simple_polygon_square_1000 =
 #include "test/data/simple_polygon/square_1000.svg"
+;
+const std::string simple_polygon_square_1000_negative_x =
+#include "test/data/simple_polygon/square_1000_negative_x.svg"
+;
+const std::string simple_polygon_square_1000_negative_y =
+#include "test/data/simple_polygon/square_1000_negative_y.svg"
+;
+const std::string simple_polygon_square_1000_negative_xy =
+#include "test/data/simple_polygon/square_1000_negative_xy.svg"
+;
+const std::string simple_polygon_square_1000_centred =
+#include "test/data/simple_polygon/square_1000_centred.svg"
+;
+const std::string simple_polygon_triangle_1000 =
+#include "test/data/simple_polygon/triangle_1000.svg"
+;
+const std::string simple_polygon_thin_rectangle =
+#include "test/data/simple_polygon/thin_rectangle.svg"
+;
+const std::string simple_polygon_arrowhead =
+#include "test/data/simple_polygon/arrowhead.svg"
+;
+const std::string simple_polygon_negative_square =
+#include "test/data/simple_polygon/negative_square.svg"
+;
+const std::string simple_polygon_hourglass =
+#include "test/data/simple_polygon/hourglass.svg"
+;
+const std::string simple_polygon_zero_width =
+#include "test/data/simple_polygon/zero_width.svg"
 ;
 
 }
