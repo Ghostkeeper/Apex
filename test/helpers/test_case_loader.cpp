@@ -11,25 +11,24 @@
 
 namespace apex {
 
-SimplePolygon<> load_simple_polygon(const char* svg) {
-	const std::string contents(svg);
+SimplePolygon<> load_simple_polygon(const std::string& svg) {
 	SimplePolygon<> result;
 
 	size_t position = 0;
-	position = contents.find("<polygon ", position) + 9;
-	position = contents.find("points=\"", position) + 8;
-	const size_t points_end = contents.find("\"", position);
+	position = svg.find("<polygon ", position) + 9;
+	position = svg.find("points=\"", position) + 8;
+	const size_t points_end = svg.find("\"", position);
 
 	std::vector<coord_t> coordinates; //Until we paired them up, store all single coordinates.
 	while(position < points_end) {
-		while(contents[position] == ',' || contents[position] == ' ') {
+		while(svg[position] == ',' || svg[position] == ' ') {
 			++position; //Skip over delimiter(s).
 		}
 		//We are now at the start of the coordinate. Find the end.
-		const size_t coordinate_end = std::min(contents.find(","), contents.find(" "));
+		const size_t coordinate_end = std::min(svg.find(","), svg.find(" "));
 
 		//Turn this substring into a coordinate and store it.
-		const std::string coordinate_str = contents.substr(position, coordinate_end - position);
+		const std::string coordinate_str = svg.substr(position, coordinate_end - position);
 		coordinates.push_back(std::stoll(coordinate_str));
 
 		//Continue from the end with finding the next coordinate.

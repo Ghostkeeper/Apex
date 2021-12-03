@@ -9,6 +9,8 @@
 #ifndef APEX_TEST_FILES
 #define APEX_TEST_FILES
 
+#include <string>
+
 /* This file defines a bunch of test files, included in the binary as strings.
 
 These files are defined as inline raw string literals, using preprocessor
@@ -22,7 +24,7 @@ namespace apex {
 
 namespace data {
 
-constexpr char* simple_polygon_square_1000 =
+const std::string simple_polygon_square_1000 =
 #include "test/data/simple_polygon/square_1000.svg"
 ;
 

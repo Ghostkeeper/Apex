@@ -30,7 +30,7 @@ namespace apex {
  * \param svg The contents of an SVG file containing the polygon to load.
  * \return A SimplePolygon with the loaded test data.
  */
-SimplePolygon<> load_simple_polygon(const char* svg);
+SimplePolygon<> load_simple_polygon(const std::string& svg);
 
 }
 
