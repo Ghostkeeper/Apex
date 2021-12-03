@@ -25,7 +25,7 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 			++position; //Skip over delimiter(s).
 		}
 		//We are now at the start of the coordinate. Find the end.
-		const size_t coordinate_end = std::min(svg.find(","), svg.find(" "));
+		const size_t coordinate_end = std::min(svg.find(",", position), std::min(svg.find(" ", position), svg.find("\"", position)));
 
 		//Turn this substring into a coordinate and store it.
 		const std::string coordinate_str = svg.substr(position, coordinate_end - position);
