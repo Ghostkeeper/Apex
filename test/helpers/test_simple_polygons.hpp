@@ -13,15 +13,17 @@
 
 /* This file defines a bunch of simple polygons for use in tests.
 
- */
-/* This file defines a bunch of test files, included in the binary as strings.
+Some of these simple polygons are loaded from SVG files. This is useful because
+SVG files are easy to visualise for a maintainer. They can be opened with any
+web browser and most image viewers. This is the preferable way to define a test
+case, because it's easy to maintain. The SVG files are included with a
+preprocessor directive and stored statically in the binary. To be directly
+included, it is first pre-processed by CMake in the build directory.
 
-These files are defined as inline raw string literals, using preprocessor
-directives to define them as symbols in the program. The compiler will then put
-them in the binary and make them accessible via a variable.
-
-The include directive refers not directly to the file in the data directory, but
-to a pre-processed file prepared by CMake.*/
+Some simple polygons are procedurally generated. This is necessary for cases
+that are extremely big. It wouldn't be practical to load SVG files of multiple
+megabytes. Nor would it be practical to store them under version control. Nobody
+would read all of that or edit it directly to maintain it anyway.*/
 
 namespace apex {
 namespace data {
