@@ -319,14 +319,13 @@ TEST(SimplePolygonBatchArea, EdgeCases) {
  * Tests getting the area of some polygons with many vertices.
  */
 TEST(SimplePolygonBatchArea, TwoCircles) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::TWO_CIRCLES);
-	const size_t num_vertices = batch[0].size();
-	const coord_t radius = batch[0][0].x;
+	const size_t num_vertices = data::simple_polygon_batch_two_circles[0].size();
+	const coord_t radius = data::simple_polygon_batch_two_circles[0][0].x;
 
 	const area_t true_area = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
-	const std::vector<area_t> calculated_areas = batch.area();
+	const std::vector<area_t> calculated_areas = area(data::simple_polygon_batch_two_circles);
 	for(area_t calculated_area : calculated_areas) {
 		EXPECT_NEAR(calculated_area, true_area, error_margin);
 	}

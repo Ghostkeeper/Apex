@@ -81,6 +81,9 @@ const Batch<SimplePolygon<>> simple_polygon_batch_edge_cases = load_simple_polyg
 #include "test/data/simple_polygon_batch/edge_cases.svg"
 );
 
+Batch<SimplePolygon<>> generate_simple_polygon_batch_two_circles();
+const Batch<SimplePolygon<>> simple_polygon_batch_two_circles = generate_simple_polygon_batch_two_circles();
+
 }
 }
 
