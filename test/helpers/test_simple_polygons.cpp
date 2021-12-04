@@ -51,7 +51,7 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 		position = coordinate_end;
 	}
 
-	for(size_t coordinate = 0; coordinate < coordinates.size() - 1; coordinate += 2) {
+	for(size_t coordinate = 0; coordinate + 1 < coordinates.size(); coordinate += 2) {
 		result.emplace_back(coordinates[coordinate], coordinates[coordinate + 1]); //Combine each pair of coordinates into a point.
 	}
 
