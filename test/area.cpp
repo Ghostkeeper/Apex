@@ -195,7 +195,6 @@ TEST(SimplePolygonArea, Line) {
  * Tests the area of a zero-width shape. It won't have any surface area.
  */
 TEST(SimplePolygonArea, ZeroWidth) {
-	const SimplePolygon<> zero_width = load_simple_polygon(data::simple_polygon_zero_width);
 	EXPECT_EQ(area(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
 	EXPECT_EQ(detail::area_st(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
 	EXPECT_EQ(detail::area_mt(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
