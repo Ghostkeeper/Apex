@@ -23,13 +23,12 @@ namespace apex {
  * Tests whether the area of an empty polygon starts off at 0.
  */
 TEST(SimplePolygonArea, InitialAreaIsZero) {
-	const SimplePolygon<> empty_polygon;
 	constexpr area_t true_area = 0;
-	EXPECT_EQ(area(empty_polygon), true_area);
-	EXPECT_EQ(detail::area_st(empty_polygon), true_area);
-	EXPECT_EQ(detail::area_mt(empty_polygon), true_area);
+	EXPECT_EQ(area(data::simple_polygon_empty), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_empty), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_empty), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(empty_polygon), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_empty), true_area);
 #endif
 }
 

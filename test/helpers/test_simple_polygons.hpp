@@ -45,6 +45,9 @@ namespace data {
  */
 SimplePolygon<> load_simple_polygon(const std::string& svg);
 
+const SimplePolygon<> simple_polygon_empty = load_simple_polygon(
+#include "test/data/simple_polygon/empty.svg"
+);
 const SimplePolygon<> simple_polygon_point = load_simple_polygon(
 #include "test/data/simple_polygon/point.svg"
 );

@@ -18,6 +18,7 @@ function(prepare_string_literal filename)
 endfunction(prepare_string_literal)
 
 prepare_string_literal("simple_polygon/arrowhead.svg")
+prepare_string_literal("simple_polygon/empty.svg")
 prepare_string_literal("simple_polygon/hourglass.svg")
 prepare_string_literal("simple_polygon/line.svg")
 prepare_string_literal("simple_polygon/negative_square.svg")
