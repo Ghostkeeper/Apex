@@ -15,7 +15,7 @@
 #include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
 #include "helpers/simple_polygon_generators.hpp" //To load testing polygons to compute the area of.
 #include "helpers/test_case_loader.hpp" //To load testing polygons to compute the area of.
-#include "helpers/test_files.hpp" //To load testing polygons to compute the area of.
+#include "helpers/test_simple_polygons.hpp" //To load testing polygons to compute the area of.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
 
@@ -39,13 +39,12 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
  * Tests the area of a basic 1000 by 1000 square.
  */
 TEST(SimplePolygonArea, Square1000) {
-	const SimplePolygon<> square_1000 = load_simple_polygon(data::simple_polygon_square_1000);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(square_1000), true_area);
-	EXPECT_EQ(detail::area_st(square_1000), true_area);
-	EXPECT_EQ(detail::area_mt(square_1000), true_area);
+	EXPECT_EQ(area(data::simple_polygon_square_1000), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_square_1000), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_square_1000), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(square_1000), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_square_1000), true_area);
 #endif
 }
 
@@ -53,13 +52,12 @@ TEST(SimplePolygonArea, Square1000) {
  * Tests the area of a 1000 by 1000 square moved into the negative X space.
  */
 TEST(SimplePolygonArea, Square1000NegativeX) {
-	const SimplePolygon<> negative_x = load_simple_polygon(data::simple_polygon_square_1000_negative_x);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(negative_x), true_area);
-	EXPECT_EQ(detail::area_st(negative_x), true_area);
-	EXPECT_EQ(detail::area_mt(negative_x), true_area);
+	EXPECT_EQ(area(data::simple_polygon_square_1000_negative_x), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_square_1000_negative_x), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_square_1000_negative_x), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(negative_x), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_square_1000_negative_x), true_area);
 #endif
 }
 
@@ -67,13 +65,12 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
  * Tests the area of a 1000 by 1000 square moved into the negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeY) {
-	const SimplePolygon<> negative_y = load_simple_polygon(data::simple_polygon_square_1000_negative_y);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(negative_y), true_area);
-	EXPECT_EQ(detail::area_st(negative_y), true_area);
-	EXPECT_EQ(detail::area_mt(negative_y), true_area);
+	EXPECT_EQ(area(data::simple_polygon_square_1000_negative_y), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_square_1000_negative_y), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_square_1000_negative_y), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(negative_y), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_square_1000_negative_y), true_area);
 #endif
 }
 
@@ -82,13 +79,12 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
  * negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeXY) {
-	const SimplePolygon<> negative_xy = load_simple_polygon(data::simple_polygon_square_1000_negative_xy);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(negative_xy), true_area);
-	EXPECT_EQ(detail::area_st(negative_xy), true_area);
-	EXPECT_EQ(detail::area_mt(negative_xy), true_area);
+	EXPECT_EQ(area(data::simple_polygon_square_1000_negative_xy), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_square_1000_negative_xy), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_square_1000_negative_xy), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(negative_xy), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_square_1000_negative_xy), true_area);
 #endif
 }
 
@@ -96,13 +92,12 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
  * Tests the area of a 1000 by 1000 square around the origin.
  */
 TEST(SimplePolygonArea, Square1000Centred) {
-	const SimplePolygon<> centred = load_simple_polygon(data::simple_polygon_square_1000_centred);
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(centred), true_area);
-	EXPECT_EQ(detail::area_st(centred), true_area);
-	EXPECT_EQ(detail::area_mt(centred), true_area);
+	EXPECT_EQ(area(data::simple_polygon_square_1000_centred), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_square_1000_centred), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_square_1000_centred), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(centred), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_square_1000_centred), true_area);
 #endif
 }
 
@@ -110,13 +105,12 @@ TEST(SimplePolygonArea, Square1000Centred) {
  * Tests the area of a triangle with a 1000-unit wide base.
  */
 TEST(SimplePolygonArea, Triangle1000) {
-	const SimplePolygon<> triangle = load_simple_polygon(data::simple_polygon_triangle_1000);
 	constexpr area_t true_area = 1000 * 1000 / 2;
-	EXPECT_EQ(area(triangle), true_area);
-	EXPECT_EQ(detail::area_st(triangle), true_area);
-	EXPECT_EQ(detail::area_mt(triangle), true_area);
+	EXPECT_EQ(area(data::simple_polygon_triangle_1000), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_triangle_1000), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_triangle_1000), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(triangle), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_triangle_1000), true_area);
 #endif
 }
 
@@ -126,13 +120,12 @@ TEST(SimplePolygonArea, Triangle1000) {
  * This catches some of the edge cases involved with rounding errors very well.
  */
 TEST(SimplePolygonArea, ThinRectangle) {
-	const SimplePolygon<> thin_rectangle = load_simple_polygon(data::simple_polygon_thin_rectangle);
 	constexpr area_t true_area = 1000 * 1;
-	EXPECT_EQ(area(thin_rectangle), true_area);
-	EXPECT_EQ(detail::area_st(thin_rectangle), true_area);
-	EXPECT_EQ(detail::area_mt(thin_rectangle), true_area);
+	EXPECT_EQ(area(data::simple_polygon_thin_rectangle), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_thin_rectangle), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_thin_rectangle), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(thin_rectangle), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_thin_rectangle), true_area);
 #endif
 }
 
@@ -140,13 +133,12 @@ TEST(SimplePolygonArea, ThinRectangle) {
  * Tests the area of a concave shape.
  */
 TEST(SimplePolygonArea, Concave) {
-	const SimplePolygon<> arrowhead = load_simple_polygon(data::simple_polygon_arrowhead);
 	constexpr area_t true_area = 1000 * 1000 / 2 - 1000 * 500 / 2;
-	EXPECT_EQ(area(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
-	EXPECT_EQ(detail::area_st(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
-	EXPECT_EQ(detail::area_mt(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(area(data::simple_polygon_arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_st(data::simple_polygon_arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 #endif
 }
 
@@ -155,13 +147,12 @@ TEST(SimplePolygonArea, Concave) {
  * is the other way around.
  */
 TEST(SimplePolygonArea, Negative) {
-	const SimplePolygon<> negative = load_simple_polygon(data::simple_polygon_negative_square);
 	constexpr area_t true_area = -1000 * 1000;
-	EXPECT_EQ(area(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
-	EXPECT_EQ(detail::area_st(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
-	EXPECT_EQ(detail::area_mt(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(area(data::simple_polygon_negative_square), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_st(data::simple_polygon_negative_square), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_negative_square), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_negative_square), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 #endif
 }
 
@@ -169,13 +160,12 @@ TEST(SimplePolygonArea, Negative) {
  * Tests the area of a self-intersecting polygon, where half of it is negative.
  */
 TEST(SimplePolygonArea, SelfIntersecting) {
-	const SimplePolygon<> hourglass = load_simple_polygon(data::simple_polygon_hourglass);
 	constexpr area_t true_area = 1000 * 500 / 2 - 1000 * 500 / 2;
-	EXPECT_EQ(area(hourglass), true_area);
-	EXPECT_EQ(detail::area_st(hourglass), true_area);
-	EXPECT_EQ(detail::area_mt(hourglass), true_area);
+	EXPECT_EQ(area(data::simple_polygon_hourglass), true_area);
+	EXPECT_EQ(detail::area_st(data::simple_polygon_hourglass), true_area);
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_hourglass), true_area);
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(hourglass), true_area);
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_hourglass), true_area);
 #endif
 }
 
@@ -183,12 +173,11 @@ TEST(SimplePolygonArea, SelfIntersecting) {
  * Tests the area of a single point.
  */
 TEST(SimplePolygonArea, Point) {
-	const SimplePolygon<> point = load_simple_polygon(data::simple_polygon_point);
-	EXPECT_EQ(area(point), 0) << "Points don't have any surface area.";
-	EXPECT_EQ(detail::area_st(point), 0) << "Points don't have any surface area.";
-	EXPECT_EQ(detail::area_mt(point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(area(data::simple_polygon_point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_st(data::simple_polygon_point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_point), 0) << "Points don't have any surface area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(point), 0) << "Points don't have any surface area.";
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_point), 0) << "Points don't have any surface area.";
 #endif
 }
 
@@ -196,12 +185,11 @@ TEST(SimplePolygonArea, Point) {
  * Tests the area of a line. It won't have any surface area.
  */
 TEST(SimplePolygonArea, Line) {
-	const SimplePolygon<> line = load_simple_polygon(data::simple_polygon_line);
-	EXPECT_EQ(area(line), 0) << "Lines don't have any surface area.";
-	EXPECT_EQ(detail::area_st(line), 0) << "Lines don't have any surface area.";
-	EXPECT_EQ(detail::area_mt(line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(area(data::simple_polygon_line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_st(data::simple_polygon_line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_line), 0) << "Lines don't have any surface area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(line), 0) << "Lines don't have any surface area.";
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_line), 0) << "Lines don't have any surface area.";
 #endif
 }
 
@@ -210,11 +198,11 @@ TEST(SimplePolygonArea, Line) {
  */
 TEST(SimplePolygonArea, ZeroWidth) {
 	const SimplePolygon<> zero_width = load_simple_polygon(data::simple_polygon_zero_width);
-	EXPECT_EQ(area(zero_width), 0) << "The shape has no width, so no surface area.";
-	EXPECT_EQ(detail::area_st(zero_width), 0) << "The shape has no width, so no surface area.";
-	EXPECT_EQ(detail::area_mt(zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(area(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_st(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_mt(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(zero_width), 0) << "The shape has no width, so no surface area.";
+	EXPECT_EQ(detail::area_gpu(data::simple_polygon_zero_width), 0) << "The shape has no width, so no surface area.";
 #endif
 }
 
@@ -227,18 +215,17 @@ TEST(SimplePolygonArea, ZeroWidth) {
  * 1/2 * n * r^2 * sin(2*pi / n)
  */
 TEST(SimplePolygonArea, Circle) {
-	SimplePolygon<> circle = data::simple_polygon_circle;
-	const size_t num_vertices = circle.size();
-	const coord_t radius = circle[0].x;
+	const size_t num_vertices = data::simple_polygon_circle.size();
+	const coord_t radius = data::simple_polygon_circle[0].x;
 
 	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
-	EXPECT_NEAR(area(circle), ground_truth, error_margin);
-	EXPECT_NEAR(detail::area_st(circle), ground_truth, error_margin);
-	EXPECT_NEAR(detail::area_mt(circle), ground_truth, error_margin);
+	EXPECT_NEAR(area(data::simple_polygon_circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_st(data::simple_polygon_circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_mt(data::simple_polygon_circle), ground_truth, error_margin);
 #ifdef GPU
-	EXPECT_NEAR(detail::area_gpu(circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_gpu(data::simple_polygon_circle), ground_truth, error_margin);
 #endif
 }
 

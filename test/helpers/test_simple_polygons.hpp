@@ -9,8 +9,12 @@
 #ifndef APEX_TEST_FILES
 #define APEX_TEST_FILES
 
-#include <string>
+#include "apex/simple_polygon.hpp" //We're defining these simple polygons here.
+#include "test_case_loader.hpp" //Generate test polygons with this function.
 
+/* This file defines a bunch of simple polygons for use in tests.
+
+ */
 /* This file defines a bunch of test files, included in the binary as strings.
 
 These files are defined as inline raw string literals, using preprocessor
@@ -21,48 +25,47 @@ The include directive refers not directly to the file in the data directory, but
 to a pre-processed file prepared by CMake.*/
 
 namespace apex {
-
 namespace data {
 
-const std::string simple_polygon_point =
+const SimplePolygon<> simple_polygon_point = load_simple_polygon(
 #include "test/data/simple_polygon/point.svg"
-;
-const std::string simple_polygon_line =
+);
+const SimplePolygon<> simple_polygon_line = load_simple_polygon(
 #include "test/data/simple_polygon/line.svg"
-;
-const std::string simple_polygon_square_1000 =
+);
+const SimplePolygon<> simple_polygon_square_1000 = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000.svg"
-;
-const std::string simple_polygon_square_1000_negative_x =
+);
+const SimplePolygon<> simple_polygon_square_1000_negative_x = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_x.svg"
-;
-const std::string simple_polygon_square_1000_negative_y =
+);
+const SimplePolygon<> simple_polygon_square_1000_negative_y = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_y.svg"
-;
-const std::string simple_polygon_square_1000_negative_xy =
+);
+const SimplePolygon<> simple_polygon_square_1000_negative_xy = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_xy.svg"
-;
-const std::string simple_polygon_square_1000_centred =
+);
+const SimplePolygon<> simple_polygon_square_1000_centred = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_centred.svg"
-;
-const std::string simple_polygon_triangle_1000 =
+);
+const SimplePolygon<> simple_polygon_triangle_1000 = load_simple_polygon(
 #include "test/data/simple_polygon/triangle_1000.svg"
-;
-const std::string simple_polygon_thin_rectangle =
+);
+const SimplePolygon<> simple_polygon_thin_rectangle = load_simple_polygon(
 #include "test/data/simple_polygon/thin_rectangle.svg"
-;
-const std::string simple_polygon_arrowhead =
+);
+const SimplePolygon<> simple_polygon_arrowhead = load_simple_polygon(
 #include "test/data/simple_polygon/arrowhead.svg"
-;
-const std::string simple_polygon_negative_square =
+);
+const SimplePolygon<> simple_polygon_negative_square = load_simple_polygon(
 #include "test/data/simple_polygon/negative_square.svg"
-;
-const std::string simple_polygon_hourglass =
+);
+const SimplePolygon<> simple_polygon_hourglass = load_simple_polygon(
 #include "test/data/simple_polygon/hourglass.svg"
-;
-const std::string simple_polygon_zero_width =
+);
+const SimplePolygon<> simple_polygon_zero_width = load_simple_polygon(
 #include "test/data/simple_polygon/zero_width.svg"
-;
+);
 
 }
 
