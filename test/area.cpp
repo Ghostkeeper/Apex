@@ -9,10 +9,7 @@
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h> //To run the test.
 
-#include "apex/area.hpp"
-#include "apex/simple_polygon.hpp"
-#include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
-#include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
+#include "apex/area.hpp" //The unit we're testing here.
 #include "helpers/test_simple_polygon_batches.hpp" //To load testing batches of polygons to compute the area of.
 #include "helpers/test_simple_polygons.hpp" //To load testing polygons to compute the area of.
 
@@ -230,7 +227,6 @@ TEST(SimplePolygonArea, Circle) {
  * Tests getting the area of an empty batch.
  */
 TEST(SimplePolygonBatchArea, EmptyBatch) {
-	const MockSimplePolygonBatch empty;
 	const std::vector<area_t> ground_truth;
 	EXPECT_EQ(area(data::simple_polygon_batch_empty), ground_truth) << "The area of an empty batch is an empty list.";
 }
