@@ -24,6 +24,6 @@ jobs:
         CC: gcc-10
         CXX: g++-10
     - name: Make
-      run: make
+      run: make -j2
     - name: CTest
       run: make test
