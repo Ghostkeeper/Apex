@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
+	<polygon points="0,0 0,1000 1000,1000 1000,0" />
+	<polygon fill="red" points="0,0 1000,1000 0,1000 1000,0" />
+	<polygon fill="orange" points="0,0 1000,0 1000,0 0,0" />
+	<polygon fill="yellow" points="50,100 100,200" />
+	<polygon fill="green" points="25,25" />
+	<polygon fill="cyan" points="" />
+</svg>

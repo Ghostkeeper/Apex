@@ -13,6 +13,7 @@
 #include "apex/simple_polygon.hpp"
 #include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
 #include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
+#include "helpers/test_simple_polygon_batches.hpp" //To load testing batches of polygons to compute the area of.
 #include "helpers/test_simple_polygons.hpp" //To load testing polygons to compute the area of.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
@@ -231,7 +232,7 @@ TEST(SimplePolygonArea, Circle) {
 TEST(SimplePolygonBatchArea, EmptyBatch) {
 	const MockSimplePolygonBatch empty;
 	const std::vector<area_t> ground_truth;
-	EXPECT_EQ(empty.area(), ground_truth) << "The area of an empty batch is an empty list.";
+	EXPECT_EQ(area(data::simple_polygon_batch_empty), ground_truth) << "The area of an empty batch is an empty list.";
 }
 
 /*!
@@ -241,10 +242,8 @@ TEST(SimplePolygonBatchArea, EmptyBatch) {
  * used.
  */
 TEST(SimplePolygonBatchArea, SingleEmpty) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_EMPTY);
-
 	const std::vector<area_t> ground_truth = {0};
-	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, and it is empty.";
+	EXPECT_EQ(area(data::simple_polygon_batch_single_empty), ground_truth) << "There is a single polygon in this batch, and it is empty.";
 }
 
 /*!
@@ -252,10 +251,8 @@ TEST(SimplePolygonBatchArea, SingleEmpty) {
  * single vertex, without any surface area.
  */
 TEST(SimplePolygonBatchArea, SinglePoint) {
-	MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_POINT);
-
 	const std::vector<area_t> ground_truth = {0};
-	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, but it's just a point with no surface area.";
+	EXPECT_EQ(area(data::simple_polygon_batch_single_point), ground_truth) << "There is a single polygon in this batch, but it's just a point with no surface area.";
 }
 
 /*!
@@ -263,20 +260,16 @@ TEST(SimplePolygonBatchArea, SinglePoint) {
  * vertices, without any surface area.
  */
 TEST(SimplePolygonBatchArea, SingleLine) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_LINE);
-
 	const std::vector<area_t> ground_truth = {0};
-	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, but it's just a line with no surface area.";
+	EXPECT_EQ(area(data::simple_polygon_batch_single_line), ground_truth) << "There is a single polygon in this batch, but it's just a line with no surface area.";
 }
 
 /*!
  * Tests getting the area of a batch with one polygon.
  */
 TEST(SimplePolygonBatchArea, SingleSquare) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SINGLE_SQUARE);
-
 	const std::vector<area_t> ground_truth = {1000 * 1000};
-	EXPECT_EQ(batch.area(), ground_truth) << "There is a single polygon in this batch, and it's a 1000x1000 square.";
+	EXPECT_EQ(area(data::simple_polygon_batch_single_square), ground_truth) << "There is a single polygon in this batch, and it's a 1000x1000 square.";
 }
 
 /*!
@@ -287,10 +280,8 @@ TEST(SimplePolygonBatchArea, SingleSquare) {
  * the batch, and also that the results are properly formatted.
  */
 TEST(SimplePolygonBatchArea, SquareTriangle) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SQUARE_TRIANGLE);
-
 	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000 / 2};
-	EXPECT_EQ(batch.area(), ground_truth) << "The square is 1000x1000. The triangle has a base and height of 1000, so an area of half of that.";
+	EXPECT_EQ(area(data::simple_polygon_batch_square_triangle), ground_truth) << "The square is 1000x1000. The triangle has a base and height of 1000, so an area of half of that.";
 }
 
 /*!
@@ -300,10 +291,8 @@ TEST(SimplePolygonBatchArea, SquareTriangle) {
  * reduced and increased.
  */
 TEST(SimplePolygonBatchArea, SquareTriangleSquare) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::SQUARE_TRIANGLE_SQUARE);
-
 	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000 / 2, 1000 * 1000};
-	EXPECT_EQ(batch.area(), ground_truth) << "The first and third polygons are squares of 1000x1000. The middle one is a triangle, with half of that area.";
+	EXPECT_EQ(area(data::simple_polygon_batch_square_triangle_square), ground_truth) << "The first and third polygons are squares of 1000x1000. The middle one is a triangle, with half of that area.";
 }
 
 /*!
@@ -313,10 +302,8 @@ TEST(SimplePolygonBatchArea, SquareTriangleSquare) {
  * it would fail this test.
  */
 TEST(SimplePolygonBatchArea, TwoSquares) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::TWO_SQUARES);
-
 	const std::vector<area_t> ground_truth = {1000 * 1000, 1000 * 1000};
-	EXPECT_EQ(batch.area(), ground_truth) << "The batch has two 1000x1000 squares.";
+	EXPECT_EQ(area(data::simple_polygon_batch_two_squares), ground_truth) << "The batch has two 1000x1000 squares.";
 }
 
 /*!
@@ -324,10 +311,8 @@ TEST(SimplePolygonBatchArea, TwoSquares) {
  * same way as the normal algorithms.
  */
 TEST(SimplePolygonBatchArea, EdgeCases) {
-	const MockSimplePolygonBatch batch(MockSimplePolygonBatch::Contents::EDGE_CASES);
-
 	const std::vector<area_t> ground_truth = {-1000 * 1000, 0, 0, 0, 0, 0};
-	EXPECT_EQ(batch.area(), ground_truth) << "The first element is a negative square. The second is self-intersecting which causes the negative area to compensate for the positive. The rest all has no surface.";
+	EXPECT_EQ(area(data::simple_polygon_batch_edge_cases), ground_truth) << "The first element is a negative square. The second is self-intersecting which causes the negative area to compensate for the positive. The rest all has no surface.";
 }
 
 /*!
