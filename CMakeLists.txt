@@ -65,10 +65,8 @@ if(BUILD_TESTS)
 
 	add_subdirectory("${CMAKE_SOURCE_DIR}/test/data")
 
-	#Library of helper functions and classes to help running the tests (e.g. mocks, gropers).
+	#Library of helper functions and classes to help running the tests (e.g. test cases, mocks, gropers).
 	set(test_helpers_sources
-		mock_simple_polygon.cpp
-		mock_simple_polygon_batch.cpp
 		test_simple_polygons.cpp
 		test_simple_polygon_batches.cpp
 	)
