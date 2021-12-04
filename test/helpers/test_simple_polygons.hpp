@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_TEST_FILES
-#define APEX_TEST_FILES
+#ifndef APEX_TEST_SIMPLE_POLYGONS
+#define APEX_TEST_SIMPLE_POLYGONS
 
 #include "apex/simple_polygon.hpp" //We're defining these simple polygons here.
 #include "test_case_loader.hpp" //Generate test polygons with this function.
@@ -71,4 +71,4 @@ const SimplePolygon<> simple_polygon_zero_width = load_simple_polygon(
 
 }
 
-#endif //APEX_TEST_FILES
+#endif //APEX_TEST_SIMPLE_POLYGONS
