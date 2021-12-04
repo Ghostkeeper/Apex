@@ -25,7 +25,7 @@ namespace apex {
  * Tests whether the area of an empty polygon starts off at 0.
  */
 TEST(SimplePolygonArea, InitialAreaIsZero) {
-	const MockSimplePolygon empty_polygon;
+	const SimplePolygon<> empty_polygon;
 	constexpr area_t true_area = 0;
 	EXPECT_EQ(area(empty_polygon), true_area);
 	EXPECT_EQ(detail::area_st(empty_polygon), true_area);
@@ -53,7 +53,7 @@ TEST(SimplePolygonArea, Square1000) {
  * Tests the area of a 1000 by 1000 square moved into the negative X space.
  */
 TEST(SimplePolygonArea, Square1000NegativeX) {
-	const MockSimplePolygon negative_x(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_X);
+	const SimplePolygon<> negative_x = load_simple_polygon(data::simple_polygon_square_1000_negative_x);
 	constexpr area_t true_area = 1000 * 1000;
 	EXPECT_EQ(area(negative_x), true_area);
 	EXPECT_EQ(detail::area_st(negative_x), true_area);
@@ -67,7 +67,7 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
  * Tests the area of a 1000 by 1000 square moved into the negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeY) {
-	const MockSimplePolygon negative_y(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_Y);
+	const SimplePolygon<> negative_y = load_simple_polygon(data::simple_polygon_square_1000_negative_y);
 	constexpr area_t true_area = 1000 * 1000;
 	EXPECT_EQ(area(negative_y), true_area);
 	EXPECT_EQ(detail::area_st(negative_y), true_area);
@@ -82,7 +82,7 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
  * negative Y space.
  */
 TEST(SimplePolygonArea, Square1000NegativeXY) {
-	const MockSimplePolygon negative_xy(MockSimplePolygon::Shape::SQUARE_1000_NEGATIVE_XY);
+	const SimplePolygon<> negative_xy = load_simple_polygon(data::simple_polygon_square_1000_negative_xy);
 	constexpr area_t true_area = 1000 * 1000;
 	EXPECT_EQ(area(negative_xy), true_area);
 	EXPECT_EQ(detail::area_st(negative_xy), true_area);
@@ -96,7 +96,7 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
  * Tests the area of a 1000 by 1000 square around the origin.
  */
 TEST(SimplePolygonArea, Square1000Centred) {
-	const MockSimplePolygon centred(MockSimplePolygon::Shape::SQUARE_1000_CENTRED);
+	const SimplePolygon<> centred = load_simple_polygon(data::simple_polygon_square_1000_centred);
 	constexpr area_t true_area = 1000 * 1000;
 	EXPECT_EQ(area(centred), true_area);
 	EXPECT_EQ(detail::area_st(centred), true_area);
@@ -110,7 +110,7 @@ TEST(SimplePolygonArea, Square1000Centred) {
  * Tests the area of a triangle with a 1000-unit wide base.
  */
 TEST(SimplePolygonArea, Triangle1000) {
-	const MockSimplePolygon triangle(MockSimplePolygon::Shape::TRIANGLE_1000);
+	const SimplePolygon<> triangle = load_simple_polygon(data::simple_polygon_triangle_1000);
 	constexpr area_t true_area = 1000 * 1000 / 2;
 	EXPECT_EQ(area(triangle), true_area);
 	EXPECT_EQ(detail::area_st(triangle), true_area);
@@ -126,7 +126,7 @@ TEST(SimplePolygonArea, Triangle1000) {
  * This catches some of the edge cases involved with rounding errors very well.
  */
 TEST(SimplePolygonArea, ThinRectangle) {
-	const MockSimplePolygon thin_rectangle(MockSimplePolygon::Shape::THIN_RECTANGLE);
+	const SimplePolygon<> thin_rectangle = load_simple_polygon(data::simple_polygon_thin_rectangle);
 	constexpr area_t true_area = 1000 * 1;
 	EXPECT_EQ(area(thin_rectangle), true_area);
 	EXPECT_EQ(detail::area_st(thin_rectangle), true_area);
@@ -140,7 +140,7 @@ TEST(SimplePolygonArea, ThinRectangle) {
  * Tests the area of a concave shape.
  */
 TEST(SimplePolygonArea, Concave) {
-	const MockSimplePolygon arrowhead(MockSimplePolygon::Shape::ARROWHEAD);
+	const SimplePolygon<> arrowhead = load_simple_polygon(data::simple_polygon_arrowhead);
 	constexpr area_t true_area = 1000 * 1000 / 2 - 1000 * 500 / 2;
 	EXPECT_EQ(area(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
 	EXPECT_EQ(detail::area_st(arrowhead), true_area) << "The arrowhead has a 1000-wide base and 1000 height, subtracting 1000-wide base with 500 height from the shape.";
@@ -155,7 +155,7 @@ TEST(SimplePolygonArea, Concave) {
  * is the other way around.
  */
 TEST(SimplePolygonArea, Negative) {
-	const MockSimplePolygon negative(MockSimplePolygon::Shape::NEGATIVE_SQUARE);
+	const SimplePolygon<> negative = load_simple_polygon(data::simple_polygon_negative_square);
 	constexpr area_t true_area = -1000 * 1000;
 	EXPECT_EQ(area(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
 	EXPECT_EQ(detail::area_st(negative), true_area) << "Since the winding order is the other way around, this shape is negative and should have a negative area.";
@@ -169,7 +169,7 @@ TEST(SimplePolygonArea, Negative) {
  * Tests the area of a self-intersecting polygon, where half of it is negative.
  */
 TEST(SimplePolygonArea, SelfIntersecting) {
-	const MockSimplePolygon hourglass(MockSimplePolygon::Shape::HOURGLASS);
+	const SimplePolygon<> hourglass = load_simple_polygon(data::simple_polygon_hourglass);
 	constexpr area_t true_area = 1000 * 500 / 2 - 1000 * 500 / 2;
 	EXPECT_EQ(area(hourglass), true_area);
 	EXPECT_EQ(detail::area_st(hourglass), true_area);
@@ -183,7 +183,7 @@ TEST(SimplePolygonArea, SelfIntersecting) {
  * Tests the area of a single point.
  */
 TEST(SimplePolygonArea, Point) {
-	const MockSimplePolygon point(MockSimplePolygon::Shape::POINT);
+	const SimplePolygon<> point = load_simple_polygon(data::simple_polygon_point);
 	EXPECT_EQ(area(point), 0) << "Points don't have any surface area.";
 	EXPECT_EQ(detail::area_st(point), 0) << "Points don't have any surface area.";
 	EXPECT_EQ(detail::area_mt(point), 0) << "Points don't have any surface area.";
@@ -196,7 +196,7 @@ TEST(SimplePolygonArea, Point) {
  * Tests the area of a line. It won't have any surface area.
  */
 TEST(SimplePolygonArea, Line) {
-	const MockSimplePolygon line(MockSimplePolygon::Shape::LINE);
+	const SimplePolygon<> line = load_simple_polygon(data::simple_polygon_line);
 	EXPECT_EQ(area(line), 0) << "Lines don't have any surface area.";
 	EXPECT_EQ(detail::area_st(line), 0) << "Lines don't have any surface area.";
 	EXPECT_EQ(detail::area_mt(line), 0) << "Lines don't have any surface area.";
@@ -209,7 +209,7 @@ TEST(SimplePolygonArea, Line) {
  * Tests the area of a zero-width shape. It won't have any surface area.
  */
 TEST(SimplePolygonArea, ZeroWidth) {
-	const MockSimplePolygon zero_width(MockSimplePolygon::Shape::ZERO_WIDTH);
+	const SimplePolygon<> zero_width = load_simple_polygon(data::simple_polygon_zero_width);
 	EXPECT_EQ(area(zero_width), 0) << "The shape has no width, so no surface area.";
 	EXPECT_EQ(detail::area_st(zero_width), 0) << "The shape has no width, so no surface area.";
 	EXPECT_EQ(detail::area_mt(zero_width), 0) << "The shape has no width, so no surface area.";
