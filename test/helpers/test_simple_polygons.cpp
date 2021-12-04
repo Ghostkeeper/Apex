@@ -7,6 +7,7 @@
  */
 
 #include <cmath> //For trigonometry functions to construct an approximation of a circle.
+#include <numbers> //For use of pi to construct an approximation of a circle by radians.
 
 #include "test_simple_polygons.hpp" //The definitions we're implementing.
 
