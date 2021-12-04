@@ -70,6 +70,7 @@ if(BUILD_TESTS)
 		mock_simple_polygon.cpp
 		mock_simple_polygon_batch.cpp
 		test_simple_polygons.cpp
+		test_simple_polygon_batches.cpp
 	)
 	set(test_helpers_paths "")
 	foreach(test_helpers_source ${test_helpers_sources})
