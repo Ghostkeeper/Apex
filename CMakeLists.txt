@@ -69,8 +69,7 @@ if(BUILD_TESTS)
 	set(test_helpers_sources
 		mock_simple_polygon.cpp
 		mock_simple_polygon_batch.cpp
-		simple_polygon_generators.cpp
-		test_case_loader.cpp
+		test_simple_polygons.cpp
 	)
 	set(test_helpers_paths "")
 	foreach(test_helpers_source ${test_helpers_sources})
@@ -78,6 +77,7 @@ if(BUILD_TESTS)
 	endforeach()
 	add_library(apex_test_helpers ${test_helpers_paths})
 	target_link_libraries(apex_test_helpers apex)
+	target_include_directories(apex_test_helpers PRIVATE "${CMAKE_CURRENT_BINARY_DIR}") #Load the test case files generated in the build directory.
 
 	#The names of all tests. Each must have a file called "test/<name>.cpp" as the source file.
 	#Instead of slashes for the directories, use periods.

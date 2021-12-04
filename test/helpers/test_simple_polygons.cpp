@@ -6,10 +6,12 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#include "apex/coordinate.hpp" //To store coordinates until we create testing polygons out of them.
-#include "test_case_loader.hpp" //The functions we're implementing.
+#include <cmath> //For trigonometry functions to construct an approximation of a circle.
+
+#include "test_simple_polygons.hpp" //The definitions we're implementing.
 
 namespace apex {
+namespace data {
 
 SimplePolygon<> load_simple_polygon(const std::string& svg) {
 	SimplePolygon<> result;
@@ -55,4 +57,18 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 	return result;
 }
 
+SimplePolygon<> generate_simple_polygon_circle() {
+	SimplePolygon result;
+	constexpr size_t num_vertices = 1000000;
+	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
+	result.reserve(num_vertices);
+	for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
+		const coord_t x = std::lround(std::cos(std::numbers::pi * 2 / num_vertices * vertex) * radius);
+		const coord_t y = std::lround(std::sin(std::numbers::pi * 2 / num_vertices * vertex) * radius);
+		result.emplace_back(x, y);
+	}
+	return result;
+}
+
+}
 }

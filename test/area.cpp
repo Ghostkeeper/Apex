@@ -13,8 +13,6 @@
 #include "apex/simple_polygon.hpp"
 #include "helpers/mock_simple_polygon.hpp" //Mock away the base SimplePolygon class.
 #include "helpers/mock_simple_polygon_batch.hpp" //Mock away the base SimplePolygonBatch class.
-#include "helpers/simple_polygon_generators.hpp" //To load testing polygons to compute the area of.
-#include "helpers/test_case_loader.hpp" //To load testing polygons to compute the area of.
 #include "helpers/test_simple_polygons.hpp" //To load testing polygons to compute the area of.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
