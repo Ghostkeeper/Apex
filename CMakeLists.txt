@@ -69,6 +69,7 @@ if(BUILD_TESTS)
 	set(test_helpers_sources
 		mock_simple_polygon.cpp
 		mock_simple_polygon_batch.cpp
+		simple_polygon_generators.cpp
 		test_case_loader.cpp
 	)
 	set(test_helpers_paths "")
