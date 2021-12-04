@@ -43,46 +43,46 @@ all of that or edit it directly to maintain it anyway.*/
  * \param svg The contents of an SVG file containing the polygons to load.
  * \return A ``Batch`` of ``SimplePolygon`` with the loaded test data.
  */
-Batch<SimplePolygon<>> load_simple_polygon_batch(const std::string& svg);
+Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg);
 
-const Batch<SimplePolygon<>> simple_polygon_batch_empty = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_empty = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/empty.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_single_empty = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_single_empty = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/single_empty.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_single_point = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_single_point = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/single_point.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_single_line = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_single_line = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/single_line.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_single_square = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_single_square = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/single_square.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_square_triangle = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_square_triangle = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/square_triangle.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_square_triangle_square = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_square_triangle_square = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/square_triangle_square.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_two_squares = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_two_squares = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/two_squares.svg"
 );
 
-const Batch<SimplePolygon<>> simple_polygon_batch_edge_cases = load_simple_polygon_batch(
+const Batch<SimplePolygon> simple_polygon_batch_edge_cases = load_simple_polygon_batch(
 #include "test/data/simple_polygon_batch/edge_cases.svg"
 );
 
-Batch<SimplePolygon<>> generate_simple_polygon_batch_two_circles();
-const Batch<SimplePolygon<>> simple_polygon_batch_two_circles = generate_simple_polygon_batch_two_circles();
+Batch<SimplePolygon> generate_simple_polygon_batch_two_circles();
+const Batch<SimplePolygon> simple_polygon_batch_two_circles = generate_simple_polygon_batch_two_circles();
 
 }
 }

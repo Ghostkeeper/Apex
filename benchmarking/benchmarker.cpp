@@ -30,7 +30,7 @@ void Benchmarker::bench_area() {
 		sizes.push_back(i);
 	}
 	//Pre-generate the polygons.
-	std::vector<apex::SimplePolygon<>> polys;
+	std::vector<apex::SimplePolygon> polys;
 	for(size_t size : sizes) {
 		polys.emplace_back(size, apex::Point2(0, 0));
 		for(size_t i = 0; i < size; ++i) {
@@ -46,7 +46,7 @@ void Benchmarker::bench_area() {
 	}
 
 	for(size_t i = 0; i < sizes.size(); ++i) {
-		apex::SimplePolygon<>& poly = polys[i];
+		apex::SimplePolygon& poly = polys[i];
 		size_t size = sizes[i];
 
 		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.

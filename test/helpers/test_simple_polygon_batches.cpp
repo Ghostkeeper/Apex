@@ -12,8 +12,8 @@
 namespace apex {
 namespace data {
 
-Batch<SimplePolygon<>> load_simple_polygon_batch(const std::string& svg) {
-	Batch<SimplePolygon<>> result;
+Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg) {
+	Batch<SimplePolygon> result;
 
 	size_t position = 0;
 	while((position = svg.find("<polygon ", position)) != std::string::npos) {
@@ -57,8 +57,8 @@ Batch<SimplePolygon<>> load_simple_polygon_batch(const std::string& svg) {
 	return result;
 }
 
-Batch<SimplePolygon<>> generate_simple_polygon_batch_two_circles() {
-	Batch<SimplePolygon<>> result;
+Batch<SimplePolygon> generate_simple_polygon_batch_two_circles() {
+	Batch<SimplePolygon> result;
 
 	result.push_back(generate_simple_polygon_circle());
 	result.push_back(generate_simple_polygon_circle());

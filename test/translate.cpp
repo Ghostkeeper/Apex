@@ -20,7 +20,7 @@ struct Point2;
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
 TEST(SimplePolygonTranslate, MoveZero) {
-	SimplePolygon<> square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = data::simple_polygon_square_1000;
 	translate(square_1000, Point2(0, 0));
 	EXPECT_EQ(square_1000, data::simple_polygon_square_1000) << "The polygon may not have changed by moving 0,0.";
 }
@@ -29,7 +29,7 @@ TEST(SimplePolygonTranslate, MoveZero) {
  * Tests moving a polygon along the X direction.
  */
 TEST(SimplePolygonTranslate, MoveX) {
-	SimplePolygon<> square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = data::simple_polygon_square_1000;
 	translate(square_1000, Point2(250, 0));
 
 	ASSERT_EQ(square_1000.size(), data::simple_polygon_square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
@@ -42,7 +42,7 @@ TEST(SimplePolygonTranslate, MoveX) {
  * Tests moving a polygon along the Y direction.
  */
 TEST(SimplePolygonTranslate, MoveY) {
-	SimplePolygon<> square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = data::simple_polygon_square_1000;
 	translate(square_1000, Point2(0, -300));
 
 	ASSERT_EQ(square_1000.size(), data::simple_polygon_square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
@@ -55,7 +55,7 @@ TEST(SimplePolygonTranslate, MoveY) {
  * Tests moving a polygon in both dimensions at the same time.
  */
 TEST(SimplePolygonTranslate, MoveXY) {
-	SimplePolygon<> square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = data::simple_polygon_square_1000;
 
 	const Point2 move_vector(-40, 70);
 	translate(square_1000, move_vector);

@@ -37,23 +37,15 @@ namespace apex {
  *
  * If the vertices of the polygon are winding counter-clockwise, the polygon is
  * positive. Otherwise it is negative.
- * \tparam VertexStorage The underlying data structure to use for this simple
- * polygon. By default this is a ``vector``, which allows the simple polygon to
- * be used separately. You can also use the view on a simple polygon batch to
- * use one of the elements in the batch separately this way. Any class that
- * implements the signature of a ``vector`` of ``Point2``s will do.
  */
-template<class VertexStorage = Batch<Point2>>
-class SimplePolygon : public VertexStorage {
-	template<class OtherVertexStorage>
-	friend class SimplePolygon; //Allow touching the privates of other instances of this template.
+class SimplePolygon : public Batch<Point2> {
 public:
 	/*!
 	 * Construct an empty simple polygon.
 	 *
 	 * The empty simple polygon will be degenerate.
 	 */
-	SimplePolygon() noexcept : VertexStorage() {}
+	SimplePolygon() noexcept : Batch<Point2>() {}
 
 	/*!
 	 * Construct a simple polygon consisting of a vertex repeated a number of
@@ -66,19 +58,7 @@ public:
 	 * \param count The amount of vertices to construct the simple polygon with.
 	 * \param vertex The vertex to repeatedly add to the simple polygon.
 	 */
-	SimplePolygon(const size_t count, const Point2& vertex = Point2()) : VertexStorage(count, vertex) {}
-
-	/*!
-	 * Construct a simple polygon consisting of a number of vertices in the
-	 * coordinate origin.
-	 *
-	 * The simple polygon will be degenerate, since it will have all vertices in
-	 * the same point, leading to a shape without any area. However it might
-	 * still be useful to construct simple polygons more easily with a fallback
-	 * vertex.
-	 * \param count The amount of vertices to construct the simple polygon with.
-	 */
-	SimplePolygon(const size_t count) : VertexStorage(count) {}
+	SimplePolygon(const size_t count, const Point2& vertex = Point2()) : Batch<Point2>(count, vertex) {}
 
 	/*!
 	 * Construct a simple polygon with the contents of the range
@@ -90,26 +70,26 @@ public:
 	 * ended.
 	 */
 	template<class InputIterator>
-	SimplePolygon(InputIterator first, InputIterator last) : VertexStorage(first, last) {}
+	SimplePolygon(InputIterator first, InputIterator last) : Batch<Point2>(first, last) {}
 
 	/*!
 	 * Copy the specified simple polygon.
 	 * \param other The simple polygon to copy.
 	 */
-	SimplePolygon(const SimplePolygon& other) : VertexStorage(static_cast<const VertexStorage&>(other)) {}
+	SimplePolygon(const SimplePolygon& other) : Batch<Point2>(static_cast<const Batch<Point2>&>(other)) {}
 
 	/*!
 	 * Move the specified simple polygon to a new memory location.
 	 * \param other The simple polygon to move.
 	 */
-	SimplePolygon(SimplePolygon&& other) : VertexStorage(static_cast<VertexStorage&&>(other)) {}
+	SimplePolygon(SimplePolygon&& other) : Batch<Point2>(static_cast<Batch<Point2>&&>(other)) {}
 
 	/*!
 	 * Construct a simple polygon from the contents of an initialiser list.
 	 * \param initialiser_list The list of vertices to put in the simple
 	 * polygon.
 	 */
-	SimplePolygon(std::initializer_list<Point2> initializer_list) : VertexStorage(initializer_list) {}
+	SimplePolygon(std::initializer_list<Point2> initializer_list) : Batch<Point2>(initializer_list) {}
 
 	/*!
 	 * Tests whether this simple polygon is equal to another.
@@ -121,13 +101,12 @@ public:
 	 * \return ``true`` if this polygon is the same as the other polygon, or
 	 * ``false`` otherwise.
 	 */
-	template<typename OtherVertexStorage>
-	bool operator ==(const SimplePolygon<OtherVertexStorage>& other) const {
+	bool operator ==(const SimplePolygon& other) const {
 		//TODO: Put implementation in separate file and allow multiple implementations.
-		if(VertexStorage::size() != other.size()) {
+		if(size() != other.size()) {
 			return false;
 		}
-		if(VertexStorage::empty()) { //Both are empty.
+		if(empty()) { //Both are empty.
 			return true; //Don't go looking for the first vertex. There is none.
 		}
 		//Find first vertex.
@@ -142,7 +121,7 @@ public:
 			return false; //First vertex is not in the other polygon.
 		}
 		//Now check if all vertices are the same, giving an offset for the check in the second polygon.
-		for(size_t i = 0; i < VertexStorage::size(); ++i) {
+		for(size_t i = 0; i < size(); ++i) {
 			if((*this)[i] != other[(i + vertex_offset) % other.size()]) {
 				return false;
 			}
@@ -207,8 +186,7 @@ namespace std {
  * \param lhs One of the containers to swap.
  * \param rhs The other container to swap.
  */
-template<typename VertexStorage>
-void swap(apex::SimplePolygon<VertexStorage>& lhs, apex::SimplePolygon<VertexStorage>& rhs) {
+inline void swap(apex::SimplePolygon& lhs, apex::SimplePolygon& rhs) {
 	lhs.swap(rhs);
 }
 

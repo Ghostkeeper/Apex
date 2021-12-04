@@ -14,8 +14,8 @@
 namespace apex {
 namespace data {
 
-SimplePolygon<> load_simple_polygon(const std::string& svg) {
-	SimplePolygon<> result;
+SimplePolygon load_simple_polygon(const std::string& svg) {
+	SimplePolygon result;
 
 	size_t position = 0;
 	position = svg.find("<polygon ", position) + 9;
@@ -58,7 +58,7 @@ SimplePolygon<> load_simple_polygon(const std::string& svg) {
 	return result;
 }
 
-SimplePolygon<> generate_simple_polygon_circle() {
+SimplePolygon generate_simple_polygon_circle() {
 	SimplePolygon result;
 	constexpr size_t num_vertices = 1000000;
 	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.

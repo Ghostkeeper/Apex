@@ -43,48 +43,48 @@ namespace data {
  * \param svg The contents of an SVG file containing the polygon to load.
  * \return A SimplePolygon with the loaded test data.
  */
-SimplePolygon<> load_simple_polygon(const std::string& svg);
+SimplePolygon load_simple_polygon(const std::string& svg);
 
-const SimplePolygon<> simple_polygon_empty = load_simple_polygon(
+const SimplePolygon simple_polygon_empty = load_simple_polygon(
 #include "test/data/simple_polygon/empty.svg"
 );
-const SimplePolygon<> simple_polygon_point = load_simple_polygon(
+const SimplePolygon simple_polygon_point = load_simple_polygon(
 #include "test/data/simple_polygon/point.svg"
 );
-const SimplePolygon<> simple_polygon_line = load_simple_polygon(
+const SimplePolygon simple_polygon_line = load_simple_polygon(
 #include "test/data/simple_polygon/line.svg"
 );
-const SimplePolygon<> simple_polygon_square_1000 = load_simple_polygon(
+const SimplePolygon simple_polygon_square_1000 = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000.svg"
 );
-const SimplePolygon<> simple_polygon_square_1000_negative_x = load_simple_polygon(
+const SimplePolygon simple_polygon_square_1000_negative_x = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_x.svg"
 );
-const SimplePolygon<> simple_polygon_square_1000_negative_y = load_simple_polygon(
+const SimplePolygon simple_polygon_square_1000_negative_y = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_y.svg"
 );
-const SimplePolygon<> simple_polygon_square_1000_negative_xy = load_simple_polygon(
+const SimplePolygon simple_polygon_square_1000_negative_xy = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_negative_xy.svg"
 );
-const SimplePolygon<> simple_polygon_square_1000_centred = load_simple_polygon(
+const SimplePolygon simple_polygon_square_1000_centred = load_simple_polygon(
 #include "test/data/simple_polygon/square_1000_centred.svg"
 );
-const SimplePolygon<> simple_polygon_triangle_1000 = load_simple_polygon(
+const SimplePolygon simple_polygon_triangle_1000 = load_simple_polygon(
 #include "test/data/simple_polygon/triangle_1000.svg"
 );
-const SimplePolygon<> simple_polygon_thin_rectangle = load_simple_polygon(
+const SimplePolygon simple_polygon_thin_rectangle = load_simple_polygon(
 #include "test/data/simple_polygon/thin_rectangle.svg"
 );
-const SimplePolygon<> simple_polygon_arrowhead = load_simple_polygon(
+const SimplePolygon simple_polygon_arrowhead = load_simple_polygon(
 #include "test/data/simple_polygon/arrowhead.svg"
 );
-const SimplePolygon<> simple_polygon_negative_square = load_simple_polygon(
+const SimplePolygon simple_polygon_negative_square = load_simple_polygon(
 #include "test/data/simple_polygon/negative_square.svg"
 );
-const SimplePolygon<> simple_polygon_hourglass = load_simple_polygon(
+const SimplePolygon simple_polygon_hourglass = load_simple_polygon(
 #include "test/data/simple_polygon/hourglass.svg"
 );
-const SimplePolygon<> simple_polygon_zero_width = load_simple_polygon(
+const SimplePolygon simple_polygon_zero_width = load_simple_polygon(
 #include "test/data/simple_polygon/zero_width.svg"
 );
 
@@ -105,7 +105,7 @@ generate the simple polygons directly, rather than parse megabytes of SVG files.
  * approximate the surface area of a circle. However the circumference will be
  * significantly higher than expected due to the rounding of the coordinates.
  */
-SimplePolygon<> generate_simple_polygon_circle();
+SimplePolygon generate_simple_polygon_circle();
 const SimplePolygon simple_polygon_circle = generate_simple_polygon_circle();
 
 }
