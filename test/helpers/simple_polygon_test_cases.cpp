@@ -9,12 +9,56 @@
 #include <cmath> //For trigonometry functions to construct an approximation of a circle.
 #include <numbers> //For use of pi to construct an approximation of a circle by radians.
 
-#include "test_simple_polygons.hpp" //The definitions we're implementing.
+#include "simple_polygon_test_cases.hpp" //The definition we're implementing.
 
 namespace apex {
-namespace data {
 
-SimplePolygon load_simple_polygon(const std::string& svg) {
+SimplePolygonTestCases::SimplePolygonTestCases() :
+		empty(load_simple_polygon(
+		#include "test/data/simple_polygon/empty.svg"
+		)),
+		point(load_simple_polygon(
+		#include "test/data/simple_polygon/point.svg"
+		)),
+		line(load_simple_polygon(
+		#include "test/data/simple_polygon/line.svg"
+		)),
+		square_1000(load_simple_polygon(
+		#include "test/data/simple_polygon/square_1000.svg"
+		)),
+		square_1000_negative_x(load_simple_polygon(
+		#include "test/data/simple_polygon/square_1000_negative_x.svg"
+		)),
+		square_1000_negative_y(load_simple_polygon(
+		#include "test/data/simple_polygon/square_1000_negative_y.svg"
+		)),
+		square_1000_negative_xy(load_simple_polygon(
+		#include "test/data/simple_polygon/square_1000_negative_xy.svg"
+		)),
+		square_1000_centred(load_simple_polygon(
+		#include "test/data/simple_polygon/square_1000_centred.svg"
+		)),
+		triangle_1000(load_simple_polygon(
+		#include "test/data/simple_polygon/triangle_1000.svg"
+		)),
+		thin_rectangle(load_simple_polygon(
+		#include "test/data/simple_polygon/thin_rectangle.svg"
+		)),
+		arrowhead(load_simple_polygon(
+		#include "test/data/simple_polygon/arrowhead.svg"
+		)),
+		negative_square(load_simple_polygon(
+		#include "test/data/simple_polygon/negative_square.svg"
+		)),
+		hourglass(load_simple_polygon(
+		#include "test/data/simple_polygon/hourglass.svg"
+		)),
+		zero_width(load_simple_polygon(
+		#include "test/data/simple_polygon/zero_width.svg"
+		)),
+		circle(generate_circle()) {}
+
+SimplePolygon SimplePolygonTestCases::load_simple_polygon(const std::string& svg) {
 	SimplePolygon result;
 
 	size_t position = 0;
@@ -58,7 +102,7 @@ SimplePolygon load_simple_polygon(const std::string& svg) {
 	return result;
 }
 
-SimplePolygon generate_simple_polygon_circle() {
+SimplePolygon SimplePolygonTestCases::generate_circle() {
 	SimplePolygon result;
 	constexpr size_t num_vertices = 1000000;
 	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
@@ -71,5 +115,4 @@ SimplePolygon generate_simple_polygon_circle() {
 	return result;
 }
 
-}
 }

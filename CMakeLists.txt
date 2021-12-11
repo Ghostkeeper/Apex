@@ -67,7 +67,7 @@ if(BUILD_TESTS)
 
 	#Library of helper functions and classes to help running the tests (e.g. test cases, mocks, gropers).
 	set(test_helpers_sources
-		test_simple_polygons.cpp
+		simple_polygon_test_cases.cpp
 		test_simple_polygon_batches.cpp
 	)
 	set(test_helpers_paths "")
