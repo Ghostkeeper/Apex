@@ -74,10 +74,11 @@ public:
 	 * million vertices.
 	 *
 	 * The radius is also 1 million, causing vertices to be spaced apart by on
-	 * average about tau (6.28) units. The surface area of this circle should
+	 * average about tau (6.28) units. The surface area of this n-gon should
 	 * approximate the surface area of a circle. However the circumference will
 	 * be significantly higher than expected due to the rounding of the
 	 * coordinates.
+	 * \return A high-resolution approximation of a circle.
 	 */
 	SimplePolygon generate_circle();
 };
