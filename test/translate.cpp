@@ -10,31 +10,31 @@
 
 #include "apex/point2.hpp" //To provide the delta vector to translate by.
 #include "apex/translate.hpp" //The function under test.
-#include "helpers/test_simple_polygons.hpp" //To load testing polygons to translate.
+#include "helpers/simple_polygon_test_cases.hpp" //To load testing polygons to translate.
 
 namespace apex {
 
-struct Point2;
+static SimplePolygonTestCases test_cases;
 
 /*!
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
 TEST(SimplePolygonTranslate, MoveZero) {
-	SimplePolygon square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = test_cases.square_1000;
 	translate(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, data::simple_polygon_square_1000) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, test_cases.square_1000) << "The polygon may not have changed by moving 0,0.";
 }
 
 /*!
  * Tests moving a polygon along the X direction.
  */
 TEST(SimplePolygonTranslate, MoveX) {
-	SimplePolygon square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = test_cases.square_1000;
 	translate(square_1000, Point2(250, 0));
 
-	ASSERT_EQ(square_1000.size(), data::simple_polygon_square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
+	ASSERT_EQ(square_1000.size(), test_cases.square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], data::simple_polygon_square_1000[i] + Point2(250, 0));
+		EXPECT_EQ(square_1000[i], test_cases.square_1000[i] + Point2(250, 0));
 	}
 }
 
@@ -42,12 +42,12 @@ TEST(SimplePolygonTranslate, MoveX) {
  * Tests moving a polygon along the Y direction.
  */
 TEST(SimplePolygonTranslate, MoveY) {
-	SimplePolygon square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = test_cases.square_1000;
 	translate(square_1000, Point2(0, -300));
 
-	ASSERT_EQ(square_1000.size(), data::simple_polygon_square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
+	ASSERT_EQ(square_1000.size(), test_cases.square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], data::simple_polygon_square_1000[i] + Point2(0, -300));
+		EXPECT_EQ(square_1000[i], test_cases.square_1000[i] + Point2(0, -300));
 	}
 }
 
@@ -55,14 +55,14 @@ TEST(SimplePolygonTranslate, MoveY) {
  * Tests moving a polygon in both dimensions at the same time.
  */
 TEST(SimplePolygonTranslate, MoveXY) {
-	SimplePolygon square_1000 = data::simple_polygon_square_1000;
+	SimplePolygon square_1000 = test_cases.square_1000;
 
 	const Point2 move_vector(-40, 70);
 	translate(square_1000, move_vector);
 
-	ASSERT_EQ(square_1000.size(), data::simple_polygon_square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
+	ASSERT_EQ(square_1000.size(), test_cases.square_1000.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], data::simple_polygon_square_1000[i] + move_vector);
+		EXPECT_EQ(square_1000[i], test_cases.square_1000[i] + move_vector);
 	}
 }
 

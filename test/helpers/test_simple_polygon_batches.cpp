@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
+#include "simple_polygon_test_cases.hpp" //Generate individual polygons that we put in these batches.
 #include "test_simple_polygon_batches.hpp" //The definitions we're implementing.
-#include "test_simple_polygons.hpp" //Generate individual polygons that we put in these batches.
 
 namespace apex {
 namespace data {
@@ -60,8 +60,9 @@ Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg) {
 Batch<SimplePolygon> generate_simple_polygon_batch_two_circles() {
 	Batch<SimplePolygon> result;
 
-	result.push_back(generate_simple_polygon_circle());
-	result.push_back(generate_simple_polygon_circle());
+	SimplePolygonTestCases simple_polygons;
+	result.push_back(simple_polygons.circle);
+	result.push_back(simple_polygons.circle);
 
 	//Move the second circle 1000 points to positive X.
 	for(Point2& vertex : result.back()) {
