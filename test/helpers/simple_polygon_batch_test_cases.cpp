@@ -7,12 +7,41 @@
  */
 
 #include "simple_polygon_test_cases.hpp" //Generate individual polygons that we put in these batches.
-#include "test_simple_polygon_batches.hpp" //The definitions we're implementing.
+#include "simple_polygon_batch_test_cases.hpp" //The definition we're implementing.
 
 namespace apex {
-namespace data {
 
-Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg) {
+SimplePolygonBatchTestCases::SimplePolygonBatchTestCases() :
+		empty(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/empty.svg"
+		)),
+		single_empty(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/single_empty.svg"
+		)),
+		single_point(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/single_point.svg"
+		)),
+		single_line(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/single_line.svg"
+		)),
+		single_square(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/single_square.svg"
+		)),
+		square_triangle(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/square_triangle.svg"
+		)),
+		square_triangle_square(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/square_triangle_square.svg"
+		)),
+		two_squares(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/two_squares.svg"
+		)),
+		edge_cases(load_simple_polygon_batch(
+		#include "test/data/simple_polygon_batch/edge_cases.svg"
+		)),
+		two_circles(generate_two_circles()) {}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::load_simple_polygon_batch(const std::string& svg) {
 	Batch<SimplePolygon> result;
 
 	size_t position = 0;
@@ -57,7 +86,7 @@ Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg) {
 	return result;
 }
 
-Batch<SimplePolygon> generate_simple_polygon_batch_two_circles() {
+Batch<SimplePolygon> SimplePolygonBatchTestCases::generate_two_circles() {
 	Batch<SimplePolygon> result;
 
 	SimplePolygonTestCases simple_polygons;
@@ -71,5 +100,4 @@ Batch<SimplePolygon> generate_simple_polygon_batch_two_circles() {
 	return result;
 }
 
-}
 }
