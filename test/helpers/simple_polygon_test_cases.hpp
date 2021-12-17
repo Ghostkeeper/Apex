@@ -31,27 +31,35 @@ namespace apex {
  */
 class SimplePolygonTestCases {
 public:
-	const SimplePolygon empty;
-	const SimplePolygon point;
-	const SimplePolygon line;
-	const SimplePolygon square_1000;
-	const SimplePolygon square_1000_negative_x;
-	const SimplePolygon square_1000_negative_y;
-	const SimplePolygon square_1000_negative_xy;
-	const SimplePolygon square_1000_centred;
-	const SimplePolygon triangle_1000;
-	const SimplePolygon thin_rectangle;
-	const SimplePolygon arrowhead;
-	const SimplePolygon negative_square;
-	const SimplePolygon hourglass;
-	const SimplePolygon zero_width;
-	const SimplePolygon circle;
+	static SimplePolygon empty();
+	static SimplePolygon point();
+	static SimplePolygon line();
+	static SimplePolygon square_1000();
+	static SimplePolygon square_1000_negative_x();
+	static SimplePolygon square_1000_negative_y();
+	static SimplePolygon square_1000_negative_xy();
+	static SimplePolygon square_1000_centred();
+	static SimplePolygon triangle_1000();
+	static SimplePolygon thin_rectangle();
+	static SimplePolygon arrowhead();
+	static SimplePolygon negative_square();
+	static SimplePolygon hourglass();
+	static SimplePolygon zero_width();
 
 	/*!
-	 * Constructs all of the test cases.
+	 * An approximation of a circle. This is actually a regular n-gon with 1
+	 * million vertices.
+	 *
+	 * The radius is also 1 million, causing vertices to be spaced apart by on
+	 * average about tau (6.28) units. The surface area of this n-gon should
+	 * approximate the surface area of a circle. However the circumference will
+	 * be significantly higher than expected due to the rounding of the
+	 * coordinates.
+	 * \return A high-resolution approximation of a circle.
 	 */
-	SimplePolygonTestCases();
+	static SimplePolygon circle();
 
+protected:
 	/*!
 	 * Load a test case as a simple polygon.
 	 *
@@ -67,20 +75,7 @@ public:
 	 * \param svg The contents of an SVG file containing the polygon to load.
 	 * \return A SimplePolygon with the loaded test data.
 	 */
-	SimplePolygon load_simple_polygon(const std::string& svg);
-
-	/*!
-	 * An approximation of a circle. This is actually a regular n-gon with 1
-	 * million vertices.
-	 *
-	 * The radius is also 1 million, causing vertices to be spaced apart by on
-	 * average about tau (6.28) units. The surface area of this n-gon should
-	 * approximate the surface area of a circle. However the circumference will
-	 * be significantly higher than expected due to the rounding of the
-	 * coordinates.
-	 * \return A high-resolution approximation of a circle.
-	 */
-	SimplePolygon generate_circle();
+	static SimplePolygon load_simple_polygon(const std::string& svg);
 };
 
 }

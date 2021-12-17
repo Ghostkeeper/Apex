@@ -13,50 +13,102 @@
 
 namespace apex {
 
-SimplePolygonTestCases::SimplePolygonTestCases() :
-		empty(load_simple_polygon(
-		#include "test/data/simple_polygon/empty.svg"
-		)),
-		point(load_simple_polygon(
-		#include "test/data/simple_polygon/point.svg"
-		)),
-		line(load_simple_polygon(
-		#include "test/data/simple_polygon/line.svg"
-		)),
-		square_1000(load_simple_polygon(
-		#include "test/data/simple_polygon/square_1000.svg"
-		)),
-		square_1000_negative_x(load_simple_polygon(
-		#include "test/data/simple_polygon/square_1000_negative_x.svg"
-		)),
-		square_1000_negative_y(load_simple_polygon(
-		#include "test/data/simple_polygon/square_1000_negative_y.svg"
-		)),
-		square_1000_negative_xy(load_simple_polygon(
-		#include "test/data/simple_polygon/square_1000_negative_xy.svg"
-		)),
-		square_1000_centred(load_simple_polygon(
-		#include "test/data/simple_polygon/square_1000_centred.svg"
-		)),
-		triangle_1000(load_simple_polygon(
-		#include "test/data/simple_polygon/triangle_1000.svg"
-		)),
-		thin_rectangle(load_simple_polygon(
-		#include "test/data/simple_polygon/thin_rectangle.svg"
-		)),
-		arrowhead(load_simple_polygon(
-		#include "test/data/simple_polygon/arrowhead.svg"
-		)),
-		negative_square(load_simple_polygon(
-		#include "test/data/simple_polygon/negative_square.svg"
-		)),
-		hourglass(load_simple_polygon(
-		#include "test/data/simple_polygon/hourglass.svg"
-		)),
-		zero_width(load_simple_polygon(
-		#include "test/data/simple_polygon/zero_width.svg"
-		)),
-		circle(generate_circle()) {}
+SimplePolygon SimplePolygonTestCases::empty() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/empty.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::point() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/point.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::line() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/line.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::square_1000() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/square_1000.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::square_1000_negative_x() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/square_1000_negative_x.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::square_1000_negative_y() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/square_1000_negative_y.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::square_1000_negative_xy() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/square_1000_negative_xy.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::square_1000_centred() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/square_1000_centred.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::triangle_1000() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/triangle_1000.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::thin_rectangle() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/thin_rectangle.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::arrowhead() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/arrowhead.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::negative_square() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/negative_square.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::hourglass() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/hourglass.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::zero_width() {
+	return load_simple_polygon(
+#include "test/data/simple_polygon/zero_width.svg"
+	);
+}
+
+SimplePolygon SimplePolygonTestCases::circle() {
+	SimplePolygon result;
+	constexpr size_t num_vertices = 1000000;
+	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
+	result.reserve(num_vertices);
+	for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
+		const coord_t x = std::lround(std::cos(std::numbers::pi * 2 / num_vertices * vertex) * radius);
+		const coord_t y = std::lround(std::sin(std::numbers::pi * 2 / num_vertices * vertex) * radius);
+		result.emplace_back(x, y);
+	}
+	return result;
+}
 
 SimplePolygon SimplePolygonTestCases::load_simple_polygon(const std::string& svg) {
 	SimplePolygon result;
@@ -99,19 +151,6 @@ SimplePolygon SimplePolygonTestCases::load_simple_polygon(const std::string& svg
 		result.emplace_back(coordinates[coordinate], coordinates[coordinate + 1]); //Combine each pair of coordinates into a point.
 	}
 
-	return result;
-}
-
-SimplePolygon SimplePolygonTestCases::generate_circle() {
-	SimplePolygon result;
-	constexpr size_t num_vertices = 1000000;
-	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
-	result.reserve(num_vertices);
-	for(size_t vertex = 0; vertex < num_vertices; ++vertex) { //Construct a circle with lots of vertices.
-		const coord_t x = std::lround(std::cos(std::numbers::pi * 2 / num_vertices * vertex) * radius);
-		const coord_t y = std::lround(std::sin(std::numbers::pi * 2 / num_vertices * vertex) * radius);
-		result.emplace_back(x, y);
-	}
 	return result;
 }
 

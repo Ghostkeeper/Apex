@@ -90,8 +90,8 @@ Batch<SimplePolygon> SimplePolygonBatchTestCases::generate_two_circles() {
 	Batch<SimplePolygon> result;
 
 	SimplePolygonTestCases simple_polygons;
-	result.push_back(simple_polygons.circle);
-	result.push_back(simple_polygons.circle);
+	result.push_back(simple_polygons.circle());
+	result.push_back(simple_polygons.circle());
 
 	//Move the second circle 1000 points to positive X.
 	for(Point2& vertex : result.back()) {
