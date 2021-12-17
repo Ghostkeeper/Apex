@@ -11,35 +11,73 @@
 
 namespace apex {
 
-SimplePolygonBatchTestCases::SimplePolygonBatchTestCases() :
-		empty(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/empty.svg"
-		)),
-		single_empty(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/single_empty.svg"
-		)),
-		single_point(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/single_point.svg"
-		)),
-		single_line(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/single_line.svg"
-		)),
-		single_square(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/single_square.svg"
-		)),
-		square_triangle(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/square_triangle.svg"
-		)),
-		square_triangle_square(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/square_triangle_square.svg"
-		)),
-		two_squares(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/two_squares.svg"
-		)),
-		edge_cases(load_simple_polygon_batch(
-		#include "test/data/simple_polygon_batch/edge_cases.svg"
-		)),
-		two_circles(generate_two_circles()) {}
+Batch<SimplePolygon> SimplePolygonBatchTestCases::empty() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/empty.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::single_empty() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/single_empty.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::single_point() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/single_point.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::single_line() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/single_line.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::single_square() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/single_square.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::square_triangle() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/square_triangle.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::square_triangle_square() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/square_triangle_square.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::two_squares() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/two_squares.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::edge_cases() {
+	return load_simple_polygon_batch(
+#include "test/data/simple_polygon_batch/edge_cases.svg"
+	);
+}
+
+Batch<SimplePolygon> SimplePolygonBatchTestCases::two_circles() {
+	Batch<SimplePolygon> result;
+
+	const SimplePolygon circle = SimplePolygonTestCases::circle();
+	result.push_back(circle);
+	result.push_back(circle);
+
+	//Move the second circle 1000 points to positive X.
+	for(Point2& vertex : result.back()) {
+		vertex.x += 1000;
+	}
+	return result;
+}
 
 Batch<SimplePolygon> SimplePolygonBatchTestCases::load_simple_polygon_batch(const std::string& svg) {
 	Batch<SimplePolygon> result;
@@ -83,20 +121,6 @@ Batch<SimplePolygon> SimplePolygonBatchTestCases::load_simple_polygon_batch(cons
 		}
 	}
 
-	return result;
-}
-
-Batch<SimplePolygon> SimplePolygonBatchTestCases::generate_two_circles() {
-	Batch<SimplePolygon> result;
-
-	SimplePolygonTestCases simple_polygons;
-	result.push_back(simple_polygons.circle());
-	result.push_back(simple_polygons.circle());
-
-	//Move the second circle 1000 points to positive X.
-	for(Point2& vertex : result.back()) {
-		vertex.x += 1000;
-	}
 	return result;
 }
 

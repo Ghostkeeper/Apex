@@ -31,22 +31,32 @@ namespace apex {
  */
 class SimplePolygonBatchTestCases {
 public:
-	const Batch<SimplePolygon> empty;
-	const Batch<SimplePolygon> single_empty;
-	const Batch<SimplePolygon> single_point;
-	const Batch<SimplePolygon> single_line;
-	const Batch<SimplePolygon> single_square;
-	const Batch<SimplePolygon> square_triangle;
-	const Batch<SimplePolygon> square_triangle_square;
-	const Batch<SimplePolygon> two_squares;
-	const Batch<SimplePolygon> edge_cases;
-	const Batch<SimplePolygon> two_circles;
+	static Batch<SimplePolygon> empty();
+	static Batch<SimplePolygon> single_empty();
+	static Batch<SimplePolygon> single_point();
+	static Batch<SimplePolygon> single_line();
+	static Batch<SimplePolygon> single_square();
+	static Batch<SimplePolygon> square_triangle();
+	static Batch<SimplePolygon> square_triangle_square();
+	static Batch<SimplePolygon> two_squares();
+	static Batch<SimplePolygon> edge_cases();
 
 	/*!
-	 * Constructs all of the test cases.
+	 * Generates a batch with two approximations of a circle. They are actually
+	 * regular n-gons with 1 million vertices each.
+	 *
+	 * The radius is also 1 million, causing vertices to be spaced apart by on
+	 * average about tau (6.28) units. The surface area of these n-gons should
+	 * approximate the surface area of a circle. However the circumference will
+	 * be significantly higher than expected due to the rounding of the
+	 * coordinates.
+	 * The first polygon is centred around the origin. The second is offset by
+	 * 1000 units to positive X.
+	 * \return A batch containing two high-resolution approximations of circles.
 	 */
-	SimplePolygonBatchTestCases();
+	static Batch<SimplePolygon> two_circles();
 
+protected:
 	/*!
 	 * Load a test case as a batch of simple polygons.
 	 *
@@ -62,22 +72,7 @@ public:
 	 * \param svg The contents of an SVG file containing the polygons to load.
 	 * \return A ``Batch`` of ``SimplePolygon`` with the loaded test data.
 	 */
-	Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg);
-
-	/*!
-	 * Generates a batch with two approximations of a circle. They are actually
-	 * regular n-gons with 1 million vertices each.
-	 *
-	 * The radius is also 1 million, causing vertices to be spaced apart by on
-	 * average about tau (6.28) units. The surface area of these n-gons should
-	 * approximate the surface area of a circle. However the circumference will
-	 * be significantly higher than expected due to the rounding of the
-	 * coordinates.
-	 * The first polygon is centred around the origin. The second is offset by
-	 * 1000 units to positive X.
-	 * \return A batch containing two high-resolution approximations of circles.
-	 */
-	Batch<SimplePolygon> generate_two_circles();
+	static Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg);
 };
 
 }
