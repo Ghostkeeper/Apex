@@ -375,7 +375,7 @@ public:
 
 	/*!
 	 * Creates a batch with a number of copies of the same subbatch.
-	 * \param The number of copies to store in this batch.
+	 * \param count The number of copies to store in this batch.
 	 * \param value The subbatch to copy multiple times.
 	 */
 	BatchBase(const size_t count, const BatchBase<Element>& value = BatchBase<Element>()) : next_position(0) {
@@ -778,7 +778,7 @@ public:
 
 	/*!
 	 * Move the specified subbatch to the end of this batch.
-	 * \param The batch to move into this batch.
+	 * \param original The batch to move into this batch.
 	 */
 	void emplace_back(BatchBase<Element>&& original) {
 		push_back(original);
@@ -2253,7 +2253,7 @@ class SubbatchView {
 	 *
 	 * The element is moved in this case. This may cause a reallocation, which
 	 * will invalidate all iterators to elements in this batch.
-	 * \param value The element to add to the subbatch.
+	 * \param element The element to add to the subbatch.
 	 */
 	void push_back(Element&& element) {
 		if(size() + 1 > capacity()) {
