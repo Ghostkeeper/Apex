@@ -24,7 +24,7 @@ namespace apex {
  * together allows them to be transferred to different compute devices in one
  * go, which reduces the latency of the transfer.
  *
- * The class behaves externally like \ref std::vector in its interface. For most
+ * The class behaves externally like \c std::vector in its interface. For most
  * types of elements, it behaves like a normal vector internally as well.
  * However the template argument can be specialised for some types. This is of
  * particular interest to complex data types which point to separately allocated

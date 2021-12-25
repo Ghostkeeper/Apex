@@ -2382,8 +2382,7 @@ class SubbatchView {
 	 * shrink for just one individual subbatch.
 	 *
 	 * To actually reduce memory usage here, call the
-	 * \ref BatchBase::shrink_to_fit function of the batch that contains this
-	 * subbatch.
+	 * \ref shrink_to_fit function of the batch that contains this subbatch.
 	 */
 	inline void shrink_to_fit() noexcept {}
 
