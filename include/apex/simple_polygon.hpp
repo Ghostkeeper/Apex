@@ -89,7 +89,7 @@ public:
 	 * \param initialiser_list The list of vertices to put in the simple
 	 * polygon.
 	 */
-	SimplePolygon(std::initializer_list<Point2> initializer_list) : Batch<Point2>(initializer_list) {}
+	SimplePolygon(std::initializer_list<Point2> initialiser_list) : Batch<Point2>(initialiser_list) {}
 
 	/*!
 	 * Tests whether this simple polygon is equal to another.

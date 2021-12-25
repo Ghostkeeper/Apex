@@ -96,7 +96,7 @@ public:
 	 * Construct a batch from the contents of an initialiser list.
 	 * \param initialiser_list The list of elements to put in the new batch.
 	 */
-	Batch(std::initializer_list<Element> initializer_list) : BatchBase<Element>(initializer_list) {}
+	Batch(std::initializer_list<Element> initialiser_list) : BatchBase<Element>(initialiser_list) {}
 };
 
 }
