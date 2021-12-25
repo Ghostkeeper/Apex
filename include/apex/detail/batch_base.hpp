@@ -36,11 +36,43 @@ class SubbatchView;
 template<typename Element>
 class BatchBase : protected std::vector<Element> {
 public:
-	//Inheriting all functions of vectors in this case, completely transparently.
+	/*!
+	 * Iterates in the forward direction over elements of this batch.
+	 *
+	 * This is a random access iterator, which allows addition and subtraction,
+	 * is bidirectional and allows iterating multiple times.
+	 */
 	using iterator = typename std::vector<Element>::iterator;
+
+	/*!
+	 * Iterates in the forward direction over elements of this batch.
+	 *
+	 * This iterator does not allow modification of the elements. It is a random
+	 * access iterator, which allows addition and subtraction, is bidirectional
+	 * and allows iterating multiple times.
+	 */
 	using const_iterator = typename std::vector<Element>::const_iterator;
+
+	/*!
+	 * Iterates in the backward direction over elements of this batch, as if the
+	 * batch is reversed.
+	 *
+	 * This is a random access iterator, which allows addition and subtraction,
+	 * is bidirectional and allows iterating multiple times.
+	 */
 	using reverse_iterator = typename std::vector<Element>::reverse_iterator;
+
+	/*!
+	 * Iterates in the backward direction over elements of this batch, as if the
+	 * batch is reversed.
+	 *
+	 * This iterator does not allow modification of the elements. It is a random
+	 * access iterator, which allows addition and subtraction, is bidirectional
+	 * and allows iterating multiple times.
+	 */
 	using const_reverse_iterator = typename std::vector<Element>::const_reverse_iterator;
+
+	//Inheriting all functions of vectors in this case, completely transparently.
 	using std::vector<Element>::operator =;
 	using std::vector<Element>::operator [];
 	using std::vector<Element>::assign;
@@ -276,11 +308,43 @@ class BatchBase<BatchBase<Element>> : protected std::vector<SubbatchView<Element
 	friend class SubbatchView<Element>; //Subbatches can access the coalesced data structure to get their own information.
 
 public:
-	//Many functions can be taken over directly from the underlying vector class.
+	/*!
+	 * Iterates in the forward direction over elements of this batch.
+	 *
+	 * This is a random access iterator, which allows addition and subtraction,
+	 * is bidirectional and allows iterating multiple times.
+	 */
 	using iterator = typename std::vector<SubbatchView<Element>>::iterator;
+
+	/*!
+	 * Iterates in the forward direction over elements of this batch.
+	 *
+	 * This iterator does not allow modification of the elements. It is a random
+	 * access iterator, which allows addition and subtraction, is bidirectional
+	 * and allows iterating multiple times.
+	 */
 	using const_iterator = typename std::vector<SubbatchView<Element>>::const_iterator;
+
+	/*!
+	 * Iterates in the backward direction over elements of this batch, as if the
+	 * batch is reversed.
+	 *
+	 * This is a random access iterator, which allows addition and subtraction,
+	 * is bidirectional and allows iterating multiple times.
+	 */
 	using reverse_iterator = typename std::vector<SubbatchView<Element>>::reverse_iterator;
+
+	/*!
+	 * Iterates in the backward direction over elements of this batch, as if the
+	 * batch is reversed.
+	 *
+	 * This iterator does not allow modification of the elements. It is a random
+	 * access iterator, which allows addition and subtraction, is bidirectional
+	 * and allows iterating multiple times.
+	 */
 	using const_reverse_iterator = typename std::vector<SubbatchView<Element>>::const_reverse_iterator;
+
+	//Many functions can be taken over directly from the underlying vector class.
 	using std::vector<SubbatchView<Element>>::operator[];
 	using std::vector<SubbatchView<Element>>::at;
 	using std::vector<SubbatchView<Element>>::back;
