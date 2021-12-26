@@ -99,6 +99,33 @@ public:
 	Batch(std::initializer_list<Element> initialiser_list) : BatchBase<Element>(initialiser_list) {}
 };
 
+/*!
+ * The Batch class groups a list of elements together, both conceptually and in
+ * memory.
+ *
+ * The purpose of this batching is to improve performance. If some algorithm
+ * needs to be performed on many elements simultaneously, batching these all
+ * together allows them to be transferred to different compute devices in one
+ * go, which reduces the latency of the transfer. This is especially important
+ * for batches of batches, since they would otherwise store a separate
+ * allocation of memory for each subbatch.
+ *
+ * The class behaves externally like \ref std::vector in its interface. For the
+ * case of a batch of batches, the internal behaviour is different though. It
+ * will store all of the subelements in one long buffer. This buffer has only
+ * one allocation. The aim of this batching is to improve performance, since
+ * only one single piece of memory will have to be moved to the GPU if
+ * algorithms are to be performed there.
+ *
+ * This implementation of batches does not always call the destructors of the
+ * subelements it contains. It may call constructors internally when moving. As
+ * such, it is not suitable for data types that produce side effects in its
+ * constructor or destructor. Only plain old data types can be used in these
+ * batches.
+ */
+template<typename Subelement>
+class Batch<Batch<Subelement>> : public BatchBase<BatchBase<Subelement>> {};
+
 }
 
 #endif //APEX_BATCH
