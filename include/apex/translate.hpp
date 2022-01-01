@@ -19,6 +19,9 @@ namespace detail {
 template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta);
 
+template<polygonal SimplePolygon>
+void translate_mt(SimplePolygon& polygon, const Point2& delta);
+
 }
 
 /*!
@@ -50,6 +53,23 @@ template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta) {
 	for(Point2& vertex : polygon) {
 		vertex += delta;
+	}
+}
+
+/*!
+ * Multi-threaded implementation of \ref translate.
+ *
+ * This implementation simply modifies all vertices in parallel.
+ * \tparam SimplePolygon A class that behaves like a simple polygon.
+ * \param polygon The polygon to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<polygonal SimplePolygon>
+void translate_mt(SimplePolygon& polygon, const Point2& delta) {
+	#pragma omp parallel for simd
+	for(size_t vertex = 0; vertex < polygon.size(); ++vertex) {
+		polygon[vertex] += delta;
 	}
 }
 
