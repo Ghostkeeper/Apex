@@ -9,11 +9,14 @@
 #ifndef APEX_TRANSLATE
 #define APEX_TRANSLATE
 
+#include "detail/geometry_concepts.hpp" //To disambiguate overloads.
+
 namespace apex {
 
 namespace detail {
 
-template<class SimplePolygon>
+//Declare the detail functions so that we can reference them from the public ones.
+template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta);
 
 }
@@ -27,7 +30,7 @@ void translate_st(SimplePolygon& polygon, const Point2& delta);
  * \param delta The distance by which to move, representing both dimensions to
  * move through as a single 2D vector.
  */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 void translate(SimplePolygon& polygon, const Point2& delta) {
 	detail::translate_st(polygon, delta);
 }
@@ -43,7 +46,7 @@ namespace detail {
  * \param delta The distance by which to move, representing both dimensions to
  * move through as a single 2D vector.
  */
-template<class SimplePolygon>
+template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta) {
 	for(Point2& vertex : polygon) {
 		vertex += delta;
