@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -22,11 +22,11 @@ namespace apex {
  */
 TEST(SimplePolygonArea, InitialAreaIsZero) {
 	constexpr area_t true_area = 0;
-	EXPECT_EQ(area(SimplePolygonTestCases::empty()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::empty()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::empty()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::empty()), true_area) << "The polygon is empty, so it has no surface area.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::empty()), true_area) << "The polygon is empty, so it has no surface area.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::empty()), true_area) << "The polygon is empty, so it has no surface area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::empty()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::empty()), true_area) << "The polygon is empty, so it has no surface area.";
 #endif
 }
 
@@ -35,11 +35,11 @@ TEST(SimplePolygonArea, InitialAreaIsZero) {
  */
 TEST(SimplePolygonArea, Square1000) {
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(SimplePolygonTestCases::square_1000()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::square_1000()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied.";
 #endif
 }
 
@@ -48,11 +48,11 @@ TEST(SimplePolygonArea, Square1000) {
  */
 TEST(SimplePolygonArea, Square1000NegativeX) {
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_x()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_x()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_x()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_x()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_x()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_x()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_x()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_x()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #endif
 }
 
@@ -61,11 +61,11 @@ TEST(SimplePolygonArea, Square1000NegativeX) {
  */
 TEST(SimplePolygonArea, Square1000NegativeY) {
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_y()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_y()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_y()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_y()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_y()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_y()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_y()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_y()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #endif
 }
 
@@ -75,11 +75,11 @@ TEST(SimplePolygonArea, Square1000NegativeY) {
  */
 TEST(SimplePolygonArea, Square1000NegativeXY) {
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_xy()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_xy()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_xy()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_negative_xy()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_negative_xy()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_negative_xy()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_xy()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_negative_xy()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #endif
 }
 
@@ -88,11 +88,11 @@ TEST(SimplePolygonArea, Square1000NegativeXY) {
  */
 TEST(SimplePolygonArea, Square1000Centred) {
 	constexpr area_t true_area = 1000 * 1000;
-	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_centred()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_centred()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_centred()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::square_1000_centred()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::square_1000_centred()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::square_1000_centred()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_centred()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::square_1000_centred()), true_area) << "It's a 1000 by 1000 square, so the area should be those multiplied, regardless of its position around the origin.";
 #endif
 }
 
@@ -101,11 +101,11 @@ TEST(SimplePolygonArea, Square1000Centred) {
  */
 TEST(SimplePolygonArea, Triangle1000) {
 	constexpr area_t true_area = 1000 * 1000 / 2;
-	EXPECT_EQ(area(SimplePolygonTestCases::triangle_1000()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::triangle_1000()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::triangle_1000()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::triangle_1000()), true_area) << "This triangle has base 1000 and height 1000, so it should have half the surface area of those multiplied.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::triangle_1000()), true_area) << "This triangle has base 1000 and height 1000, so it should have half the surface area of those multiplied.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::triangle_1000()), true_area) << "This triangle has base 1000 and height 1000, so it should have half the surface area of those multiplied.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::triangle_1000()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::triangle_1000()), true_area) << "This triangle has base 1000 and height 1000, so it should have half the surface area of those multiplied.";
 #endif
 }
 
@@ -116,11 +116,11 @@ TEST(SimplePolygonArea, Triangle1000) {
  */
 TEST(SimplePolygonArea, ThinRectangle) {
 	constexpr area_t true_area = 1000 * 1;
-	EXPECT_EQ(area(SimplePolygonTestCases::thin_rectangle()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::thin_rectangle()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::thin_rectangle()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::thin_rectangle()), true_area) << "This is a 1000-long and 1-wide polygon.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::thin_rectangle()), true_area) << "This is a 1000-long and 1-wide polygon.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::thin_rectangle()), true_area) << "This is a 1000-long and 1-wide polygon.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::thin_rectangle()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::thin_rectangle()), true_area) << "This is a 1000-long and 1-wide polygon.";
 #endif
 }
 
@@ -156,11 +156,11 @@ TEST(SimplePolygonArea, Negative) {
  */
 TEST(SimplePolygonArea, SelfIntersecting) {
 	constexpr area_t true_area = 1000 * 500 / 2 - 1000 * 500 / 2;
-	EXPECT_EQ(area(SimplePolygonTestCases::hourglass()), true_area);
-	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::hourglass()), true_area);
-	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::hourglass()), true_area);
+	EXPECT_EQ(area(SimplePolygonTestCases::hourglass()), true_area) << "The negative area of this polygon exactly cancels out the positive area.";
+	EXPECT_EQ(detail::area_st(SimplePolygonTestCases::hourglass()), true_area) << "The negative area of this polygon exactly cancels out the positive area.";
+	EXPECT_EQ(detail::area_mt(SimplePolygonTestCases::hourglass()), true_area) << "The negative area of this polygon exactly cancels out the positive area.";
 #ifdef GPU
-	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::hourglass()), true_area);
+	EXPECT_EQ(detail::area_gpu(SimplePolygonTestCases::hourglass()), true_area) << "The negative area of this polygon exactly cancels out the positive area.";
 #endif
 }
 
@@ -216,11 +216,11 @@ TEST(SimplePolygonArea, Circle) {
 	const area_t ground_truth = num_vertices * radius * radius * std::sin(PI * 2 / num_vertices) / 2; //Formula for the area of a regular polygon.
 	const area_t error_margin = std::sqrt(num_vertices) / num_vertices / 6 * (PI * radius * radius - PI * (radius - 1) * (radius - 1)); //Margin gets slowly smaller with more vertices, but larger with greater radius.
 
-	EXPECT_NEAR(area(circle), ground_truth, error_margin);
-	EXPECT_NEAR(detail::area_st(circle), ground_truth, error_margin);
-	EXPECT_NEAR(detail::area_mt(circle), ground_truth, error_margin);
+	EXPECT_NEAR(area(circle), ground_truth, error_margin) << "The area of the polygon must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
+	EXPECT_NEAR(detail::area_st(circle), ground_truth, error_margin) << "The area of the polygon must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
+	EXPECT_NEAR(detail::area_mt(circle), ground_truth, error_margin) << "The area of the polygon must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 #ifdef GPU
-	EXPECT_NEAR(detail::area_gpu(circle), ground_truth, error_margin);
+	EXPECT_NEAR(detail::area_gpu(circle), ground_truth, error_margin) << "The area of the polygon must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 #endif
 }
 
@@ -370,20 +370,20 @@ TEST(SimplePolygonBatchArea, TwoCircles) {
 
 	std::vector<area_t> calculated_areas = area(two_circles);
 	for(area_t calculated_area : calculated_areas) {
-		EXPECT_NEAR(calculated_area, true_area, error_margin);
+		EXPECT_NEAR(calculated_area, true_area, error_margin) << "The area of the polygons must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 	}
 	calculated_areas = detail::area_st(two_circles);
 	for(area_t calculated_area : calculated_areas) {
-		EXPECT_NEAR(calculated_area, true_area, error_margin);
+		EXPECT_NEAR(calculated_area, true_area, error_margin) << "The area of the polygons must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 	}
 	calculated_areas = detail::area_mt(two_circles);
 	for(area_t calculated_area : calculated_areas) {
-		EXPECT_NEAR(calculated_area, true_area, error_margin);
+		EXPECT_NEAR(calculated_area, true_area, error_margin) << "The area of the polygons must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 	}
 #ifdef GPU
 	calculated_areas = detail::area_gpu(two_circles);
 	for(area_t calculated_area : calculated_areas) {
-		EXPECT_NEAR(calculated_area, true_area, error_margin);
+		EXPECT_NEAR(calculated_area, true_area, error_margin) << "The area of the polygons must be close to the ideal area of the regular polygon, but can be different due to integer rounding of its vertices.";
 	}
 #endif
 }
