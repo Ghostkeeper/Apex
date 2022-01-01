@@ -13,6 +13,7 @@
 #include <vector> //Returning the results of batch operations.
 
 #include "coordinate.hpp" //To return area_t.
+#include "detail/batch_base.hpp" //For using subbatches.
 #include "detail/geometry_concepts.hpp" //To disambiguate overloads.
 #include "point2.hpp" //To access coordinates of vertices.
 
@@ -411,16 +412,18 @@ area_t area_gpu(const SimplePolygon& polygon) {
  */
 template<multi_polygonal SimplePolygonBatch>
 std::vector<area_t> area_gpu(const SimplePolygonBatch& batch) {
+	const size_t batch_size = batch.size();
 	std::vector<area_t> result;
-	result.resize(batch.size()); //Resize, so that all threads can enter their data in parallel.
+	result.resize(batch_size); //Resize, so that all threads can enter their data in parallel.
 	area_t* result_data = result.data();
 
+	const SubbatchView<Point2>* polygons = batch.data();
 	const Point2* vertices = batch.data_subelements();
 	const size_t vertices_size = batch.size_subelements();
-	#pragma omp target teams distribute parallel for map(to:vertices[0:vertices_size]) map(from:result_data[0:batch.size()])
-	for(size_t polygon_index = 0; polygon_index < batch.size(); ++polygon_index) {
+	#pragma omp target teams distribute parallel for map(to:vertices[0:vertices_size]) map(to:polygons[0:batch_size]) map(from:result_data[0:batch_size])
+	for(size_t polygon_index = 0; polygon_index < batch_size; ++polygon_index) {
 		area_t area = 0;
-		const auto& polygon = batch[polygon_index];
+		const auto& polygon = polygons[polygon_index];
 		const size_t size = polygon.size();
 
 		//On the GPU we'll spawn new threads for each sub-loop too.
@@ -429,7 +432,7 @@ std::vector<area_t> area_gpu(const SimplePolygonBatch& batch) {
 			size_t previous = (vertex - 1 + size) % size;
 			area += static_cast<area_t>(polygon[previous].x) * polygon[vertex].y - static_cast<area_t>(polygon[previous].y) * polygon[vertex].x;
 		}
-		result[polygon_index] = area / 2;
+		result_data[polygon_index] = area / 2;
 	}
 	return result;
 }
