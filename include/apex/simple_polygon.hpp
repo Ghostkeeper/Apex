@@ -174,6 +174,31 @@ public:
 	}
 };
 
+/*!
+ * This specialisation of batches of simple polygons allows polygon operations
+ * on batches, increasing parallelism.
+ */
+template<>
+class Batch<SimplePolygon> : public Batch<Batch<Point2>> {
+	/*!
+	 * Computes the surface area of the simple polygons in this batch.
+	 *
+	 * The sign of the area is linked to the polygon winding order. If the
+	 * polygon is positive, the area will be positive too, and vice versa. If
+	 * the polygon intersects itself, parts of the polygon will be subtracting
+	 * from the area while other parts add up to the area.
+	 *
+	 * The area of the polygon is counted differently from the nonzero or
+	 * even-odd fill rules. If a zone is looped around multiple times by the
+	 * polygon, it will count to the total area multiple times as well.
+	 * \return A list, equally long to the number of polygons in this batch,
+	 * that lists the areas of each polygon in the same order.
+	 */
+	std::vector<area_t> area() const {
+		return apex::area(*this);
+	}
+};
+
 }
 
 namespace std {
