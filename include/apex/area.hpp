@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -290,8 +290,8 @@ std::vector<area_t> area_mt(const SimplePolygonBatch& batch) {
 		const auto& polygon = batch[polygon_index]; //Instantiates auto with whatever type the batch indexes.
 		const size_t size = polygon.size();
 
-		//For each polygon, spawn a task loop processing each vertex, so that there is no multiplication in the number of threads here with the outer loop.
-		#pragma omp taskloop simd reduction(+:area)
+		//While task loops may be more efficient in this case, they cause segfaults with GCC when the loop is empty.
+		#pragma omp parallel for simd reduction(+:area)
 		for(size_t vertex = 0; vertex < size; ++vertex) {
 			size_t previous = (vertex - 1 + size) % size;
 			area += static_cast<area_t>(polygon[previous].x) * polygon[vertex].y - static_cast<area_t>(polygon[previous].y) * polygon[vertex].x;
