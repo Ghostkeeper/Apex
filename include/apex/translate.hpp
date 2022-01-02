@@ -22,6 +22,11 @@ void translate_st(SimplePolygon& polygon, const Point2& delta);
 template<polygonal SimplePolygon>
 void translate_mt(SimplePolygon& polygon, const Point2& delta);
 
+#ifdef GPU
+template<polygonal SimplePolygon>
+void translate_gpu(SimplePolygon& polygon, const Point2& delta);
+#endif
+
 }
 
 /*!
@@ -72,6 +77,32 @@ void translate_mt(SimplePolygon& polygon, const Point2& delta) {
 		polygon[vertex] += delta;
 	}
 }
+
+#ifdef GPU
+/*!
+ * GPU-accelerated implementation of \ref translate.
+ *
+ * This implementation simply modifies all vertices in parallel.
+ *
+ * While this alternative is likely never the fastest option on its own, using
+ * this may allow the data to remain on the GPU without communicating to the
+ * host for just a translate operation, which may improve performance if handled
+ * well.
+ * \tparam SimplePolygon A class that behaves like a simple polygon.
+ * \param polygon The polygon to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<polygonal SimplePolygon>
+void translate_gpu(SimplePolygon& polygon, const Point2& delta) {
+	Point2* vertices = polygon.data();
+	const size_t size = polygon.size();
+	#pragma omp target teams distribute parallel for map(tofrom:vertices[0:size])
+	for(size_t vertex = 0; vertex < size; ++vertex) {
+		vertices[vertex] += delta;
+	}
+}
+#endif
 
 }
 
