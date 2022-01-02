@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -40,56 +40,7 @@ namespace apex {
  */
 class SimplePolygon : public Batch<Point2> {
 public:
-	/*!
-	 * Construct an empty simple polygon.
-	 *
-	 * The empty simple polygon will be degenerate.
-	 */
-	SimplePolygon() noexcept : Batch<Point2>() {}
-
-	/*!
-	 * Construct a simple polygon consisting of a vertex repeated a number of
-	 * times.
-	 *
-	 * The simple polygon will be degenerate, since it will have all vertices in
-	 * the same point, leading to a shape without any area. However it might
-	 * still be useful to construct simple polygons more easily with a fallback
-	 * vertex.
-	 * \param count The amount of vertices to construct the simple polygon with.
-	 * \param vertex The vertex to repeatedly add to the simple polygon.
-	 */
-	SimplePolygon(const size_t count, const Point2& vertex = Point2()) : Batch<Point2>(count, vertex) {}
-
-	/*!
-	 * Construct a simple polygon with the contents of the range
-	 * ``[first, last)``.
-	 * \tparam InputIterator This constructor accepts any type of input
-	 * iterator.
-	 * \param first The iterator to start copying from.
-	 * \param last An iterator signalling that the range of vertices to copy has
-	 * ended.
-	 */
-	template<class InputIterator>
-	SimplePolygon(InputIterator first, InputIterator last) : Batch<Point2>(first, last) {}
-
-	/*!
-	 * Copy the specified simple polygon.
-	 * \param other The simple polygon to copy.
-	 */
-	SimplePolygon(const SimplePolygon& other) : Batch<Point2>(static_cast<const Batch<Point2>&>(other)) {}
-
-	/*!
-	 * Move the specified simple polygon to a new memory location.
-	 * \param other The simple polygon to move.
-	 */
-	SimplePolygon(SimplePolygon&& other) : Batch<Point2>(static_cast<Batch<Point2>&&>(other)) {}
-
-	/*!
-	 * Construct a simple polygon from the contents of an initialiser list.
-	 * \param initialiser_list The list of vertices to put in the simple
-	 * polygon.
-	 */
-	SimplePolygon(std::initializer_list<Point2> initialiser_list) : Batch<Point2>(initialiser_list) {}
+	using Batch<Point2>::Batch; //The constructors are the same.
 
 	/*!
 	 * Tests whether this simple polygon is equal to another.
