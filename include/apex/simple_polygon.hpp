@@ -145,7 +145,7 @@ class Batch<SimplePolygon> : public Batch<Batch<Point2>> {
 	 * \return A list, equally long to the number of polygons in this batch,
 	 * that lists the areas of each polygon in the same order.
 	 */
-	std::vector<area_t> area() const {
+	Batch<area_t> area() const {
 		return apex::area(*this);
 	}
 };

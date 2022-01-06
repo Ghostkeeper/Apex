@@ -12,8 +12,8 @@
 #include <omp.h> //To do parallel processing.
 #include <vector> //Returning the results of batch operations.
 
+#include "batch.hpp" //To return batches of areas.
 #include "coordinate.hpp" //To return area_t.
-#include "detail/batch_base.hpp" //For using subbatches.
 #include "detail/geometry_concepts.hpp" //To disambiguate overloads.
 #include "point2.hpp" //To access coordinates of vertices.
 
@@ -26,20 +26,20 @@ template<polygonal SimplePolygon>
 area_t area_st(const SimplePolygon& polygon);
 
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_st(const SimplePolygonBatch&);
+Batch<area_t> area_st(const SimplePolygonBatch&);
 
 template<polygonal SimplePolygon>
 area_t area_mt(const SimplePolygon& polygon);
 
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_mt(const SimplePolygonBatch&);
+Batch<area_t> area_mt(const SimplePolygonBatch&);
 
 #ifdef GPU
 template<polygonal SimplePolygon>
 area_t area_gpu(const SimplePolygon& polygon);
 
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_gpu(const SimplePolygonBatch&);
+Batch<area_t> area_gpu(const SimplePolygonBatch&);
 #endif //GPU
 
 };
@@ -90,7 +90,7 @@ area_t area(const SimplePolygon& polygon) {
  * the order of those polygons in the batch.
  */
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area(const SimplePolygonBatch& batch) {
+Batch<area_t> area(const SimplePolygonBatch& batch) {
 	return detail::area_st(batch);
 }
 
@@ -163,8 +163,8 @@ area_t area_st(const SimplePolygon& polygon) {
  * the order of those polygons in the batch.
  */
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_st(const SimplePolygonBatch& batch) {
-	std::vector<area_t> result;
+Batch<area_t> area_st(const SimplePolygonBatch& batch) {
+	Batch<area_t> result;
 	result.reserve(batch.size());
 	for(typename SimplePolygonBatch::const_iterator it = batch.begin(); it != batch.end(); ++it) {
 		result.push_back(detail::area_st(*it));
@@ -280,8 +280,8 @@ area_t area_mt(const SimplePolygon& polygon) {
  * the order of those polygons in the batch.
  */
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_mt(const SimplePolygonBatch& batch) {
-	std::vector<area_t> result;
+Batch<area_t> area_mt(const SimplePolygonBatch& batch) {
+	Batch<area_t> result;
 	result.resize(batch.size()); //Resize, so that all threads can enter their data in parallel.
 
 	#pragma omp parallel for
@@ -411,9 +411,9 @@ area_t area_gpu(const SimplePolygon& polygon) {
  * the order of those polygons in the batch.
  */
 template<multi_polygonal SimplePolygonBatch>
-std::vector<area_t> area_gpu(const SimplePolygonBatch& batch) {
+Batch<area_t> area_gpu(const SimplePolygonBatch& batch) {
 	const size_t batch_size = batch.size();
-	std::vector<area_t> result;
+	Batch<area_t> result;
 	result.resize(batch_size); //Resize, so that all threads can enter their data in parallel.
 	area_t* result_data = result.data();
 
