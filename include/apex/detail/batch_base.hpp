@@ -208,7 +208,7 @@ public:
 	 * inequal.
 	 */
 	bool operator ==(const BatchBase<Element>& other) const {
-		return (*this) == static_cast<std::vector<Element>&>(other);
+		return (*this) == static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
@@ -223,7 +223,7 @@ public:
 	 * equal.
 	 */
 	bool operator !=(const BatchBase<Element>& other) const {
-		return (*this) != static_cast<std::vector<Element>&>(other);
+		return (*this) != static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
@@ -234,7 +234,7 @@ public:
 	 * other batch.
 	 */
 	bool operator <(const BatchBase<Element>& other) const {
-		return (*this) < static_cast<std::vector<Element>&>(other);
+		return (*this) < static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
@@ -245,7 +245,7 @@ public:
 	 * batch.
 	 */
 	bool operator <=(const BatchBase<Element>& other) const {
-		return (*this) <= static_cast<std::vector<Element>&>(other);
+		return (*this) <= static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
@@ -256,7 +256,7 @@ public:
 	 * other batch.
 	 */
 	bool operator >(const BatchBase<Element>& other) const {
-		return (*this) > static_cast<std::vector<Element>&>(other);
+		return (*this) > static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
@@ -267,7 +267,7 @@ public:
 	 * batch.
 	 */
 	bool operator >=(const BatchBase<Element>& other) const {
-		return (*this) >= static_cast<std::vector<Element>&>(other);
+		return (*this) >= static_cast<const std::vector<Element>&>(other);
 	}
 
 	/*!
