@@ -178,7 +178,8 @@ public:
 	 * \return A reference to this batch.
 	 */
 	BatchBase& operator =(const BatchBase& other) {
-		return (*this) = static_cast<std::vector<Element>&>(other);
+		std::vector<Element>::operator =(other);
+		return *this;
 	}
 
 	/*!
@@ -189,7 +190,8 @@ public:
 	 * \return A reference to this batch.
 	 */
 	BatchBase& operator =(BatchBase&& other) noexcept {
-		return (*this) = static_cast<BatchBase<Element>&&>(other);
+		std::vector<Element>::operator =(other);
+		return *this;
 	}
 
 	//Vector doesn't implement these comparison operators itself. They are defined as loose functions in line with the STL design.
@@ -210,14 +212,14 @@ public:
 	}
 
 	/*!
-	 * Checks if this batch is inequal to another batch.
+	 * Checks if this batch is unequal to another batch.
 	 *
-	 * The batches are inequal if there is any element in this batch that is not
+	 * The batches are unequal if there is any element in this batch that is not
 	 * equal to the element in the same position in the other batch. They are
-	 * inequal if the batches have different sizes, contain different elements
+	 * unequal if the batches have different sizes, contain different elements
 	 * or are in a different order.
 	 * \param other The batch to compare this batch to.
-	 * \return ``true`` if the batches are inequal, or ``false`` if they are
+	 * \return ``true`` if the batches are unequal, or ``false`` if they are
 	 * equal.
 	 */
 	bool operator !=(const BatchBase<Element>& other) const {
