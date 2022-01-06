@@ -440,61 +440,6 @@ Batch<area_t> area_gpu(const SimplePolygonBatch& batch) {
 
 }
 
-/*!
- * Implements the Curiously Recurring Template Pattern to separate out the
- * private functions to compute the area of a batch of simple polygons.
- * \tparam SimplePolygonBase An implementation of SimplePolygonBatch's
- * footprint, including private members.
- */
-template <typename SimplePolygonBatchBase>
-class SimplePolygonBatchArea
-{
-public:
-	/*!
-	 * Computes the surface area of a batch of simple polygons.
-	 *
-	 * The sign of the area is linked to the polygon winding order. If the
-	 * polygon is positive, the area will be positive too, and vice versa. If
-	 * the polygon intersects itself, parts of the polygon will be subtracting
-	 * from the area while other parts add up to the area.
-	 *
-	 * The area of the polygon is counted differently from the nonzero or
-	 * even-odd fill rules. If a zone is looped around multiple times by the
-	 * polygon, it will count to the total area multiple times as well.
-	 * \return For each simple polygon in the batch, the surface area.
-	 */
-	std::vector<area_t> area() const {
-		return area_st();
-	}
-
-protected:
-	/*!
-	 * Single-threaded implementation of ``area``.
-	 *
-	 * This implementation calls on the single-threaded versions of each
-	 * individual simple polygon to compute its area.
-	 * \return For each simple polygon in the batch, the surface area.
-	 */
-	std::vector<area_t> area_st() const {
-		std::vector<area_t> result;
-		result.reserve(base().size());
-		for(typename SimplePolygonBatchBase::const_iterator it = base().begin(); it != base().end(); ++it) {
-			result.push_back(detail::area_st(*it));
-		}
-		return result;
-	}
-
-private:
-	/*!
-	 * Gives the base SimplePolygon instance via the template pattern, which is
-	 * actually still this instance.
-	 * \return This instance, cast to SimplePolygonBase.
-	 */
-	const SimplePolygonBatchBase& base() const {
-		return *static_cast<const SimplePolygonBatchBase*>(this);
-	}
-};
-
 }
 
 #endif //APEX_AREA
