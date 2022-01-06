@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -166,6 +166,31 @@ public:
 	 * \param other The batch to move into the new batch.
 	 */
 	BatchBase(BatchBase&& other) noexcept : std::vector<Element>(other) {}
+
+	//Because of the types involved here, Vector's own assignment operators are not useful when using just batches.
+	//We'll have to define these overloads ourselves.
+
+	/*!
+	 * Copies the contents of the given batch into this batch.
+	 *
+	 * The given batch is unaltered.
+	 * \param other The batch to copy to this batch.
+	 * \return A reference to this batch.
+	 */
+	BatchBase& operator =(const BatchBase& other) {
+		return (*this) = static_cast<std::vector<Element>&>(other);
+	}
+
+	/*!
+	 * Moves the contents of the given batch into this batch.
+	 *
+	 * The given batch should no longer be used afterwards.
+	 * \param other The batch to move into this batch.
+	 * \return A reference to this batch.
+	 */
+	BatchBase& operator =(BatchBase&& other) noexcept {
+		return (*this) = static_cast<BatchBase<Element>&&>(other);
+	}
 
 	//Vector doesn't implement these comparison operators itself. They are defined as loose functions in line with the STL design.
 	//However this doesn't allow us to inherit from them. We need to redefine them.
