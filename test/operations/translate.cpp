@@ -42,34 +42,35 @@ TEST(SimplePolygonTranslate, MoveZero) {
  */
 TEST(SimplePolygonTranslate, MoveX) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
+	const Point2 move_vector(250, 0);
 
 	SimplePolygon square_1000 = original;
-	translate(square_1000, Point2(250, 0));
+	translate(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(250, 0));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 	square_1000 = original;
-	detail::translate_st(square_1000, Point2(250, 0));
+	detail::translate_st(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(250, 0));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 	square_1000 = original;
-	detail::translate_mt(square_1000, Point2(250, 0));
+	detail::translate_mt(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(250, 0));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 #ifdef GPU
 	square_1000 = original;
-	detail::translate_gpu(square_1000, Point2(250, 0));
+	detail::translate_gpu(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(250, 0));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 #endif
 }
@@ -79,34 +80,35 @@ TEST(SimplePolygonTranslate, MoveX) {
  */
 TEST(SimplePolygonTranslate, MoveY) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
+	const Point2 move_vector(0, -300);
 
 	SimplePolygon square_1000 = original;
-	translate(square_1000, Point2(0, -300));
+	translate(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(0, -300));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 	square_1000 = original;
-	detail::translate_st(square_1000, Point2(0, -300));
+	detail::translate_st(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(0, -300));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 	square_1000 = original;
-	detail::translate_mt(square_1000, Point2(0, -300));
+	detail::translate_mt(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(0, -300));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 
 #ifdef GPU
 	square_1000 = original;
-	detail::translate_gpu(square_1000, Point2(0, -300));
+	detail::translate_gpu(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + Point2(0, -300));
+		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
 #endif
 }
