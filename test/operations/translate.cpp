@@ -14,28 +14,26 @@
 
 namespace apex {
 
-static SimplePolygonTestCases test_cases;
-
 /*!
  * Tests whether moving by 0,0 yields the original simple polygon.
  */
 TEST(SimplePolygonTranslate, MoveZero) {
-	SimplePolygon square_1000 = test_cases.square_1000();
+	SimplePolygon square_1000 = SimplePolygonTestCases::square_1000();
 	translate(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, test_cases.square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
-	square_1000 = test_cases.square_1000(); //Reset for the next test, just in case.
+	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_st(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, test_cases.square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
-	square_1000 = test_cases.square_1000(); //Reset for the next test, just in case.
+	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_mt(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, test_cases.square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
 #ifdef GPU
-	square_1000 = test_cases.square_1000(); //Reset for the next test, just in case.
+	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_gpu(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, test_cases.square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 #endif
 }
 
@@ -43,7 +41,7 @@ TEST(SimplePolygonTranslate, MoveZero) {
  * Tests moving a polygon along the X direction.
  */
 TEST(SimplePolygonTranslate, MoveX) {
-	const SimplePolygon original = test_cases.square_1000(); //Keep a copy to compare to the original.
+	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
 
 	SimplePolygon square_1000 = original;
 	translate(square_1000, Point2(250, 0));
@@ -80,7 +78,7 @@ TEST(SimplePolygonTranslate, MoveX) {
  * Tests moving a polygon along the Y direction.
  */
 TEST(SimplePolygonTranslate, MoveY) {
-	const SimplePolygon original = test_cases.square_1000(); //Keep a copy to compare to the original.
+	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
 
 	SimplePolygon square_1000 = original;
 	translate(square_1000, Point2(0, -300));
@@ -117,7 +115,7 @@ TEST(SimplePolygonTranslate, MoveY) {
  * Tests moving a polygon in both dimensions at the same time.
  */
 TEST(SimplePolygonTranslate, MoveXY) {
-	const SimplePolygon original = test_cases.square_1000(); //Keep a copy to compare to the original.
+	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
 	const Point2 move_vector(-40, 70);
 
 	SimplePolygon square_1000 = original;
