@@ -19,6 +19,9 @@ namespace detail {
 template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta);
 
+template<multi_polygonal SimplePolygonBatch>
+void translate_st(SimplePolygonBatch& batch, const Point2& delta);
+
 template<polygonal SimplePolygon>
 void translate_mt(SimplePolygon& polygon, const Point2& delta);
 
@@ -43,6 +46,21 @@ void translate(SimplePolygon& polygon, const Point2& delta) {
 	detail::translate_st(polygon, delta);
 }
 
+/*!
+ * Moves all polygons in a batch of polygons with a certain offset.
+ *
+ * The polygons are moved in-place. All polygons are moved with the same offset.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch The batch of simple polygons to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<multi_polygonal SimplePolygonBatch>
+void translate(SimplePolygonBatch& batch, const Point2& delta) {
+	detail::translate_st(batch, delta);
+}
+
 namespace detail {
 
 /*!
@@ -58,6 +76,23 @@ template<polygonal SimplePolygon>
 void translate_st(SimplePolygon& polygon, const Point2& delta) {
 	for(Point2& vertex : polygon) {
 		vertex += delta;
+	}
+}
+
+/*!
+ * Single-threaded implementation of \ref translate for batches of polygons.
+ *
+ * This implementation simply translates each polygon in turn.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch The batch of simple polygons to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<multi_polygonal SimplePolygonBatch>
+void translate_st(SimplePolygonBatch& batch, const Point2& delta) {
+	for(typename SimplePolygonBatch::iterator polygon = batch.begin(); polygon != batch.end(); ++polygon) {
+		translate_st(*polygon, delta);
 	}
 }
 

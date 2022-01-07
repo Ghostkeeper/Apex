@@ -148,6 +148,17 @@ class Batch<SimplePolygon> : public Batch<Batch<Point2>> {
 	Batch<area_t> area() const {
 		return apex::area(*this);
 	}
+
+	/*!
+	 * Moves all polygons in this batch with the same offset.
+	 *
+	 * The polygons are moved in-place.
+	 * \param delta The distance by which to move, representing both dimensions
+	 * to move through as a single 2D vector.
+	 */
+	void translate(const Point2& delta) {
+		apex::translate(*this, delta);
+	}
 };
 
 }
