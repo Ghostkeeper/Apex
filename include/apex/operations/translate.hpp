@@ -113,6 +113,34 @@ void translate_mt(SimplePolygon& polygon, const Point2& delta) {
 	}
 }
 
+/*!
+ * Multi-threaded implementation of \ref translate for batches of polygons.
+ *
+ * This implementation will translate all polygons in parallel. The vertices of
+ * each polygon may be translated in parallel as well, if there are enough of
+ * them. Small polygons will simply be processed thread-locally.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch The batch of simple polygons to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<multi_polygonal SimplePolygonBatch>
+void translate_mt(SimplePolygonBatch& batch, const Point2& delta) {
+	const int parallel_threshold = omp_get_num_procs() * 2; //A polygon is considered "big" if it's larger than twice the number of available polygons. We'll parallelise that then.
+	#pragma omp parallel for
+	for(size_t polygon = 0; polygon < batch.size(); ++polygon) {
+		if(batch[polygon].size() < parallel_threshold) {
+			translate_st(batch[polygon], delta);
+		} else {
+			#pragma omp parallel for
+			for(size_t vertex = 0; vertex < batch[polygon].size(); ++vertex) {
+				batch[polygon][vertex] += delta;
+			}
+		}
+	}
+}
+
 #ifdef GPU
 /*!
  * GPU-accelerated implementation of \ref translate.
