@@ -15,7 +15,7 @@
 namespace apex {
 
 /*!
- * Tests whether moving by 0,0 yields the original simple polygon.
+ * Test whether moving by 0,0 yields the original simple polygon.
  */
 TEST(SimplePolygonTranslate, MoveZero) {
 	SimplePolygon square_1000 = SimplePolygonTestCases::square_1000();
@@ -38,7 +38,7 @@ TEST(SimplePolygonTranslate, MoveZero) {
 }
 
 /*!
- * Tests moving a polygon along the X direction.
+ * Test moving a polygon along the X direction.
  */
 TEST(SimplePolygonTranslate, MoveX) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
@@ -75,7 +75,7 @@ TEST(SimplePolygonTranslate, MoveX) {
 }
 
 /*!
- * Tests moving a polygon along the Y direction.
+ * Test moving a polygon along the Y direction.
  */
 TEST(SimplePolygonTranslate, MoveY) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
@@ -112,7 +112,7 @@ TEST(SimplePolygonTranslate, MoveY) {
 }
 
 /*!
- * Tests moving a polygon in both dimensions at the same time.
+ * Test moving a polygon in both dimensions at the same time.
  */
 TEST(SimplePolygonTranslate, MoveXY) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
@@ -146,6 +146,30 @@ TEST(SimplePolygonTranslate, MoveXY) {
 	for(size_t i = 0; i < square_1000.size(); ++i) {
 		EXPECT_EQ(square_1000[i], original[i] + move_vector);
 	}
+#endif
+}
+
+/*!
+ * Test moving an empty polygon.
+ *
+ * Since the polygon stays empty, nothing should happen. But it shouldn't crash.
+ */
+TEST(SimplePolygonTranslate, MoveEmpty) {
+	SimplePolygon empty = SimplePolygonTestCases::empty();
+	const Point2 move_vector(1337, -31337);
+
+	translate(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the polygon is still empty.";
+
+	detail::translate_st(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the polygon is still empty.";
+
+	detail::translate_mt(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the polygon is still empty.";
+
+#ifdef GPU
+	detail::translate_gpu(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the polygon is still empty.";
 #endif
 }
 
