@@ -133,7 +133,7 @@ void translate_mt(SimplePolygonBatch& batch, const Point2& delta) {
 		if(batch[polygon].size() < parallel_threshold) {
 			translate_st(batch[polygon], delta);
 		} else {
-			#pragma omp parallel for
+			#pragma omp parallel for simd
 			for(size_t vertex = 0; vertex < batch[polygon].size(); ++vertex) {
 				batch[polygon][vertex] += delta;
 			}
@@ -160,8 +160,31 @@ template<polygonal SimplePolygon>
 void translate_gpu(SimplePolygon& polygon, const Point2& delta) {
 	Point2* vertices = polygon.data();
 	const size_t size = polygon.size();
-	#pragma omp target teams distribute parallel for map(tofrom:vertices[0:size])
+	#pragma omp target teams distribute parallel for simd map(tofrom:vertices[0:size])
 	for(size_t vertex = 0; vertex < size; ++vertex) {
+		vertices[vertex] += delta;
+	}
+}
+
+/*!
+ * GPU-accelerated implementation of \ref translate for batches of simple
+ * polygons.
+ *
+ * This implementation ignores the boundaries of polygons and simply shifts all
+ * vertices in the batch by the given delta, even those in unused regions of the
+ * vertex buffer. This works well on batches which are space-optimised.
+ * \tparam SimplePolygonBatch A class that behaves like a batch of simple
+ * polygons.
+ * \param batch The batch of simple polygons to translate.
+ * \param delta The distance by which to move, representing both dimensions to
+ * move through as a single 2D vector.
+ */
+template<multi_polygonal SimplePolygonBatch>
+void translate_gpu(SimplePolygonBatch& batch, const Point2& delta) {
+	Point2* vertices = batch.data_subelements();
+	const size_t vertices_size = batch.size_subelements();
+	#pragma omp target teams distribute parallel for simd map(tofrom:vertices[0:vertices_size])
+	for(size_t vertex = 0; vertex < vertices_size; ++vertex) {
 		vertices[vertex] += delta;
 	}
 }
