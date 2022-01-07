@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -9,15 +9,15 @@
 #include <gtest/gtest.h> //To run the test.
 #include <list> //For linked lists, a data structure with inherently limited iterators, from which batches must be able to copy.
 
-#include "../helpers/fuzz_equal_behaviour.hpp" //To test whether batches behave equally to vectors.
-#include "../helpers/input_iterator_limiter.hpp" //To test with very limited iterator types.
-#include "apex/detail/batch_base.hpp" //The code under test.
+#include "apex/batch.hpp" //The code under test.
+#include "helpers/fuzz_equal_behaviour.hpp" //To test whether batches behave equally to vectors.
+#include "helpers/input_iterator_limiter.hpp" //To test with very limited iterator types.
 
 namespace apex {
 
 /*
 You might expect there to be some tests for batches of simple elements here.
-However the BatchBase<E> class simply inherits all of its functions from
+However the Batch<E> class simply inherits all of its functions from
 std::vector<E>. Writing tests for this then is effectively like writing tests
 for the vector implementation of your compiler. Since std::vector can be
 considered stable, writing tests for it is not effective. The tests below only
@@ -32,38 +32,38 @@ public:
 	/*!
 	 * A batch without any elements.
 	 */
-	BatchBase<int> empty;
+	Batch<int> empty;
 
 	/*!
 	 * A batch without any subbatches.
 	 */
-	BatchBase<BatchBase<int>> empty_batch;
+	Batch<Batch<int>> empty_batch;
 
 	/*!
 	 * A batch of batches with linearly increasing sizes: 1, 2, 3, 4, 5
 	 * elements.
 	 */
-	BatchBase<BatchBase<int>> linear_increases;
+	Batch<Batch<int>> linear_increases;
 
 	/*!
 	 * A batch with a single element, the number 1.
 	 */
-	BatchBase<int> one;
+	Batch<int> one;
 
 	/*!
 	 * A batch with numbers 1 and 2.
 	 */
-	BatchBase<int> one_two;
+	Batch<int> one_two;
 
 	/*!
 	 * A batch with numbers 1, 2, 3, 4, 5, 6, 7, 8 and 9.
 	 */
-	BatchBase<int> one_through_nine;
+	Batch<int> one_through_nine;
 
 	/*!
 	 * A batch of batches with increasing sizes: 1, 2, 4, 8, 16, 32 elements.
 	 */
-	BatchBase<BatchBase<int>> power_increases;
+	Batch<Batch<int>> power_increases;
 
 	/*!
 	 * Constructs the fixture batches.
@@ -94,7 +94,7 @@ public:
  * This also serves as a basic test for whether the class can be used at all.
  */
 TEST(BatchOfBatches, ConstructEmpty) {
-	const BatchBase<BatchBase<int>> empty;
+	const Batch<Batch<int>> empty;
 	EXPECT_EQ(empty.size(), 0) << "The batch is empty after its creation.";
 	EXPECT_TRUE(empty.empty()) << "The batch is empty after its creation.";
 }
@@ -104,11 +104,11 @@ TEST(BatchOfBatches, ConstructEmpty) {
  * subbatches.
  */
 TEST(BatchOfBatches, ConstructDefault) {
-	const BatchBase<BatchBase<int>> batch1(1);
+	const Batch<Batch<int>> batch1(1);
 	EXPECT_EQ(batch1.size(), 1) << "We added one empty subbatch.";
 	EXPECT_TRUE(batch1[0].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
 
-	const BatchBase<BatchBase<int>> batch4(4);
+	const Batch<Batch<int>> batch4(4);
 	EXPECT_EQ(batch4.size(), 4) << "We added 4 default-constructed subbatches.";
 	EXPECT_TRUE(batch4[0].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
 	EXPECT_TRUE(batch4[1].empty()) << "The subbatch was created with its default constructor, which should leave it empty.";
@@ -120,25 +120,25 @@ TEST(BatchOfBatches, ConstructDefault) {
  * Test constructing a batch of batches by making copies of one subbatch.
  */
 TEST_F(BatchOfBatchesFixture, ConstructCopies) {
-	const BatchBase<BatchBase<int>> batch1_1(1, one);
+	const Batch<Batch<int>> batch1_1(1, one);
 	EXPECT_EQ(batch1_1.size(), 1) << "There is one subbatch in this batch.";
 	EXPECT_EQ(batch1_1[0], one) << "The subbatch is the one with one element.";
 
-	const BatchBase<BatchBase<int>> batch4_1(4, one);
+	const Batch<Batch<int>> batch4_1(4, one);
 	EXPECT_EQ(batch4_1.size(), 4) << "There are four copies of the subbatch in this batch.";
 	EXPECT_EQ(batch4_1[0], one) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_1[1], one) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_1[2], one) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_1[3], one) << "The subbatches are copies of the original.";
 
-	const BatchBase<BatchBase<int>> batch4_12(4, one_two);
+	const Batch<Batch<int>> batch4_12(4, one_two);
 	EXPECT_EQ(batch4_12.size(), 4) << "There are four copies of the subbatch in this batch.";
 	EXPECT_EQ(batch4_12[0], one_two) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_12[1], one_two) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_12[2], one_two) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_12[3], one_two) << "The subbatches are copies of the original.";
 
-	const BatchBase<BatchBase<int>> batch4_19(4, one_through_nine);
+	const Batch<Batch<int>> batch4_19(4, one_through_nine);
 	EXPECT_EQ(batch4_19.size(), 4) << "There are four copies of the subbatch in this batch.";
 	EXPECT_EQ(batch4_19[0], one_through_nine) << "The subbatches are copies of the original.";
 	EXPECT_EQ(batch4_19[1], one_through_nine) << "The subbatches are copies of the original.";
@@ -153,16 +153,16 @@ TEST_F(BatchOfBatchesFixture, ConstructCopies) {
  * beforehand how many subbatches will be stored.
  */
 TEST_F(BatchOfBatchesFixture, ConstructRandomAccessIterator) {
-	const BatchBase<BatchBase<int>> batch_full(power_increases.begin(), power_increases.end()); //power_increases is also a batch, which has a random-access iterator.
+	const Batch<Batch<int>> batch_full(power_increases.begin(), power_increases.end()); //power_increases is also a batch, which has a random-access iterator.
 	EXPECT_EQ(batch_full, power_increases) << "Using the random-access iterator of power_increases, a complete copy of that batch was made.";
 
-	const BatchBase<BatchBase<int>> batch_partial(power_increases.begin(), power_increases.begin() + 3); //Construct from a part of the range of the original.
+	const Batch<Batch<int>> batch_partial(power_increases.begin(), power_increases.begin() + 3); //Construct from a part of the range of the original.
 	EXPECT_EQ(batch_partial.size(), 3) << "The range this batch was constructed with contained only 3 elements. Not the entire power_increases batch.";
 	EXPECT_EQ(batch_partial[0], power_increases[0]) << "The first subbatch was copied.";
 	EXPECT_EQ(batch_partial[1], power_increases[1]) << "The second subbatch was copied.";
 	EXPECT_EQ(batch_partial[2], power_increases[2]) << "The third subbatch was copied.";
 
-	const BatchBase<BatchBase<int>> batch_last_third(power_increases.begin() + 4, power_increases.end()); //Construct from the last part of the range of the original.
+	const Batch<Batch<int>> batch_last_third(power_increases.begin() + 4, power_increases.end()); //Construct from the last part of the range of the original.
 	EXPECT_EQ(batch_last_third.size(), 2) << "The range this batch was constructed with contained only 2 elements. Not the entire power_increases batch.";
 	EXPECT_EQ(batch_last_third[0], power_increases[4]) << "The fifth subbatch was copied.";
 	EXPECT_EQ(batch_last_third[1], power_increases[5]) << "The last subbatch was copied.";
@@ -176,23 +176,23 @@ TEST_F(BatchOfBatchesFixture, ConstructRandomAccessIterator) {
  */
 TEST_F(BatchOfBatchesFixture, ConstructForwardIterator) {
 	//A linked list offers a bidirectional iterator, which is a forward iterator but not random access.
-	const std::list<BatchBase<int>> batches = {empty, one, one_two, one_through_nine};
+	const std::list<Batch<int>> batches = {empty, one, one_two, one_through_nine};
 
-	const BatchBase<BatchBase<int>> batch_full(batches.begin(), batches.end());
+	const Batch<Batch<int>> batch_full(batches.begin(), batches.end());
 	EXPECT_EQ(batch_full.size(), 4) << "We put 4 subbatches in the list.";
 	EXPECT_EQ(batch_full[0], empty) << "The first element is the empty subbatch.";
 	EXPECT_EQ(batch_full[1], one) << "The second element is the subbatch with one element.";
 	EXPECT_EQ(batch_full[2], one_two) << "The third element is the subbatch with two elements.";
 	EXPECT_EQ(batch_full[3], one_through_nine) << "The fourth element is the subbatch with 9 digits.";
 
-	std::list<BatchBase<int>>::const_iterator third = batches.begin();
+	std::list<Batch<int>>::const_iterator third = batches.begin();
 	std::advance(third, 2);
-	const BatchBase<BatchBase<int>> batch_partial(batches.begin(), third);
+	const Batch<Batch<int>> batch_partial(batches.begin(), third);
 	EXPECT_EQ(batch_partial.size(), 2) << "We iterated up until the third element. Everything before that should be included, not including the third element.";
 	EXPECT_EQ(batch_partial[0], empty) << "The first element is the empty subbatch.";
 	EXPECT_EQ(batch_partial[1], one) << "The second element is the subbatch with one element.";
 
-	const BatchBase<BatchBase<int>> batch_second_half(third, batches.end());
+	const Batch<Batch<int>> batch_second_half(third, batches.end());
 	EXPECT_EQ(batch_second_half.size(), 2) << "Starting from the third subbatch, there's only the third and fourth elements left.";
 	EXPECT_EQ(batch_second_half[0], one_two) << "The third item in the list is the first in this batch.";
 	EXPECT_EQ(batch_second_half[1], one_through_nine) << "The fourth item in the list is the second in this batch.";
@@ -206,19 +206,19 @@ TEST_F(BatchOfBatchesFixture, ConstructForwardIterator) {
  * encounter.
  */
 TEST_F(BatchOfBatchesFixture, ConstructInputIterator) {
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> third(power_increases.begin() + 2);
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> third(power_increases.begin() + 2);
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> end(power_increases.end());
 
-	const BatchBase<BatchBase<int>> batch_full(begin, end); //Construct with very limited type of iterator.
+	const Batch<Batch<int>> batch_full(begin, end); //Construct with very limited type of iterator.
 	EXPECT_EQ(batch_full.size(), power_increases.size()) << "We added the entire batch of batches to this batch.";
 
-	const BatchBase<BatchBase<int>> batch_partial(begin, third);
+	const Batch<Batch<int>> batch_partial(begin, third);
 	EXPECT_EQ(batch_partial.size(), 2) << "The first and second subbatches are in, but the third marked the end.";
 	EXPECT_EQ(batch_partial[0], power_increases[0]) << "The first subbatch got placed in first place.";
 	EXPECT_EQ(batch_partial[1], power_increases[1]) << "The second subbatch got placed in second place.";
 
-	const BatchBase<BatchBase<int>> batch_second_half(third, end);
+	const Batch<Batch<int>> batch_second_half(third, end);
 	EXPECT_EQ(batch_second_half.size(), 4) << "The third batch marks the start, and then the fourth, fifth and sixth are also in.";
 	EXPECT_EQ(batch_second_half[0], power_increases[2]) << "The third subbatch got placed in first place.";
 	EXPECT_EQ(batch_second_half[1], power_increases[3]) << "The fourth subbatch got placed in second place.";
@@ -230,10 +230,10 @@ TEST_F(BatchOfBatchesFixture, ConstructInputIterator) {
  * Test the copy constructor of batches of batches.
  */
 TEST_F(BatchOfBatchesFixture, ConstructCopy) {
-	const BatchBase<BatchBase<int>> copy_empty(empty_batch);
+	const Batch<Batch<int>> copy_empty(empty_batch);
 	EXPECT_EQ(copy_empty, empty_batch);
 
-	const BatchBase<BatchBase<int>> copy_filled(power_increases);
+	const Batch<Batch<int>> copy_filled(power_increases);
 	EXPECT_EQ(copy_filled, power_increases);
 }
 
@@ -244,10 +244,10 @@ TEST_F(BatchOfBatchesFixture, ConstructCopy) {
  * position, to give more certainty that the data wasn't actually copied.
  */
 TEST_F(BatchOfBatchesFixture, ConstructMove) {
-	const BatchBase<BatchBase<int>> original_batch(power_increases); //Make a copy so that we can compare the data in the batch without using the decommissioned moved batch.
+	const Batch<Batch<int>> original_batch(power_increases); //Make a copy so that we can compare the data in the batch without using the decommissioned moved batch.
 
 	const int* original_position = &power_increases[5][5]; //Grab an arbitrary element in the array, noting its position in memory.
-	const BatchBase<BatchBase<int>> moved_batch(std::move(power_increases));
+	const Batch<Batch<int>> moved_batch(std::move(power_increases));
 	const int* new_position = &moved_batch[5][5];
 
 	EXPECT_EQ(moved_batch, original_batch) << "After the move, all element data and subelement data is still unchanged.";
@@ -258,29 +258,29 @@ TEST_F(BatchOfBatchesFixture, ConstructMove) {
  * Test constructing batches of batches from initialiser lists.
  */
 TEST(BatchOfBatches, ConstructInitialiserList) {
-	const BatchBase<BatchBase<int>> empty({});
+	const Batch<Batch<int>> empty({});
 	EXPECT_EQ(empty.size(), 0) << "We constructed this from an empty initialiser list, so the batch must be empty too.";
 	
-	const BatchBase<BatchBase<int>> batch({{1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11, 12}});
+	const Batch<Batch<int>> batch({{1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11, 12}});
 	EXPECT_EQ(batch.size(), 3) << "The initialiser list had 3 members.";
-	EXPECT_EQ(batch[0], BatchBase<int>({1, 2, 3})) << "The first subbatch.";
-	EXPECT_EQ(batch[1], BatchBase<int>({4, 5, 6, 7})) << "The second subbatch.";
-	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
+	EXPECT_EQ(batch[0], Batch<int>({1, 2, 3})) << "The first subbatch.";
+	EXPECT_EQ(batch[1], Batch<int>({4, 5, 6, 7})) << "The second subbatch.";
+	EXPECT_EQ(batch[2], Batch<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
 }
 
 /*!
  * Test assigning empty batches to other batches with copy-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignCopyEmpty) {
-	BatchBase<BatchBase<int>> assign_empty_to_empty(empty_batch);
+	Batch<Batch<int>> assign_empty_to_empty(empty_batch);
 	assign_empty_to_empty = empty_batch; //Assign the empty batch again.
 	EXPECT_EQ(assign_empty_to_empty, empty_batch) << "After assigning the empty batch, this batch is still empty.";
 
-	BatchBase<BatchBase<int>> assign_empty_to_singular({one});
+	Batch<Batch<int>> assign_empty_to_singular({one});
 	assign_empty_to_singular = empty_batch;
 	EXPECT_EQ(assign_empty_to_singular, empty_batch) << "After assigning the empty batch, this batch is empty.";
 
-	BatchBase<BatchBase<int>> assign_empty_to_filled(power_increases);
+	Batch<Batch<int>> assign_empty_to_filled(power_increases);
 	assign_empty_to_filled = empty_batch;
 	EXPECT_EQ(assign_empty_to_filled, empty_batch) << "After assigning the empty batch, this batch is empty.";
 }
@@ -289,15 +289,15 @@ TEST_F(BatchOfBatchesFixture, AssignCopyEmpty) {
  * Test assigning filled batches to other batches with copy-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
-	BatchBase<BatchBase<int>> assign_empty(empty_batch);
+	Batch<Batch<int>> assign_empty(empty_batch);
 	assign_empty = power_increases; //Assign a filled batch to this empty batch.
 	EXPECT_EQ(assign_empty, power_increases) << "After assigning this batch to the batch, it must be equal to the new batch.";
 
-	BatchBase<BatchBase<int>> assign_singular({one});
+	Batch<Batch<int>> assign_singular({one});
 	assign_singular = power_increases;
 	EXPECT_EQ(assign_singular, power_increases) << "After assigning this batch, it must be equal to this batch.";
 
-	BatchBase<BatchBase<int>> assign_filled(linear_increases);
+	Batch<Batch<int>> assign_filled(linear_increases);
 	assign_filled = power_increases;
 	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
 }
@@ -306,18 +306,18 @@ TEST_F(BatchOfBatchesFixture, AssignCopyFilled) {
  * Test assigning empty batches to other batches with move-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignMoveEmpty) {
-	BatchBase<BatchBase<int>> empty_copy_1(empty_batch); //Make a copy of the empty batch we're about to move, so we can still compare with the original.
-	BatchBase<BatchBase<int>> assign_empty_to_empty(empty_batch);
+	Batch<Batch<int>> empty_copy_1(empty_batch); //Make a copy of the empty batch we're about to move, so we can still compare with the original.
+	Batch<Batch<int>> assign_empty_to_empty(empty_batch);
 	assign_empty_to_empty = std::move(empty_copy_1); //Assign the empty batch again.
 	EXPECT_EQ(assign_empty_to_empty, empty_batch) << "After assigning the empty batch, this batch is still empty.";
 
-	BatchBase<BatchBase<int>> empty_copy_2(empty_batch); //Don't re-use the moved batch ever again!
-	BatchBase<BatchBase<int>> assign_empty_to_singular({one});
+	Batch<Batch<int>> empty_copy_2(empty_batch); //Don't re-use the moved batch ever again!
+	Batch<Batch<int>> assign_empty_to_singular({one});
 	assign_empty_to_singular = std::move(empty_copy_2);
 	EXPECT_EQ(assign_empty_to_singular, empty_batch) << "After assigning the empty batch, this batch is empty.";
 
-	BatchBase<BatchBase<int>> empty_copy_3(empty_batch); //Don't re-use the moved batch ever again!
-	BatchBase<BatchBase<int>> assign_empty_to_filled(power_increases);
+	Batch<Batch<int>> empty_copy_3(empty_batch); //Don't re-use the moved batch ever again!
+	Batch<Batch<int>> assign_empty_to_filled(power_increases);
 	assign_empty_to_filled = std::move(empty_copy_3);
 	EXPECT_EQ(assign_empty_to_filled, empty_batch) << "After assigning the empty batch, this batch is empty.";
 }
@@ -326,18 +326,18 @@ TEST_F(BatchOfBatchesFixture, AssignMoveEmpty) {
  * Test assigning filled batches to other batches with move-assignment.
  */
 TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
-	BatchBase<BatchBase<int>> powers_copy_1(power_increases); //Make a copy of the batch we're about to move, so we can still compare with the original.
-	BatchBase<BatchBase<int>> assign_empty(empty_batch);
+	Batch<Batch<int>> powers_copy_1(power_increases); //Make a copy of the batch we're about to move, so we can still compare with the original.
+	Batch<Batch<int>> assign_empty(empty_batch);
 	assign_empty = std::move(powers_copy_1); //Assign a filled batch to this empty batch.
 	EXPECT_EQ(assign_empty, power_increases) << "After assigning this batch to the batch, it must be equal to the new batch.";
 
-	BatchBase<BatchBase<int>> powers_copy_2(power_increases); //Don't re-use the moved batch ever again!
-	BatchBase<BatchBase<int>> assign_singular({one});
+	Batch<Batch<int>> powers_copy_2(power_increases); //Don't re-use the moved batch ever again!
+	Batch<Batch<int>> assign_singular({one});
 	assign_singular = std::move(powers_copy_2);
 	EXPECT_EQ(assign_singular, power_increases) << "After assigning this batch, it must be equal to this batch.";
 
-	BatchBase<BatchBase<int>> powers_copy_3(power_increases); //Don't re-use the moved batch ever again!
-	BatchBase<BatchBase<int>> assign_filled(linear_increases);
+	Batch<Batch<int>> powers_copy_3(power_increases); //Don't re-use the moved batch ever again!
+	Batch<Batch<int>> assign_filled(linear_increases);
 	assign_filled = std::move(powers_copy_3);
 	EXPECT_EQ(assign_filled, power_increases) << "After assigning this batch, it must be equal to this batch.";
 }
@@ -347,7 +347,7 @@ TEST_F(BatchOfBatchesFixture, AssignMoveFilled) {
  */
 TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
 	//Empty containers are always equal.
-	const BatchBase<BatchBase<int>> empty;
+	const Batch<Batch<int>> empty;
 	EXPECT_TRUE(empty == empty_batch) << "Both batches are empty, so they are equal.";
 	EXPECT_FALSE(empty != empty_batch) << "Both batches are empty, so they are equal.";
 
@@ -360,8 +360,8 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
 	EXPECT_FALSE(linear_increases != linear_increases) << "A batch is always equal to itself.";
 
 	//Now test with different instances that happen to be the same.
-	const BatchBase<BatchBase<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
-	const BatchBase<BatchBase<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const Batch<Batch<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const Batch<Batch<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
 	EXPECT_TRUE(left == right) << "These batches are constructed from the same initialiser lists, so they must be equal.";
 	EXPECT_FALSE(left != right) << "These batches are constructed from the same initialiser lists, so they must be equal.";
 }
@@ -370,26 +370,26 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityEqual) {
  * Test equality of batches that have different numbers of subbatches.
  */
 TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSize) {
-	const BatchBase<BatchBase<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
+	const Batch<Batch<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
 	EXPECT_FALSE(empty_batch == empty_subbatch) << "empty_subbatch contains one subbatch, while the other does not.";
 	EXPECT_FALSE(empty_subbatch == empty_batch) << "empty_subbatch contains one subbatch, while the other does not.";
 	EXPECT_TRUE(empty_batch != empty_subbatch) << "empty_subbatch contains one subbatch, while the other does not.";
 	EXPECT_TRUE(empty_subbatch != empty_batch) << "empty_subbatch contains one subbatch, while the other does not.";
 
-	const BatchBase<BatchBase<int>> two_empty_subbatches({{}, {}});
+	const Batch<Batch<int>> two_empty_subbatches({{}, {}});
 	EXPECT_FALSE(empty_subbatch == two_empty_subbatches) << "One batch has one empty subbatch, while the other has two empty subbatches.";
 	EXPECT_FALSE(two_empty_subbatches == empty_subbatch) << "One batch has one empty subbatch, while the other has two empty subbatches.";
 	EXPECT_TRUE(empty_subbatch != two_empty_subbatches) << "One batch has one empty subbatch, while the other has two empty subbatches.";
 	EXPECT_TRUE(two_empty_subbatches != empty_subbatch) << "One batch has one empty subbatch, while the other has two empty subbatches.";
 
-	const BatchBase<BatchBase<int>> just_one({one});
-	const BatchBase<BatchBase<int>> just_one_twice({one, one});
+	const Batch<Batch<int>> just_one({one});
+	const Batch<Batch<int>> just_one_twice({one, one});
 	EXPECT_FALSE(just_one == just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_FALSE(just_one_twice == just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_TRUE(just_one != just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 	EXPECT_TRUE(just_one_twice != just_one) << "The just_one batch is a prefix of the just_one_twice batch. Their size is different.";
 
-	const BatchBase<BatchBase<int>> just_one_many({one, one_through_nine});
+	const Batch<Batch<int>> just_one_many({one, one_through_nine});
 	EXPECT_FALSE(just_one == just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 	EXPECT_FALSE(just_one_many == just_one) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
 	EXPECT_TRUE(just_one != just_one_many) << "The just_one batch is a prefix of the just_one_many batch. Their size is different.";
@@ -401,15 +401,15 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSize) {
  * subbatches have different sizes.
  */
 TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSubsize) {
-	const BatchBase<BatchBase<int>> just_one({one});
-	const BatchBase<BatchBase<int>> just_one_two({one_two});
+	const Batch<Batch<int>> just_one({one});
+	const Batch<Batch<int>> just_one_two({one_two});
 	EXPECT_FALSE(just_one == just_one_two) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
 	EXPECT_FALSE(just_one_two == just_one) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
 	EXPECT_TRUE(just_one != just_one_two) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
 	EXPECT_TRUE(just_one_two != just_one) << "One batch has a subbatch with 1 element, while the other has a subbatch with 2 elements.";
 
-	const BatchBase<BatchBase<int>> one_onetwo({one, one_two});
-	const BatchBase<BatchBase<int>> one_many({one, one_through_nine});
+	const Batch<Batch<int>> one_onetwo({one, one_two});
+	const Batch<Batch<int>> one_many({one, one_through_nine});
 	EXPECT_FALSE(one_onetwo == one_many) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
 	EXPECT_FALSE(one_many == one_onetwo) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
 	EXPECT_TRUE(one_onetwo != one_many) << "The first subbatch is the same for each, but the second subbatch is longer in one batch.";
@@ -420,15 +420,15 @@ TEST_F(BatchOfBatchesFixture, CompareEqualityDifferentSubsize) {
  * Test equality of batches where only the subvalues are different.
  */
 TEST(BatchOfBatches, CompareEqualityDifferentValues) {
-	const BatchBase<BatchBase<int>> just_one({{1}});
-	const BatchBase<BatchBase<int>> just_two({{2}});
+	const Batch<Batch<int>> just_one({{1}});
+	const Batch<Batch<int>> just_two({{2}});
 	EXPECT_FALSE(just_one == just_two) << "One subbatch has the number 1, the other has the number 2.";
 	EXPECT_FALSE(just_two == just_one) << "One subbatch has the number 1, the other has the number 2.";
 	EXPECT_TRUE(just_one != just_two) << "One subbatch has the number 1, the other has the number 2.";
 	EXPECT_TRUE(just_two != just_one) << "One subbatch has the number 1, the other has the number 2.";
 
-	const BatchBase<BatchBase<int>> onetwo_threefour({{1, 2}, {3, 4}});
-	const BatchBase<BatchBase<int>> onetwo_fourthree({{1, 2}, {4, 3}});
+	const Batch<Batch<int>> onetwo_threefour({{1, 2}, {3, 4}});
+	const Batch<Batch<int>> onetwo_fourthree({{1, 2}, {4, 3}});
 	EXPECT_FALSE(onetwo_threefour == onetwo_fourthree) << "The second subbatch is in a different order.";
 	EXPECT_FALSE(onetwo_fourthree == onetwo_threefour) << "The second subbatch is in a different order.";
 	EXPECT_TRUE(onetwo_threefour != onetwo_fourthree) << "The second subbatch is in a different order.";
@@ -442,7 +442,7 @@ TEST(BatchOfBatches, CompareEqualityDifferentValues) {
  * < and > operators should always return ``false``.
  */
 TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
-	const BatchBase<BatchBase<int>> empty;
+	const Batch<Batch<int>> empty;
 	EXPECT_TRUE(empty <= empty_batch) << "Both batches are empty, so they are equal.";
 	EXPECT_TRUE(empty >= empty_batch) << "Both batches are empty, so they are equal.";
 	EXPECT_FALSE(empty < empty_batch) << "Both batches are empty, one is not greater or less than the other.";
@@ -463,8 +463,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
 	EXPECT_FALSE(linear_increases > linear_increases) << "The batch is not greater or less than itself.";
 
 	//Now test with different instances that happen to be the same.
-	const BatchBase<BatchBase<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
-	const BatchBase<BatchBase<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const Batch<Batch<int>> left({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
+	const Batch<Batch<int>> right({{3, 2, 1}, {7, 6, 5, 4}, {}, {9, 8}});
 	EXPECT_TRUE(left <= right) << "Both batches have the same contents, so they are equal.";
 	EXPECT_TRUE(left >= right) << "Both batches have the same contents, so they are equal.";
 	EXPECT_FALSE(left < right) << "Both batches have the same contents, so one is not greater or less than the other.";
@@ -478,7 +478,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderEqual) {
  * subbatches.
  */
 TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
-	const BatchBase<BatchBase<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
+	const Batch<Batch<int>> empty_subbatch({{}}); //Has one subbatch, which is empty.
 	EXPECT_TRUE(empty_batch < empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
 	EXPECT_TRUE(empty_batch <= empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
 	EXPECT_FALSE(empty_batch > empty_subbatch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
@@ -488,7 +488,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 	EXPECT_TRUE(empty_subbatch > empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
 	EXPECT_TRUE(empty_subbatch >= empty_batch) << "The empty batch is a prefix of all other batches so it is always sorted first.";
 
-	const BatchBase<BatchBase<int>> two_empty_subbatches({{}, {}});
+	const Batch<Batch<int>> two_empty_subbatches({{}, {}});
 	EXPECT_TRUE(empty_subbatch < two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
 	EXPECT_TRUE(empty_subbatch <= two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
 	EXPECT_FALSE(empty_subbatch > two_empty_subbatches) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
@@ -498,8 +498,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 	EXPECT_TRUE(two_empty_subbatches > empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
 	EXPECT_TRUE(two_empty_subbatches >= empty_subbatch) << "The single subbatch is a prefix of the two subbatches, so it should be sorted first.";
 
-	const BatchBase<BatchBase<int>> just_one({one});
-	const BatchBase<BatchBase<int>> just_one_twice({one, one});
+	const Batch<Batch<int>> just_one({one});
+	const Batch<Batch<int>> just_one_twice({one, one});
 	EXPECT_TRUE(just_one < just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
 	EXPECT_TRUE(just_one <= just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
 	EXPECT_FALSE(just_one > just_one_twice) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
@@ -509,7 +509,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 	EXPECT_TRUE(just_one_twice > just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
 	EXPECT_TRUE(just_one_twice >= just_one) << "The just_one batch is a prefix of the just_one_twice batch, so it should be sorted first.";
 
-	const BatchBase<BatchBase<int>> just_one_many({one, one_through_nine});
+	const Batch<Batch<int>> just_one_many({one, one_through_nine});
 	EXPECT_TRUE(just_one < just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
 	EXPECT_TRUE(just_one <= just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
 	EXPECT_FALSE(just_one > just_one_many) << "The just_one batch is a prefix of the just_one_many batch, so it should be sorted first.";
@@ -528,8 +528,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
 	EXPECT_TRUE(just_one_many > just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
 	EXPECT_TRUE(just_one_many >= just_one_twice) << "The last subbatch of just_one is a prefix of the last subbatch of just_one_many, so it should be sorted first.";
 
-	const BatchBase<BatchBase<int>> just_one_thrice({one, one, one});
-	const BatchBase<BatchBase<int>> one_onetwo_zero({one, one_two, {0}});
+	const Batch<Batch<int>> just_one_thrice({one, one, one});
+	const Batch<Batch<int>> one_onetwo_zero({one, one_two, {0}});
 	EXPECT_TRUE(just_one_thrice < one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
 	EXPECT_TRUE(just_one_thrice <= one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
 	EXPECT_FALSE(just_one_thrice > one_onetwo_zero) << "The second subbatch is a prefix of its counterpart, so it should be sorted first, even though in the third subbatch the order is different.";
@@ -545,8 +545,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderPrefix) {
  * different values, but the batches are otherwise the same.
  */
 TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
-	const BatchBase<BatchBase<int>> just_one({{1}});
-	const BatchBase<BatchBase<int>> just_two({{2}});
+	const Batch<Batch<int>> just_one({{1}});
+	const Batch<Batch<int>> just_two({{2}});
 	EXPECT_TRUE(just_one < just_two) << "The number 1 is lower than the number 2.";
 	EXPECT_TRUE(just_one <= just_two) << "The number 1 is lower than the number 2.";
 	EXPECT_FALSE(just_one > just_two) << "The number 1 is lower than the number 2.";
@@ -556,8 +556,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
 	EXPECT_TRUE(just_two > just_one) << "The number 1 is lower than the number 2.";
 	EXPECT_TRUE(just_two >= just_one) << "The number 1 is lower than the number 2.";
 
-	const BatchBase<BatchBase<int>> onetwo_threefour({{1, 2}, {3, 4}});
-	const BatchBase<BatchBase<int>> onetwo_fourthree({{1, 2}, {4, 3}});
+	const Batch<Batch<int>> onetwo_threefour({{1, 2}, {3, 4}});
+	const Batch<Batch<int>> onetwo_fourthree({{1, 2}, {4, 3}});
 	EXPECT_TRUE(onetwo_threefour < onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
 	EXPECT_TRUE(onetwo_threefour <= onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
 	EXPECT_FALSE(onetwo_threefour > onetwo_fourthree) << "In the second subbatch, the number 3 is lower than the number 4.";
@@ -577,8 +577,8 @@ TEST_F(BatchOfBatchesFixture, CompareOrderValues) {
  * front to back their order is as it is.
  */
 TEST_F(BatchOfBatchesFixture, CompareOrderLexicographic) {
-	const BatchBase<BatchBase<int>> one_two_three({{1}, {2}, {3}});
-	const BatchBase<BatchBase<int>> one_three_two({{1}, {3}, {2}});
+	const Batch<Batch<int>> one_two_three({{1}, {2}, {3}});
+	const Batch<Batch<int>> one_three_two({{1}, {3}, {2}});
 	EXPECT_TRUE(one_two_three < one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
 	EXPECT_TRUE(one_two_three <= one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
 	EXPECT_FALSE(one_two_three > one_three_two) << "The third subbatch doesn't matter since the second subbatch already determines the order.";
@@ -593,7 +593,7 @@ TEST_F(BatchOfBatchesFixture, CompareOrderLexicographic) {
  * Test the assign method to assign multiple copies of a subbatch.
  */
 TEST_F(BatchOfBatchesFixture, AssignCopies) {
-	BatchBase<BatchBase<int>> batch; //Start off empty.
+	Batch<Batch<int>> batch; //Start off empty.
 
 	batch.assign(20, one_two);
 	EXPECT_EQ(batch.size(), 20);
@@ -623,7 +623,7 @@ TEST_F(BatchOfBatchesFixture, AssignCopies) {
  * beforehand how many subbatches will be stored.
  */
 TEST_F(BatchOfBatchesFixture, AssignRandomAccessIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
+	Batch<Batch<int>> batch = linear_increases;
 
 	batch.assign(power_increases.begin(), power_increases.end()); //power_increases is also a batch, which has a random-access iterator.
 	EXPECT_EQ(batch, power_increases) << "Using the random-access iterator of power_increases, a complete copy of that batch was made.";
@@ -649,10 +649,10 @@ TEST_F(BatchOfBatchesFixture, AssignRandomAccessIterator) {
  * order to count how much.
  */
 TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
+	Batch<Batch<int>> batch = linear_increases;
 
 	//A linked list offers a bidirectional iterator, which is a forward iterator but not random access.
-	const std::list<BatchBase<int>> batches = {empty, one, one_two, one_through_nine};
+	const std::list<Batch<int>> batches = {empty, one, one_two, one_through_nine};
 	batch.assign(batches.begin(), batches.end());
 	EXPECT_EQ(batch.size(), 4) << "We put 4 subbatches in the list.";
 	EXPECT_EQ(batch[0], empty) << "The first element is the empty subbatch.";
@@ -660,7 +660,7 @@ TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
 	EXPECT_EQ(batch[2], one_two) << "The third element is the subbatch with two elements.";
 	EXPECT_EQ(batch[3], one_through_nine) << "The fourth element is the subbatch with 9 digits.";
 
-	std::list<BatchBase<int>>::const_iterator third = batches.begin();
+	std::list<Batch<int>>::const_iterator third = batches.begin();
 	std::advance(third, 2);
 	batch.assign(batches.begin(), third);
 	EXPECT_EQ(batch.size(), 2) << "We iterated up until the third element. Everything before that should be included, not including the third element.";
@@ -682,10 +682,10 @@ TEST_F(BatchOfBatchesFixture, AssignForwardIterator) {
  * size.
  */
 TEST_F(BatchOfBatchesFixture, AssignInputIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> third(power_increases.begin() + 2);
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+	Batch<Batch<int>> batch = linear_increases;
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> third(power_increases.begin() + 2);
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> end(power_increases.end());
 
 	batch.assign(begin, end); //Assign with this very limited type of iterator.
 	EXPECT_EQ(batch, power_increases) << "We added the entire batch of batches to this batch.";
@@ -707,7 +707,7 @@ TEST_F(BatchOfBatchesFixture, AssignInputIterator) {
  * Test assigning an initialiser list to the batch of batches.
  */
 TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
-	BatchBase<BatchBase<int>> batch = power_increases;
+	Batch<Batch<int>> batch = power_increases;
 
 	batch.assign({one, one_through_nine, one_two});
 	EXPECT_EQ(batch.size(), 3) << "We assigned a list of 3 subbatches to this batch.";
@@ -720,9 +720,9 @@ TEST_F(BatchOfBatchesFixture, AssignInitialiserList) {
 
 	batch.assign({{1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11, 12}});
 	EXPECT_EQ(batch.size(), 3) << "The initialiser list had 3 members.";
-	EXPECT_EQ(batch[0], BatchBase<int>({1, 2, 3})) << "The first subbatch.";
-	EXPECT_EQ(batch[1], BatchBase<int>({4, 5, 6, 7})) << "The second subbatch.";
-	EXPECT_EQ(batch[2], BatchBase<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
+	EXPECT_EQ(batch[0], Batch<int>({1, 2, 3})) << "The first subbatch.";
+	EXPECT_EQ(batch[1], Batch<int>({4, 5, 6, 7})) << "The second subbatch.";
+	EXPECT_EQ(batch[2], Batch<int>({8, 9, 10, 11, 12})) << "The third subbatch.";
 }
 
 /*!
@@ -738,7 +738,7 @@ TEST_F(BatchOfBatchesFixture, Clear) {
 	power_increases.clear();
 	EXPECT_EQ(power_increases.size(), 0) << "After clearing the batch, it should no longer have any items.";
 
-	BatchBase<BatchBase<int>> batch({one_two}); //A batch with a single item inside.
+	Batch<Batch<int>> batch({one_two}); //A batch with a single item inside.
 	batch.clear();
 	EXPECT_EQ(batch.size(), 0) << "The one item in this batch must be erased by the clearing.";
 }
@@ -765,10 +765,10 @@ TEST_F(BatchOfBatchesFixture, DataSubelements) {
  * Test emplacing an empty subbatch into the parent batch.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end()); //Emplace at the end.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -778,7 +778,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	})) << "There's an empty subbatch at the end now.";
 
 	batch.emplace(batch.begin()); //Emplace another one at the beginning.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{},
 		linear_increases[0],
 		linear_increases[1],
@@ -789,7 +789,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
 	})) << "There's an empty subbatch at the start and end now.";
 
 	batch.emplace(batch.begin() + 3); //Emplace another one somewhere in the middle.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{},
 		linear_increases[0],
 		linear_increases[1],
@@ -806,10 +806,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceEmpty) {
  * makes copies of a subvalue.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end(), size_t(4), 1); //Add a subbatch with four 1's at the end.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -819,7 +819,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 		{1, 1, 1, 1}})) << "There is a subbatch with four 1's appended to the end.";
 
 	batch.emplace(batch.begin(), size_t(3), 2); //Add a subbatch with three 2's in the beginning.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{2, 2, 2},
 		power_increases[0],
 		power_increases[1],
@@ -831,7 +831,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
 	})) << "We added a subbatch with three 2's at the start.";
 
 	batch.emplace(batch.begin() + 2, size_t(2), 3); //Add a subbatch with two 3's in the middle.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{2, 2, 2},
 		power_increases[0],
 		{3, 3},
@@ -852,10 +852,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopies) {
  * distance between them can be obtained in constant time.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.end(), one_through_nine.begin(), one_through_nine.begin() + 4); //Append a subbatch with 4 elements at the end.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -865,7 +865,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 	})) << "There is a part of the one_through_nine batch at the end.";
 
 	batch.emplace(batch.begin(), batch[3].begin(), batch[3].end()); //Re-add a part of itself. Does the index get invalidated prematurely?
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[3],
 		linear_increases[0],
 		linear_increases[1],
@@ -876,7 +876,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
 	})) << "A part of the batch itself was added again. This should not invalidate the index in the batch until it's completed.";
 
 	batch.emplace(batch.begin() + 4, one.begin(), one.begin()); //Add an empty subbatch through random access iterators.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[3],
 		linear_increases[0],
 		linear_increases[1],
@@ -897,11 +897,11 @@ TEST_F(BatchOfBatchesFixture, EmplaceRandomAccessIterator) {
  * multiple times.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 	std::list<int> numbers(one_through_nine.begin(), one_through_nine.end()); //A linked list has bidirectional iterators, which is a forward iterator but not random access.
 
 	batch.emplace(batch.end(), numbers.begin(), numbers.begin()); //Append an empty subbatch at the end.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -913,7 +913,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	std::list<int>::const_iterator fifth = numbers.begin();
 	std::advance(fifth, 4);
 	batch.emplace(batch.begin(), numbers.cbegin(), fifth); //Prepend part of this list at the start.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{1, 2, 3, 4},
 		linear_increases[0],
 		linear_increases[1],
@@ -926,7 +926,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
 	std::list<int>::const_iterator second = numbers.begin();
 	std::advance(second, 1);
 	batch.emplace(batch.begin() + 4, second, fifth); //Insert a subbatch in the middle too.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{1, 2, 3, 4},
 		linear_increases[0],
 		linear_increases[1],
@@ -946,13 +946,13 @@ TEST_F(BatchOfBatchesFixture, EmplaceForwardIterator) {
  * can't calculate the number of items beforehand.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
-	InputIteratorLimiter<BatchBase<int>::const_iterator> begin(one_through_nine.begin()); //Create some very limited input iterators to test with.
-	InputIteratorLimiter<BatchBase<int>::const_iterator> fifth(one_through_nine.begin() + 4);
-	InputIteratorLimiter<BatchBase<int>::const_iterator> end(one_through_nine.end());
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	InputIteratorLimiter<Batch<int>::const_iterator> begin(one_through_nine.begin()); //Create some very limited input iterators to test with.
+	InputIteratorLimiter<Batch<int>::const_iterator> fifth(one_through_nine.begin() + 4);
+	InputIteratorLimiter<Batch<int>::const_iterator> end(one_through_nine.end());
 
 	batch.emplace(batch.end(), begin, fifth);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -962,7 +962,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	})) << "There is a new subbatch at the end.";
 
 	batch.emplace(batch.begin(), fifth, fifth); //Empty range!
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{},
 		linear_increases[0],
 		linear_increases[1],
@@ -973,7 +973,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
 	})) << "We added an empty subbatch at the start.";
 
 	batch.emplace(batch.begin() + 4, fifth, end);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{},
 		linear_increases[0],
 		linear_increases[1],
@@ -991,10 +991,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceInputIterator) {
  * Behaviourally this should be identical to just inserting the copy.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.begin(), one_through_nine);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1004,7 +1004,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	})) << "We added the one_through_nine batch at the front.";
 
 	batch.emplace(batch.end(), one);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1015,7 +1015,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
 	})) << "We added the one batch at the end.";
 
 	batch.emplace(batch.begin() + 2, one_two);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		one_two,
@@ -1033,13 +1033,13 @@ TEST_F(BatchOfBatchesFixture, EmplaceCopy) {
  * Behaviourally this should be identical to just inserting the subbatch.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceMove) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy of each input, so that we can compare with the original.
-	BatchBase<int> one_through_nine_copy = one_through_nine;
-	BatchBase<int> one_copy = one;
-	BatchBase<int> one_two_copy = one_two;
+	Batch<Batch<int>> batch = linear_increases; //Make a copy of each input, so that we can compare with the original.
+	Batch<int> one_through_nine_copy = one_through_nine;
+	Batch<int> one_copy = one;
+	Batch<int> one_two_copy = one_two;
 
 	batch.emplace(batch.begin(), std::move(one_through_nine_copy));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1049,7 +1049,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	})) << "We added the one_through_nine batch at the front.";
 
 	batch.emplace(batch.end(), std::move(one_copy));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1060,7 +1060,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
 	})) << "We added the one batch at the end.";
 
 	batch.emplace(batch.begin() + 2, std::move(one_two_copy));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		one_two,
@@ -1077,10 +1077,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceMove) {
  * takes an initialiser list.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace(batch.begin(), {9, 8, 7});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{9, 8, 7},
 		power_increases[0],
 		power_increases[1],
@@ -1091,7 +1091,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added {9, 8, 7} at the front.";
 
 	batch.emplace(batch.end(), {6});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{9, 8, 7},
 		power_increases[0],
 		power_increases[1],
@@ -1103,7 +1103,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added {6} at the end.";
 
 	batch.emplace(batch.begin() + 3, {});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{9, 8, 7},
 		power_increases[0],
 		power_increases[1],
@@ -1116,7 +1116,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
 	})) << "We added an empty subbatch in the middle.";
 
 	batch.emplace(batch.begin() + 4, {5, 4, 3, 2, 1});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		{9, 8, 7},
 		power_increases[0],
 		power_increases[1],
@@ -1134,10 +1134,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceInitialiserList) {
  * Test emplacing an empty subbatch onto the back.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace_back();
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1147,7 +1147,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
 	})) << "We added an empty subbatch at the end.";
 
 	batch.emplace_back();
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1158,7 +1158,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
 	})) << "We added a second empty subbatch at the end.";
 
 	empty_batch.emplace_back(); //Test starting from an empty batch.
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty subbatch to the previously empty batch.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}})) << "We added an empty subbatch to the previously empty batch.";
 }
 
 /*!
@@ -1166,10 +1166,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackEmpty) {
  * subelement.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackCopies) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace_back(size_t(4), 1);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1179,7 +1179,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopies) {
 	})) << "We constructed a subbatch containing four 1's at the end.";
 
 	empty_batch.emplace_back(size_t(5), 2);
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{2, 2, 2, 2, 2}})) << "We constructed a subbatch containing five 2's at the end of the previously empty batch.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{2, 2, 2, 2, 2}})) << "We constructed a subbatch containing five 2's at the end of the previously empty batch.";
 }
 
 /*!
@@ -1190,10 +1190,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopies) {
  * measure how many items are in that range.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackRandomAccessIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.emplace_back(one_through_nine.begin() + 4, one_through_nine.end());
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1203,10 +1203,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackRandomAccessIterator) {
 	})) << "We constructed the second half of one_through_nine as a new subbatch at the end.";
 
 	empty_batch.emplace_back(one_through_nine.begin() + 3, one_through_nine.begin() + 3); //Try an empty range.
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
 
 	empty_batch.emplace_back(one_through_nine.begin(), one_through_nine.begin() + 4);
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
 }
 
 /*!
@@ -1218,13 +1218,13 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackRandomAccessIterator) {
  * multiple times.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackForwardIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 	std::list<int> numbers(one_through_nine.begin(), one_through_nine.end()); //Linked list which has bidirectional iterators, which are just as good as forward iterators for our purpose.
 	std::list<int>::iterator halfway = numbers.begin();
 	std::advance(halfway, 4);
 
 	batch.emplace_back(halfway, numbers.end());
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1234,10 +1234,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackForwardIterator) {
 	})) << "We constructed the second half of numbers as a new subbatch at the end.";
 
 	empty_batch.emplace_back(halfway, halfway); //Try an empty range.
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
 
 	empty_batch.emplace_back(numbers.begin(), halfway);
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of numbers to the batch that previously contained just an empty subbatch.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of numbers to the batch that previously contained just an empty subbatch.";
 }
 
 /*!
@@ -1249,13 +1249,13 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackForwardIterator) {
  * beforehand, and we can't walk over it multiple times.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackInputIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
-	InputIteratorLimiter<BatchBase<int>::const_iterator> begin(one_through_nine.begin());
-	InputIteratorLimiter<BatchBase<int>::const_iterator> middle(one_through_nine.begin() + 4);
-	InputIteratorLimiter<BatchBase<int>::const_iterator> end(one_through_nine.end());
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	InputIteratorLimiter<Batch<int>::const_iterator> begin(one_through_nine.begin());
+	InputIteratorLimiter<Batch<int>::const_iterator> middle(one_through_nine.begin() + 4);
+	InputIteratorLimiter<Batch<int>::const_iterator> end(one_through_nine.end());
 
 	batch.emplace_back(middle, end);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1265,10 +1265,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInputIterator) {
 	})) << "We constructed the second half of one_through_nine as a new subbatch at the end.";
 
 	empty_batch.emplace_back(middle, middle); //Try an empty range.
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}})) << "We added an empty range to this previously empty batch, so that it now contains one subbatch which is itself empty.";
 
 	empty_batch.emplace_back(begin, middle);
-	EXPECT_EQ(empty_batch, BatchBase<BatchBase<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
+	EXPECT_EQ(empty_batch, Batch<Batch<int>>({{}, {1, 2, 3, 4}})) << "We appended the first half of one_through_nine to the batch that previously contained just an empty subbatch.";
 }
 
 /*!
@@ -1279,10 +1279,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInputIterator) {
  * interface consistent.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
-	BatchBase<BatchBase<int>> batch = power_increases;
+	Batch<Batch<int>> batch = power_increases;
 
 	batch.emplace_back(one_two);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1292,7 +1292,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
 		one_two
 	})) << "We added a copy of one_two to the end.";
 	batch.emplace_back(one);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1303,7 +1303,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
 		one
 	})) << "We added a copy of one to the end.";
 	batch.emplace_back(one_through_nine);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1320,10 +1320,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackCopy) {
  * Test emplacing a new subbatch onto the back using the move constructor.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
-	BatchBase<BatchBase<int>> batch = power_increases;
+	Batch<Batch<int>> batch = power_increases;
 
 	batch.emplace_back(std::move(one_two));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1333,7 +1333,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
 		one_two
 	})) << "We moved one_two onto the end.";
 	batch.emplace_back(std::move(one));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1344,7 +1344,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
 		one
 	})) << "We moved one onto the end.";
 	batch.emplace_back(std::move(one_through_nine));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1362,10 +1362,10 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackMove) {
  * an initialiser list.
  */
 TEST_F(BatchOfBatchesFixture, EmplaceBackInitialiserList) {
-	BatchBase<BatchBase<int>> batch = linear_increases;
+	Batch<Batch<int>> batch = linear_increases;
 
 	batch.emplace_back({6, 5, 4});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1374,7 +1374,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInitialiserList) {
 		{6, 5, 4}
 	})) << "We added {6, 5, 4} to the end.";
 	batch.emplace_back({});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1384,7 +1384,7 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInitialiserList) {
 		{}
 	})) << "We added an empty initialiser list to the end.";
 	batch.emplace_back({1});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1400,11 +1400,11 @@ TEST_F(BatchOfBatchesFixture, EmplaceBackInitialiserList) {
  * Test inserting a subbatch into a batch by making a copy.
  */
 TEST_F(BatchOfBatchesFixture, InsertCopy) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.insert(batch.begin(), one_through_nine);
 	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1415,7 +1415,7 @@ TEST_F(BatchOfBatchesFixture, InsertCopy) {
 
 	batch.insert(batch.end(), one);
 	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1427,7 +1427,7 @@ TEST_F(BatchOfBatchesFixture, InsertCopy) {
 
 	batch.insert(batch.begin() + 2, one_two);
 	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		one_two,
@@ -1443,14 +1443,14 @@ TEST_F(BatchOfBatchesFixture, InsertCopy) {
  * Test inserting a subbatch into a batch by moving it in.
  */
 TEST_F(BatchOfBatchesFixture, InsertMove) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy of each input, so that we can compare with the original.
-	BatchBase<int> one_through_nine_copy = one_through_nine;
-	BatchBase<int> one_copy = one;
-	BatchBase<int> one_two_copy = one_two;
+	Batch<Batch<int>> batch = linear_increases; //Make a copy of each input, so that we can compare with the original.
+	Batch<int> one_through_nine_copy = one_through_nine;
+	Batch<int> one_copy = one;
+	Batch<int> one_two_copy = one_two;
 
 	batch.insert(batch.begin(), std::move(one_through_nine_copy));
 	EXPECT_EQ(batch.size(), linear_increases.size() + 1) << "We added a new subbatch, so the size grew by one.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1461,7 +1461,7 @@ TEST_F(BatchOfBatchesFixture, InsertMove) {
 
 	batch.insert(batch.end(), std::move(one_copy));
 	EXPECT_EQ(batch.size(), linear_increases.size() + 2) << "We added another subbatch, so the size grew again.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		linear_increases[1],
@@ -1473,7 +1473,7 @@ TEST_F(BatchOfBatchesFixture, InsertMove) {
 
 	batch.insert(batch.begin() + 2, std::move(one_two_copy));
 	EXPECT_EQ(batch.size(), linear_increases.size() + 3) << "We added a third subbatch.";
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_through_nine,
 		linear_increases[0],
 		one_two,
@@ -1489,10 +1489,10 @@ TEST_F(BatchOfBatchesFixture, InsertMove) {
  * Test inserting repeated copies of a subbatch into the batch.
  */
 TEST_F(BatchOfBatchesFixture, InsertCopies) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.insert(batch.begin() + 3, 3, one_two);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1505,7 +1505,7 @@ TEST_F(BatchOfBatchesFixture, InsertCopies) {
 	})) << "We inserted three copies of one_two in the middle.";
 
 	batch.insert(batch.begin() + 2, 0, one_through_nine);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1518,7 +1518,7 @@ TEST_F(BatchOfBatchesFixture, InsertCopies) {
 	})) << "We inserted zero copies, so the batch is unchanged.";
 
 	batch.insert(batch.end(), 4, one);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1542,10 +1542,10 @@ TEST_F(BatchOfBatchesFixture, InsertCopies) {
  * size of it with a simple subtraction.
  */
 TEST_F(BatchOfBatchesFixture, InsertRandomAccessIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
 
 	batch.insert(batch.begin(), power_increases.begin() + 2, power_increases.begin() + 4);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[2],
 		power_increases[3],
 		linear_increases[0],
@@ -1556,7 +1556,7 @@ TEST_F(BatchOfBatchesFixture, InsertRandomAccessIterator) {
 	})) << "We inserted two elements of power_increases at the start.";
 
 	batch.insert(batch.begin() + 4, power_increases.begin(), power_increases.begin() + 1);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[2],
 		power_increases[3],
 		linear_increases[0],
@@ -1567,7 +1567,7 @@ TEST_F(BatchOfBatchesFixture, InsertRandomAccessIterator) {
 		linear_increases[4]
 	})) << "We inserted the first subbatch of power_increases in the middle.";
 
-	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	Batch<Batch<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
 	batch.insert(batch.begin() + 7, power_increases.begin() + 3, power_increases.begin() + 3);
 	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
 }
@@ -1579,15 +1579,15 @@ TEST_F(BatchOfBatchesFixture, InsertRandomAccessIterator) {
  * the size of the range, but we can iterate over it multiple times.
  */
 TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
-	std::list<BatchBase<int>> subbatches(power_increases.begin(), power_increases.end()); //Std::list uses bidirectional iterators, which are for our purposes just as powerful as forward iterators.
-	std::list<BatchBase<int>>::const_iterator partway = subbatches.begin();
-	std::list<BatchBase<int>>::const_iterator halfway = subbatches.begin();
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	std::list<Batch<int>> subbatches(power_increases.begin(), power_increases.end()); //Std::list uses bidirectional iterators, which are for our purposes just as powerful as forward iterators.
+	std::list<Batch<int>>::const_iterator partway = subbatches.begin();
+	std::list<Batch<int>>::const_iterator halfway = subbatches.begin();
 	std::advance(partway, 2);
 	std::advance(halfway, 4);
 
 	batch.insert(batch.begin(), partway, halfway);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[2],
 		power_increases[3],
 		linear_increases[0],
@@ -1598,7 +1598,7 @@ TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
 	})) << "We inserted two elements of power_increases at the start.";
 
 	batch.insert(batch.begin() + 4, subbatches.cbegin(), partway);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[2],
 		power_increases[3],
 		linear_increases[0],
@@ -1610,7 +1610,7 @@ TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
 		linear_increases[4]
 	})) << "We inserted the first two subbatches of power_increases in the middle.";
 
-	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	Batch<Batch<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
 	batch.insert(batch.begin() + 7, partway, partway);
 	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
 }
@@ -1623,13 +1623,13 @@ TEST_F(BatchOfBatchesFixture, InsertForwardIterator) {
  * limited type of iterators.
  */
 TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> begin(power_increases.begin());
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> middle(power_increases.begin() + 4);
-	InputIteratorLimiter<BatchBase<BatchBase<int>>::const_iterator> end(power_increases.end());
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare with the original.
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> begin(power_increases.begin());
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> middle(power_increases.begin() + 4);
+	InputIteratorLimiter<Batch<Batch<int>>::const_iterator> end(power_increases.end());
 
 	batch.insert(batch.begin(), middle, end);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[4],
 		power_increases[5],
 		linear_increases[0],
@@ -1640,7 +1640,7 @@ TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
 	})) << "We inserted two elements of power_increases at the start.";
 
 	batch.insert(batch.begin() + 4, begin, middle);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[4],
 		power_increases[5],
 		linear_increases[0],
@@ -1654,7 +1654,7 @@ TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
 		linear_increases[4]
 	})) << "We inserted the first four subbatches of power_increases in the middle.";
 
-	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	Batch<Batch<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
 	batch.insert(batch.begin() + 7, middle, middle);
 	EXPECT_EQ(batch, original) << "We inserted an empty range, so the batch should remain unchanged.";
 }
@@ -1663,10 +1663,10 @@ TEST_F(BatchOfBatchesFixture, InsertInputIterator) {
  * Test inserting a list of subbatches into the batch via initialiser lists.
  */
 TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare with the original.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we can compare with the original.
 
 	batch.insert(batch.begin(), {one_two, one});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_two,
 		one,
 		power_increases[0],
@@ -1678,7 +1678,7 @@ TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
 	})) << "We inserted a list of two subbatches at the start.";
 
 	batch.insert(batch.begin() + 3, {one_through_nine, one, one});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_two,
 		one,
 		power_increases[0],
@@ -1692,12 +1692,12 @@ TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
 		power_increases[5]
 	})) << "We inserted three more subbatches in the middle.";
 
-	BatchBase<BatchBase<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
+	Batch<Batch<int>> original = batch; //Nothing should happen here, so keep an original to compare with.
 	batch.insert(batch.begin() + 8, {});
 	EXPECT_EQ(batch, original) << "We inserted an empty initialiser list, so the batch should remain unchanged.";
 
 	batch.insert(batch.end(), {one_two});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_two,
 		one,
 		power_increases[0],
@@ -1717,19 +1717,19 @@ TEST_F(BatchOfBatchesFixture, InsertInitialiserList) {
  * Test appending a new subbatch to the end by making a copy of it.
  */
 TEST_F(BatchOfBatchesFixture, PushBackCopy) {
-	BatchBase<BatchBase<int>> batch;
+	Batch<Batch<int>> batch;
 	batch.push_back(one_two);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+	EXPECT_EQ(batch, Batch<Batch<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
 
 	batch.push_back({});
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_two,
 		{}
 	})) << "We added an empty subbatch at the end.";
 
 	batch = linear_increases; //Make a copy so that we can compare with the original.
 	batch.push_back(one_through_nine);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1743,22 +1743,22 @@ TEST_F(BatchOfBatchesFixture, PushBackCopy) {
  * Test appending a new subbatch to the end by moving it.
  */
 TEST_F(BatchOfBatchesFixture, PushBackMove) {
-	BatchBase<BatchBase<int>> batch;
-	BatchBase<int> one_two_copy = one_two; //Make a copy that we can move while leaving the original intact to compare with.
+	Batch<Batch<int>> batch;
+	Batch<int> one_two_copy = one_two; //Make a copy that we can move while leaving the original intact to compare with.
 	batch.push_back(std::move(one_two_copy));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+	EXPECT_EQ(batch, Batch<Batch<int>>({one_two})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
 
-	BatchBase<int> empty;
+	Batch<int> empty;
 	batch.push_back(std::move(empty));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		one_two,
 		{}
 	})) << "We added an empty subbatch at the end.";
 
 	batch = linear_increases; //Make a copy so that we can compare with the original.
-	BatchBase<int> one_through_nine_copy = one_through_nine;
+	Batch<int> one_through_nine_copy = one_through_nine;
 	batch.push_back(std::move(one_through_nine_copy));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1772,13 +1772,13 @@ TEST_F(BatchOfBatchesFixture, PushBackMove) {
  * Test appending a new subbatch to the end by making a copy of it.
  */
 TEST_F(BatchOfBatchesFixture, PushBackCopySubbatch) {
-	BatchBase<BatchBase<int>> batch;
+	Batch<Batch<int>> batch;
 	batch.push_back(power_increases[3]);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[3]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+	EXPECT_EQ(batch, Batch<Batch<int>>({power_increases[3]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
 
 	batch = linear_increases; //Make a copy so that we can compare with the original.
 	batch.push_back(power_increases[2]);
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1792,14 +1792,14 @@ TEST_F(BatchOfBatchesFixture, PushBackCopySubbatch) {
  * Test appending a new subbatch to the end by moving it.
  */
 TEST_F(BatchOfBatchesFixture, PushBackMoveSubbatch) {
-	BatchBase<BatchBase<int>> batch;
-	BatchBase<BatchBase<int>> power_increases_copy = power_increases; //Make a copy that we can move while leaving the original intact to compare with.
+	Batch<Batch<int>> batch;
+	Batch<Batch<int>> power_increases_copy = power_increases; //Make a copy that we can move while leaving the original intact to compare with.
 	batch.push_back(std::move(power_increases_copy[5]));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[5]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
+	EXPECT_EQ(batch, Batch<Batch<int>>({power_increases[5]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
 
 	batch = linear_increases; //Make a copy so that we can compare with the original.
 	batch.push_back(std::move(power_increases[3]));
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1815,13 +1815,13 @@ TEST_F(BatchOfBatchesFixture, PushBackMoveSubbatch) {
  * subelements.
  */
 TEST_F(BatchOfBatchesFixture, ReserveSubelementsRetainsIterators) {
-	BatchBase<BatchBase<int>> batch = {one, one_two}; //Have something that we can refer to before reserving more subelements.
+	Batch<Batch<int>> batch = {one, one_two}; //Have something that we can refer to before reserving more subelements.
 	batch.reserve_subelements(one.size() + one_two.size() + one_through_nine.size()); //Reserve enough to contain all data we'll put in it.
 
 	//Now store iterators to the current data. They must not get invalidated when we add more data.
-	BatchBase<int>::const_iterator first = batch[0].begin();
-	BatchBase<int>::const_iterator second = batch[1].begin();
-	BatchBase<int>::const_iterator third = batch[1].begin() + 1;
+	Batch<int>::const_iterator first = batch[0].begin();
+	Batch<int>::const_iterator second = batch[1].begin();
+	Batch<int>::const_iterator third = batch[1].begin() + 1;
 
 	batch.push_back(one_through_nine); //Much bigger array. This would normally cause reallocation, invalidating the iterators. But not now!
 
@@ -1837,10 +1837,10 @@ TEST_F(BatchOfBatchesFixture, ReserveSubelementsRetainsIterators) {
  * the end are dropped then.
  */
 TEST_F(BatchOfBatchesFixture, ResizeShrink) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we have something to compare with.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we have something to compare with.
 
 	batch.resize(3); //Shrink to 3 subbatches.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2]
@@ -1854,10 +1854,10 @@ TEST_F(BatchOfBatchesFixture, ResizeShrink) {
  * Test resizing the batch of batches to a bigger size.
  */
 TEST_F(BatchOfBatchesFixture, ResizeGrow) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we can compare to the original.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we can compare to the original.
 
 	batch.resize(8); //Grow to 8 subbatches.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 		linear_increases[2],
@@ -1876,10 +1876,10 @@ TEST_F(BatchOfBatchesFixture, ResizeGrow) {
  * The default element should not get used.
  */
 TEST_F(BatchOfBatchesFixture, ResizeShrinkWithDefault) {
-	BatchBase<BatchBase<int>> batch = linear_increases; //Make a copy so that we have something to compare with.
+	Batch<Batch<int>> batch = linear_increases; //Make a copy so that we have something to compare with.
 
 	batch.resize(2, one); //Shrink to 2 subbatches.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		linear_increases[0],
 		linear_increases[1],
 	})) << "The first two subbatches must have been retained, while the rest has been dropped.";
@@ -1893,10 +1893,10 @@ TEST_F(BatchOfBatchesFixture, ResizeShrinkWithDefault) {
  * element to fill in empty spots with.
  */
 TEST_F(BatchOfBatchesFixture, ResizeGrowWithDefault) {
-	BatchBase<BatchBase<int>> batch = power_increases; //Make a copy so that we can compare to the original.
+	Batch<Batch<int>> batch = power_increases; //Make a copy so that we can compare to the original.
 
 	batch.resize(9, one_two); //Grow to 9 subbatches.
-	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({
+	EXPECT_EQ(batch, Batch<Batch<int>>({
 		power_increases[0],
 		power_increases[1],
 		power_increases[2],
@@ -1924,7 +1924,7 @@ TEST_F(BatchOfBatchesFixture, ShrinkToFit) {
 	power_increases[4].push_back(101);
 	power_increases[1].push_back(102);
 	minimum_memory += 3; //Because we added 3 elements.
-	BatchBase<BatchBase<int>> before_shrinking = power_increases; //Store a copy of this state. Shrinking shouldn't change the data, so we can compare to this.
+	Batch<Batch<int>> before_shrinking = power_increases; //Store a copy of this state. Shrinking shouldn't change the data, so we can compare to this.
 
 	power_increases.shrink_to_fit();
 
@@ -1961,8 +1961,8 @@ TEST_F(BatchOfBatchesFixture, SizeSubelements) {
  * Test swapping the contents of batches of batches.
  */
 TEST_F(BatchOfBatchesFixture, Swap) {
-	BatchBase<BatchBase<int>> batch_a = linear_increases; //Make copies so that we can compare with their original contents.
-	BatchBase<BatchBase<int>> batch_b = power_increases;
+	Batch<Batch<int>> batch_a = linear_increases; //Make copies so that we can compare with their original contents.
+	Batch<Batch<int>> batch_b = power_increases;
 
 	batch_a.swap(batch_b);
 	ASSERT_EQ(batch_a, power_increases) << "Batch A was swapped with Batch B, which contained power_increases at the time, so now Batch A must contain power_increases.";
@@ -1987,7 +1987,7 @@ TEST_F(BatchOfBatchesFixture, Swap) {
  * even though the implementation is very different.
  */
 TEST(BatchOfBatches, VectorEquivalenceFuzz) {
-	FuzzEqualBehaviour<BatchBase<BatchBase<int>>, std::vector<std::vector<int>>> fuzzer([](const BatchBase<BatchBase<int>>& batch, const std::vector<std::vector<int>>& vec) {
+	FuzzEqualBehaviour<Batch<Batch<int>>, std::vector<std::vector<int>>> fuzzer([](const Batch<Batch<int>>& batch, const std::vector<std::vector<int>>& vec) {
 		if(batch.size() != vec.size()) { //If they have a different number of subbatches, they are not equal.
 			return false;
 		}
@@ -2005,24 +2005,24 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 	});
 
 	fuzzer.add_transformation("assign_operator",
-		[](BatchBase<BatchBase<int>>& batch) { batch = BatchBase<BatchBase<int>>({{1, 2, 3}, {4, 5, 6}}); },
+		[](Batch<Batch<int>>& batch) { batch = Batch<Batch<int>>({{1, 2, 3}, {4, 5, 6}}); },
 		[](std::vector<std::vector<int>>& vec) { vec = std::vector<std::vector<int>>({{1, 2, 3}, {4, 5, 6}}); },
 		1.0);
 	fuzzer.add_transformation("assign_empty",
-		[](BatchBase<BatchBase<int>>& batch) { batch.assign({}); },
+		[](Batch<Batch<int>>& batch) { batch.assign({}); },
 		[](std::vector<std::vector<int>>& vec) { vec.assign({}); },
 		1.0);
 	fuzzer.add_transformation("assign_singular",
-		[](BatchBase<BatchBase<int>>& batch) { batch.assign({{1}}); },
+		[](Batch<Batch<int>>& batch) { batch.assign({{1}}); },
 		[](std::vector<std::vector<int>>& vec) { vec.assign({{1}}); },
 		1.0);
 	fuzzer.add_transformation("assign_copies",
-		[](BatchBase<BatchBase<int>>& batch) { batch.assign(5, BatchBase<int>({1, 2, 3, 4})); },
+		[](Batch<Batch<int>>& batch) { batch.assign(5, Batch<int>({1, 2, 3, 4})); },
 		[](std::vector<std::vector<int>>& vec) { vec.assign(5, std::vector<int>({1, 2, 3, 4})); },
 		1.0);
 	fuzzer.add_transformation("assign_iterator",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const std::vector<BatchBase<int>> source({{0}, {1, 2}, {3, 4, 5}, {6, 7, 8, 9}});
+		[](Batch<Batch<int>>& batch) {
+			const std::vector<Batch<int>> source({{0}, {1, 2}, {3, 4, 5}, {6, 7, 8, 9}});
 			batch.assign(source.cbegin(), source.cend());
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2031,35 +2031,35 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		1.0);
 	fuzzer.add_transformation("clear",
-		[](BatchBase<BatchBase<int>>& batch) { batch.clear(); },
+		[](Batch<Batch<int>>& batch) { batch.clear(); },
 		[](std::vector<std::vector<int>>& vec) { vec.clear(); },
 		1.0);
 	fuzzer.add_transformation("emplace_empty_begin",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin()); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin()); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin()); },
 		10.0);
 	fuzzer.add_transformation("emplace_empty_mid",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2); },
 		10.0);
 	fuzzer.add_transformation("emplace_empty_end",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end()); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.end()); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.end()); },
 		10.0);
 	fuzzer.add_transformation("emplace_copies_begin",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin(), size_t(8), 42); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin(), size_t(8), 42); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin(), size_t(8), 42); },
 		10.0);
 	fuzzer.add_transformation("emplace_copies_mid",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, size_t(8), 42); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, size_t(8), 42); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2, size_t(8), 42); },
 		10.0);
 	fuzzer.add_transformation("emplace_copies_end",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end(), size_t(6), 69); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.end(), size_t(6), 69); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.end(), size_t(6), 69); },
 		10.0);
 	fuzzer.add_transformation("emplace_iterator_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			const std::list<int> source({4, 3, 2, 1});
 			batch.emplace(batch.cbegin(), source.cbegin(), source.cend());
 		},
@@ -2069,7 +2069,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_iterator_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			const std::list<int> source({4, 3, 2, 1});
 			batch.emplace(batch.cbegin() + batch.size() / 2, source.cbegin(), source.cend());
 		},
@@ -2079,7 +2079,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_iterator_end",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			const std::list<int> source({4, 3, 2, 1});
 			batch.emplace(batch.cend(), source.cbegin(), source.cend());
 		},
@@ -2089,8 +2089,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_copy_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({99});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({99});
 			batch.emplace(batch.cbegin(), source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2099,8 +2099,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_copy_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({99});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({99});
 			batch.emplace(batch.cbegin() + batch.size() / 2, source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2109,8 +2109,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_copy_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({88});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({88});
 			batch.emplace(batch.cend(), source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2119,8 +2119,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_move_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({77});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({77});
 			batch.emplace(batch.cbegin(), std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2129,8 +2129,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_move_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({77});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({77});
 			batch.emplace(batch.cbegin() + batch.size() / 2, std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2139,8 +2139,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_move_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({66});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({66});
 			batch.emplace(batch.cend(), std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2149,27 +2149,27 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("emplace_initialiser_list_begin",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin(), {1, 2, 3, 4, 5}); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin(), {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin(), std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("emplace_initialiser_list_mid",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, {1, 2, 3, 4, 5}); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.begin() + batch.size() / 2, {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.begin() + vec.size() / 2, std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("emplace_initialiser_list_end",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace(batch.end(), {1, 2, 3, 4, 5}); },
+		[](Batch<Batch<int>>& batch) { batch.emplace(batch.end(), {1, 2, 3, 4, 5}); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace(vec.end(), std::initializer_list<int>({1, 2, 3, 4, 5})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("emplace_back_empty",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace_back(); },
+		[](Batch<Batch<int>>& batch) { batch.emplace_back(); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace_back(); },
 		3.0);
 	fuzzer.add_transformation("emplace_back_copies",
-		[](BatchBase<BatchBase<int>>& batch) { batch.emplace_back(size_t(4), 1337); },
+		[](Batch<Batch<int>>& batch) { batch.emplace_back(size_t(4), 1337); },
 		[](std::vector<std::vector<int>>& vec) { vec.emplace_back(size_t(4), 1337); },
 		3.0);
 	fuzzer.add_transformation("emplace_back_iterator",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			const std::list<int> source({1, 2, 3, 5, 8, 13, 21});
 			batch.emplace_back(source.cbegin(), source.cend());
 		},
@@ -2179,8 +2179,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		3.0);
 	fuzzer.add_transformation("emplace_back_copy",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({3, 1, 4, 1, 5, 9});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({3, 1, 4, 1, 5, 9});
 			batch.emplace_back(source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2189,8 +2189,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		3.0);
 	fuzzer.add_transformation("emplace_back_move",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({1, 2, 4, 8, 16, 32, 64});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({1, 2, 4, 8, 16, 32, 64});
 			batch.emplace_back(std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2199,7 +2199,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		3.0);
 	fuzzer.add_transformation("erase_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(!batch.empty()) {
 				batch.erase(batch.cbegin());
 			}
@@ -2211,7 +2211,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("erase_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(!batch.empty()) {
 				batch.erase(batch.cbegin() + batch.size() / 2);
 			}
@@ -2223,7 +2223,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("erase_last",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(!batch.empty()) {
 				batch.erase(batch.cend() - 1);
 			}
@@ -2235,7 +2235,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("erase_first_half",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(batch.size() >= 2) {
 				batch.erase(batch.cbegin(), batch.cbegin() + batch.size() / 2);
 			}
@@ -2247,7 +2247,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("erase_mid_half",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(batch.size() >= 2) {
 				batch.erase(batch.cbegin() + batch.size() / 4, batch.cbegin() + batch.size() * 3 / 4);
 			}
@@ -2259,7 +2259,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("erase_last_half",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(batch.size() >= 2) {
 				batch.erase(batch.cbegin() + batch.size() / 2, batch.cend());
 			}
@@ -2271,8 +2271,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copy_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({1, 4, 9, 16, 25});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({1, 4, 9, 16, 25});
 			batch.insert(batch.cbegin(), source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2281,8 +2281,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copy_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({1, 3, 6, 10});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({1, 3, 6, 10});
 			batch.insert(batch.cbegin() + batch.size() / 2, source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2291,8 +2291,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copy_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({1, 5, 12, 22});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({1, 5, 12, 22});
 			batch.insert(batch.cend(), source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2301,8 +2301,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_move_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({1, 11, 21, 1211, 111221, 13112221});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({1, 11, 21, 1211, 111221, 13112221});
 			batch.insert(batch.cbegin(), std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2311,8 +2311,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_move_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({11, 121, 12321, 1234321});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({11, 121, 12321, 1234321});
 			batch.insert(batch.cbegin() + batch.size() / 2, std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2321,8 +2321,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_move_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({44, 33, 22, 11});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({44, 33, 22, 11});
 			batch.insert(batch.cend(), std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2331,8 +2331,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copies_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({1, -1, 1, -1, 2});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({1, -1, 1, -1, 2});
 			batch.insert(batch.cbegin(), 3, source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2341,8 +2341,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copies_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({1, -1, 2, -1, 2});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({1, -1, 2, -1, 2});
 			batch.insert(batch.cbegin() + batch.size() / 2, 3, source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2351,8 +2351,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_copies_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<int> source({2, -1, 1, -1, 2});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<int> source({2, -1, 1, -1, 2});
 			batch.insert(batch.cend(), 3, source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2361,8 +2361,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_iterator_begin",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<BatchBase<int>> source({{1, 2}, {3, 4}, {4, 5}, {}, {}});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<Batch<int>> source({{1, 2}, {3, 4}, {4, 5}, {}, {}});
 			batch.insert(batch.cbegin(), source.cbegin(), source.cend());
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2371,8 +2371,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_iterator_mid",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<BatchBase<int>> source({{1}, {}, {2, 3}, {}, {4, 5, 6}});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<Batch<int>> source({{1}, {}, {2, 3}, {}, {4, 5, 6}});
 			batch.insert(batch.cbegin() + batch.size() / 2, source.cbegin(), source.cend());
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2381,8 +2381,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_iterator_end",
-		[](BatchBase<BatchBase<int>>& batch) {
-			const BatchBase<BatchBase<int>> source({{}, {1, 2, 3}, {2, 3, 4}, {}});
+		[](Batch<Batch<int>>& batch) {
+			const Batch<Batch<int>> source({{}, {1, 2, 3}, {2, 3, 4}, {}});
 			batch.insert(batch.cend(), source.cbegin(), source.cend());
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2391,23 +2391,23 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		10.0);
 	fuzzer.add_transformation("insert_initialiser_list_begin",
-		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.begin(), {{2, 2}, {3, 3, 3}, {1}}); },
+		[](Batch<Batch<int>>& batch) { batch.insert(batch.begin(), {{2, 2}, {3, 3, 3}, {1}}); },
 		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.begin(), std::initializer_list<std::vector<int>>({{2, 2}, {3, 3, 3}, {1}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("insert_initialiser_list_mid",
-		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.begin() + batch.size() / 2, {{5, 0, -5}, {}, {4, 0, -4}}); },
+		[](Batch<Batch<int>>& batch) { batch.insert(batch.begin() + batch.size() / 2, {{5, 0, -5}, {}, {4, 0, -4}}); },
 		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.begin() + vec.size() / 2, std::initializer_list<std::vector<int>>({{5, 0, -5}, {}, {4, 0, -4}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("insert_initialiser_list_end",
-		[](BatchBase<BatchBase<int>>& batch) { batch.insert(batch.end(), {{12, 23, 34, 45}, {}}); },
+		[](Batch<Batch<int>>& batch) { batch.insert(batch.end(), {{12, 23, 34, 45}, {}}); },
 		[](std::vector<std::vector<int>>& vec) { vec.insert(vec.end(), std::initializer_list<std::vector<int>>({{12, 23, 34, 45}, {}})); }, //The template argument deduction of the vector doesn't allow detecting the type, so explicitly specify it.
 		10.0);
 	fuzzer.add_transformation("push_back_copy",
-		[](BatchBase<BatchBase<int>>& batch) { batch.push_back({1001, 2002}); },
+		[](Batch<Batch<int>>& batch) { batch.push_back({1001, 2002}); },
 		[](std::vector<std::vector<int>>& vec) { vec.push_back({1001, 2002}); },
 		25.0);
 	fuzzer.add_transformation("pop_back",
-		[](BatchBase<BatchBase<int>>& batch) {
+		[](Batch<Batch<int>>& batch) {
 			if(!batch.empty()) {
 				batch.pop_back();
 			}
@@ -2419,8 +2419,8 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		50.0);
 	fuzzer.add_transformation("push_back_move",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<int> source({2003, 3004});
+		[](Batch<Batch<int>>& batch) {
+			Batch<int> source({2003, 3004});
 			batch.push_back(std::move(source));
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2429,40 +2429,40 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		25.0);
 	fuzzer.add_transformation("reserve_small",
-		[](BatchBase<BatchBase<int>>& batch) { batch.reserve(10); },
+		[](Batch<Batch<int>>& batch) { batch.reserve(10); },
 		[](std::vector<std::vector<int>>& vec) { vec.reserve(10); },
 		5.0);
 	fuzzer.add_transformation("reserve_large",
-		[](BatchBase<BatchBase<int>>& batch) { batch.reserve(100); },
+		[](Batch<Batch<int>>& batch) { batch.reserve(100); },
 		[](std::vector<std::vector<int>>& vec) { vec.reserve(100); },
 		5.0);
 	fuzzer.add_transformation("resize_empty",
-		[](BatchBase<BatchBase<int>>& batch) { batch.resize(0); },
+		[](Batch<Batch<int>>& batch) { batch.resize(0); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(0); },
 		1.0);
 	fuzzer.add_transformation("resize_small",
-		[](BatchBase<BatchBase<int>>& batch) { batch.resize(4); },
+		[](Batch<Batch<int>>& batch) { batch.resize(4); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(4); },
 		4.0);
 	fuzzer.add_transformation("resize_large",
-		[](BatchBase<BatchBase<int>>& batch) { batch.resize(40); },
+		[](Batch<Batch<int>>& batch) { batch.resize(40); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(40); },
 		4.0);
 	fuzzer.add_transformation("resize_default_small",
-		[](BatchBase<BatchBase<int>>& batch) { batch.resize(4, {666, 66, 6}); },
+		[](Batch<Batch<int>>& batch) { batch.resize(4, {666, 66, 6}); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(4, {666, 66, 6}); },
 		4.0);
 	fuzzer.add_transformation("resize_default_large",
-		[](BatchBase<BatchBase<int>>& batch) { batch.resize(40, {31337, 1337, 5318008}); },
+		[](Batch<Batch<int>>& batch) { batch.resize(40, {31337, 1337, 5318008}); },
 		[](std::vector<std::vector<int>>& vec) { vec.resize(40, {31337, 1337, 5318008}); },
 		4.0);
 	fuzzer.add_transformation("shrink_to_fit",
-		[](BatchBase<BatchBase<int>>& batch) { batch.shrink_to_fit(); },
+		[](Batch<Batch<int>>& batch) { batch.shrink_to_fit(); },
 		[](std::vector<std::vector<int>>& vec) { vec.shrink_to_fit(); },
 		10.0);
 	fuzzer.add_transformation("swap",
-		[](BatchBase<BatchBase<int>>& batch) {
-			BatchBase<BatchBase<int>> source({{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}});
+		[](Batch<Batch<int>>& batch) {
+			Batch<Batch<int>> source({{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}});
 			batch.swap(source);
 		},
 		[](std::vector<std::vector<int>>& vec) {
@@ -2471,7 +2471,7 @@ TEST(BatchOfBatches, VectorEquivalenceFuzz) {
 		},
 		1.0);
 
-	BatchBase<BatchBase<int>> batch;
+	Batch<Batch<int>> batch;
 	std::vector<std::vector<int>> vec;
 	fuzzer.run(batch, vec, 100000);
 }
