@@ -11,10 +11,10 @@
 
 #include <utility> //For std::forward.
 
-#include "area.hpp" //To allow calculating the area of this shape.
 #include "batch.hpp" //The vertex storage is by batch.
+#include "operations/area.hpp" //To allow calculating the area of this shape.
+#include "operations/translate.hpp" //To allow moving this shape.
 #include "point2.hpp" //The vertices of the polygon are 2D points.
-#include "translate.hpp" //To allow moving this shape.
 
 namespace apex {
 

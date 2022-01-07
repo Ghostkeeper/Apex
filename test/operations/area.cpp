@@ -9,9 +9,9 @@
 #include <cmath> //To construct a circle.
 #include <gtest/gtest.h> //To run the test.
 
-#include "apex/area.hpp" //The unit we're testing here.
-#include "helpers/simple_polygon_batch_test_cases.hpp" //To load testing batches of polygons to compute the area of.
-#include "helpers/simple_polygon_test_cases.hpp" //To load testing polygons to compute the area of.
+#include "../helpers/simple_polygon_batch_test_cases.hpp" //To load testing batches of polygons to compute the area of.
+#include "../helpers/simple_polygon_test_cases.hpp" //To load testing polygons to compute the area of.
+#include "apex/operations/area.hpp" //The unit we're testing here.
 
 #define PI 3.14159265358979 //To calculate the area of a regular N-gon.
 

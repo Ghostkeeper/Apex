@@ -8,9 +8,9 @@
 
 #include <gtest/gtest.h> //To run the test.
 
+#include "../helpers/simple_polygon_test_cases.hpp" //To load testing polygons to translate.
+#include "apex/operations/translate.hpp" //The function under test.
 #include "apex/point2.hpp" //To provide the delta vector to translate by.
-#include "apex/translate.hpp" //The function under test.
-#include "helpers/simple_polygon_test_cases.hpp" //To load testing polygons to translate.
 
 namespace apex {
 

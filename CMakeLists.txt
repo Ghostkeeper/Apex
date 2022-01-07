@@ -81,12 +81,12 @@ if(BUILD_TESTS)
 	#The names of all tests. Each must have a file called "test/<name>.cpp" as the source file.
 	#Instead of slashes for the directories, use periods.
 	set(test_names
-		area
 		batch
 		coordinate
+		operations.area
+		operations.translate
 		point2
 		simple_polygon
-		translate
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.

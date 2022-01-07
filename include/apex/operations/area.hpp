@@ -12,10 +12,10 @@
 #include <omp.h> //To do parallel processing.
 #include <vector> //Returning the results of batch operations.
 
-#include "batch.hpp" //To return batches of areas.
-#include "coordinate.hpp" //To return area_t.
-#include "detail/geometry_concepts.hpp" //To disambiguate overloads.
-#include "point2.hpp" //To access coordinates of vertices.
+#include "../batch.hpp" //To return batches of areas.
+#include "../coordinate.hpp" //To return area_t.
+#include "../detail/geometry_concepts.hpp" //To disambiguate overloads.
+#include "../point2.hpp" //To access coordinates of vertices.
 
 namespace apex {
 

@@ -9,7 +9,7 @@
 #ifndef APEX_TRANSLATE
 #define APEX_TRANSLATE
 
-#include "detail/geometry_concepts.hpp" //To disambiguate overloads.
+#include "../detail/geometry_concepts.hpp" //To disambiguate overloads.
 
 namespace apex {
 
