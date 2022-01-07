@@ -597,21 +597,21 @@ TEST_F(BatchOfBatchesFixture, AssignCopies) {
 
 	batch.assign(20, one_two);
 	EXPECT_EQ(batch.size(), 20);
-	for(SubbatchView<int>& subbatch : batch) {
+	for(Subbatch<int>& subbatch : batch) {
 		EXPECT_EQ(subbatch, one_two);
 	}
 
 	//In this same batch, assign something else, confirming that the old content is erased.
 	batch.assign(10, one);
 	EXPECT_EQ(batch.size(), 10);
-	for(SubbatchView<int>& subbatch : batch) {
+	for(Subbatch<int>& subbatch : batch) {
 		EXPECT_EQ(subbatch, one);
 	}
 
 	//Now assign something bigger.
 	batch.assign(30, one_through_nine);
 	EXPECT_EQ(batch.size(), 30);
-	for(SubbatchView<int>& subbatch : batch) {
+	for(Subbatch<int>& subbatch : batch) {
 		EXPECT_EQ(subbatch, one_through_nine);
 	}
 }
@@ -1769,9 +1769,9 @@ TEST_F(BatchOfBatchesFixture, PushBackMove) {
 }
 
 /*!
- * Test appending a new subbatch view to the end by making a copy of it.
+ * Test appending a new subbatch to the end by making a copy of it.
  */
-TEST_F(BatchOfBatchesFixture, PushBackCopyView) {
+TEST_F(BatchOfBatchesFixture, PushBackCopySubbatch) {
 	BatchBase<BatchBase<int>> batch;
 	batch.push_back(power_increases[3]);
 	EXPECT_EQ(batch, BatchBase<BatchBase<int>>({power_increases[3]})) << "We added a subbatch to the end of an empty batch, so now the batch contains just that one subbatch.";
@@ -1789,9 +1789,9 @@ TEST_F(BatchOfBatchesFixture, PushBackCopyView) {
 }
 
 /*!
- * Test appending a new subbatch view to the end by moving it.
+ * Test appending a new subbatch to the end by moving it.
  */
-TEST_F(BatchOfBatchesFixture, PushBackMoveView) {
+TEST_F(BatchOfBatchesFixture, PushBackMoveSubbatch) {
 	BatchBase<BatchBase<int>> batch;
 	BatchBase<BatchBase<int>> power_increases_copy = power_increases; //Make a copy that we can move while leaving the original intact to compare with.
 	batch.push_back(std::move(power_increases_copy[5]));
@@ -1916,7 +1916,7 @@ TEST_F(BatchOfBatchesFixture, ResizeGrowWithDefault) {
  */
 TEST_F(BatchOfBatchesFixture, ShrinkToFit) {
 	//Find how many elements are stored in total.
-	size_t minimum_memory = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const SubbatchView<int>& subbatch) {
+	size_t minimum_memory = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const Subbatch<int>& subbatch) {
 		return current + subbatch.size();
 	});
 	//Now add a few extra elements. This causes the subbatches to reallocate with doubling, adding superfluous extra capacity.
@@ -1936,7 +1936,7 @@ TEST_F(BatchOfBatchesFixture, ShrinkToFit) {
  * Test counting the size of the subelement array.
  */
 TEST_F(BatchOfBatchesFixture, SizeSubelements) {
-	size_t power_subelement_count = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const SubbatchView<int>& subbatch) {
+	size_t power_subelement_count = std::accumulate(power_increases.cbegin(), power_increases.cend(), size_t(0), [](const size_t current, const Subbatch<int>& subbatch) {
 		return current + subbatch.size();
 	});
 	EXPECT_GE(power_increases.size_subelements(), power_subelement_count) << "The size of the subelement array must be at least as big as the number of subelements (but may be larger if there are dead spots).";
@@ -1946,7 +1946,7 @@ TEST_F(BatchOfBatchesFixture, SizeSubelements) {
 		subelement_buffer.push_back(power_increases.data_subelements()[i]);
 	}
 
-	for(SubbatchView<int>& subbatch : power_increases) {
+	for(Subbatch<int>& subbatch : power_increases) {
 		for(int subelement : subbatch) {
 			std::vector<int>::iterator found_element = std::find(subelement_buffer.begin(), subelement_buffer.end(), subelement);
 			EXPECT_NE(found_element, subelement_buffer.end()) << "Every subelement of the batch of batches must be somewhere within the range [0, size_subelements()] in the subelement array.";

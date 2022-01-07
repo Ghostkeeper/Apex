@@ -417,7 +417,7 @@ Batch<area_t> area_gpu(const SimplePolygonBatch& batch) {
 	result.resize(batch_size); //Resize, so that all threads can enter their data in parallel.
 	area_t* result_data = result.data();
 
-	const SubbatchView<Point2>* polygons = batch.data();
+	const Subbatch<Point2>* polygons = batch.data();
 	const Point2* vertices = batch.data_subelements();
 	const size_t vertices_size = batch.size_subelements();
 	#pragma omp target teams distribute parallel for map(to:vertices[0:vertices_size]) map(to:polygons[0:batch_size]) map(from:result_data[0:batch_size])
