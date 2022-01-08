@@ -42,7 +42,10 @@ class TranslateByVector : public testing::TestWithParam<Point2> {};
 
 INSTANTIATE_TEST_SUITE_P(TranslateInputs, TranslateByVector, testing::Values(Point2(250, 0), Point2(0, -300), Point2(-40, 70)));
 
-TEST_P(TranslateByVector, MoveByVector) {
+/*!
+ * Test moving a polygon by a certain offset.
+ */
+TEST_P(TranslateByVector, SimplePolygonTranslateByVector) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
 	const Point2 move_vector = GetParam();
 
@@ -125,11 +128,11 @@ TEST(SimplePolygonBatchTranslate, MoveZero) {
 }
 
 /*!
- * Test moving a batch of polygons along the X direction.
+ * Test moving a batch of polygons by a certain offset.
  */
-TEST(SimplePolygonBatchTranslate, MoveX) {
+TEST_P(TranslateByVector, SimplePolygonBatchTranslateByVector) {
 	const Batch<SimplePolygon> original = SimplePolygonBatchTestCases::square_triangle(); //Keep a copy to compare to the original.
-	const Point2 move_vector(0, -300);
+	const Point2 move_vector = GetParam();
 
 	Batch<SimplePolygon> square_triangle = original;
 	translate(square_triangle, move_vector);
