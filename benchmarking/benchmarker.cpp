@@ -14,6 +14,7 @@
 #include <chrono> //To measure execution time.
 #include <iomanip> //For std::setw.
 #include <iostream> //To output the benchmark results to stdcout.
+#include <numeric> //Easy summing for the CRC.
 #include <vector>
 
 #include "benchmarker.hpp"
@@ -70,6 +71,68 @@ void Benchmarker::bench_area() {
 		}
 		end = std::chrono::steady_clock::now();
 		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
+
+		std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
+	}
+
+	//Repeat for the area of batches of polygons.
+	std::cout << "_______ [AREA] _______" << std::endl;
+	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
+
+	//Sizes to test with.
+	sizes.clear();
+	for(size_t i = 0; i < 1000; i += 10) {
+		sizes.push_back(i);
+	}
+
+	//Pre-generate the batches.
+	std::vector<apex::Batch<apex::SimplePolygon>> batches;
+	apex::SimplePolygon poly(10, apex::Point2(0, 0)); //Each batch repeats this one polygon multiple times.
+	for(size_t i = 0; i < poly.size(); ++i) {
+		poly[i] = apex::Point2(i, i);
+	}
+	for(size_t size : sizes) {
+		apex::Batch<apex::SimplePolygon> batch(size, poly);
+		batches.push_back(batch);
+	}
+
+	//First do a dry run with the largest size, to get more accurate results without system calls to allocate more memory.
+	{
+		apex::detail::area_st(batches.back());
+		apex::detail::area_mt(batches.back());
+		apex::detail::area_gpu(batches.back());
+	}
+
+	for(size_t i = 0; i < sizes.size(); ++i) {
+		apex::Batch<apex::SimplePolygon>& batch = batches[i];
+		size_t size = sizes[i];
+
+		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.
+		apex::Batch<apex::area_t> area_results;
+		area_results.reserve(size);
+		std::chrono::time_point start = std::chrono::steady_clock::now();
+		for(size_t repeat = 0; repeat < repeats; ++repeat) {
+			area_results = apex::detail::area_st(batch);
+		}
+		std::chrono::time_point end = std::chrono::steady_clock::now();
+		std::chrono::duration st_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
+		sum = std::accumulate(area_results.begin(), area_results.end(), sum);
+
+		start = std::chrono::steady_clock::now();
+		for(size_t repeat = 0; repeat < repeats; ++repeat) {
+			area_results = apex::detail::area_mt(batch);
+		}
+		end = std::chrono::steady_clock::now();
+		std::chrono::duration mt_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
+		sum = std::accumulate(area_results.begin(), area_results.end(), sum);
+
+		start = std::chrono::steady_clock::now();
+		for(size_t repeat = 0; repeat < repeats; ++repeat) {
+			area_results = apex::detail::area_gpu(batch);
+		}
+		end = std::chrono::steady_clock::now();
+		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
+		sum = std::accumulate(area_results.begin(), area_results.end(), sum);
 
 		std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
 	}
