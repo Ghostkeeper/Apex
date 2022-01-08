@@ -177,4 +177,28 @@ TEST_P(TranslateByVector, SimplePolygonBatchTranslateByVector) {
 #endif
 }
 
+/*!
+ * Test moving an empty batch.
+ *
+ * Since the batch stays empty, nothing should happen. But it shouldn't crash.
+ */
+TEST(SimplePolygonBatchTranslate, MoveEmpty) {
+	Batch<SimplePolygon> empty = SimplePolygonBatchTestCases::empty();
+	const Point2 move_vector(1337, -31337);
+
+	translate(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the batch is still empty.";
+
+	detail::translate_st(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the batch is still empty.";
+
+	detail::translate_mt(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the batch is still empty.";
+
+#ifdef GPU
+	detail::translate_gpu(empty, move_vector);
+	ASSERT_TRUE(empty.empty()) << "After translating it, the batch is still empty.";
+#endif
+}
+
 }
