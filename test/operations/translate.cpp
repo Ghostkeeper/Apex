@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h> //To run the test.
 
+#include "../helpers/simple_polygon_batch_test_cases.hpp" //To load testing batches of polygons to translate.
 #include "../helpers/simple_polygon_test_cases.hpp" //To load testing polygons to translate.
 #include "apex/operations/translate.hpp" //The function under test.
 #include "apex/point2.hpp" //To provide the delta vector to translate by.
@@ -172,6 +173,29 @@ TEST(SimplePolygonTranslate, MoveEmpty) {
 #ifdef GPU
 	detail::translate_gpu(empty, move_vector);
 	ASSERT_TRUE(empty.empty()) << "After translating it, the polygon is still empty.";
+#endif
+}
+
+/*!
+ * Tests whether moving by 0,0 yields the original simple polygon.
+ */
+TEST(SimplePolygonBatchTranslate, MoveZero) {
+	Batch<SimplePolygon> square_triangle = SimplePolygonBatchTestCases::square_triangle();
+	translate(square_triangle, Point2(0, 0));
+	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+
+	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	detail::translate_st(square_triangle, Point2(0, 0));
+	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+
+	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	detail::translate_mt(square_triangle, Point2(0, 0));
+	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+
+#ifdef GPU
+	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	detail::translate_gpu(square_triangle, Point2(0, 0));
+	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
 #endif
 }
 
