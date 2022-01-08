@@ -177,7 +177,7 @@ TEST(SimplePolygonTranslate, MoveEmpty) {
 }
 
 /*!
- * Tests whether moving by 0,0 yields the original simple polygon.
+ * Tests whether moving by 0,0 yields the original batch of simple polygons.
  */
 TEST(SimplePolygonBatchTranslate, MoveZero) {
 	Batch<SimplePolygon> square_triangle = SimplePolygonBatchTestCases::square_triangle();
@@ -196,6 +196,56 @@ TEST(SimplePolygonBatchTranslate, MoveZero) {
 	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
 	detail::translate_gpu(square_triangle, Point2(0, 0));
 	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+#endif
+}
+
+/*!
+ * Test moving a batch of polygons along the X direction.
+ */
+TEST(SimplePolygonBatchTranslate, MoveX) {
+	const Batch<SimplePolygon> original = SimplePolygonBatchTestCases::square_triangle(); //Keep a copy to compare to the original.
+	const Point2 move_vector(0, -300);
+
+	Batch<SimplePolygon> square_triangle = original;
+	translate(square_triangle, move_vector);
+	ASSERT_EQ(square_triangle.size(), original.size()) << "The number of polygons must remain the same.";
+	for(size_t polygon = 0; polygon < square_triangle.size(); ++polygon) {
+		ASSERT_EQ(square_triangle[polygon].size(), original[polygon].size()) << "The number of vertices in each polygon must remain the same.";
+		for(size_t vertex = 0; vertex < square_triangle[polygon].size(); ++vertex) {
+			EXPECT_EQ(square_triangle[polygon][vertex], original[polygon][vertex] + move_vector);
+		}
+	}
+
+	square_triangle = original;
+	detail::translate_st(square_triangle, move_vector);
+	ASSERT_EQ(square_triangle.size(), original.size()) << "The number of polygons must remain the same.";
+	for(size_t polygon = 0; polygon < square_triangle.size(); ++polygon) {
+		ASSERT_EQ(square_triangle[polygon].size(), original[polygon].size()) << "The number of vertices in each polygon must remain the same.";
+		for(size_t vertex = 0; vertex < square_triangle[polygon].size(); ++vertex) {
+			EXPECT_EQ(square_triangle[polygon][vertex], original[polygon][vertex] + move_vector);
+		}
+	}
+
+	square_triangle = original;
+	detail::translate_mt(square_triangle, move_vector);
+	ASSERT_EQ(square_triangle.size(), original.size()) << "The number of polygons must remain the same.";
+	for(size_t polygon = 0; polygon < square_triangle.size(); ++polygon) {
+		ASSERT_EQ(square_triangle[polygon].size(), original[polygon].size()) << "The number of vertices in each polygon must remain the same.";
+		for(size_t vertex = 0; vertex < square_triangle[polygon].size(); ++vertex) {
+			EXPECT_EQ(square_triangle[polygon][vertex], original[polygon][vertex] + move_vector);
+		}
+	}
+
+#ifdef GPU
+	square_triangle = original;
+	detail::translate_gpu(square_triangle, move_vector);
+	ASSERT_EQ(square_triangle.size(), original.size()) << "The number of polygons must remain the same.";
+	for(size_t polygon = 0; polygon < square_triangle.size(); ++polygon) {
+		ASSERT_EQ(square_triangle[polygon].size(), original[polygon].size()) << "The number of vertices in each polygon must remain the same.";
+		for(size_t vertex = 0; vertex < square_triangle[polygon].size(); ++vertex) {
+			EXPECT_EQ(square_triangle[polygon][vertex], original[polygon][vertex] + move_vector);
+		}
+	}
 #endif
 }
 
