@@ -38,88 +38,13 @@ TEST(SimplePolygonTranslate, MoveZero) {
 #endif
 }
 
-/*!
- * Test moving a polygon along the X direction.
- */
-TEST(SimplePolygonTranslate, MoveX) {
+class TranslateByVector : public testing::TestWithParam<Point2> {};
+
+INSTANTIATE_TEST_SUITE_P(TranslateInputs, TranslateByVector, testing::Values(Point2(250, 0), Point2(0, -300), Point2(-40, 70)));
+
+TEST_P(TranslateByVector, MoveByVector) {
 	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
-	const Point2 move_vector(250, 0);
-
-	SimplePolygon square_1000 = original;
-	translate(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-	square_1000 = original;
-	detail::translate_st(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-	square_1000 = original;
-	detail::translate_mt(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-#ifdef GPU
-	square_1000 = original;
-	detail::translate_gpu(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-#endif
-}
-
-/*!
- * Test moving a polygon along the Y direction.
- */
-TEST(SimplePolygonTranslate, MoveY) {
-	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
-	const Point2 move_vector(0, -300);
-
-	SimplePolygon square_1000 = original;
-	translate(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-	square_1000 = original;
-	detail::translate_st(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-	square_1000 = original;
-	detail::translate_mt(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-
-#ifdef GPU
-	square_1000 = original;
-	detail::translate_gpu(square_1000, move_vector);
-	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
-	for(size_t i = 0; i < square_1000.size(); ++i) {
-		EXPECT_EQ(square_1000[i], original[i] + move_vector);
-	}
-#endif
-}
-
-/*!
- * Test moving a polygon in both dimensions at the same time.
- */
-TEST(SimplePolygonTranslate, MoveXY) {
-	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
-	const Point2 move_vector(-40, 70);
+	const Point2 move_vector = GetParam();
 
 	SimplePolygon square_1000 = original;
 	translate(square_1000, move_vector);
