@@ -131,6 +131,9 @@ public:
  */
 template<>
 class Batch<SimplePolygon> : public Batch<Batch<Point2>> {
+public:
+	using Batch<Batch<Point2>>::Batch; //The constructors are the same.
+
 	/*!
 	 * Computes the surface area of the simple polygons in this batch.
 	 *
