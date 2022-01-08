@@ -23,7 +23,8 @@ namespace benchmarker {
 
 void Benchmarker::bench_area() {
 	std::cout << "________ AREA ________" << std::endl;
-	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
+	//std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
+	std::cout << "SIZE;ST;MT;GPU;CRC" << std::endl;
 
 	//Sizes to test with.
 	std::vector<size_t> sizes;
@@ -72,12 +73,14 @@ void Benchmarker::bench_area() {
 		end = std::chrono::steady_clock::now();
 		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
 
-		std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
+		//std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
+		std::cout << size << ";" << st_time.count() << ";" << mt_time.count() << ";" << gpu_time.count() << ";" << sum << std::endl;
 	}
 
 	//Repeat for the area of batches of polygons.
 	std::cout << "_______ [AREA] _______" << std::endl;
-	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
+	//std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
+	std::cout << "SIZE;ST;MT;GPU;CRC" << std::endl;
 
 	//Sizes to test with.
 	sizes.clear();
@@ -134,7 +137,8 @@ void Benchmarker::bench_area() {
 		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
 		sum = std::accumulate(area_results.begin(), area_results.end(), sum);
 
-		std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
+		//std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
+		std::cout << size << ";" << st_time.count() << ";" << mt_time.count() << ";" << gpu_time.count() << ";" << sum << std::endl;
 	}
 }
 
