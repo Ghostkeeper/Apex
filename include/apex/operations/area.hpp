@@ -91,7 +91,11 @@ area_t area(const SimplePolygon& polygon) {
  */
 template<multi_polygonal SimplePolygonBatch>
 Batch<area_t> area(const SimplePolygonBatch& batch) {
-	return detail::area_st(batch);
+	if(batch.size() + batch.size_subelements() < 200) {
+		return detail::area_st(batch);
+	}
+	return detail::area_mt(batch);
+	//Currently, there doesn't seem to be a case where the GPU is faster in this algorithm.
 }
 
 namespace detail {
