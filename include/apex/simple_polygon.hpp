@@ -12,6 +12,7 @@
 #include <utility> //For std::forward.
 
 #include "batch.hpp" //The vertex storage is by batch.
+#include "detail/simple_polygon_properties.hpp" //Properties about simple polygons to cache.
 #include "operations/area.hpp" //To allow calculating the area of this shape.
 #include "operations/translate.hpp" //To allow moving this shape.
 #include "point2.hpp" //The vertices of the polygon are 2D points.
@@ -123,6 +124,17 @@ public:
 	void translate(const Point2& delta) {
 		apex::translate(*this, delta);
 	}
+
+protected:
+	/*!
+	 * Geometric properties that we know (or don't know) about this simple
+	 * polygon.
+	 *
+	 * This is used to cache important information and use that speed up future
+	 * calculations with the simple polygon if we already know some properties
+	 * about the simple polygon.
+	 */
+	SimplePolygonProperties properties;
 };
 
 /*!
@@ -162,6 +174,17 @@ public:
 	void translate(const Point2& delta) {
 		apex::translate(*this, delta);
 	}
+
+protected:
+	/*!
+	 * Geometric properties that we know (or don't know) about the simple
+	 * polygons in this batch.
+	 *
+	 * This is used to cache important information and use that speed up future
+	 * calculations with the simple polygons if we already know some properties
+	 * about the simple polygons.
+	 */
+	std::vector<SimplePolygonProperties> properties;
 };
 
 }
