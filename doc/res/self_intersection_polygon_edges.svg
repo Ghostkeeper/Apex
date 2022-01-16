@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+	<g stroke="black" stroke-width="4" fill="none">
+		<polygon opacity="0.4" points="2,25 2,100 50,200 100,250 200,298 300,250 350,200 398,100 398,25 375,2 325,2 300,25 300,75 350,125 325,225 300,250 200,298 100,250 75,225 50,125 100,75 100,25 75,2 25,2" /> <!-- The polygon that self-intersects. -->
+		<path d="M50,200 L100,250 L200,298 L300,250 L350,200" /> <!-- The two polylines that intersect. -->
+		<path d="M350,125 L325,225 L300,250 L200,298 L100,250 L75,225 L50,125" />
+	</g>
+	<g fill="red"> <!-- The intersection points. -->
+		<circle cx="75" cy="225" r="4" />
+		<circle cx="100" cy="250" r="4" />
+		<circle cx="200" cy="298" r="4" />
+		<circle cx="300" cy="250" r="4" />
+		<circle cx="325" cy="225" r="4" />
+	</g>
+	<g stroke="black" stroke-width="2"> <!-- Lines pointing at the intersection for the legend. -->
+		<line x1="82" y1="221" x2="145" y2="198" />
+		<line x1="105" y1="245" x2="160" y2="205" />
+		<line x1="200" y1="292" x2="200" y2="205" />
+		<line x1="295" y1="245" x2="240" y2="205" />
+		<line x1="318" y1="221" x2="255" y2="198" />
+	</g>
+	<text font-family="sans" size="20" text-anchor="middle" x="200" y="200">Self-intersections</text>
+</svg>
