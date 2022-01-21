@@ -1,21 +1,21 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_SIMPLE_POLYGON_BATCH_TEST_CASES
-#define APEX_SIMPLE_POLYGON_BATCH_TEST_CASES
+#ifndef APEX_POLYGON_BATCH_TEST_CASES
+#define APEX_POLYGON_BATCH_TEST_CASES
 
 #include "apex/batch.hpp" //We're going to provide test cases of batches.
-#include "apex/simple_polygon.hpp" //We're going to put simple polygons in the test batches.
+#include "apex/polygon.hpp" //We're going to put polygons in the test batches.
 
 namespace apex {
 
 /*!
- * This class defines a bunch of batches of simple polygons for use in tests.
+ * This class defines a bunch of batches of polygons for use in tests.
  *
  * Some of these batches are loaded from SVG files. This is useful because SVG
  * files are easy to visualise for a maintainer. They can be opened with any web
@@ -29,17 +29,17 @@ namespace apex {
  * megabytes. Nor would it be practical to store them under version control.
  * Nobody would read all of that or edit it directly to maintain them anyway.
  */
-class SimplePolygonBatchTestCases {
+class PolygonBatchTestCases {
 public:
-	static Batch<SimplePolygon> empty();
-	static Batch<SimplePolygon> single_empty();
-	static Batch<SimplePolygon> single_point();
-	static Batch<SimplePolygon> single_line();
-	static Batch<SimplePolygon> single_square();
-	static Batch<SimplePolygon> square_triangle();
-	static Batch<SimplePolygon> square_triangle_square();
-	static Batch<SimplePolygon> two_squares();
-	static Batch<SimplePolygon> edge_cases();
+	static Batch<Polygon> empty();
+	static Batch<Polygon> single_empty();
+	static Batch<Polygon> single_point();
+	static Batch<Polygon> single_line();
+	static Batch<Polygon> single_square();
+	static Batch<Polygon> square_triangle();
+	static Batch<Polygon> square_triangle_square();
+	static Batch<Polygon> two_squares();
+	static Batch<Polygon> edge_cases();
 
 	/*!
 	 * Generates a batch with two approximations of a circle. They are actually
@@ -54,27 +54,27 @@ public:
 	 * 1000 units to positive X.
 	 * \return A batch containing two high-resolution approximations of circles.
 	 */
-	static Batch<SimplePolygon> two_circles();
+	static Batch<Polygon> two_circles();
 
 protected:
 	/*!
-	 * Load a test case as a batch of simple polygons.
+	 * Load a test case as a batch of polygons.
 	 *
 	 * This will take the contents of an SVG file and look for all ``<polygon>``
 	 * tags and parse their coordinates. Those coordinates are used to construct
-	 * a simple polygon, which is added to the batch. This way, the
-	 * easy-to-visualise SVG files can be used to create test cases.
+	 * a polygon, which is added to the batch. This way, the easy-to-visualise
+	 * SVG files can be used to create test cases.
 	 *
 	 * No transformations or CSS is applied. Other SVG elements such as
 	 * ``<path>`` are not parsed. The parser in this loader is extremely simple
 	 * and naive. This prevents needing a whole new library just to read test
 	 * cases.
 	 * \param svg The contents of an SVG file containing the polygons to load.
-	 * \return A ``Batch`` of ``SimplePolygon`` with the loaded test data.
+	 * \return A ``Batch`` of ``Polygon`` with the loaded test data.
 	 */
-	static Batch<SimplePolygon> load_simple_polygon_batch(const std::string& svg);
+	static Batch<Polygon> load_polygon_batch(const std::string& svg);
 };
 
 }
 
-#endif //APEX_TEST_SIMPLE_POLYGON_BATCHES
+#endif //APEX_POLYGON_BATCH_TEST_CASES

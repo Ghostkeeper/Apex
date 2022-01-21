@@ -12,13 +12,13 @@
 namespace apex {
 
 /*!
- * A struct representing a self-intersection result for simple polygons.
+ * A struct representing a self-intersection result for polygons.
  *
  * This piece of data is the result of the algorithm that finds self-
  * intersections. It contains the information that was found about a self-
  * intersection that the consumer of the self-intersections might need.
  */
-struct SimplePolygonSelfIntersection {
+struct PolygonSelfIntersection {
 	/*!
 	 * The position of the self-intersection.
 	 *

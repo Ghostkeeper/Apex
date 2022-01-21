@@ -6,8 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#ifndef APEX_SIMPLE_POLYGON_PROPERTIES
-#define APEX_SIMPLE_POLYGON_PROPERTIES
+#ifndef APEX_POLYGON_PROPERTIES
+#define APEX_POLYGON_PROPERTIES
 
 #include "convexity.hpp"
 #include "orientation.hpp"
@@ -16,31 +16,43 @@
 namespace apex {
 
 /*!
- * A collection of geometric properties of a simple polygon.
+ * A collection of geometric properties of a polygon.
  *
  * These properties must not add any new information that cannot be derived from
- * the simple polygon itself. It is only used to cache information for more
- * efficient computation.
+ * the polygon itself. It is only used to cache information for more efficient
+ * computation.
  */
-struct SimplePolygonProperties {
+struct PolygonProperties {
 	/*!
-	 * Whether this simple polygon is convex or concave.
+	 * Whether this polygon is convex or concave.
 	 */
 	Convexity convexity : 2;
 
 	/*!
-	 * Whether this simple polygon has any of its edges intersecting each other.
+	 * Whether this polygon has any of its edges intersecting each other.
 	 */
 	SelfIntersecting self_intersecting : 2;
 
 	/*!
-	 * The winding orientation of this simple polygon: Clockwise,
-	 * counter-clockwise or a mix. For a mix, simple polygons have to be self-
-	 * intersecting.
+	 * The winding orientation of this polygon: Clockwise, counter-clockwise or
+	 * a mix. For a mix, polygons have to be self-intersecting.
 	 */
 	Orientation orientation : 2;
+
+	/*!
+	 * Makes all properties unknown again.
+	 *
+	 * This is a helper function for a common operation. It is common because
+	 * when a polygon is modified arbitrarily, these usually become
+	 * unknown.
+	 */
+	void reset() {
+		convexity = Convexity::UNKNOWN;
+		self_intersecting = SelfIntersecting::UNKNOWN;
+		orientation = Orientation::UNKNOWN;
+	}
 };
 
 }
 
-#endif //APEX_SIMPLE_POLYGON_PROPERTIES
+#endif //APEX_POLYGON_PROPERTIES

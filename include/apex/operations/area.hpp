@@ -22,30 +22,30 @@ namespace apex {
 namespace detail {
 
 //Declare the detail functions so that we can reference them from the public ones.
-template<polygonal SimplePolygon>
-area_t area_st(const SimplePolygon& polygon);
+template<polygonal Polygon>
+area_t area_st(const Polygon& polygon);
 
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_st(const SimplePolygonBatch&);
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_st(const PolygonBatch&);
 
-template<polygonal SimplePolygon>
-area_t area_mt(const SimplePolygon& polygon);
+template<polygonal Polygon>
+area_t area_mt(const Polygon& polygon);
 
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_mt(const SimplePolygonBatch&);
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_mt(const PolygonBatch&);
 
 #ifdef GPU
-template<polygonal SimplePolygon>
-area_t area_gpu(const SimplePolygon& polygon);
+template<polygonal Polygon>
+area_t area_gpu(const Polygon& polygon);
 
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_gpu(const SimplePolygonBatch&);
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_gpu(const PolygonBatch&);
 #endif //GPU
 
 };
 
 /*!
- * Computes the surface area of a simple polygon.
+ * Computes the surface area of a polygon.
  *
  * The sign of the area is linked to the polygon winding order. If the polygon
  * is positive, the area will be positive too, and vice versa. If the polygon
@@ -55,12 +55,12 @@ Batch<area_t> area_gpu(const SimplePolygonBatch&);
  * The area of the polygon is counted differently from the nonzero or even-odd
  * fill rules. If a zone is looped around multiple times by the polygon, it will
  * count to the total area multiple times as well.
- * \tparam SimplePolygon A class that behaves like a simple polygon.
- * \param polygon The simple polygon to calculate the area of.
- * \return The surface area of the simple polygon.
+ * \tparam Polygon A class that behaves like a polygon.
+ * \param polygon The polygon to calculate the area of.
+ * \return The surface area of the polygon.
  */
-template<polygonal SimplePolygon>
-area_t area(const SimplePolygon& polygon) {
+template<polygonal Polygon>
+area_t area(const Polygon& polygon) {
 	if(polygon.size() < 400) {
 		return detail::area_st(polygon);
 	}
@@ -73,7 +73,7 @@ area_t area(const SimplePolygon& polygon) {
 }
 
 /*!
- * Computes the surface areas of each simple polygon in a batch.
+ * Computes the surface areas of each polygon in a batch.
  *
  * The sign of the area is linked to the polygon winding order. If the polygon
  * is positive, the area will be positive too, and vice versa. If the polygon
@@ -83,14 +83,13 @@ area_t area(const SimplePolygon& polygon) {
  * The area of the polygon is counted differently from the nonzero or even-odd
  * fill rules. If a zone is looped around multiple times by the polygon, it will
  * count to the total area multiple times as well.
- * \tparam SimplePolygonBatch A class that behaves like a batch of simple
- * polygons.
- * \param batch A batch of simple polygons to calculate the areas of.
- * \return A list of areas, one for each simple polygon, in the same order as
- * the order of those polygons in the batch.
+ * \tparam PolygonBatch A class that behaves like a batch of polygons.
+ * \param batch A batch of polygons to calculate the areas of.
+ * \return A list of areas, one for each polygon, in the same order as the order
+ * of those polygons in the batch.
  */
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area(const SimplePolygonBatch& batch) {
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area(const PolygonBatch& batch) {
 	if(batch.size() + batch.size_subelements() < 200) {
 		return detail::area_st(batch);
 	}
@@ -136,17 +135,17 @@ namespace detail {
  * formed by \f$x_2 \cdot y_1\f$ minus the area formed by the other rectangle
  * formed by \f$x_1 \cdot y_2\f$. In other words, the area of the parallelogram
  * is \f$x_2 \cdot y_1 - x_1 \cdot y_2\f$. This needs to be divided by two to
- * arrive at the area of the triangle. The surface area of a simple polygon is
- * the sum of all of these triangles. This is the shoelace formula.
+ * arrive at the area of the triangle. The surface area of a polygon is the sum
+ * of all of these triangles. This is the shoelace formula.
  *
  * In this implementation, the areas of these parallelograms are calculated in
- * sequence and summed together to get the area of the simple polygon.
- * \tparam SimplePolygon A class that behaves like a simple polygon.
- * \param polygon The simple polygon to calculate the area of.
- * \return The surface area of the simple polygon.
+ * sequence and summed together to get the area of the polygon.
+ * \tparam Polygon A class that behaves like a polygon.
+ * \param polygon The polygon to calculate the area of.
+ * \return The surface area of the polygon.
 */
-template<polygonal SimplePolygon>
-area_t area_st(const SimplePolygon& polygon) {
+template<polygonal Polygon>
+area_t area_st(const Polygon& polygon) {
    area_t area = 0;
    for(size_t vertex = 0, previous = polygon.size() - 1; vertex < polygon.size(); vertex++) {
 	   area += static_cast<area_t>(polygon[previous].x) * polygon[vertex].y - static_cast<area_t>(polygon[previous].y) * polygon[vertex].x;
@@ -158,19 +157,18 @@ area_t area_st(const SimplePolygon& polygon) {
 /*!
  * Single-threaded implementation of ``area``.
  *
- * This single-threaded implementation simply computes the area for each simple
- * polygon in the batch in sequence, and adds them to the resulting vector.
- * \tparam SimplePolygonBatch A class that behaves like a batch of simple
- * polygons.
- * \param batch The batch of simple polygons to compute the areas of.
- * \return A list of areas, one for each simple polygon, in the same order as
- * the order of those polygons in the batch.
+ * This single-threaded implementation simply computes the area for each polygon
+ * in the batch in sequence, and adds them to the resulting vector.
+ * \tparam PolygonBatch A class that behaves like a batch of polygons.
+ * \param batch The batch of polygons to compute the areas of.
+ * \return A list of areas, one for each polygon, in the same order as the order
+ * of those polygons in the batch.
  */
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_st(const SimplePolygonBatch& batch) {
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_st(const PolygonBatch& batch) {
 	Batch<area_t> result;
 	result.reserve(batch.size());
-	for(typename SimplePolygonBatch::const_iterator it = batch.begin(); it != batch.end(); ++it) {
+	for(typename PolygonBatch::const_iterator it = batch.begin(); it != batch.end(); ++it) {
 		result.push_back(detail::area_st(*it));
 	}
 	return result;
@@ -212,18 +210,18 @@ Batch<area_t> area_st(const SimplePolygonBatch& batch) {
  * formed by \f$x_2 \cdot y_1\f$ minus the area formed by the other rectangle
  * formed by \f$x_1 \cdot y_2\f$. In other words, the area of the parallelogram
  * is \f$x_2 \cdot y_1 - x_1 \cdot y_2\f$. This needs to be divided by two to
- * arrive at the area of the triangle. The surface area of a simple polygon is
- * the sum of all of these triangles. This is the shoelace formula.
+ * arrive at the area of the triangle. The surface area of a polygon is the sum
+ * of all of these triangles. This is the shoelace formula.
  *
  * In this implementation, the areas of these parallelograms are calculated in
  * parallel. This is summed with a parallel reduction, to produce the area of
  * the complete polygon.
- * \tparam SimplePolygon A class that behaves like a simple polygon.
- * \param polygon The simple polygon to calculate the area of.
- * \return The surface area of the simple polygon.
+ * \tparam Polygon A class that behaves like a polygon.
+ * \param polygon The polygon to calculate the area of.
+ * \return The surface area of the polygon.
  */
-template<polygonal SimplePolygon>
-area_t area_mt(const SimplePolygon& polygon) {
+template<polygonal Polygon>
+area_t area_mt(const Polygon& polygon) {
 	area_t area = 0;
 	const size_t size = polygon.size();
 	#pragma omp parallel for simd reduction(+:area)
@@ -270,21 +268,20 @@ area_t area_mt(const SimplePolygon& polygon) {
  * formed by \f$x_2 \cdot y_1\f$ minus the area formed by the other rectangle
  * formed by \f$x_1 \cdot y_2\f$. In other words, the area of the parallelogram
  * is \f$x_2 \cdot y_1 - x_1 \cdot y_2\f$. This needs to be divided by two to
- * arrive at the area of the triangle. The surface area of a simple polygon is
- * the sum of all of these triangles. This is the shoelace formula.
+ * arrive at the area of the triangle. The surface area of a polygon is the sum
+ * of all of these triangles. This is the shoelace formula.
  *
  * In this implementation, the areas of these parallelograms are calculated in
  * parallel. This is summed with a parallel reduction, to produce the area of
  * the complete polygon. This is repeated in parallel for each polygon in the
  * batch.
- * \tparam SimplePolygonBatch A class that behaves like a batch of simple
- * polygons.
- * \param batch The batch of simple polygons to calculate the areas of.
- * \return A list of areas, one for each simple polygon, in the same order as
- * the order of those polygons in the batch.
+ * \tparam PolygonBatch A class that behaves like a batch of polygons.
+ * \param batch The batch of polygons to calculate the areas of.
+ * \return A list of areas, one for each polygon, in the same order as the order
+ * of those polygons in the batch.
  */
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_mt(const SimplePolygonBatch& batch) {
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_mt(const PolygonBatch& batch) {
 	Batch<area_t> result;
 	result.resize(batch.size()); //Resize, so that all threads can enter their data in parallel.
 
@@ -342,18 +339,18 @@ Batch<area_t> area_mt(const SimplePolygonBatch& batch) {
  * formed by \f$x_2 \cdot y_1\f$ minus the area formed by the other rectangle
  * formed by \f$x_1 \cdot y_2\f$. In other words, the area of the parallelogram
  * is \f$x_2 \cdot y_1 - x_1 \cdot y_2\f$. This needs to be divided by two to
- * arrive at the area of the triangle. The surface area of a simple polygon is
- * the sum of all of these triangles. This is the shoelace formula.
+ * arrive at the area of the triangle. The surface area of a polygon is the sum
+ * of all of these triangles. This is the shoelace formula.
  *
  * In this implementation, the areas of these parallelograms are calculated on
  * the GPU, if available. This is summed with a parallel reduction, to produce
  * the area of the complete polygon.
- * \tparam SimplePolygon A class that behaves like a simple polygon.
- * \param polygon The simple polygon to calculate the area of.
- * \return The surface area of the simple polygon.
+ * \tparam Polygon A class that behaves like a polygon.
+ * \param polygon The polygon to calculate the area of.
+ * \return The surface area of the polygon.
  */
-template<polygonal SimplePolygon>
-area_t area_gpu(const SimplePolygon& polygon) {
+template<polygonal Polygon>
+area_t area_gpu(const Polygon& polygon) {
 	area_t area = 0;
 	const size_t size = polygon.size();
 	const Point2* vertices = polygon.data();
@@ -401,21 +398,20 @@ area_t area_gpu(const SimplePolygon& polygon) {
  * formed by \f$x_2 \cdot y_1\f$ minus the area formed by the other rectangle
  * formed by \f$x_1 \cdot y_2\f$. In other words, the area of the parallelogram
  * is \f$x_2 \cdot y_1 - x_1 \cdot y_2\f$. This needs to be divided by two to
- * arrive at the area of the triangle. The surface area of a simple polygon is
- * the sum of all of these triangles. This is the shoelace formula.
+ * arrive at the area of the triangle. The surface area of a polygon is the sum
+ * of all of these triangles. This is the shoelace formula.
  *
  * In this implementation, the areas of these parallelograms are calculated on
  * the GPU, if available. This is summed with a parallel reduction, to produce
  * the area of the complete polygon. This is repeated in parallel for each
  * polygon in the batch.
- * \tparam SimplePolygonBatch A class that behaves like a batch of simple
- * polygons.
- * \param batch The batch of simple polygons to calculate the areas of.
- * \return A list of areas, one for each simple polygon, in the same order as
+ * \tparam PolygonBatch A class that behaves like a batch of polygons.
+ * \param batch The batch of polygons to calculate the areas of.
+ * \return A list of areas, one for each polygon, in the same order as
  * the order of those polygons in the batch.
  */
-template<multi_polygonal SimplePolygonBatch>
-Batch<area_t> area_gpu(const SimplePolygonBatch& batch) {
+template<multi_polygonal PolygonBatch>
+Batch<area_t> area_gpu(const PolygonBatch& batch) {
 	const size_t batch_size = batch.size();
 	Batch<area_t> result;
 	result.resize(batch_size); //Resize, so that all threads can enter their data in parallel.

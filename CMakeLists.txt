@@ -67,8 +67,8 @@ if(BUILD_TESTS)
 
 	#Library of helper functions and classes to help running the tests (e.g. test cases, mocks, gropers).
 	set(test_helpers_sources
-		simple_polygon_batch_test_cases.cpp
-		simple_polygon_test_cases.cpp
+		polygon_batch_test_cases.cpp
+		polygon_test_cases.cpp
 	)
 	set(test_helpers_paths "")
 	foreach(test_helpers_source ${test_helpers_sources})
@@ -86,7 +86,7 @@ if(BUILD_TESTS)
 		operations.area
 		operations.translate
 		point2
-		simple_polygon
+		polygon
 	)
 
 	#To make sure that the tests are built before running them, add the building of these tests as an additional test.

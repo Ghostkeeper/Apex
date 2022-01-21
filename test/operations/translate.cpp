@@ -8,33 +8,33 @@
 
 #include <gtest/gtest.h> //To run the test.
 
-#include "../helpers/simple_polygon_batch_test_cases.hpp" //To load testing batches of polygons to translate.
-#include "../helpers/simple_polygon_test_cases.hpp" //To load testing polygons to translate.
+#include "../helpers/polygon_batch_test_cases.hpp" //To load testing batches of polygons to translate.
+#include "../helpers/polygon_test_cases.hpp" //To load testing polygons to translate.
 #include "apex/operations/translate.hpp" //The function under test.
 #include "apex/point2.hpp" //To provide the delta vector to translate by.
 
 namespace apex {
 
 /*!
- * Test whether moving by 0,0 yields the original simple polygon.
+ * Test whether moving by 0,0 yields the original polygon.
  */
-TEST(SimplePolygonTranslate, MoveZero) {
-	SimplePolygon square_1000 = SimplePolygonTestCases::square_1000();
+TEST(PolygonTranslate, MoveZero) {
+	Polygon square_1000 = PolygonTestCases::square_1000();
 	translate(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, PolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
-	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
+	square_1000 = PolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_st(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, PolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
-	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
+	square_1000 = PolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_mt(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, PolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 
 #ifdef GPU
-	square_1000 = SimplePolygonTestCases::square_1000(); //Reset for the next test, just in case.
+	square_1000 = PolygonTestCases::square_1000(); //Reset for the next test, just in case.
 	detail::translate_gpu(square_1000, Point2(0, 0));
-	EXPECT_EQ(square_1000, SimplePolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
+	EXPECT_EQ(square_1000, PolygonTestCases::square_1000()) << "The polygon may not have changed by moving 0,0.";
 #endif
 }
 
@@ -45,11 +45,11 @@ INSTANTIATE_TEST_SUITE_P(TranslateInputs, TranslateByVector, testing::Values(Poi
 /*!
  * Test moving a polygon by a certain offset.
  */
-TEST_P(TranslateByVector, SimplePolygonTranslateByVector) {
-	const SimplePolygon original = SimplePolygonTestCases::square_1000(); //Keep a copy to compare to the original.
+TEST_P(TranslateByVector, PolygonTranslateByVector) {
+	const Polygon original = PolygonTestCases::square_1000(); //Keep a copy to compare to the original.
 	const Point2 move_vector = GetParam();
 
-	SimplePolygon square_1000 = original;
+	Polygon square_1000 = original;
 	translate(square_1000, move_vector);
 	ASSERT_EQ(square_1000.size(), original.size()) << "The polygon may not gain or lose any vertices by translating it.";
 	for(size_t i = 0; i < square_1000.size(); ++i) {
@@ -85,8 +85,8 @@ TEST_P(TranslateByVector, SimplePolygonTranslateByVector) {
  *
  * Since the polygon stays empty, nothing should happen. But it shouldn't crash.
  */
-TEST(SimplePolygonTranslate, MoveEmpty) {
-	SimplePolygon empty = SimplePolygonTestCases::empty();
+TEST(PolygonTranslate, MoveEmpty) {
+	Polygon empty = PolygonTestCases::empty();
 	const Point2 move_vector(1337, -31337);
 
 	translate(empty, move_vector);
@@ -105,36 +105,36 @@ TEST(SimplePolygonTranslate, MoveEmpty) {
 }
 
 /*!
- * Tests whether moving by 0,0 yields the original batch of simple polygons.
+ * Tests whether moving by 0,0 yields the original batch of polygons.
  */
-TEST(SimplePolygonBatchTranslate, MoveZero) {
-	Batch<SimplePolygon> square_triangle = SimplePolygonBatchTestCases::square_triangle();
+TEST(PolygonBatchTranslate, MoveZero) {
+	Batch<Polygon> square_triangle = PolygonBatchTestCases::square_triangle();
 	translate(square_triangle, Point2(0, 0));
-	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+	EXPECT_EQ(square_triangle, PolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
 
-	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	square_triangle = PolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
 	detail::translate_st(square_triangle, Point2(0, 0));
-	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+	EXPECT_EQ(square_triangle, PolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
 
-	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	square_triangle = PolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
 	detail::translate_mt(square_triangle, Point2(0, 0));
-	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+	EXPECT_EQ(square_triangle, PolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
 
 #ifdef GPU
-	square_triangle = SimplePolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
+	square_triangle = PolygonBatchTestCases::square_triangle(); //Reset for the next test, just in case.
 	detail::translate_gpu(square_triangle, Point2(0, 0));
-	EXPECT_EQ(square_triangle, SimplePolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
+	EXPECT_EQ(square_triangle, PolygonBatchTestCases::square_triangle()) << "The polygons may not have changed by moving 0,0.";
 #endif
 }
 
 /*!
  * Test moving a batch of polygons by a certain offset.
  */
-TEST_P(TranslateByVector, SimplePolygonBatchTranslateByVector) {
-	const Batch<SimplePolygon> original = SimplePolygonBatchTestCases::square_triangle(); //Keep a copy to compare to the original.
+TEST_P(TranslateByVector, PolygonBatchTranslateByVector) {
+	const Batch<Polygon> original = PolygonBatchTestCases::square_triangle(); //Keep a copy to compare to the original.
 	const Point2 move_vector = GetParam();
 
-	Batch<SimplePolygon> square_triangle = original;
+	Batch<Polygon> square_triangle = original;
 	translate(square_triangle, move_vector);
 	ASSERT_EQ(square_triangle.size(), original.size()) << "The number of polygons must remain the same.";
 	for(size_t polygon = 0; polygon < square_triangle.size(); ++polygon) {
@@ -182,8 +182,8 @@ TEST_P(TranslateByVector, SimplePolygonBatchTranslateByVector) {
  *
  * Since the batch stays empty, nothing should happen. But it shouldn't crash.
  */
-TEST(SimplePolygonBatchTranslate, MoveEmpty) {
-	Batch<SimplePolygon> empty = SimplePolygonBatchTestCases::empty();
+TEST(PolygonBatchTranslate, MoveEmpty) {
+	Batch<Polygon> empty = PolygonBatchTestCases::empty();
 	const Point2 move_vector(1337, -31337);
 
 	translate(empty, move_vector);

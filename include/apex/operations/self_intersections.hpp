@@ -16,7 +16,7 @@
 namespace apex {
 
 /*!
- * Finds all self-intersections in a simple polygon.
+ * Finds all self-intersections in a polygon.
  *
  * Aside from edge cases, when a polygon self-intersects, it leads to some part
  * of the polygon being negative and another part being positive. This can be
@@ -63,15 +63,15 @@ namespace apex {
  *
  * When more than two edges of the polygon intersect in one point, the same
  * point will be reported multiple times, one for each pairwise intersection.
- * \tparam SimplePolygon A class that behaves like a simple polygon.
+ * \tparam Polygon A class that behaves like a polygon.
  * \param polygon A polygon to test for self-intersections.
  * \return A batch of self-intersection results. Each self-intersection contains
  * the position of the intersection and the indices of the two edges that are
  * involved.
  */
-template<polygonal SimplePolygon>
-Batch<SimplePolygonSelfIntersection> self_intersections(const SimplePolygon& polygon) {
-	return Batch<SimplePolygonSelfIntersection>(); //TODO: Implement.
+template<polygonal Polygon>
+Batch<PolygonSelfIntersection> self_intersections(const Polygon& polygon) {
+	return Batch<PolygonSelfIntersection>(); //TODO: Implement.
 }
 
 }

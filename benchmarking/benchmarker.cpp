@@ -1,13 +1,13 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
 #define protected public //Allow calling protected functions in this class.
-#include <apex/simple_polygon.hpp>
+#include <apex/polygon.hpp>
 #undef protected
 #include <apex/point2.hpp>
 
@@ -32,7 +32,7 @@ void Benchmarker::bench_area() {
 		sizes.push_back(i);
 	}
 	//Pre-generate the polygons.
-	std::vector<apex::SimplePolygon> polys;
+	std::vector<apex::Polygon> polys;
 	for(size_t size : sizes) {
 		polys.emplace_back(size, apex::Point2(0, 0));
 		for(size_t i = 0; i < size; ++i) {
@@ -48,7 +48,7 @@ void Benchmarker::bench_area() {
 	}
 
 	for(size_t i = 0; i < sizes.size(); ++i) {
-		apex::SimplePolygon& poly = polys[i];
+		apex::Polygon& poly = polys[i];
 		size_t size = sizes[i];
 
 		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.
@@ -89,13 +89,13 @@ void Benchmarker::bench_area() {
 	}
 
 	//Pre-generate the batches.
-	std::vector<apex::Batch<apex::SimplePolygon>> batches;
-	apex::SimplePolygon poly(10, apex::Point2(0, 0)); //Each batch repeats this one polygon multiple times.
+	std::vector<apex::Batch<apex::Polygon>> batches;
+	apex::Polygon poly(10, apex::Point2(0, 0)); //Each batch repeats this one polygon multiple times.
 	for(size_t i = 0; i < poly.size(); ++i) {
 		poly[i] = apex::Point2(i, i);
 	}
 	for(size_t size : sizes) {
-		apex::Batch<apex::SimplePolygon> batch(size, poly);
+		apex::Batch<apex::Polygon> batch(size, poly);
 		batches.push_back(batch);
 	}
 
@@ -107,7 +107,7 @@ void Benchmarker::bench_area() {
 	}
 
 	for(size_t i = 0; i < sizes.size(); ++i) {
-		apex::Batch<apex::SimplePolygon>& batch = batches[i];
+		apex::Batch<apex::Polygon>& batch = batches[i];
 		size_t size = sizes[i];
 
 		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.

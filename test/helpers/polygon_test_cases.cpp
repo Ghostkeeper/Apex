@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -9,96 +9,96 @@
 #include <cmath> //For trigonometry functions to construct an approximation of a circle.
 #include <numbers> //For use of pi to construct an approximation of a circle by radians.
 
-#include "simple_polygon_test_cases.hpp" //The definition we're implementing.
+#include "polygon_test_cases.hpp" //The definition we're implementing.
 
 namespace apex {
 
-SimplePolygon SimplePolygonTestCases::empty() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/empty.svg"
+Polygon PolygonTestCases::empty() {
+	return load_polygon(
+#include "test/data/polygon/empty.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::point() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/point.svg"
+Polygon PolygonTestCases::point() {
+	return load_polygon(
+#include "test/data/polygon/point.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::line() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/line.svg"
+Polygon PolygonTestCases::line() {
+	return load_polygon(
+#include "test/data/polygon/line.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::square_1000() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/square_1000.svg"
+Polygon PolygonTestCases::square_1000() {
+	return load_polygon(
+#include "test/data/polygon/square_1000.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::square_1000_negative_x() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/square_1000_negative_x.svg"
+Polygon PolygonTestCases::square_1000_negative_x() {
+	return load_polygon(
+#include "test/data/polygon/square_1000_negative_x.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::square_1000_negative_y() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/square_1000_negative_y.svg"
+Polygon PolygonTestCases::square_1000_negative_y() {
+	return load_polygon(
+#include "test/data/polygon/square_1000_negative_y.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::square_1000_negative_xy() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/square_1000_negative_xy.svg"
+Polygon PolygonTestCases::square_1000_negative_xy() {
+	return load_polygon(
+#include "test/data/polygon/square_1000_negative_xy.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::square_1000_centred() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/square_1000_centred.svg"
+Polygon PolygonTestCases::square_1000_centred() {
+	return load_polygon(
+#include "test/data/polygon/square_1000_centred.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::triangle_1000() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/triangle_1000.svg"
+Polygon PolygonTestCases::triangle_1000() {
+	return load_polygon(
+#include "test/data/polygon/triangle_1000.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::thin_rectangle() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/thin_rectangle.svg"
+Polygon PolygonTestCases::thin_rectangle() {
+	return load_polygon(
+#include "test/data/polygon/thin_rectangle.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::arrowhead() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/arrowhead.svg"
+Polygon PolygonTestCases::arrowhead() {
+	return load_polygon(
+#include "test/data/polygon/arrowhead.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::negative_square() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/negative_square.svg"
+Polygon PolygonTestCases::negative_square() {
+	return load_polygon(
+#include "test/data/polygon/negative_square.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::hourglass() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/hourglass.svg"
+Polygon PolygonTestCases::hourglass() {
+	return load_polygon(
+#include "test/data/polygon/hourglass.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::zero_width() {
-	return load_simple_polygon(
-#include "test/data/simple_polygon/zero_width.svg"
+Polygon PolygonTestCases::zero_width() {
+	return load_polygon(
+#include "test/data/polygon/zero_width.svg"
 	);
 }
 
-SimplePolygon SimplePolygonTestCases::circle() {
-	SimplePolygon result;
+Polygon PolygonTestCases::circle() {
+	Polygon result;
 	constexpr size_t num_vertices = 1000000;
 	constexpr coord_t radius = 1000000; //Prevent getting equal vertices by making them space out far enough.
 	result.reserve(num_vertices);
@@ -110,8 +110,8 @@ SimplePolygon SimplePolygonTestCases::circle() {
 	return result;
 }
 
-SimplePolygon SimplePolygonTestCases::load_simple_polygon(const std::string& svg) {
-	SimplePolygon result;
+Polygon PolygonTestCases::load_polygon(const std::string& svg) {
+	Polygon result;
 
 	size_t position = 0;
 	position = svg.find("<polygon ", position) + 9;
