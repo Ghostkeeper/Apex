@@ -23,17 +23,17 @@ enum class SelfIntersecting {
 	/*!
 	 * It is not known if this shape is self-intersecting.
 	 */
-	UNKNOWN,
+	UNKNOWN = 0,
 
 	/*!
 	 * The shape is definitely self-intersecting.
 	 */
-	YES,
+	YES = 4,
 
 	/*!
 	 * The shape is definitely not self-intersecting.
 	 */
-	NO,
+	NO = 8,
 
 	/*!
 	 * While the shape does not properly intersect itself, it does intersect
@@ -42,7 +42,7 @@ enum class SelfIntersecting {
 	 * This could be just single vertices touching, or parts of line segments,
 	 * or the tips of curves touching tangentially.
 	 */
-	EDGE
+	EDGE = 12
 };
 
 }

@@ -49,9 +49,13 @@ struct PolygonProperties {
 	 * - The 2 least significant bits indicate the convexity.
 	 * - The next 2 least significant bits indicate self-intersection.
 	 * - The next 2 least significant bits indicate orientation.
-	 * - The remaining 2 bits are unused.
+	 * - The remaining bits of the int (however long that is) are unused.
+	 * This uses an integer as bits, since it is by definition the same type as
+	 * the enums that it is composed of, preventing the need for copies in order
+	 * to cast. This makes at least 16 bits available (of which currently only 6
+	 * are used).
 	 */
-	uint8_t bitfield;
+	int bitfield;
 
 	PolygonProperties() : bitfield(0) {}
 
@@ -60,7 +64,7 @@ struct PolygonProperties {
 	 * \return Whether this polygon is convex or concave.
 	 */
 	Convexity convexity() {
-		return static_cast<Convexity>(bitfield & 0b00000011);
+		return static_cast<Convexity>(bitfield & 0b11);
 	}
 
 	/*!
@@ -69,7 +73,7 @@ struct PolygonProperties {
 	 * other.
 	 */
 	SelfIntersecting self_intersecting() {
-		return static_cast<SelfIntersecting>((bitfield & 0b00001100) >> 2);
+		return static_cast<SelfIntersecting>(bitfield & 0b1100);
 	}
 
 	/*!
@@ -78,7 +82,7 @@ struct PolygonProperties {
 	 * \return The winding orientation of this polygon.
 	 */
 	Orientation orientation() {
-		return static_cast<Orientation>((bitfield & 0b00110000) >> 4);
+		return static_cast<Orientation>(bitfield & 0b110000);
 	}
 
 	/*!

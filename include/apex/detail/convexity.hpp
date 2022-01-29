@@ -23,19 +23,19 @@ enum class Convexity {
 	/*!
 	 * No convexity information has been calculated yet about this shape.
 	 */
-	UNKNOWN,
+	UNKNOWN = 0,
 
 	/*!
 	 * The shape is convex. No straight line between any points inside the shape
 	 * will intersect the border of the shape.
 	 */
-	CONVEX,
+	CONVEX = 1,
 
 	/*!
 	 * The shape is concave. There are straight lines between points inside the
 	 * shape that intersect with its edges.
 	 */
-	CONCAVE,
+	CONCAVE = 2,
 
 	/*!
 	 * The shape is degenerate. Convexity has no meaning with this shape.
@@ -43,7 +43,7 @@ enum class Convexity {
 	 * For instance, the shape could be a point or a line, which has no positive
 	 * area to draw lines in, or it could be self-intersecting.
 	 */
-	DEGENERATE
+	DEGENERATE = 3
 };
 
 }

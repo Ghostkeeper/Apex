@@ -22,22 +22,22 @@ enum class Orientation {
 	/*!
 	 * The orientation of this shape is unknown.
 	 */
-	UNKNOWN,
+	UNKNOWN = 0,
 
 	/*!
 	 * The shape is entirely positive. There are no negative areas.
 	 */
-	POSITIVE,
+	POSITIVE = 16,
 
 	/*!
 	 * The shape is entirely negative. There are no positive areas.
 	 */
-	NEGATIVE,
+	NEGATIVE = 32,
 
 	/*!
 	 * The shape contains both positive and negative areas.
 	 */
-	MIXED
+	MIXED = 48
 };
 
 }
