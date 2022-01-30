@@ -68,6 +68,14 @@ struct PolygonProperties {
 	}
 
 	/*!
+	 * Change the stored convexity value.
+	 * \param convexity The new convexity to store.
+	 */
+	void set_convexity(const Convexity convexity) {
+		bitfield = (bitfield & (~0b11)) + static_cast<int>(convexity); //Clear the convexity bits, then add the new convexity to them.
+	}
+
+	/*!
 	 * Whether this polygon has any of its edges intersecting each other.
 	 * \return Whether this polygon has any of its edges intersecting each
 	 * other.
@@ -77,12 +85,28 @@ struct PolygonProperties {
 	}
 
 	/*!
+	 * Change the stored self-intersecting value.
+	 * \param self_intersecting The new self-intersecting value to store.
+	 */
+	void set_self_intersecting(const SelfIntersecting self_intersecting) {
+		bitfield = (bitfield & (~0b1100)) + static_cast<int>(self_intersecting); //Clear the self-intersecting bits, then add the new value to them.
+	}
+
+	/*!
 	 * The winding orientation of this polygon: Clockwise, counter-clockwise or
 	 * a mix. For a mix, polygons have to be self-intersecting.
 	 * \return The winding orientation of this polygon.
 	 */
 	Orientation orientation() {
 		return static_cast<Orientation>(bitfield & 0b110000);
+	}
+
+	/*!
+	 * Change the stored orientation value.
+	 * \param orientation The new orientation to store.
+	 */
+	void set_orientation(const Orientation orientation) {
+		bitfield = (bitfield & (~0b110000)) + static_cast<int>(orientation); //Clear the orientation bits, then add the new orientation to them.
 	}
 
 	/*!
