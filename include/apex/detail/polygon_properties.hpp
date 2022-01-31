@@ -55,7 +55,7 @@ struct PolygonProperties {
 	 * to cast. This makes at least 16 bits available (of which currently only 6
 	 * are used).
 	 */
-	int bitfield;
+	unsigned int bitfield;
 
 	PolygonProperties() : bitfield(0) {}
 
