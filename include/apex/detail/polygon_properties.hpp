@@ -63,7 +63,7 @@ struct PolygonProperties {
 	 * Whether this polygon is convex or concave.
 	 * \return Whether this polygon is convex or concave.
 	 */
-	Convexity convexity() {
+	Convexity convexity() const {
 		return static_cast<Convexity>(bitfield & 0b11);
 	}
 
@@ -80,7 +80,7 @@ struct PolygonProperties {
 	 * \return Whether this polygon has any of its edges intersecting each
 	 * other.
 	 */
-	SelfIntersecting self_intersecting() {
+	SelfIntersecting self_intersecting() const {
 		return static_cast<SelfIntersecting>(bitfield & 0b1100);
 	}
 
@@ -97,7 +97,7 @@ struct PolygonProperties {
 	 * a mix. For a mix, polygons have to be self-intersecting.
 	 * \return The winding orientation of this polygon.
 	 */
-	Orientation orientation() {
+	Orientation orientation() const {
 		return static_cast<Orientation>(bitfield & 0b110000);
 	}
 
