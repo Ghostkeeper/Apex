@@ -9,10 +9,6 @@
 #ifndef APEX_POLYGON_PROPERTIES
 #define APEX_POLYGON_PROPERTIES
 
-#include "convexity.hpp"
-#include "orientation.hpp"
-#include "self_intersecting.hpp"
-
 namespace apex {
 
 /*!
@@ -23,6 +19,105 @@ namespace apex {
  * computation.
  */
 struct PolygonProperties {
+	/*!
+	 * This geometric property conveys whether a shape is convex or not.
+	 *
+	 * A shape is convex when any straight line segment starting and ending
+	 * inside the shape stays completely inside the shape. If a straight line
+	 * segment exists that starts and ends inside the shape, but halfway along
+	 * exits the shape, the shape is not convex but concave.
+	 */
+	enum class Convexity {
+		/*!
+		 * No convexity information has been calculated yet about this shape.
+		 */
+		UNKNOWN = 0,
+
+		/*!
+		 * The shape is convex. No straight line between any points inside the
+		 * shape will intersect the border of the shape.
+		 */
+		CONVEX = 1,
+
+		/*!
+		 * The shape is concave. There are straight lines between points inside
+		 * the shape that intersect with its edges.
+		 */
+		CONCAVE = 2,
+
+		/*!
+		 * The shape is degenerate. Convexity has no meaning with this shape.
+		 *
+		 * For instance, the shape could be a point or a line, which has no
+		 * positive area to draw lines in, or it could be self-intersecting.
+		 */
+		DEGENERATE = 3
+	};
+
+	/*!
+	 * A property of shapes to indicate whether the border of the shape
+	 * intersects itself.
+	 *
+	 * A self-intersecting shape can be considered degenerate in some
+	 * applications, as it cannot exist in reality and makes it ambiguous what
+	 * the inside of the shape is. The inside of the shape depends on the fill
+	 * rule applied to it.
+	 */
+	enum class SelfIntersecting {
+		/*!
+		 * It is not known if this shape is self-intersecting.
+		 */
+		UNKNOWN = 0,
+
+		/*!
+		 * The shape is definitely self-intersecting.
+		 */
+		YES = 4,
+
+		/*!
+		 * The shape is definitely not self-intersecting.
+		 */
+		NO = 8,
+
+		/*!
+		 * While the shape does not properly intersect itself, it does intersect
+		 * itself counting edge cases.
+		 *
+		 * This could be just single vertices touching, or parts of line
+		 * segments, or the tips of curves touching tangentially.
+		 */
+		EDGE = 12
+	};
+
+	/*!
+	 * A property of shapes that indicates the winding orientation of the shape.
+	 *
+	 * The winding orientation is a convention in geometrical algorithms where
+	 * shapes wind counter-clockwisely if they are solid shapes, but clockwisely
+	 * if they are negative shapes, meant to subtract from other shapes.
+	 */
+	enum class Orientation {
+		/*!
+		 * The orientation of this shape is unknown.
+		 */
+		UNKNOWN = 0,
+
+		/*!
+		 * The shape is entirely positive. There are no negative areas.
+		 */
+		POSITIVE = 16,
+
+		/*!
+		 * The shape is entirely negative. There are no positive areas.
+		 */
+		NEGATIVE = 32,
+
+		/*!
+		 * The shape contains both positive and negative areas.
+		 */
+		MIXED = 48
+	};
+
 	/*!
 	 * Stores the state of these properties of a polygon.
 	 *
