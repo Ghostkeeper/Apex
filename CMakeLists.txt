@@ -83,6 +83,7 @@ if(BUILD_TESTS)
 	set(test_names
 		batch
 		coordinate
+		detail.polygon_properties
 		operations.area
 		operations.translate
 		point2
