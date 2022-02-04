@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <tuple> //Combinatoric test data.
 
 #include "apex/detail/polygon_properties.hpp" //The code under test.
 
@@ -21,5 +22,32 @@ TEST(PolyProperties, InitUnknown) {
 	EXPECT_EQ(properties.self_intersecting(), PolygonProperties::SelfIntersecting::UNKNOWN) << "The self-intersectingness must be initialised as unknown.";
 	EXPECT_EQ(properties.orientation(), PolygonProperties::Orientation::UNKNOWN) << "The orientation must be initialised as unknown.";
 }
+
+/*!
+ * Tests that run for all combinations of initial values of the properties.
+ */
+class PolygonPropertiesTest : public testing::TestWithParam<std::tuple<PolygonProperties::Convexity, PolygonProperties::SelfIntersecting, PolygonProperties::Orientation>> {};
+
+/*!
+ * Tests setting all of the properties, then retrieving them again.
+ */
+TEST_P(PolygonPropertiesTest, SetAndGet) {
+	//Create properties and set them according to the parameterised test.
+	PolygonProperties properties;
+	properties.set_convexity(std::get<0>(GetParam()));
+	properties.set_self_intersecting(std::get<1>(GetParam()));
+	properties.set_orientation(std::get<2>(GetParam()));
+
+	//Now check if they are still what we set them to.
+	EXPECT_EQ(properties.convexity(), std::get<0>(GetParam())) << "The convexity must remain what we have set it to.";
+	EXPECT_EQ(properties.self_intersecting(), std::get<1>(GetParam())) << "The self-intersectingness must remain what we have set it to.";
+	EXPECT_EQ(properties.orientation(), std::get<2>(GetParam())) << "The orientation must remain what we have set it to.";
+}
+
+INSTANTIATE_TEST_SUITE_P(AllCombinations, PolygonPropertiesTest, testing::Combine(
+		testing::Values(PolygonProperties::Convexity::UNKNOWN, PolygonProperties::Convexity::CONVEX, PolygonProperties::Convexity::CONCAVE, PolygonProperties::Convexity::DEGENERATE),
+		testing::Values(PolygonProperties::SelfIntersecting::UNKNOWN, PolygonProperties::SelfIntersecting::NO, PolygonProperties::SelfIntersecting::YES, PolygonProperties::SelfIntersecting::EDGE),
+		testing::Values(PolygonProperties::Orientation::UNKNOWN, PolygonProperties::Orientation::POSITIVE, PolygonProperties::Orientation::NEGATIVE, PolygonProperties::Orientation::MIXED)
+));
 
 }
