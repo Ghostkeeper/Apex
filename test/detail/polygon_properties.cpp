@@ -28,6 +28,12 @@ TEST(PolyProperties, InitUnknown) {
  */
 class PolygonPropertiesTest : public testing::TestWithParam<std::tuple<PolygonProperties::Convexity, PolygonProperties::SelfIntersecting, PolygonProperties::Orientation>> {};
 
+INSTANTIATE_TEST_SUITE_P(AllCombinations, PolygonPropertiesTest, testing::Combine(
+		testing::Values(PolygonProperties::Convexity::UNKNOWN, PolygonProperties::Convexity::CONVEX, PolygonProperties::Convexity::CONCAVE, PolygonProperties::Convexity::DEGENERATE),
+		testing::Values(PolygonProperties::SelfIntersecting::UNKNOWN, PolygonProperties::SelfIntersecting::NO, PolygonProperties::SelfIntersecting::YES, PolygonProperties::SelfIntersecting::EDGE),
+		testing::Values(PolygonProperties::Orientation::UNKNOWN, PolygonProperties::Orientation::POSITIVE, PolygonProperties::Orientation::NEGATIVE, PolygonProperties::Orientation::MIXED)
+));
+
 /*!
  * Tests setting all of the properties, then retrieving them again.
  */
@@ -44,10 +50,22 @@ TEST_P(PolygonPropertiesTest, SetAndGet) {
 	EXPECT_EQ(properties.orientation(), std::get<2>(GetParam())) << "The orientation must remain what we have set it to.";
 }
 
-INSTANTIATE_TEST_SUITE_P(AllCombinations, PolygonPropertiesTest, testing::Combine(
-		testing::Values(PolygonProperties::Convexity::UNKNOWN, PolygonProperties::Convexity::CONVEX, PolygonProperties::Convexity::CONCAVE, PolygonProperties::Convexity::DEGENERATE),
-		testing::Values(PolygonProperties::SelfIntersecting::UNKNOWN, PolygonProperties::SelfIntersecting::NO, PolygonProperties::SelfIntersecting::YES, PolygonProperties::SelfIntersecting::EDGE),
-		testing::Values(PolygonProperties::Orientation::UNKNOWN, PolygonProperties::Orientation::POSITIVE, PolygonProperties::Orientation::NEGATIVE, PolygonProperties::Orientation::MIXED)
-));
+/*!
+ * Tests whether the values are unknown again after resetting it.
+ */
+TEST_P(PolygonPropertiesTest, Reset) {
+	//Create properties and set them according to the parameterised test.
+	PolygonProperties properties;
+	properties.set_convexity(std::get<0>(GetParam()));
+	properties.set_self_intersecting(std::get<1>(GetParam()));
+	properties.set_orientation(std::get<2>(GetParam()));
+
+	properties.reset();
+
+	//Now check if it's all unknown.
+	EXPECT_EQ(properties.convexity(), PolygonProperties::Convexity::UNKNOWN);
+	EXPECT_EQ(properties.self_intersecting(), PolygonProperties::SelfIntersecting::UNKNOWN);
+	EXPECT_EQ(properties.orientation(), PolygonProperties::Orientation::UNKNOWN);
+}
 
 }
