@@ -152,7 +152,20 @@ struct PolygonProperties {
 	 */
 	unsigned int bitfield;
 
+	/*!
+	 * Initialises the bitfield with all unknown properties.
+	 */
 	PolygonProperties() : bitfield(0) {}
+
+	/*!
+	 * Initialises the bitfield with a specific set of properties.
+	 *
+	 * To provide these properties, you can provide the known properties as a
+	 * conjunction, such as this:
+	 * ``PolygonProperties(PolygonProperties::Convexity::CONVEX | PolygonProperties::Orientation::Positive``)
+	 * \param bitfield The bits to store in this properties object.
+	 */
+	PolygonProperties(const unsigned int bitfield) : bitfield(bitfield) {}
 
 	/*!
 	 * Whether this polygon is convex or concave.

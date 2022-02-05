@@ -55,10 +55,10 @@ TEST_P(PolygonPropertiesTest, SetAndGet) {
  */
 TEST_P(PolygonPropertiesTest, Reset) {
 	//Create properties and set them according to the parameterised test.
-	PolygonProperties properties;
-	properties.set_convexity(std::get<0>(GetParam()));
-	properties.set_self_intersecting(std::get<1>(GetParam()));
-	properties.set_orientation(std::get<2>(GetParam()));
+	PolygonProperties properties(
+		static_cast<unsigned int>(std::get<0>(GetParam()))
+		| static_cast<unsigned int>(std::get<1>(GetParam()))
+		| static_cast<unsigned int>(std::get<2>(GetParam())));
 
 	properties.reset();
 
