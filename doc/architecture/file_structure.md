@@ -21,7 +21,7 @@ Within the include directory
 The source code of the library is inside the `include` directory. Inside the include directory, there are two subdirectories:
 
 * `operations`: This contains all of the [operations](operations.md) that can be performed on geometric objects. They are grouped together because they all have generally the same structure. They define variations of geometric algorithms.
-* `detail`: This contains helper classes, functions and other things that should not be directly accessed by the user. The user doesn't need to know about the files in this folder. Everything in this folder should be defined in the `::apex::detail` namespace.
+* `detail`: This contains helper classes, functions and other things that should not be directly accessed by the user. The user doesn't need to know about the files in this folder. Everything in this folder should be defined in the `apex::detail` namespace.
 
 The rest of the files in the `include` directory are data structures that the user does need to access. In many cases, these data structures are the main way in which the user would use the library. For this reason, they can be placed directly in the `include` directory.
 

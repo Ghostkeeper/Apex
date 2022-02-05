@@ -319,7 +319,7 @@ class Subbatch; //Forward declare this subbatch here so we can use it as templat
  * for batches of batches, since they would otherwise store a separate
  * allocation of memory for each subbatch.
  *
- * The class behaves externally like \ref std::vector in its interface. For the
+ * The class behaves externally like ``std::vector`` in its interface. For the
  * case of a batch of batches, the internal behaviour is different though. It
  * will store all of the subelements in one long buffer. This buffer has only
  * one allocation. The aim of this batching is to improve performance, since
