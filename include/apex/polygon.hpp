@@ -121,6 +121,33 @@ public:
 	properties(original.properties) {} //The same properties as the original.
 
 	/*!
+	 * Assigns a different polygon to this polygon.
+	 *
+	 * This makes this polygon copy the contents from the other polygon.
+	 * \param other The polygon to assign to this one.
+	 * \return A reference to this polygon.
+	 */
+	Polygon& operator =(const Polygon& other) {
+		Batch<Point2>::operator =(other);
+		properties = other.properties; //Also copy its properties
+		return *this;
+	}
+
+	/*!
+	 * Assigns a different polygon to this polygon.
+	 *
+	 * This moves the contents of the other polygon into this one. The vertex
+	 * data can have just its reference moved, saving work.
+	 * \param other The polygon to assign to this one.
+	 * \return A reference to this polygon.
+	 */
+	Polygon& operator =(Polygon&& other) {
+		Batch<Point2>::operator =(other);
+		properties = other.properties;
+		return *this;
+	}
+
+	/*!
 	 * Tests whether this polygon is equal to another.
 	 *
 	 * Two polygons are the same if they share the same set of vertices in the
