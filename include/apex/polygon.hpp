@@ -43,7 +43,82 @@ namespace apex {
  */
 class Polygon : public Batch<Point2> {
 public:
-	using Batch<Point2>::Batch; //The constructors are the same.
+	/*!
+	 * Constructs an empty polygon, without any vertices.
+	 *
+	 * The polygon will be degenerate, since it has no vertices.
+	 */
+	Polygon() noexcept : Batch<Point2>(),
+		properties(
+			static_cast<unsigned int>(PolygonProperties::Convexity::DEGENERATE)
+			| static_cast<unsigned int>(PolygonProperties::SelfIntersecting::NO)
+			| static_cast<unsigned int>(PolygonProperties::Orientation::POSITIVE)
+		) {}
+
+	/*!
+	 * Constructs a polygon containing a single point repeated numerous times.
+	 *
+	 * The resulting polygon will be degenerate and is probably not so useful in
+	 * practical applications. However it could be useful to have a certain
+	 * number of vertices in before editing the polygon.
+	 * \param count The number of copies of the vertex to add.
+	 * \param vertex The vertex to add copies of. If no vertex is given, the
+	 * vertex at position [0, 0] will be stored.
+	 */
+	Polygon(const size_t count, const Point2& vertex = Point2(0, 0)) : Batch<Point2>(count, vertex),
+		properties(
+			static_cast<unsigned int>(PolygonProperties::Convexity::DEGENERATE)
+			| static_cast<unsigned int>(PolygonProperties::SelfIntersecting::UNKNOWN) //Would be an edge case if count >= 2.
+			| static_cast<unsigned int>(PolygonProperties::Orientation::POSITIVE)
+		) {}
+
+	/*!
+	 * Constructs a polygon, filling it with the vertices in the given range.
+	 * \param begin The first vertex to insert.
+	 * \param end The position beyond the last vertex to insert.
+	 */
+	template<class InputIterator>
+	Polygon(const InputIterator begin, const InputIterator end) : Batch<Point2>(begin, end),
+		properties(0) {} //Properties are completely unknown.
+
+	/*!
+	 * Constructs a polygon, filled with the vertices from this initialiser
+	 * list.
+	 * \param vertices The vertices to add to the polygon.
+	 */
+	Polygon(const std::initializer_list<Point2>& vertices) : Batch<Point2>(vertices),
+		properties(0) {} //Properties are completely unknown.
+
+	/*!
+	 * Copies the vertices of the subbatch into a polygon.
+	 * \param subbatch The batch to construct a polygon with.
+	 */
+	Polygon(const Subbatch<Point2>& subbatch) : Batch<Point2>(subbatch),
+		properties(0) {} //Properties are completely unknown. It doesn't necessarily come from a polygon.
+
+	/*!
+	 * Converts a batch into a polygon.
+	 * \param batch The batch to convert.
+	 */
+	Polygon(const Batch<Point2>& batch) : Batch<Point2>(batch),
+		properties(0) {} //Properties are completely unknown.
+
+	/*!
+	 * Copies a polygon.
+	 * \param original The polygon to copy.
+	 */
+	Polygon(const Polygon& original) : Batch<Point2>(original),
+		properties(original.properties) {} //The same properties as the original.
+
+	/*!
+	 * Move constructor to move a polygon into a different polygon.
+	 *
+	 * This move constructor doesn't require a copy of the polygon data, and it
+	 * can execute in constant time.
+	 * \param original The polygon to move.
+	 */
+	Polygon(Polygon&& original) : Batch<Point2>(original),
+	properties(original.properties) {} //The same properties as the original.
 
 	/*!
 	 * Tests whether this polygon is equal to another.
