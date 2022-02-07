@@ -219,6 +219,44 @@ public:
 	}
 
 	/*!
+	 * Replaces the content of the polygon with a vertex, repeated a number of
+	 * times.
+	 *
+	 * For most applications this will not be useful by itself. The polygon will
+	 * be degenerate. However it may serve as a starting point for modifying the
+	 * polygon afterwards.
+	 * \param count The number of vertices to add.
+	 * \param vertex The vertex to add multiple times.
+	 */
+	void assign(const size_t count, const Point2& vertex) {
+		properties = static_cast<unsigned int>(PolygonProperties::Convexity::DEGENERATE)
+			| static_cast<unsigned int>(PolygonProperties::SelfIntersecting::UNKNOWN) //Would be an edge case if count >= 2.
+			| static_cast<unsigned int>(PolygonProperties::Orientation::POSITIVE);
+		Batch<Point2>::assign(count, vertex);
+	}
+
+	/*!
+	 * Replaces the content of the polygon with the vertices in the given range.
+	 * \param first An iterator pointing to the first vertex to insert.
+	 * \param last An iterator indicating to beyond the last vertex to insert.
+	 */
+	template<class InputIterator>
+	void assign(InputIterator first, InputIterator last) {
+		properties.reset();
+		Batch<Point2>::assign(first, last);
+	}
+
+	/*!
+	 * Replaces the content of the polygon with the vertices in the given list.
+	 * \param vertices An initialiser list containing vertices to assign to this
+	 * polygon.
+	 */
+	void assign(const std::initializer_list<Point2>& vertices) {
+		properties.reset();
+		Batch<Point2>::assign(vertices);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
