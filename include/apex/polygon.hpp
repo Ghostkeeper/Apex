@@ -257,6 +257,16 @@ public:
 	}
 
 	/*!
+	 * Empties out the polygon, resulting in an empty polygon.
+	 */
+	void clear() noexcept {
+		properties = static_cast<unsigned int>(PolygonProperties::Convexity::DEGENERATE)
+			| static_cast<unsigned int>(PolygonProperties::SelfIntersecting::NO)
+			| static_cast<unsigned int>(PolygonProperties::Orientation::POSITIVE);
+		Batch<Point2>::clear();
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
