@@ -118,7 +118,7 @@ public:
 	 * \param original The polygon to move.
 	 */
 	Polygon(Polygon&& original) : Batch<Point2>(original),
-	properties(original.properties) {} //The same properties as the original.
+		properties(original.properties) {} //The same properties as the original.
 
 	/*!
 	 * Assigns a different polygon to this polygon.
@@ -141,7 +141,7 @@ public:
 	 * \param other The polygon to assign to this one.
 	 * \return A reference to this polygon.
 	 */
-	Polygon& operator =(Polygon&& other) {
+	Polygon& operator =(Polygon&& other) noexcept {
 		Batch<Point2>::operator =(other);
 		properties = other.properties;
 		return *this;
