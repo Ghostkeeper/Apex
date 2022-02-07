@@ -656,7 +656,7 @@ public:
 	 * \param initialiser_list A list of subbatches to store in this batch of
 	 * batches.
 	 */
-	void assign(const std::initializer_list<Batch<Element>> initialiser_list) {
+	void assign(const std::initializer_list<Batch<Element>>& initialiser_list) {
 		assign(initialiser_list.begin(), initialiser_list.end());
 	}
 
