@@ -267,6 +267,21 @@ public:
 	}
 
 	/*!
+	 * Constructs a vertex in-place at the specified position in the polygon.
+	 *
+	 * The vertex will be constructed directly inside of the memory allocated
+	 * for the polygon, possibly saving a copy.
+	 * \param position The position where to insert the new vertex.
+	 * \param arguments The constructor arguments for \ref Point2.
+	 * \return The position of the newly inserted vertex.
+	 */
+	template<typename... Arguments>
+	iterator emplace(const_iterator position, Arguments... arguments) {
+		properties.reset();
+		return Batch<Point2>::emplace(position, arguments...);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
