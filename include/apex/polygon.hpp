@@ -282,6 +282,19 @@ public:
 	}
 
 	/*!
+	 * Constructs a vertex in-place at the seam of the polygon.
+	 *
+	 * The vertex will be constructed directly inside of the memory allocated
+	 * for the polygon, possibly saving a copy.
+	 * \param arguments The constructor arguments for \ref Point2.
+	 */
+	template<typename... Arguments>
+	void emplace_back(Arguments... arguments) {
+		properties.reset();
+		Batch<Point2>::emplace_back(arguments...);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
