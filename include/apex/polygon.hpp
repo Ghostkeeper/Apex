@@ -295,6 +295,34 @@ public:
 	}
 
 	/*!
+	 * Erase the vertex in the specified position.
+	 *
+	 * The vertices around that position will be joined with a new edge.
+	 * \param position An iterator pointing to the edge to remove.
+	 * \return An iterator referring to the vertex after the removed vertex.
+	 */
+	iterator erase(const_iterator position) {
+		properties.reset();
+		return Batch<Point2>::erase(position);
+	}
+
+	/*!
+	 * Erase the vertices in the specified range.
+	 *
+	 * All vertices in that range are removed, and the vertices around it are
+	 * joined together.
+	 * \param first The first element of the range to erase.
+	 * \param last An iterator referring to the vertex after the last removed
+	 * vertex.
+	 * \return An iterator referring to the vertex after the last removed
+	 * vertex.
+	 */
+	iterator erase(const_iterator first, const_iterator last) {
+		properties.reset();
+		return Batch<Point2>::erase(first, last);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
