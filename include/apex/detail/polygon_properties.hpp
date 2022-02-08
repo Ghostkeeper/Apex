@@ -229,6 +229,58 @@ struct PolygonProperties {
 	}
 };
 
+/*!
+ * Prints a human-readable version of the convexity property to a stream.
+ * \param stream The stream to print the convexity to.
+ * \param convexity The convexity to print.
+ * \return The same stream that was given as input, useful for chaining.
+ */
+inline std::ostream& operator <<(std::ostream& stream, const PolygonProperties::Convexity convexity) {
+	switch(convexity) {
+		default:
+		case PolygonProperties::Convexity::UNKNOWN: stream << std::string("unknown"); break;
+		case PolygonProperties::Convexity::CONVEX: stream << std::string("convex"); break;
+		case PolygonProperties::Convexity::CONCAVE: stream << std::string("concave"); break;
+		case PolygonProperties::Convexity::DEGENERATE: stream << std::string("degenerate"); break;
+	}
+	return stream;
+}
+
+/*!
+ * Prints a human-readable version of the self-intersecting property to a
+ * stream.
+ * \param stream The stream to print the self-intersectingness to.
+ * \param self_intersecting The self-intersectingness to print.
+ * \return The same stream that was given as input, useful for chaining.
+ */
+inline std::ostream& operator <<(std::ostream& stream, const PolygonProperties::SelfIntersecting self_intersecting) {
+	switch(self_intersecting) {
+		default:
+		case PolygonProperties::SelfIntersecting::UNKNOWN: stream << std::string("unknown"); break;
+		case PolygonProperties::SelfIntersecting::NO: stream << std::string("no"); break;
+		case PolygonProperties::SelfIntersecting::YES: stream << std::string("yes"); break;
+		case PolygonProperties::SelfIntersecting::EDGE: stream << std::string("edge"); break;
+	}
+	return stream;
+}
+
+/*!
+ * Prints a human-readable version of the orientation property to a stream.
+ * \param stream The stream to print the orientation to.
+ * \param orientation The orientation to print.
+ * \return The same stream that was given as input, useful for chaining.
+ */
+inline std::ostream& operator <<(std::ostream& stream, const PolygonProperties::Orientation orientation) {
+	switch(orientation) {
+		default:
+		case PolygonProperties::Orientation::UNKNOWN: stream << std::string("unknown"); break;
+		case PolygonProperties::Orientation::POSITIVE: stream << std::string("positive"); break;
+		case PolygonProperties::Orientation::NEGATIVE: stream << std::string("negative"); break;
+		case PolygonProperties::Orientation::MIXED: stream << std::string("mixed"); break;
+	}
+	return stream;
+}
+
 }
 
 #endif //APEX_POLYGON_PROPERTIES
