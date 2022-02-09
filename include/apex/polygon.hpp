@@ -323,6 +323,77 @@ public:
 	}
 
 	/*!
+	 * Insert a vertex in a certain place in the polygonal chain.
+	 * \param position The vertex will be inserted before this position.
+	 * \param vertex The new coordinate to insert.
+	 * \return An iterator referring to the newly inserted vertex.
+	 */
+	iterator insert(const_iterator position, const Point2& vertex) {
+		properties.reset();
+		return Batch<Point2>::insert(position, vertex);
+	}
+
+	/*!
+	 * Insert a vertex in a certain place in the polygonal chain.
+	 *
+	 * The vertex would be moved if possible, although the vertex itself doesn't
+	 * lend itself to it.
+	 * \param position The vertex will be inserted before this position.
+	 * \param vertex The new coordinate to insert.
+	 * \return An iterator referring to the newly inserted vertex.
+	 */
+	iterator insert(const_iterator position, const Point2&& vertex) {
+		properties.reset();
+		return Batch<Point2>::insert(position, vertex);
+	}
+
+	/*!
+	 * Insert a number of copies of a vertex into the polygonal chain.
+	 *
+	 * This causes the polygon to become degenerate. However it may still be
+	 * useful if these vertices are later modified.
+	 * \param position The vertices will be inserted before this position.
+	 * \param count The number of copies of the vertex to insert.
+	 * \param vertex The vertex to insert a number of times.
+	 * \return An iterator referring to the first of the newly inserted
+	 * vertices.
+	 */
+	iterator insert(const_iterator position, const size_t count, const Point2& vertex) {
+		properties.reset();
+		return Batch<Point2>::insert(position, count, vertex);
+	}
+
+	/*!
+	 * Insert a range of vertices into the polygonal chain.
+	 *
+	 * The vertices in the given range will be copied.
+	 * \param position The vertices will be inserted before this position.
+	 * \param first An iterator referring to the first of the vertices to
+	 * insert.
+	 * \param last An iterator referring to the vertex after the last of the
+	 * vertices to insert.
+	 * \return An iterator referring to the first of the newly inserted
+	 * vertices.
+	 */
+	template<class InputIterator>
+	iterator insert(const_iterator position, InputIterator first, InputIterator last) {
+		properties.reset();
+		return Batch<Point2>::insert(position, first, last);
+	}
+
+	/*!
+	 * Insert a list of vertices into the polygonal chain.
+	 * \param position The vertices will be inserted before this position.
+	 * \param vertices A list of vertices to insert.
+	 * \return An iterator referring to the first of the newly inserted
+	 * vertices.
+	 */
+	iterator insert(const_iterator position, const std::initializer_list<Point2>& vertices) {
+		properties.reset();
+		return Batch<Point2>::insert(position, vertices);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
