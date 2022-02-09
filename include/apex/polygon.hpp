@@ -442,6 +442,15 @@ public:
 	}
 
 	/*!
+	 * Swap the contents of this polygon with that of another.
+	 * \param other The polygon to swap with.
+	 */
+	void swap(Polygon& other) {
+		std::swap(properties, other.properties); //Also swap the properties that we already know about them.
+		Batch<Point2>::swap(other);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
