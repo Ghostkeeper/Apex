@@ -422,6 +422,26 @@ public:
 	}
 
 	/*!
+	 * Resize the list of vertices of the polygon such that it reaches the given
+	 * size.
+	 *
+	 * If the new size is larger than the current size, the \ref fill_vertex
+	 * will be added in the seam numerous times until the given size is reached.
+	 * This could make the polygon degenerate, but may still be useful if the
+	 * fill vertices are properly filled in later with real data.
+	 *
+	 * If the new size is smaller than the current size, vertices will be
+	 * dropped just before the seam until the desired size is reached.
+	 * \param new_size The new number of vertices to resize this polygon to.
+	 * \param fill_vertex A vertex to insert in case the polygon needs to have
+	 * more vertices.
+	 */
+	void resize(const size_t new_size, const Point2& fill_vertex = Point2(0, 0)) {
+		properties.reset();
+		Batch<Point2>::resize(new_size, fill_vertex);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
