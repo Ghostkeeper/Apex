@@ -394,6 +394,34 @@ public:
 	}
 
 	/*!
+	 * Remove the last vertex in the polygonal chain, just before the seam.
+	 */
+	void pop_back() {
+		properties.reset();
+		Batch<Point2>::pop_back();
+	}
+
+	/*!
+	 * Add a new vertex to the polygonal chain, just before the seam.
+	 * \param vertex The position of the new vertex to insert.
+	 */
+	void push_back(const Point2& vertex) {
+		properties.reset();
+		Batch<Point2>::push_back(vertex);
+	}
+
+	/*!
+	 * Add a new vertex to the polygonal chain, just before the seam.
+	 *
+	 * The new vertex would be moved into the polygon, if possible.
+	 * \param vertex The position of the new vertex to insert.
+	 */
+	void push_back(Point2&& vertex) {
+		properties.reset();
+		Batch<Point2>::push_back(vertex);
+	}
+
+	/*!
 	 * Moves this polygon with a certain offset.
 	 *
 	 * The polygon is moved in-place.
