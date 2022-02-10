@@ -127,6 +127,47 @@ public:
 	friend std::ostream& operator <<(std::ostream& output_stream, const Point2& point) {
 		return output_stream << "[" << point.x << "," << point.y << "]";
 	}
+
+	/*!
+	 * The possible orientations that a point could have with respect to a line.
+	 */
+	enum LineOrientation {
+		/*!
+		 * The point is left of the line, when seen from the line's start to its
+		 * end position.
+		 */
+		LEFT,
+
+		/*!
+		 * The point is right of the line, when seen from the line's start to
+		 * its end position.
+		 */
+		RIGHT,
+
+		/*!
+		 * The point is exactly on the line.
+		 */
+		COLINEAR
+	};
+
+	/*!
+	 * Find the orientation of this point with respect to a line.
+	 *
+	 * The line is considered infinite, going through the two given points. The
+	 * line has a direction, going from the given \p line_start to the given
+	 * \p line_end position.
+	 *
+	 * The line's start and end positions are not allowed to be equal. The
+	 * direction of the line would be ambiguous then. The result of such a
+	 * computation is left undefined.
+	 * \param line_start One point on the line of which to check the
+	 * orientation.
+	 * \param line_end The second point on the line of which to check the
+	 * orientation.
+	 */
+	constexpr LineOrientation orientation(const Point2& line_start, const Point2& line_end) {
+		return LineOrientation::COLINEAR; //TODO: Implement.
+	}
 };
 
 }
