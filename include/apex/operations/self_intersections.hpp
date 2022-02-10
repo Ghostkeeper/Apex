@@ -76,6 +76,17 @@ Batch<PolygonSelfIntersection> self_intersections(const Polygon& polygon) {
 
 namespace detail {
 
+/*!
+ * Naive implementation to find self-intersections in a polygon.
+ *
+ * This implementation simply compares all pairs of line segments to see if they
+ * intersect. All found intersections are returned in a batch.
+ *
+ * The implementation is so simple that it may be very effective for low-
+ * resolution polygons, but it scales badly for high-resolution polygons.
+ * \param polygon The polygons to find self-intersections in.
+ * \return A batch of self-intersections.
+ */
 Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygon) {
 	Batch<PolygonSelfIntersection> result;
 	for(size_t segment_index = 0; segment_index < polygon.size(); ++segment_index) {
