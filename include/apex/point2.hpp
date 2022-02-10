@@ -129,6 +129,38 @@ public:
 	}
 
 	/*!
+	 * Compute the magnitude of the cross product of this 2D vector with another
+	 * 2D vector.
+	 *
+	 * The cross product is normally defined only for 3D vectors. This function
+	 * takes the cross product between two 3D vectors where the third coordinate
+	 * is 0. The cross product would then be the 3D vector that is perpendicular
+	 * to both of these vectors. As both of these vectors are on the plane of
+	 * those first two dimensions, the cross product would end up on position
+	 * [0, 0], but with a third dimension. The third dimension is returned here.
+	 *
+	 * The direction of the cross product is characterised with the right-hand
+	 * rule, with the two vectors of the input vectors as the index and middle
+	 * fingers, and the resulting cross product in the direction of the thumb.
+	 * It is anticommutative, meaning that taking the cross product of this
+	 * point with another will yield an inverted result to taking the cross
+	 * product of that point with this point.
+	 *
+	 * The magnitude of the cross product is the area of the parallelogram
+	 * containing the two vectors as two of its sides. The result of this
+	 * function is an area, as a result. The result could be so big that it
+	 * cannot be represented as an actual vector in this library. This geometric
+	 * property can be useful to work with the angle between the two vectors.
+	 * \param other The other point, considered as a 2D vector, to compute the
+	 * cross product with.
+	 * \return The magnitude of the cross product of this vector with the other
+	 * vector.
+	 */
+	area_t cross_product(const Point2& other) {
+		return 0; //TODO
+	}
+
+	/*!
 	 * The possible orientations that a point could have with respect to a line.
 	 */
 	enum LineOrientation {
