@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2019 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -102,6 +102,20 @@ TEST(Point, Stream) {
 	std::stringstream stream;
 	stream << point;
 	EXPECT_EQ(stream.str(), "[42,69]");
+}
+
+/*!
+ * Tests whether the cross product adheres to the right-hand rule.
+ *
+ * The right-hand rule is a mnemonic to find the direction of the cross product.
+ * When pointing the index finger in the direction of the first vector and the
+ * middle finger in the direction of the second vector, and shaping the hand in
+ * a sort of finger gun, the thumb will point in the direction of the cross
+ * product of the first and second vectors.
+ */
+TEST(Point, CrossProductRightHandRule) {
+	EXPECT_GT(Point2(1, 0).cross_product(Point2(0, 1)), 0) << "The cross product should be positive according to the right-hand rule.";
+	EXPECT_LT(Point2(0, 1).cross_product(Point2(1, 0)), 0) << "The cross product should be negative according to the right-hand rule.";
 }
 
 }
