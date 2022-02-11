@@ -157,7 +157,7 @@ public:
 	 * vector.
 	 */
 	area_t cross_product(const Point2& other) {
-		return 0; //TODO
+		return x * other.y - y * other.x;
 	}
 
 	/*!
