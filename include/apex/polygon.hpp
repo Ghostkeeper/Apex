@@ -425,10 +425,10 @@ public:
 	 * Resize the list of vertices of the polygon such that it reaches the given
 	 * size.
 	 *
-	 * If the new size is larger than the current size, the \ref fill_vertex
-	 * will be added in the seam numerous times until the given size is reached.
-	 * This could make the polygon degenerate, but may still be useful if the
-	 * fill vertices are properly filled in later with real data.
+	 * If the new size is larger than the current size, the \p fill_vertex will
+	 * be added in the seam numerous times until the given size is reached. This
+	 * could make the polygon degenerate, but may still be useful if the fill
+	 * vertices are properly filled in later with real data.
 	 *
 	 * If the new size is smaller than the current size, vertices will be
 	 * dropped just before the seam until the desired size is reached.
