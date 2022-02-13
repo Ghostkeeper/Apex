@@ -156,7 +156,7 @@ public:
 	 * \return The magnitude of the cross product of this vector with the other
 	 * vector.
 	 */
-	area_t cross_product(const Point2& other) {
+	area_t cross_product(const Point2& other) const {
 		return x * other.y - y * other.x;
 	}
 
