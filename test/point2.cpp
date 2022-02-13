@@ -118,4 +118,15 @@ TEST(Point, CrossProductRightHandRule) {
 	EXPECT_LT(Point2(0, 1).cross_product(Point2(1, 0)), 0) << "The cross product should be negative according to the right-hand rule.";
 }
 
+/*!
+ * The magnitude of the cross product should be the positive area of the
+ * parallelogram created with the two vectors as two of the sides.
+ */
+TEST(Point, CrossProductMagnitude) {
+	//Use Pythagorean triples, so that the magnitude of these vectors is integer.
+	const Point2 a(12, 16); //Magnitude 20.
+	const Point2 b = a + Point2(-4, 3); //Delta is perpendicular to a, magnitude 5. Perpendicularity makes this delta the height of the parallelogram.
+	EXPECT_EQ(std::abs(a.cross_product(b)), 20 * 5) << "The magnitude of the cross product should equal the area of the parallelogram.";
+}
+
 }
