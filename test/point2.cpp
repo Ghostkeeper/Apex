@@ -57,7 +57,7 @@ TEST_P(Point2FourCoordinates, Subtract) {
 }
 
 /*!
- * Various combinations of points to test summing and subtracting with.
+ * Various combinations of points to test with.
  */
 INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
 	std::make_tuple(0, 0, 0, 0),
@@ -127,6 +127,18 @@ TEST(Point, CrossProductMagnitude) {
 	const Point2 a(12, 16); //Magnitude 20.
 	const Point2 b = a + Point2(-4, 3); //Delta is perpendicular to a, magnitude 5. Perpendicularity makes this delta the height of the parallelogram.
 	EXPECT_EQ(std::abs(a.cross_product(b)), 20 * 5) << "The magnitude of the cross product should equal the area of the parallelogram.";
+}
+
+/*!
+ * The cross product is anti-commutative, meaning that reversing the operands
+ * causes the resulting magnitude to be inverted too.
+ */
+TEST_P(Point2FourCoordinates, CrossProductAntiCommutative) {
+	const std::tuple<coord_t, coord_t, coord_t, coord_t> parameters = GetParam();
+	const Point2 a(std::get<0>(parameters), std::get<1>(parameters));
+	const Point2 b(std::get<2>(parameters), std::get<3>(parameters));
+
+	EXPECT_EQ(a.cross_product(b), -b.cross_product(a)) << "When the operands of the cross product are switched, the result should be inverted.";
 }
 
 }
