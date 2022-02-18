@@ -161,29 +161,8 @@ public:
 	}
 
 	/*!
-	 * The possible orientations that a point could have with respect to a line.
-	 */
-	enum LineOrientation {
-		/*!
-		 * The point is left of the line, when seen from the line's start to its
-		 * end position.
-		 */
-		LEFT,
-
-		/*!
-		 * The point is right of the line, when seen from the line's start to
-		 * its end position.
-		 */
-		RIGHT,
-
-		/*!
-		 * The point is exactly on the line.
-		 */
-		COLINEAR
-	};
-
-	/*!
-	 * Find the orientation of this point with respect to a line.
+	 * Find whether this point is to the right of a line, left of a line or on a
+	 * line.
 	 *
 	 * The line is considered infinite, going through the two given points. The
 	 * line has a direction, going from the given \p line_start to the given
@@ -191,14 +170,19 @@ public:
 	 *
 	 * The line's start and end positions are not allowed to be equal. The
 	 * direction of the line would be ambiguous then. The result of such a
-	 * computation is left undefined.
+	 * computation is undefined.
 	 * \param line_start One point on the line of which to check the
 	 * orientation.
 	 * \param line_end The second point on the line of which to check the
 	 * orientation.
+	 * \return A positive number if this point is to the right of that line, or
+	 * a negative number if this point is to the left of that line, or 0 if this
+	 * point is exactly on the line.
 	 */
-	constexpr LineOrientation orientation(const Point2& line_start, const Point2& line_end) {
-		return LineOrientation::COLINEAR; //TODO: Implement.
+	constexpr area_t orientation_with_line(const Point2& line_start, const Point2& line_end) {
+		//To make line_start the coordinate origin, subtract line_start from line_end and self.
+		//Then rightness is simply the cross product.
+		return (*this - line_start).cross_product(line_end - line_start);
 	}
 };
 
