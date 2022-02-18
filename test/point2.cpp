@@ -141,4 +141,20 @@ TEST_P(Point2FourCoordinates, CrossProductAntiCommutative) {
 	EXPECT_EQ(a.cross_product(b), -b.cross_product(a)) << "When the operands of the cross product are switched, the result should be inverted.";
 }
 
+/*!
+ * Test the orientation of a point with a line if the line is horizontal.
+ */
+TEST(Point, OrientationWithLineHorizontal) {
+	const Point2 line_start(10, 10);
+	const Point2 line_end(110, 10);
+	EXPECT_LT(Point2(40, 40).orientation_with_line(line_start, line_end), 0) << "The point is above the line, which is left of the line, so the result should be negative.";
+	EXPECT_GT(Point2(40, 0).orientation_with_line(line_start, line_end), 0) << "The point is below the line, which is right of the line, so the result should be positive.";
+	EXPECT_EQ(Point2(50, 10).orientation_with_line(line_start, line_end), 0) << "The point is exactly on the line, so the result should be 0.";
+
+	//If the line switches direction, the orientation should be reversed.
+	EXPECT_GT(Point2(40, 40).orientation_with_line(line_end, line_start), 0) << "Since the line is flipped (going right to left), the point above the line is to the right, so the result should be positive.";
+	EXPECT_LT(Point2(40, 0).orientation_with_line(line_end, line_start), 0) << "Since the line is flipped (going right to left), the point below the line is to the left, so the result should be negative.";
+	EXPECT_EQ(Point2(50, 10).orientation_with_line(line_end, line_start), 0) << "The point is exactly on the line, so the result should be 0, even if the line is flipped.";
+}
+
 }
