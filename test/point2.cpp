@@ -157,4 +157,20 @@ TEST(Point, OrientationWithLineHorizontal) {
 	EXPECT_EQ(Point2(50, 10).orientation_with_line(line_end, line_start), 0) << "The point is exactly on the line, so the result should be 0, even if the line is flipped.";
 }
 
+/*!
+ * Test the orientation of a point with a line if the line is vertical.
+ */
+TEST(Point, OrientationWithLineVertical) {
+	const Point2 line_start(10, 10);
+	const Point2 line_end(10, 110);
+	EXPECT_LT(Point2(-10, 40).orientation_with_line(line_start, line_end), 0) << "The point is left of the line, so the result should be negative.";
+	EXPECT_GT(Point2(40, 40).orientation_with_line(line_start, line_end), 0) << "The point is right of the line, so the result should be negative.";
+	EXPECT_EQ(Point2(10, 40).orientation_with_line(line_start, line_end), 0) << "The point is exactly on the line, so the result should be 0.";
+
+	//If the line switches direction, the orientation should be reversed.
+	EXPECT_GT(Point2(-10, 40).orientation_with_line(line_end, line_start), 0) << "Since the line is flipped (going up to down), the point is now to its right, so the result should be positive.";
+	EXPECT_LT(Point2(40, 40).orientation_with_line(line_end, line_start), 0) << "Since the line is flipped (going up to down), the point is now to its left, so the result should be negative.";
+	EXPECT_EQ(Point2(10, 40).orientation_with_line(line_end, line_start), 0) << "The point is exactly on the line, so the result should be 0, even if the line is flipped.";
+}
+
 }
