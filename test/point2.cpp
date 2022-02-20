@@ -173,4 +173,15 @@ TEST(Point, OrientationWithLineVertical) {
 	EXPECT_EQ(Point2(10, 40).orientation_with_line(line_end, line_start), 0) << "The point is exactly on the line, so the result should be 0, even if the line is flipped.";
 }
 
+/*!
+ * Test the orientation of a point with a line if the line is diagonal.
+ */
+TEST(Point, OrientationWithLineDiagonal) {
+	const Point2 line_start(10, 110); //Going from top-left to bottom-right.
+	const Point2 line_end(110, 10);
+	EXPECT_LT(Point2(100, 100).orientation_with_line(line_start, line_end), 0) << "The point in the top-right is to the left of the line going from top-left to bottom-right, so the result should be negative.";
+	EXPECT_GT(Point2(0, 0).orientation_with_line(line_start, line_end), 0) << "The point in the bottom-left is to the right of the line going from top-left to bottom-right, so the result should be positive.";
+	EXPECT_EQ(Point2(40, 80).orientation_with_line(line_start, line_end), 0) << "The point is exactly on the diagonal line, so the result should be 0.";
+}
+
 }
