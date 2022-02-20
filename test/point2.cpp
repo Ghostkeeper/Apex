@@ -184,4 +184,30 @@ TEST(Point, OrientationWithLineDiagonal) {
 	EXPECT_EQ(Point2(40, 80).orientation_with_line(line_start, line_end), 0) << "The point is exactly on the diagonal line, so the result should be 0.";
 }
 
+/*!
+ * Test the orientation of a point with a line if the point is extremely close
+ * to the line, but not exactly on it.
+ *
+ * With a diagonal line, a lot of the points in the line cannot be represented
+ * with the integer unit coordinate system. Those points are either to the left
+ * or to the right of the infinitely thin line. If the point is very close,
+ * there is a danger that the point appears as if it's exactly on the line due
+ * to rounding errors, but in reality it's just really close. This test ensures
+ * that the points are indeed recognised as not being exactly on the line.
+ *
+ * The implementation should be able to handle that by virtue of the greater
+ * coordinate range of the output of \ref Point2::orientation_with_line.
+ */
+TEST(Point, OrientationWithLineRoundingErrors) {
+	//Create a line with a fairly shallow slope.
+	const Point2 line_start(0, 0);
+	const Point2 line_end(100, 5);
+
+	ASSERT_EQ(Point2(20, 1).orientation_with_line(line_start, line_end), 0) << "This point is exactly on the diagonal line."; //Assert this one since the rest of the tests depend on it.
+	EXPECT_LT(Point2(19, 1).orientation_with_line(line_start, line_end), 0) << "The point is slightly left of the [20,1] integer coordinate point which is on the line, so the result should be negative.";
+	EXPECT_GT(Point2(21, 1).orientation_with_line(line_start, line_end), 0) << "The point is slightly right of the [20,1] integer coordinate point which is on the line, so the result should be positive.";
+	EXPECT_LT(Point2(21, 2).orientation_with_line(line_start, line_end), 0) << "The point is slightly above the [20,1] integer coordinate point which is on the line, so the result should be negative.";
+	EXPECT_GT(Point2(19, 0).orientation_with_line(line_start, line_end), 0) << "The point is slightly below the [20,1] integer coordinate point which is on the line, so the result should be positive.";
+}
+
 }
