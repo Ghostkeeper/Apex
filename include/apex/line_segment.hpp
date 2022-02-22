@@ -11,12 +11,15 @@
 
 #include <optional>
 
+#include "apex/point2.hpp"
+
 namespace apex {
 
 /*!
  * This class represents a straight line segment, a finite part of a line.
  */
 class LineSegment {
+public:
 	/*!
 	 * Check if two line segments intersect, without constructing those line
 	 * segments.
@@ -36,14 +39,68 @@ class LineSegment {
 	 * The line segments are considered to be intersecting if one of the line
 	 * segments intersects with the body of the other. If only the endpoints of
 	 * the line segments intersect, they are not considered to be intersecting.
+	 *
+	 * The line intersection check is implemented by creating a parametric
+	 * representation of the lines through both line segments, and then finding
+	 * where both of these equations are equal. There are many equations for a
+	 * line, but the one used here is as follows:
+	 * \f$L = \vec{p} + \vec{v}t\f$
+	 * You can visualise this as the line starting from a position \f$\vec{p}\f$
+	 * and extending in the directional vector \f$\vec{v}\f$. The parameter
+	 * \f$t\f$ causes the position to slide along the line. We will choose the
+	 * position \f$\vec{p}\f$ to be the starting vertex of a line segment, and
+	 * the vector \f$\vec{v}\f$ to be the difference between the start and end
+	 * positions. The resulting position is inside of the line segment then if
+	 * \f$0 <= t <= 1\f$.
+	 *
+	 * To find the intersection between the two lines, we have to equate the two
+	 * line representations to each other, and solve for the two \f$t\f$
+	 * parameters. We can plug one of those into the formula for either of the
+	 * lines to get the position of the intersection. For simplicity, we'll
+	 * break the vectors into their X and Y components. This involves solving
+	 * the following system of equations for \f$t_a\f$ and \f$t_b\f$:
+	 * \f$\vec{p}_a.x + \vec{v}_a.x t_a = \vec{p}_b.x + \vec{v}_b.x t_b \\
+	 * \vec{p}_a.y + \vec{v}_a.y * t_a = \vec{p}_b.y + \vec{v}_b.y t_b\f$
+	 *
+	 * This system of equations solves to:
+	 * \f$t_a = \frac{\vec{v}_b.y(\vec{p}_a.x - \vec{p}_b.x) + \vec{v}_b.x(\vec{v}_b.y - \vec{v}_a.y)}{\vec{v}_b.x \vec{v}_a.y - \vec{v}_a.x \vec{v}_b.y} \\
+	 * t_b = \frac{\vec{v}_a.y(\vec{p}_a.x - \vec{p}_b.x) + \vec{v}_a.x(\vec{v}_b.y - \vec{v}_a.y)}{\vec{v}_b.x \vec{v}_a.y - \vec{v}_a.x \vec{v}_b.y} \\
+	 * \vec{v}_b.x \vec{v}_a.y - \vec{v}_a.x \vec{v}_b.y \neq 0\f$
+	 *
+	 * These formulas refer to \f$\vec{p}_a.x - \vec{p}_b.x\f$, and similarly
+	 * for ``y``, which is simply the difference between the starting positions
+	 * of the line segments and can be re-used. Similarly, the divisor of both
+	 * equations are the same and can be re-used. Care should be taken with that
+	 * divisor though, since dividing this with integer coordinates rounds the
+	 * resulting \f$t\f$ parameters to integers, losing a lot of accuracy. This
+	 * division can be delayed to the end, and instead of checking if the
+	 * parameters are between 0 and 1, we'll check if they are between 0 and the
+	 * divisor.
+	 *
+	 * If the divisor is 0, that means that the lines are parallel and there may
+	 * not be a solution. This case needs to be handled separately.
 	 * \param a_start One of the vertices of the first line segment.
 	 * \param a_end The other vertex of the first line segment.
 	 * \param b_start One of the vertices of the second line segment.
 	 * \param b_end The other vertex of the second line segment.
-	 * \return Whether the two line segments are considered to be intersecting.
+	 * \return If they intersect, the point of intersection. If they don't
+	 * intersect, an empty optional.
 	 */
 	static std::optional<Point2> intersects(const Point2& a_start, const Point2& a_end, const Point2& b_start, const Point2& b_end) {
-		return std::nullopt; //TODO: Implement.
+		const Point2 a_delta = a_end - a_start;
+		const Point2 b_delta = b_end - b_start;
+		const Point2 starts_delta = a_start - b_start;
+
+		//Find the parametric coordinates (named "t" in the documentation) where the intersection occurs.
+		const area_t divisor = a_delta.x * b_delta.y - b_delta.x * a_delta.y; //TODO: If this is 0, the lines are parallel. You can check with a cross product whether they are colinear?
+		const area_t a_parametric = b_delta.x * starts_delta.y - b_delta.y * starts_delta.x;
+		const area_t b_parametric = a_delta.x * starts_delta.y - a_delta.y * starts_delta.x;
+
+		if(a_parametric < 0 || a_parametric > divisor || b_parametric < 0 || b_parametric > divisor) //Intersection is not within the ranges of both segments.
+		{
+			return std::nullopt;
+		}
+		return a_start + Point2(a_parametric * a_delta.x / divisor, a_parametric * a_delta.y / divisor);
 	}
 };
 
