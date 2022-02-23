@@ -86,7 +86,7 @@ public:
 	 * \return If they intersect, the point of intersection. If they don't
 	 * intersect, an empty optional.
 	 */
-	static std::optional<Point2> intersects(const Point2& a_start, const Point2& a_end, const Point2& b_start, const Point2& b_end) {
+	static std::optional<Point2> intersect(const Point2& a_start, const Point2& a_end, const Point2& b_start, const Point2& b_end) {
 		const Point2 a_delta = a_end - a_start;
 		const Point2 b_delta = b_end - b_start;
 		const Point2 starts_delta = a_start - b_start;
