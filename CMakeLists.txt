@@ -84,6 +84,7 @@ if(BUILD_TESTS)
 		batch
 		coordinate
 		detail.polygon_properties
+		line_segment
 		operations.area
 		operations.translate
 		point2
