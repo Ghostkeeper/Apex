@@ -13,11 +13,22 @@
 namespace apex {
 
 /*!
- * Tests finding the intersection of two line segments simply crossing.
+ * Tests finding the intersection of two line segments that are simply crossing.
  */
 TEST(LineSegment, IntersectionCross) {
-	std::optional<Point2> result = LineSegment::intersect(Point2(10, 100), Point2(210, 20), Point2(130, 10), Point2(180, 60));
-	EXPECT_EQ(*result, Point2(160, 40));
+	const std::optional<Point2> result = LineSegment::intersect(Point2(10, 100), Point2(210, 20), Point2(130, 10), Point2(180, 60));
+	EXPECT_EQ(*result, Point2(160, 40)) << "This is where the two line segments intersect.";
+}
+
+/*!
+ * Tests finding the intersection of two line segments when they don't cross.
+ */
+TEST(LineSegment, IntersectionDontCross) {
+	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(140, 130), Point2(200, 80), Point2(230, 180));
+	EXPECT_EQ(result, std::nullopt) << "These two line segments don't intersect.";
+
+	result = LineSegment::intersect(Point2(-100, 100), Point2(-10, 10), Point2(20, 10), Point2(20, -500));
+	EXPECT_EQ(result, std::nullopt) << "These two line segments don't intersect.";
 }
 
 }
