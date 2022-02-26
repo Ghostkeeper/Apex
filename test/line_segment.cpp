@@ -13,15 +13,16 @@
 namespace apex {
 
 /*!
- * Tests finding the intersection of two line segments that are simply crossing.
+ * Test finding the intersection of two line segments that are simply crossing.
  */
 TEST(LineSegment, IntersectionCross) {
 	const std::optional<Point2> result = LineSegment::intersect(Point2(10, 100), Point2(210, 20), Point2(130, 10), Point2(180, 60));
+	ASSERT_NE(result, std::nullopt) << "These line segments intersect fully.";
 	EXPECT_EQ(*result, Point2(160, 40)) << "This is where the two line segments intersect.";
 }
 
 /*!
- * Tests finding the intersection of two line segments when they don't cross.
+ * Test finding the intersection of two line segments when they don't cross.
  */
 TEST(LineSegment, IntersectionDontCross) {
 	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(140, 130), Point2(200, 80), Point2(230, 180));
@@ -29,6 +30,28 @@ TEST(LineSegment, IntersectionDontCross) {
 
 	result = LineSegment::intersect(Point2(-100, 100), Point2(-10, 10), Point2(20, 10), Point2(20, -500));
 	EXPECT_EQ(result, std::nullopt) << "These two line segments don't intersect.";
+}
+
+/*!
+ * Test finding the intersection of two line segments when an endpoint of the
+ * line intersects with the body of the other line.
+ */
+TEST(LineSegment, IntersectionEndpoint) {
+	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(110, 60), Point2(60, 35), Point2(70, 50)); //[60,35] is exactly halfway the first line.
+	ASSERT_NE(result, std::nullopt) << "One of the vertices of the second line segment is exactly on the first line segment.";
+	EXPECT_EQ(*result, Point2(60, 35)) << "One of the vertices of the second line segment is exactly on the first line segment.";
+
+	result = LineSegment::intersect(Point2(10, 10), Point2(110, 60), Point2(70, 50), Point2(60, 35)); //Second line flipped around, to test the second vertex.
+	ASSERT_NE(result, std::nullopt) << "Even if the segment is flipped around, they still intersect.";
+	EXPECT_EQ(*result, Point2(60, 35)) << "Even if the segment is flipped around, the intersection is the same.";
+
+	result = LineSegment::intersect(Point2(60, 35), Point2(70, 50), Point2(10, 10), Point2(110, 60)); //The two line segments swapped around.
+	ASSERT_NE(result, std::nullopt) << "Swapping the two line segments around should make no difference. They still intersect.";
+	EXPECT_EQ(*result, Point2(60, 35)) << "Swapping the two line segments around should make no difference. The intersection point is the same.";
+
+	result = LineSegment::intersect(Point2(70, 50), Point2(60, 35), Point2(10, 10), Point2(110, 60)); //The first line flipped around, to test the second vertex.
+	ASSERT_NE(result, std::nullopt) << "Even if the segment is flipped around, they still intersect.";
+	EXPECT_EQ(*result, Point2(60, 35)) << "Even if the segment is flipped around, the intersection is the same.";
 }
 
 }
