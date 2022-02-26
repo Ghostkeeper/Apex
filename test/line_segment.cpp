@@ -54,4 +54,26 @@ TEST(LineSegment, IntersectionEndpoint) {
 	EXPECT_EQ(*result, Point2(60, 35)) << "Even if the segment is flipped around, the intersection is the same.";
 }
 
+/*!
+ * Test finding the intersection of two line segments when they are joined at
+ * one of their endpoints.
+ */
+TEST(LineSegment, IntersectionEndpoints) {
+	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(50, 50), Point2(60, 0), Point2(50, 50)); //At their last endpoints.
+	ASSERT_NE(result, std::nullopt) << "The line segments share a vertex, so they intersect.";
+	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
+
+	result = LineSegment::intersect(Point2(0, 0), Point2(50, 50), Point2(50, 50), Point2(60, 0)); //The second line flipped around, causing that one to intersect at its first vertex but the first at its second vertex.
+	ASSERT_NE(result, std::nullopt) << "The line segments share a vertex, so they intersect, even after flipping one of the lines.";
+	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
+
+	result = LineSegment::intersect(Point2(50, 50), Point2(0, 0), Point2(50, 50), Point2(60, 0)); //Both lines flipped around, causing them to intersect at their first vertices.
+	ASSERT_NE(result, std::nullopt) << "The line segments share their first vertices, so they intersect.";
+	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
+
+	result = LineSegment::intersect(Point2(50, 50), Point2(0, 0), Point2(60, 0), Point2(50, 50)); //Just the first line flipped around, causing that one to intersect at its first vertex but the second at its second vertex.
+	ASSERT_NE(result, std::nullopt) << "The line segments share a vertex, so they intersect, even after flipping one of the lines.";
+	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
+}
+
 }
