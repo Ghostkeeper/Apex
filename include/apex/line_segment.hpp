@@ -96,7 +96,10 @@ public:
 		const area_t a_parametric = b_delta.x * starts_delta.y - b_delta.y * starts_delta.x;
 		const area_t b_parametric = a_delta.x * starts_delta.y - a_delta.y * starts_delta.x;
 
-		if(a_parametric < 0 || a_parametric > divisor || b_parametric < 0 || b_parametric > divisor) //Intersection is not within the ranges of both segments.
+		//If both parameters are between 0 and the divisor, they intersect.
+		const area_t lower_range = std::min(area_t(0), divisor);
+		const area_t upper_range = std::max(area_t(0), divisor);
+		if(a_parametric < lower_range || a_parametric > upper_range || b_parametric < lower_range || b_parametric > upper_range) //Intersection is not within the ranges of both segments.
 		{
 			return std::nullopt;
 		}
