@@ -24,15 +24,17 @@ namespace apex {
  * identify regions that need special attention.
  *
  * This function finds all locations where an edge of the polygon hits or
- * crosses another edge, except the exact vertex at the last endpoint of the
- * edge. The first vertex of the edge is included with the edge, but the last is
- * not (otherwise it would mark all vertices where two edges come together to be
- * self-intersections). The intersection results this function returns contain
- * the location of the intersection, as well as the indices of the edges that
- * intersect. These indices refer to the edge after the vertex with that index,
- * and include the start endpoint of that edge. So given such an index, you can
- * derive that either the vertex with that index was hit, or the edge that
- * follows it.
+ * crosses another edge. The vertices of the polygon are considered to be part
+ * of both line segments they are part of, so if a vertex is positioned exactly
+ * on a self-intersection, both line segments will be reported as intersecting.
+ * Line segments are not considered to be self-intersecting with adjacent line
+ * segments though, unless they overlap lengthwise (otherwise every vertex would
+ * be the intersection of its two adjacent line segments).
+ *
+ * The intersection results this function returns contain the location of the
+ * intersection, as well as the indices of the edges that intersect. These
+ * indices refer to the edge after the vertex with that index. For instance, the
+ * edge with index 0 is the edge that connects vertex 0 with vertex 1.
  *
  * A simple example is a proper intersection, where two edges cross each other
  * halfway:
@@ -40,16 +42,15 @@ namespace apex {
  * @image html res/self_intersection_polygon_proper.svg
  *
  * An edge case for intersections occurs when an edge of the polygon crosses
- * exactly through a vertex that it is not connected to. In the result, such an
- * intersection is shown as the edge crossing the edge following the vertex that
- * was crossed, as explained above.
+ * exactly through a vertex that it is not connected to. In the result, both
+ * line segments adjacent to that vertex will be reported as intersecting.
  *
  * @image html res/self_intersection_polygon_vertex.svg
  *
  * Another edge case is when the polygon grazes itself without actually piercing
  * through to the other side. This is considered a self-intersection too, even
  * though it doesn't (directly) result in a mixed-orientation polygon. The
- * intersection result contains the edge that follows the vertex that was hit.
+ * intersection result contains both adjacent edges again.
  *
  * @image html res/self_intersection_polygon_grazing.svg
  *

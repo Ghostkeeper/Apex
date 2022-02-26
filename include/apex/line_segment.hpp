@@ -36,9 +36,11 @@ public:
 	 * probably involves writing them to memory. This function is static, and
 	 * doesn't require copying the coordinates of the line segments.
 	 *
-	 * The line segments are considered to be intersecting if one of the line
-	 * segments intersects with the body of the other. If only the endpoints of
-	 * the line segments intersect, they are not considered to be intersecting.
+	 * The endpoints of the line segment are considered to be part of the line
+	 * segment. If two line segments share a vertex for one of their endpoints,
+	 * they are considered to be intersecting. If an endpoint of one segment is
+	 * exactly somewhere halfway the other segment, they are still considered to
+	 * be intersecting.
 	 *
 	 * The line intersection check is implemented by creating a parametric
 	 * representation of the lines through both line segments, and then finding
