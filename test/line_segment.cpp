@@ -85,15 +85,15 @@ TEST(LineSegment, IntersectionParallelSeparate) {
 	EXPECT_EQ(result, std::nullopt) << "Both line segments have the same slope, but they start from different places and don't intersect or overlap.";
 
 	result = LineSegment::intersect(Point2(10, 10), Point2(110, 210), Point2(130, 250), Point2(170, 330));
-	EXPECT_EQ(result, std::nullopt) << "Both line segments are parallel and even colinear, but still separated lengthwise and don't intersect or overlap.";
+	EXPECT_EQ(result, std::nullopt) << "Both line segments are parallel and even collinear, but still separated lengthwise and don't intersect or overlap.";
 }
 
 /*!
- * Test finding the intersection of two line segments that are colinear and
+ * Test finding the intersection of two line segments that are collinear and
  * intersect at their endpoints, but don't overlap.
  */
 TEST(LineSegment, IntersectionParallelVertex) {
-	const std::optional<Point2> result = LineSegment::intersect(Point2(5, 5), Point2(50, 50), Point2(50, 50), Point2(100, 100)); //Both have a slope of 1, so they are colinear.
+	const std::optional<Point2> result = LineSegment::intersect(Point2(5, 5), Point2(50, 50), Point2(50, 50), Point2(100, 100)); //Both have a slope of 1, so they are collinear.
 	ASSERT_NE(result, std::nullopt) << "The line segments share a vertex, so they intersect.";
 	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
 }
