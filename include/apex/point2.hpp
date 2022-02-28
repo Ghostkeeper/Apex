@@ -179,7 +179,7 @@ public:
 	 * a negative number if this point is to the left of that line, or 0 if this
 	 * point is exactly on the line.
 	 */
-	constexpr area_t orientation_with_line(const Point2& line_start, const Point2& line_end) {
+	constexpr area_t orientation_with_line(const Point2& line_start, const Point2& line_end) const {
 		//To make line_start the coordinate origin, subtract line_start from line_end and self.
 		//Then rightness is simply the cross product.
 		return (*this - line_start).cross_product(line_end - line_start);
