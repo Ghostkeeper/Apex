@@ -21,7 +21,7 @@ namespace apex {
 class Point2FourCoordinates : public testing::TestWithParam<std::tuple<coord_t, coord_t, coord_t, coord_t>> {};
 
 /*!
- * Tests summing coordinates.
+ * Test summing coordinates.
  *
  * The final coordinates must be element-wise summed.
  */
@@ -39,7 +39,7 @@ TEST_P(Point2FourCoordinates, Sum) {
 }
 
 /*!
- * Tests subtracting coordinates.
+ * Test subtracting coordinates.
  *
  * The final coordinates must be element-wise subtracted.
  */
@@ -72,7 +72,7 @@ INSTANTIATE_TEST_SUITE_P(SubtractInst, Point2FourCoordinates, testing::Values(
 ));
 
 /*!
- * Tests equality between points.
+ * Test equality between points.
  */
 TEST(Point, Equality) {
 	constexpr Point2 a(10, 20); //The point to compare to.
@@ -95,7 +95,56 @@ TEST(Point, Equality) {
 }
 
 /*!
- * Tests outputting this point to a stream.
+ * Test comparing the ordering of two points lexicographically.
+ *
+ * The X coordinate should be the leading comparison. In case of ties, the Y
+ * coordinate is considered.
+ */
+TEST(Point, Comparison) {
+	constexpr Point2 point(10, 20); //The point to compare to.
+	constexpr Point2 lower(9, 21); //Lower X coordinate, which wins over the higher Y coordinate.
+	EXPECT_TRUE(lower < point);
+	EXPECT_TRUE(lower <= point);
+	EXPECT_FALSE(point < lower);
+	EXPECT_FALSE(point <= lower);
+	EXPECT_TRUE(point > lower);
+	EXPECT_TRUE(point >= lower);
+	EXPECT_FALSE(lower > point);
+	EXPECT_FALSE(lower >= point);
+
+	const Point2 higher(11, -200); //Higher X coordinate, which wins over the lower Y coordinate.
+	EXPECT_TRUE(point < higher);
+	EXPECT_TRUE(point <= higher);
+	EXPECT_FALSE(higher < point);
+	EXPECT_FALSE(higher <= point);
+	EXPECT_TRUE(higher > point);
+	EXPECT_TRUE(higher >= point);
+	EXPECT_FALSE(point > higher);
+	EXPECT_FALSE(point >= higher);
+
+	const Point2 above(10, 50); //Same X coordinate, but higher Y coordinate which breaks the tie.
+	EXPECT_TRUE(point < above);
+	EXPECT_TRUE(point <= above);
+	EXPECT_FALSE(above < point);
+	EXPECT_FALSE(above <= point);
+	EXPECT_TRUE(above > point);
+	EXPECT_TRUE(above >= point);
+	EXPECT_FALSE(point > above);
+	EXPECT_FALSE(point >= above);
+
+	const Point2 below(10, -100); //Same X coordinate, but lower Y coordinate which breaks the tie.
+	EXPECT_TRUE(below < point);
+	EXPECT_TRUE(below <= point);
+	EXPECT_FALSE(point < below);
+	EXPECT_FALSE(point <= below);
+	EXPECT_TRUE(point > below);
+	EXPECT_TRUE(point >= below);
+	EXPECT_FALSE(below > point);
+	EXPECT_FALSE(below >= point);
+}
+
+/*!
+ * Test outputting this point to a stream.
  */
 TEST(Point, Stream) {
 	const Point2 point(42, 69);
@@ -105,7 +154,7 @@ TEST(Point, Stream) {
 }
 
 /*!
- * Tests whether the cross product adheres to the right-hand rule.
+ * Test whether the cross product adheres to the right-hand rule.
  *
  * The right-hand rule is a mnemonic to find the direction of the cross product.
  * When pointing the index finger in the direction of the first vector and the
