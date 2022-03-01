@@ -21,6 +21,12 @@ namespace apex {
  * We call the two dimensions X and Y, by convention.
  *
  * The coordinates are stored as coord_t, which is a 32-bit integer type.
+ *
+ * Points can be compared lexicographically. While this has no real geometric
+ * meaning, this can be useful for certain geometric algorithms. When compared,
+ * points with lower X coordinates will be considered lower. If points have the
+ * same X coordinate, points with lower Y coordinates will be considered lower.
+ * Thus the points are compared lexicographically with X before Y.
  */
 struct Point2 {
 public:
@@ -100,23 +106,23 @@ public:
 	}
 
 	/*!
-	 * Compares two points for whether they point to the same location in space.
+	 * Compare two points lexicographically.
+	 *
+	 * This operator allows comparing points for equality, and also allows
+	 * ordering them.
+	 * Ordering points has no real geographic meaning, but may be useful for
+	 * certain algorithms. It allows scanning a number of points from one side
+	 * to another, and deals with ties well.
+	 *
+	 * The order in which points are sorted is from negative X to positive X.
+	 * When multiple points have the same X coordinate, those are sorted from
+	 * negative Y to positive Y. Thus the sorting is lexicographic with X before
+	 * Y.
 	 * \param other The point to compare with.
-	 * \return ``true`` if the two points are equal, or ``false`` otherwise.
+	 * \return An ordering, determining whether this point is earlier, equal or
+	 * later than the point it was compared with.
 	 */
-	constexpr bool operator ==(const Point2& other) const {
-		return x == other.x && y == other.y;
-	}
-
-	/*!
-	 * Compares two points for whether they point to a different location in
-	 * space.
-	 * \param other The point to compare with.
-	 * \return ``true`` if the two points are different, or ``false`` otherwise.
-	 */
-	constexpr bool operator !=(const Point2& other) const {
-		return !((*this) == other);
-	}
+	constexpr std::strong_ordering operator <=>(const Point2& other) const = default;
 
 	/*!
 	 * Overloads streaming this point.
