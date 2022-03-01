@@ -93,8 +93,25 @@ public:
 		const Point2 b_delta = b_end - b_start;
 		const Point2 starts_delta = a_start - b_start;
 
+		//Pre-compute the divisor needed for the intersection check.
+		const area_t divisor = a_delta.x * b_delta.y - b_delta.x * a_delta.y;
+		if(divisor == 0) { //The two lines are exactly parallel.
+			if(b_start.orientation_with_line(a_start, a_end) != 0) { //The lines are not collinear, so they can't intersect.
+				return std::nullopt;
+			}
+			//Order endpoints from left to right (bottom to top in case of ties) to see if their ranges have overlap.
+			const Point2 a_min = std::min(a_start, a_end);
+			const Point2 a_max = std::max(a_start, a_end);
+			const Point2 b_min = std::min(b_start, b_end);
+			const Point2 b_max = std::max(b_start, b_end);
+			if(a_max >= b_min && b_max >= a_min) { //Ranges overlap, so the line segments intersect.
+				return std::max(a_min, b_min); //The right-most of the two left-most endpoints is always in the intersection.
+			} else { //Ranges don't overlap.
+				return std::nullopt;
+			}
+		}
+
 		//Find the parametric coordinates (named "t" in the documentation) where the intersection occurs.
-		const area_t divisor = a_delta.x * b_delta.y - b_delta.x * a_delta.y; //TODO: If this is 0, the lines are parallel. You can check with a cross product whether they are colinear?
 		const area_t a_parametric = b_delta.x * starts_delta.y - b_delta.y * starts_delta.x;
 		const area_t b_parametric = a_delta.x * starts_delta.y - a_delta.y * starts_delta.x;
 
