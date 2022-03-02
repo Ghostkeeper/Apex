@@ -72,7 +72,7 @@ public:
 	 * \param other The point to add to this point.
 	 * \return This point.
 	 */
-	Point2& operator +=(const Point2& other) {
+	constexpr Point2& operator +=(const Point2& other) {
 		x += other.x;
 		y += other.y;
 		return *this;
@@ -99,7 +99,7 @@ public:
 	 * \param other The point to subtract from this point.
 	 * \return This point.
 	 */
-	Point2& operator -=(const Point2& other) {
+	constexpr Point2& operator -=(const Point2& other) {
 		x -= other.x;
 		y -= other.y;
 		return *this;
