@@ -98,4 +98,34 @@ TEST(LineSegment, IntersectionParallelVertex) {
 	EXPECT_EQ(*result, Point2(50, 50)) << "The vertex they share is here.";
 }
 
+/*!
+ * Test finding the intersection of two collinear line segments that partially
+ * overlap.
+ */
+TEST(LineSegment, IntersectionParallelOverlap) {
+	std::optional<Point2> result = LineSegment::intersect(Point2(100, 0), Point2(40, 60), Point2(70, 30), Point2(0, 100)); //Both have a slope of -1, so they are collinear. They overlap from X=40 to X=70.
+	ASSERT_NE(result, std::nullopt) << "The line segments partially overlap, so they intersect.";
+	EXPECT_GE(result->x, 30) << "The overlap is from X=40 to X=70, so a point in that range must be returned.";
+	EXPECT_LE(result->x, 70) << "The overlap is from X=40 to X=70, so a point in that range must be returned.";
+	EXPECT_EQ(result->y, 100 - result->x) << "The resulting point must be in the intersecting overlap.";
+
+	result = LineSegment::intersect(Point2(70, 30), Point2(0, 100), Point2(100, 0), Point2(40, 60)); //Same as previous case, but swapped lines.
+	ASSERT_NE(result, std::nullopt) << "The line segments partially overlap, so they intersect.";
+	EXPECT_GE(result->x, 30) << "The overlap is from X=40 to X=70, so a point in that range must be returned.";
+	EXPECT_LE(result->x, 70) << "The overlap is from X=40 to X=70, so a point in that range must be returned.";
+	EXPECT_EQ(result->y, 100 - result->x) << "The resulting point must be in the intersecting overlap.";
+
+	result = LineSegment::intersect(Point2(10, 10), Point2(10, 110), Point2(10, 30), Point2(10, 45)); //Both are vertical lines at X10, so they are collinear. The first line wholly overlaps the second.
+	ASSERT_NE(result, std::nullopt) << "The line segments overlap, so they intersect.";
+	EXPECT_EQ(result->x, 10) << "Both lines are vertical at X=10, so the intersection occurs there.";
+	EXPECT_LE(result->y, 45) << "The second line is completely overlapped, so the intersection must be in that line.";
+	EXPECT_GE(result->y, 30) << "The second line is completely overlapped, so the intersection must be in that line.";
+
+	result = LineSegment::intersect(Point2(10, 30), Point2(10, 45), Point2(10, 110), Point2(10, 10)); //Same as previous case, but swapped lines and one line is reverted.
+	ASSERT_NE(result, std::nullopt) << "The line segments overlap, so they intersect.";
+	EXPECT_EQ(result->x, 10) << "Both lines are vertical at X=10, so the intersection occurs there.";
+	EXPECT_LE(result->y, 45) << "The second line is completely overlapped, so the intersection must be in that line.";
+	EXPECT_GE(result->y, 30) << "The second line is completely overlapped, so the intersection must be in that line.";
+}
+
 }
