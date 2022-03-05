@@ -109,4 +109,13 @@ TEST(Coordinate, RoundDivideNegativeDenominator) {
 	EXPECT_EQ(round_divide(3, -2), -2) << "3 / -2 = -1.5, which rounds away from zero to -2.";
 }
 
+/*!
+ * Test rounding a division with a positive denominator but negative numerator.
+ */
+TEST(Coordinate, RoundDivideNegativeNumerator) {
+	EXPECT_EQ(round_divide(-20, 6), -3) << "-20 / 6 = -3.33333, which rounds up to -3.";
+	EXPECT_EQ(round_divide(-24, 5), -5) << "-24 / 5 = -4.8, which rounds down to -5.";
+	EXPECT_EQ(round_divide(-25, 10), -3) << "-25 / 10 = -2.5, which rounds away from zero to -3.";
+}
+
 }
