@@ -1,6 +1,6 @@
 /*
  * Library for performing massively parallel computations on polygons.
- * Copyright (C) 2021 Ghostkeeper
+ * Copyright (C) 2022 Ghostkeeper
  * This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -14,7 +14,7 @@
 namespace apex {
 
 /*!
- * Tests whether the range of coord_t is as expected.
+ * Test whether the range of coord_t is as expected.
  */
 TEST(Coordinate, CoordTRange) {
 	//Test increasing bit depths to see where it should give an overflow.
@@ -55,8 +55,8 @@ TEST(Coordinate, CoordTRange) {
 };
 
 /*!
- * Tests whether the range of areas that can be expressed with area_t matches
- * the range of coordinates expressed by coord_t.
+ * Test whether the range of areas that can be expressed with area_t matches the
+ * range of coordinates expressed by coord_t.
  *
  * Sadly, the limit of area_t is only up to half the coordinate space of coord_t
  * due to needing to represent the negative areas too.
@@ -80,6 +80,15 @@ TEST(Coordinate, RoundDivideInteger) {
 	EXPECT_EQ(round_divide(24, -8), -3) << "24 / -8 = -3, which is already integer and needs no further rounding.";
 	EXPECT_EQ(round_divide(-42, -7), 6) << "-42 / -7 = 6, which is already integer and needs no further rounding.";
 	EXPECT_EQ(round_divide(0, 10), 0) << "0 / 10 = 0, which is already integer and needs no further rounding.";
+}
+
+/*!
+ * Test rounding a division of positive numbers.
+ */
+TEST(Coordinate, RoundDividePositive) {
+	EXPECT_EQ(round_divide(7, 4), 2) << "7 / 4 = 1.75, which rounds up to 2.";
+	EXPECT_EQ(round_divide(26, 8), 3) << "26 / 8 = 3.25, which rounds down to 3.";
+	EXPECT_EQ(round_divide(27, 6), 5) << "27 / 6 = 4.5, which rounds away from 0 to 5.";
 }
 
 }
