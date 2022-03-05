@@ -71,4 +71,15 @@ TEST(Coordinate, AreaTRange) {
 	EXPECT_EQ(min_area, -max_distance / 2 * max_distance) << "There was no integer underflow.";
 }
 
+/*!
+ * Test rounding a division when the answer is already integer.
+ */
+TEST(Coordinate, RoundDivideInteger) {
+	EXPECT_EQ(round_divide(15, 3), 5) << "15 / 3 = 5, which is already integer and needs no further rounding.";
+	EXPECT_EQ(round_divide(-40, 10), -4) << "-40 / 4 = -4, which is already integer and needs no further rounding.";
+	EXPECT_EQ(round_divide(24, -8), -3) << "24 / -8 = -3, which is already integer and needs no further rounding.";
+	EXPECT_EQ(round_divide(-42, -7), 6) << "-42 / -7 = 6, which is already integer and needs no further rounding.";
+	EXPECT_EQ(round_divide(0, 10), 0) << "0 / 10 = 0, which is already integer and needs no further rounding.";
+}
+
 }
