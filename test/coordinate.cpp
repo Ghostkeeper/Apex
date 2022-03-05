@@ -88,7 +88,7 @@ TEST(Coordinate, RoundDivideInteger) {
 TEST(Coordinate, RoundDividePositive) {
 	EXPECT_EQ(round_divide(7, 4), 2) << "7 / 4 = 1.75, which rounds up to 2.";
 	EXPECT_EQ(round_divide(26, 8), 3) << "26 / 8 = 3.25, which rounds down to 3.";
-	EXPECT_EQ(round_divide(27, 6), 5) << "27 / 6 = 4.5, which rounds away from 0 to 5.";
+	EXPECT_EQ(round_divide(27, 6), 5) << "27 / 6 = 4.5, which rounds away from zero to 5.";
 }
 
 /*!
@@ -97,7 +97,16 @@ TEST(Coordinate, RoundDividePositive) {
 TEST(Coordinate, RoundDivideNegative) {
 	EXPECT_EQ(round_divide(-14, -5), 3) << "-14 / -5 = 2.8, which rounds up to 3.";
 	EXPECT_EQ(round_divide(-2, -12), 0) << "-2 / -12 = 0.16667, which rounds down to 0.";
-	EXPECT_EQ(round_divide(-28, -8), 4) << "-28 / -8 = 3.5, which rounds away from 0 to 4.";
+	EXPECT_EQ(round_divide(-28, -8), 4) << "-28 / -8 = 3.5, which rounds away from zero to 4.";
+}
+
+/*!
+ * Test rounding a division with a positive numerator but negative denominator.
+ */
+TEST(Coordinate, RoundDivideNegativeDenominator) {
+	EXPECT_EQ(round_divide(16, -5), -3) << "16 / -5 = -3.2, which rounds up to -3.";
+	EXPECT_EQ(round_divide(46, -8), -6) << "46 / -8 = -5.75, which rounds down to -6.";
+	EXPECT_EQ(round_divide(3, -2), -2) << "3 / -2 = -1.5, which rounds away from zero to -2.";
 }
 
 }
