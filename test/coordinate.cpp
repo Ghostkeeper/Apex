@@ -91,4 +91,13 @@ TEST(Coordinate, RoundDividePositive) {
 	EXPECT_EQ(round_divide(27, 6), 5) << "27 / 6 = 4.5, which rounds away from 0 to 5.";
 }
 
+/*!
+ * Test rounding a division of two negative numbers.
+ */
+TEST(Coordinate, RoundDivideNegative) {
+	EXPECT_EQ(round_divide(-14, -5), 3) << "-14 / -5 = 2.8, which rounds up to 3.";
+	EXPECT_EQ(round_divide(-2, -12), 0) << "-2 / -12 = 0.16667, which rounds down to 0.";
+	EXPECT_EQ(round_divide(-28, -8), 4) << "-28 / -8 = 3.5, which rounds away from 0 to 4.";
+}
+
 }
