@@ -122,7 +122,7 @@ public:
 		{
 			return std::nullopt;
 		}
-		return a_start + Point2(a_parametric * a_delta.x / divisor, a_parametric * a_delta.y / divisor);
+		return a_start + Point2(round_divide(a_parametric * a_delta.x, divisor), round_divide(a_parametric * a_delta.y, divisor));
 	}
 };
 
