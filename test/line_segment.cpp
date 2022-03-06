@@ -128,4 +128,29 @@ TEST(LineSegment, IntersectionParallelOverlap) {
 	EXPECT_GE(result->y, 30) << "The second line is completely overlapped, so the intersection must be in that line.";
 }
 
+/*!
+ * Test rounding the intersection coordinates to the nearest coordinate point.
+ *
+ * The actual intersection between lines is not always on an integer coordinate.
+ * Often it will be an arbitrary rational coordinate. The result of the
+ * intersection calculation must indicate the closest point that can be
+ * represented with the coordinate system.
+ */
+TEST(LineSegment, IntersectionRounding) {
+	//We'll use a diagonal line with a slope of 1:4, and then intersect that with vertical lines where the X coordinate is not divisible by 4 to get a rational intersection coordinate.
+	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(400, 100), Point2(41, 0), Point2(41, 100)); //X=41, so the intersection is at Y=10.25.
+	ASSERT_NE(result, std::nullopt) << "The line segments definitely intersect.";
+	EXPECT_EQ(*result, Point2(41, 10)) << "They intersect at [41, 10.25], which is rounded to [41, 10].";
+
+	//Same diagonal line, but now at X=43, so the intersection is at Y=10.75.
+	result = LineSegment::intersect(Point2(0, 0), Point2(400, 100), Point2(43, 0), Point2(43, 100));
+	ASSERT_NE(result, std::nullopt) << "The line segments definitely intersect.";
+	EXPECT_EQ(*result, Point2(43, 11)) << "They intersect at [43, 10.75], which is rounded to [43, 11].";
+
+	//At X=42, the intersection is at Y=10.5, which should get rounded away from zero.
+	result = LineSegment::intersect(Point2(0, 0), Point2(400, 100), Point2(42, 0), Point2(42, 100));
+	ASSERT_NE(result, std::nullopt) << "The line segments definitely intersect.";
+	EXPECT_EQ(*result, Point2(42, 11)) << "They intersect at [42, 10.5], which is rounded to [42, 11].";
+}
+
 }
