@@ -153,4 +153,18 @@ TEST(LineSegment, IntersectionRounding) {
 	EXPECT_EQ(*result, Point2(42, 11)) << "They intersect at [42, 10.5], which is rounded to [42, 11].";
 }
 
+/*!
+ * Test intersecting line segments when they narrowly miss, such that a rounding
+ * error would cause a false intersection to be found.
+ */
+TEST(LineSegment, IntersectionShallowSlopeMiss) {
+	//Make a line with a very shallow slope of 1:1000. Then when that line is almost up to 1, have another line come down to Y=1. They almost intersect, just 0.01 units short.
+	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(1000, 1), Point2(990, 10), Point2(990, 1));
+	EXPECT_EQ(result, std::nullopt) << "The line segments almost intersect, but not quite. There is 0.01 units of space between them.";
+
+	//Make a line that crosses Y=1 at a non-integer X coordinate, then another line that reaches up to just left of where Y=1 is crossed.
+	result = LineSegment::intersect(Point2(0, 0), Point2(101, 2), Point2(50, 10), Point2(50, 1));
+	EXPECT_EQ(result, std::nullopt) << "The line segments almost intersect, but not quite. The second line ends just left of where the first line crosses Y=1.";
+}
+
 }
