@@ -103,12 +103,20 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 	for(size_t segment_index = 0; segment_index < polygon.size(); ++segment_index) {
 		const Point2 this_a = polygon[segment_index];
 		const Point2 this_b = polygon[(segment_index + 1) % polygon.size()];
-		for(size_t other_index = 0; other_index < segment_index; ++other_index) {
+		for(size_t other_index = 0; other_index < segment_index - 1; ++other_index) { //Stop 1 short of the neighbouring segment, because neighbours can be checked more easily.
 			const Point2 other_a = polygon[other_index];
 			const Point2 other_b = polygon[other_index + 1]; //No need to limit to polygon size, since this can never equal segment_index.
 			std::optional<Point2> intersection = LineSegment::intersect(this_a, this_b, other_a, other_b);
 			if(intersection) { //They did intersect.
 				result.emplace_back(*intersection, segment_index, other_index);
+			}
+		}
+		//We skipped the neighbour. Check now for self-intersection with the neighbour. This can only partially overlap, never properly intersect.
+		const size_t previous_index = (segment_index + polygon.size() - 1) % polygon.size();
+		const Point2 previous = polygon[previous_index];
+		if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if colinear.
+			if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
+				result.emplace_back(this_a, previous_index, segment_index);
 			}
 		}
 	}
