@@ -45,6 +45,14 @@ struct PolygonSelfIntersection {
 	 * index of the vertex after which the intersection occurs.
 	 */
 	size_t segment_b;
+
+	/*!
+	 * Construct a new self-intersection.
+	 * \param location The position of the self-intersection.
+	 * \param segment_a The index of one of the segments that intersects.
+	 * \param segment_b The index of the other of the segments that intersects.
+	 */
+	PolygonSelfIntersection(const Point2 location, const size_t segment_a, const size_t segment_b) : location(location), segment_a(segment_a), segment_b(segment_b) {};
 };
 
 }

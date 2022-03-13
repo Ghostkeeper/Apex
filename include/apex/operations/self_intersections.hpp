@@ -11,6 +11,7 @@
 
 #include "../detail/geometry_concepts.hpp" //To disambiguate overloads.
 #include "../batch.hpp" //To perform batch operations and to return batches of self-intersections.
+#include "../line_segment.hpp" //To intersect edges of the polygon.
 #include "../self_intersection.hpp" //The return type of this operation.
 
 namespace apex {
@@ -96,17 +97,18 @@ namespace detail {
  * \param polygon The polygons to find self-intersections in.
  * \return A batch of self-intersections.
  */
+template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygon) {
 	Batch<PolygonSelfIntersection> result;
 	for(size_t segment_index = 0; segment_index < polygon.size(); ++segment_index) {
-		const Point this_a = polygon[segment_index];
-		const Point this_b = polygon[(segment_index + 1) % polygon.size()];
+		const Point2 this_a = polygon[segment_index];
+		const Point2 this_b = polygon[(segment_index + 1) % polygon.size()];
 		for(size_t other_index = 0; other_index < segment_index; ++other_index) {
-			const Point other_a = polygon[other_index];
-			const Point other_b = polygon[other_index + 1]; //No need to limit to polygon size, since this can never equal segment_index.
+			const Point2 other_a = polygon[other_index];
+			const Point2 other_b = polygon[other_index + 1]; //No need to limit to polygon size, since this can never equal segment_index.
 			std::optional<Point2> intersection = LineSegment::intersect(this_a, this_b, other_a, other_b);
 			if(intersection) { //They did intersect.
-				result.emplace_back(segment_index, other_index, *intersection);
+				result.emplace_back(*intersection, segment_index, other_index);
 			}
 		}
 	}
