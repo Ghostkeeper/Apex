@@ -15,6 +15,14 @@
 
 namespace apex {
 
+namespace detail {
+
+//Forward declare the functions we'd like to use.
+template<polygonal Polygon>
+Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygon);
+
+}
+
 /*!
  * Finds all self-intersections in a polygon.
  *
