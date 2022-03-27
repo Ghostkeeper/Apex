@@ -93,7 +93,7 @@ public:
 		const Point2 b_delta = b_end - b_start;
 
 		//Pre-compute the divisor needed for the intersection check.
-		const area_t divisor = a_delta.x * b_delta.y - b_delta.x * a_delta.y;
+		const area_t divisor = a_delta.cross_product(b_delta);
 		if(divisor == 0) { //The two lines are exactly parallel.
 			if(b_start.orientation_with_line(a_start, a_end) != 0) { //The lines are not collinear, so they can't intersect.
 				return std::nullopt;
@@ -112,8 +112,8 @@ public:
 
 		//Find the parametric coordinates (named "t" in the documentation) where the intersection occurs.
 		const Point2 starts_delta = a_start - b_start;
-		const area_t a_parametric = b_delta.x * starts_delta.y - b_delta.y * starts_delta.x;
-		const area_t b_parametric = a_delta.x * starts_delta.y - a_delta.y * starts_delta.x;
+		const area_t a_parametric = b_delta.cross_product(starts_delta);
+		const area_t b_parametric = a_delta.cross_product(starts_delta);
 
 		//If both parameters are between 0 and the divisor, they intersect.
 		const area_t lower_range = std::min(area_t(0), divisor);
@@ -192,7 +192,7 @@ public:
 		const Point2 b_delta = b_end - b_start;
 
 		//Pre-compute the divisor needed for the intersection check.
-		const area_t divisor = a_delta.x * b_delta.y - b_delta.x * a_delta.y;
+		const area_t divisor = a_delta.cross_product(b_delta);
 		if(divisor == 0) { //The two lines are exactly parallel.
 			if(b_start.orientation_with_line(a_start, a_end) != 0) { //The lines are not collinear, so they can't intersect.
 				return false;
@@ -201,8 +201,8 @@ public:
 		}
 
 		const Point2 starts_delta = a_start - b_start;
-		const area_t a_parametric = b_delta.x * starts_delta.y - b_delta.y * starts_delta.x;
-		const area_t b_parametric = a_delta.x * starts_delta.y - a_delta.y * starts_delta.x;
+		const area_t a_parametric = b_delta.cross_product(starts_delta);
+		const area_t b_parametric = a_delta.cross_product(starts_delta);
 
 		//If both parameters are between 0 and the divisor, they intersect.
 		const area_t lower_range = std::min(area_t(0), divisor);
