@@ -94,7 +94,7 @@ public:
 
 		//Pre-compute the divisor needed for the intersection check.
 		const area_t divisor = a_delta.cross_product(b_delta);
-		if(divisor == 0) { //The two lines are exactly parallel.
+		if(divisor == 0) [[unlikely]] { //The two lines are exactly parallel.
 			if(b_start.orientation_with_line(a_start, a_end) != 0) { //The lines are not collinear, so they can't intersect.
 				return std::nullopt;
 			}
@@ -193,7 +193,7 @@ public:
 
 		//Pre-compute the divisor needed for the intersection check.
 		const area_t divisor = a_delta.cross_product(b_delta);
-		if(divisor == 0) { //The two lines are exactly parallel.
+		if(divisor == 0) [[unlikely]] { //The two lines are exactly parallel.
 			if(b_start.orientation_with_line(a_start, a_end) != 0) { //The lines are not collinear, so they can't intersect.
 				return false;
 			}
