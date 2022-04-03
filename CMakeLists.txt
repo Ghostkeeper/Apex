@@ -86,6 +86,7 @@ if(BUILD_TESTS)
 		detail.polygon_properties
 		line_segment
 		operations.area
+		operations.self_intersections
 		operations.translate
 		point2
 		polygon
