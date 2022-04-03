@@ -114,12 +114,13 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 		//We skipped the neighbour. Check now for self-intersection with the neighbour. This can only partially overlap, never properly intersect.
 		const size_t previous_index = (segment_index + polygon.size() - 1) % polygon.size();
 		const Point2 previous = polygon[previous_index];
-		if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if colinear.
+		if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if collinear.
 			if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
 				result.emplace_back(this_a, previous_index, segment_index);
 			}
 		}
 	}
+	return result;
 }
 
 }
