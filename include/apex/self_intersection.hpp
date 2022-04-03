@@ -53,6 +53,16 @@ struct PolygonSelfIntersection {
 	 * \param segment_b The index of the other of the segments that intersects.
 	 */
 	PolygonSelfIntersection(const Point2 location, const size_t segment_a, const size_t segment_b) : location(location), segment_a(segment_a), segment_b(segment_b) {};
+
+	/*!
+	 * Check if two self-intersections are the same.
+	 *
+	 * They are the same if they concern the same two segments. This assumes
+	 * that the position where these two segments intersect remains unchanged.
+	 */
+	bool operator ==(const PolygonSelfIntersection& other) const {
+		return segment_a == other.segment_a && segment_b == other.segment_b;
+	}
 };
 
 }
