@@ -17,8 +17,16 @@ namespace apex {
  * Test finding self-intersections on an empty polygon.
  */
 TEST(PolygonSelfIntersections, Empty) {
-	const Batch<PolygonSelfIntersection> result; //No self-intersections, empty batch.
-	EXPECT_EQ(self_intersections(PolygonTestCases::empty()), result) << "There should be no self-intersections in the empty polygon.";
+	const Batch<PolygonSelfIntersection> ground_truth; //No self-intersections, empty batch.
+	EXPECT_EQ(self_intersections(PolygonTestCases::empty()), ground_truth) << "There should be no self-intersections in the empty polygon.";
+}
+
+/*!
+ * Test finding self-intersections on a polygon with a single vertex.
+ */
+TEST(PolygonSelfIntersections, Point) {
+	const Batch<PolygonSelfIntersection> ground_truth; //No self-intersections, empty batch.
+	EXPECT_EQ(self_intersections(PolygonTestCases::point()), ground_truth) << "With only 1 vertex, there are no edges that can intersect.";
 }
 
 }
