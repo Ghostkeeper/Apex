@@ -52,4 +52,13 @@ TEST(PolygonSelfIntersections, Square) {
 	EXPECT_EQ(self_intersections(PolygonTestCases::square_1000()), ground_truth) << "This square has no self-intersections.";
 }
 
+/*!
+ * Test finding self-intersections in a concave shape. It does not
+ * self-intersect.
+ */
+TEST(PolygonSelfIntersections, Concave) {
+	const Batch<PolygonSelfIntersection> ground_truth; //No self-intersections, empty batch.
+	EXPECT_EQ(self_intersections(PolygonTestCases::arrowhead()), ground_truth) << "This shape has no self-intersections.";
+}
+
 }
