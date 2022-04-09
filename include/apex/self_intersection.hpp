@@ -61,7 +61,7 @@ struct PolygonSelfIntersection {
 	 * that the position where these two segments intersect remains unchanged.
 	 */
 	bool operator ==(const PolygonSelfIntersection& other) const {
-		return segment_a == other.segment_a && segment_b == other.segment_b;
+		return (segment_a == other.segment_a && segment_b == other.segment_b) || (segment_a == other.segment_b && segment_b == other.segment_a);
 	}
 
 	/*!
