@@ -43,4 +43,13 @@ TEST(PolygonSelfIntersections, Line) {
 	EXPECT_TRUE(result[0].location == polygon[0] || result[0].location == polygon[1]) << "The intersecting point must be somewhere on the line.";
 }
 
+/*!
+ * Test finding self-intersections on a simple square. It does not
+ * self-intersect.
+ */
+TEST(PolygonSelfIntersections, Square) {
+	const Batch<PolygonSelfIntersection> ground_truth; //No self-intersections, empty batch.
+	EXPECT_EQ(self_intersections(PolygonTestCases::square_1000()), ground_truth) << "This square has no self-intersections.";
+}
+
 }
