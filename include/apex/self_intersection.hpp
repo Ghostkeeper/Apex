@@ -63,6 +63,16 @@ struct PolygonSelfIntersection {
 	bool operator ==(const PolygonSelfIntersection& other) const {
 		return segment_a == other.segment_a && segment_b == other.segment_b;
 	}
+
+	/*!
+	 * Overloads streaming this self-intersection.
+	 *
+	 * This is useful for debugging, since it allows printing the data to a
+	 * stream directly, giving you a reasonably readable output.
+	 */
+	friend std::ostream& operator <<(std::ostream& output_stream, const PolygonSelfIntersection& self_intersection) {
+		return output_stream << self_intersection.segment_a << "x" << self_intersection.segment_b << "->" << self_intersection.location;
+	}
 };
 
 }
