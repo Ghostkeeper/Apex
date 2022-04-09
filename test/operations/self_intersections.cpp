@@ -61,4 +61,13 @@ TEST(PolygonSelfIntersections, Concave) {
 	EXPECT_EQ(self_intersections(PolygonTestCases::arrowhead()), ground_truth) << "This shape has no self-intersections.";
 }
 
+/*!
+ * Test finding self-intersections in the clear-cut case where the polygon
+ * clearly self-intersects.
+ */
+TEST(PolygonSelfIntersections, SimpleSelfIntersection) {
+	const Batch<PolygonSelfIntersection> ground_truth = {PolygonSelfIntersection(Point2(500, 500), 0, 2)};
+	EXPECT_EQ(self_intersections(PolygonTestCases::hourglass()), ground_truth) << "The 0th segment intersects with the 2nd segment, in the middle at position 500,500.";
+}
+
 }
