@@ -75,6 +75,13 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
  * point will be reported multiple times, one for each pairwise intersection.
  *
  * @image html res/self_intersection_multiple.svg
+ *
+ * Zero-length edges are ignored in this result. It behaves as if they are not
+ * there. Thus a self-intersection is never reported involving any zero-length
+ * edge. What's more, the neighbours of a string of zero-length edges will not
+ * be reported as intersecting, even though they touch at the endpoints. Only if
+ * they touch at the endpoints but nonzero-length edges are in between will an
+ * intersection be reported.
  * \tparam Polygon A class that behaves like a polygon.
  * \param polygon A polygon to test for self-intersections.
  * \return A batch of self-intersection results. Each self-intersection contains
@@ -109,7 +116,24 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 		for overlap with the previous line (with clock arithmetic). But there is
 		only one. So we can special-case that. */
 		result.emplace_back(polygon[0], 0, 1); //The 0th segment always intersects with the 1st segment. Choose any point on the line as intersection point.
-	} else {
+	} else if(polygon.size() > 2) {
+		//Pre-compute the unique positions along the contour, to find and ignore zero-length edges.
+		std::vector<size_t> position_index;
+		position_index.reserve(polygon.size());
+		Point2 last_position = polygon[0];
+		position_index.push_back(0); //The first vertex is always a unique position.
+		size_t unique_position = 0;
+		for(size_t segment_index = 1; segment_index < polygon.size(); ++segment_index) {
+			if(polygon[segment_index] != last_position) {
+				unique_position++;
+			}
+			position_index.push_back(unique_position);
+			last_position = polygon[segment_index];
+		}
+		for(size_t segment_index = 0; segment_index < polygon.size() && polygon[segment_index] == last_position; ++segment_index) { //Also loop around to eliminate the seam.
+			position_index[segment_index] = position_index.back();
+		}
+
 		for(size_t segment_index = 0; segment_index < polygon.size(); ++segment_index) {
 			const Point2 this_a = polygon[segment_index];
 			const Point2 this_b = polygon[(segment_index + 1) % polygon.size()];
@@ -117,10 +141,16 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 				if(other_index == 0 && segment_index == polygon.size() - 1) {
 					continue; //Don't check the last vs. the first segment, as they are also neighbours.
 				}
+				if(position_index[segment_index] == position_index[other_index]) { //Same position, so this is a zero-length segment.
+					continue; //Skip. They may not intersect anything (and the segment intersection check doesn't deal with this well).
+				}
 				const Point2 other_a = polygon[other_index];
 				const Point2 other_b = polygon[other_index + 1]; //No need to limit to polygon size, since this can never equal segment_index.
 				std::optional<Point2> intersection = LineSegment::intersect(this_a, this_b, other_a, other_b);
 				if(intersection) { //They did intersect.
+					if((position_index[segment_index] == position_index[other_index + 1] && *intersection == this_a) || (position_index[(segment_index + 1) % polygon.size()] == position_index[other_index] && *intersection == this_b)) { //But it's intersecting at the endpoints with only 0-length segments in between.
+						continue; //Don't count those. They are essentially just along the same contour.
+					}
 					result.emplace_back(*intersection, segment_index, other_index);
 				}
 			}
