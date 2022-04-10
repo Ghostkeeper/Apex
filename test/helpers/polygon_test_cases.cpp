@@ -91,6 +91,12 @@ Polygon PolygonTestCases::hourglass() {
 	);
 }
 
+Polygon PolygonTestCases::zero_length_segments() {
+	return load_polygon(
+#include "test/data/polygon/zero_length_segments.svg"
+	);
+}
+
 Polygon PolygonTestCases::zero_width() {
 	return load_polygon(
 #include "test/data/polygon/zero_width.svg"

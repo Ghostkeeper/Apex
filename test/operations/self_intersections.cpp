@@ -70,4 +70,17 @@ TEST(PolygonSelfIntersections, SimpleSelfIntersection) {
 	EXPECT_EQ(self_intersections(PolygonTestCases::hourglass()), ground_truth) << "The 0th segment intersects with the 2nd segment, in the middle at position 500,500.";
 }
 
+/*!
+ * Test finding self-intersections when there are zero-length segments in the
+ * polygon.
+ *
+ * The zero-length segments may not be causing self-intersections. And the line
+ * segments around them may also not be thought of as intersecting even though
+ * their endpoints touch.
+ */
+TEST(PolygonSelfIntersections, ZeroLengthSegments) {
+	const Batch<PolygonSelfIntersection> ground_truth;
+	EXPECT_EQ(self_intersections(PolygonTestCases::zero_length_segments()), ground_truth) << "Zero-length line segments are not counted in the self-intersection.";
+}
+
 }
