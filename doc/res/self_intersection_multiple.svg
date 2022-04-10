@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+	<g stroke="black" stroke-width="4" fill="none">
+		<polygon opacity="0.4" points="2,200 100,2 300,398 100,398 300,2 398,200" /> <!-- The polygon that self-intersects. -->
+		<line x1="2" y1="200" x2="398" y2="200" /> <!-- The three segments that intersect. -->
+		<line x1="100" y1="2" x2="300" y2="398" />
+		<line x1="100" y1="398" x2="300" y2="2" />
+	</g>
+	<circle fill="red" cx="200" cy="200" r="4" /> <!-- The intersection point. -->
+	<line stroke="black" stroke-width="2" x1="208" y1="196" x2="250" y2="180" /> <!-- Line pointing at the intersection for the legend. -->
+	<text font-family="sans" size="20" x="250" y="182">Self-intersections</text>
+</svg>

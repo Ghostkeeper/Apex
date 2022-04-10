@@ -73,6 +73,8 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
  *
  * When more than two edges of the polygon intersect in one point, the same
  * point will be reported multiple times, one for each pairwise intersection.
+ *
+ * @image html res/self_intersection_multiple.svg
  * \tparam Polygon A class that behaves like a polygon.
  * \param polygon A polygon to test for self-intersections.
  * \return A batch of self-intersection results. Each self-intersection contains
