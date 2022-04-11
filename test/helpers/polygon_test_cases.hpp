@@ -39,8 +39,9 @@ public:
 	static Polygon square_1000_negative_y();
 	static Polygon square_1000_negative_xy();
 	static Polygon square_1000_centred();
-	static Polygon triangle_1000();
 	static Polygon thin_rectangle();
+	static Polygon touching_edge();
+	static Polygon triangle_1000();
 	static Polygon arrowhead();
 	static Polygon negative_square();
 	static Polygon hourglass();

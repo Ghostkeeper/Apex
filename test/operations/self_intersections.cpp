@@ -83,4 +83,16 @@ TEST(PolygonSelfIntersections, ZeroLengthSegments) {
 	EXPECT_EQ(self_intersections(PolygonTestCases::zero_length_segments()), ground_truth) << "Zero-length line segments are not counted in the self-intersection.";
 }
 
+/*!
+ * Test finding grazing zelf-intersections, where a vertex touches an edge of
+ * the same polygon.
+ */
+TEST(PolygonSelfIntersections, GrazingVertex) {
+	const Batch<PolygonSelfIntersection> ground_truth = {
+		PolygonSelfIntersection(Point2(500, 0), 0, 2),
+		PolygonSelfIntersection(Point2(500, 0), 0, 3)
+	};
+	EXPECT_EQ(self_intersections(PolygonTestCases::touching_edge()), ground_truth) << "A vertex touches an edge, so both incident edges will be reported as intersecting.";
+}
+
 }

@@ -61,15 +61,21 @@ Polygon PolygonTestCases::square_1000_centred() {
 	);
 }
 
-Polygon PolygonTestCases::triangle_1000() {
-	return load_polygon(
-#include "test/data/polygon/triangle_1000.svg"
-	);
-}
-
 Polygon PolygonTestCases::thin_rectangle() {
 	return load_polygon(
 #include "test/data/polygon/thin_rectangle.svg"
+	);
+}
+
+Polygon PolygonTestCases::touching_edge() {
+	return load_polygon(
+#include "test/data/polygon/touching_edge.svg"
+	);
+}
+
+Polygon PolygonTestCases::triangle_1000() {
+	return load_polygon(
+#include "test/data/polygon/triangle_1000.svg"
 	);
 }
 
