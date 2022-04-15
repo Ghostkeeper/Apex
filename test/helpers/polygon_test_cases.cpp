@@ -73,6 +73,12 @@ Polygon PolygonTestCases::touching_edge() {
 	);
 }
 
+Polygon PolygonTestCases::touching_vertex() {
+	return load_polygon(
+#include "test/data/polygon/touching_vertex.svg"
+	);
+}
+
 Polygon PolygonTestCases::triangle_1000() {
 	return load_polygon(
 #include "test/data/polygon/triangle_1000.svg"

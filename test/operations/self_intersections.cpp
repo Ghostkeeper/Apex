@@ -84,7 +84,7 @@ TEST(PolygonSelfIntersections, ZeroLengthSegments) {
 }
 
 /*!
- * Test finding grazing zelf-intersections, where a vertex touches an edge of
+ * Test finding grazing self-intersections, where a vertex touches an edge of
  * the same polygon.
  */
 TEST(PolygonSelfIntersections, GrazingVertex) {
@@ -93,6 +93,23 @@ TEST(PolygonSelfIntersections, GrazingVertex) {
 		PolygonSelfIntersection(Point2(500, 0), 0, 3)
 	};
 	EXPECT_EQ(self_intersections(PolygonTestCases::touching_edge()), ground_truth) << "A vertex touches an edge, so both incident edges will be reported as intersecting.";
+}
+
+/*!
+ * Test finding self-intersections where two vertices are on the same position.
+ *
+ * This is similar to the case where there are zero-length segments, in the
+ * sense that the endpoints of line segments touch. But this time there are non-
+ * zero length segments in between. It should find those then.
+ */
+TEST(PolygonSelfIntersections, TouchingVertex) {
+	const Batch<PolygonSelfIntersection> ground_truth = {
+		PolygonSelfIntersection(Point2(1000, 500), 0, 3),
+		PolygonSelfIntersection(Point2(1000, 500), 0, 4),
+		PolygonSelfIntersection(Point2(1000, 500), 1, 3),
+		PolygonSelfIntersection(Point2(1000, 500), 1, 4)
+	};
+	EXPECT_EQ(self_intersections(PolygonTestCases::touching_vertex()), ground_truth) << "Two vertices touch each other, and it's not just zero-length segments. Every non-adjacent edge must be reported as intersecting.";
 }
 
 }
