@@ -92,7 +92,11 @@ TEST(PolygonSelfIntersections, GrazingVertex) {
 		PolygonSelfIntersection(Point2(500, 0), 0, 2),
 		PolygonSelfIntersection(Point2(500, 0), 0, 3)
 	};
-	EXPECT_EQ(self_intersections(PolygonTestCases::touching_edge()), ground_truth) << "A vertex touches an edge, so both incident edges will be reported as intersecting.";
+	const Batch<PolygonSelfIntersection> result = self_intersections(PolygonTestCases::touching_edge());
+	EXPECT_EQ(ground_truth.size(), result.size()) << "A vertex touches an edge, so both edges incident to that vertex will be reported as intersecting.";
+	for(const PolygonSelfIntersection& intersection : result) {
+		EXPECT_EQ(std::count(ground_truth.begin(), ground_truth.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
+	}
 }
 
 /*!
@@ -109,7 +113,11 @@ TEST(PolygonSelfIntersections, TouchingVertex) {
 		PolygonSelfIntersection(Point2(1000, 500), 1, 3),
 		PolygonSelfIntersection(Point2(1000, 500), 1, 4)
 	};
-	EXPECT_EQ(self_intersections(PolygonTestCases::touching_vertex()), ground_truth) << "Two vertices touch each other, and it's not just zero-length segments. Every non-adjacent edge must be reported as intersecting.";
+	const Batch<PolygonSelfIntersection> result = self_intersections(PolygonTestCases::touching_vertex());
+	EXPECT_EQ(ground_truth.size(), result.size()) << "Two vertices touch each other, and it's not just zero-length segments. Every non-adjacent pair of edges must be reported as intersecting.";
+	for(const PolygonSelfIntersection& intersection : result) {
+		EXPECT_EQ(std::count(ground_truth.begin(), ground_truth.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
+	}
 }
 
 }
