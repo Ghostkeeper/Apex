@@ -244,4 +244,12 @@ TEST(LineSegment, IntersectionPointHit) {
 	EXPECT_TRUE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(60, 52))) << "This point is towards the start of the line segment, but still on it.";
 }
 
+/*!
+ * Test whether the endpoints of a segment intersect with that segment.
+ */
+TEST(LineSegment, IntersectionPointEndpoints) {
+	EXPECT_TRUE(LineSegment(Point2(100, 200), Point2(150, 400)).intersects(Point2(100, 200))) << "The starting point is considered part of the line segment, so it must intersect.";
+	EXPECT_TRUE(LineSegment(Point2(100, 200), Point2(150, 400)).intersects(Point2(150, 400))) << "The end point is considered part of the line segment, so it must intersect.";
+}
+
 }
