@@ -209,6 +209,23 @@ public:
 		const area_t upper_range = std::max(area_t(0), divisor);
 		return a_parametric >= lower_range && a_parametric <= upper_range && b_parametric >= lower_range && b_parametric <= upper_range;
 	}
+
+	/*!
+	 * The first endpoint of the line segment.
+	 */
+	Point2 start;
+
+	/*!
+	 * The second endpoint of the line segment.
+	 */
+	Point2 end;
+
+	/*!
+	 * Constructs a line segment by its two endpoints.
+	 * \param start One of the endpoints of the line segment.
+	 * \param end The other endpoint of the line segment.
+	 */
+	LineSegment(const Point2& start, const Point2& end) : start(start), end(end) {}
 };
 
 }
