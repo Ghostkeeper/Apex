@@ -268,6 +268,27 @@ public:
 	bool intersects(const LineSegment& other) const {
 		return LineSegment::intersects(start, end, other.start, other.end);
 	}
+
+	/*!
+	 * Check if the given point lies on the line segment.
+	 *
+	 * The endpoints of this line segment are considered to be intersecting with
+	 * the line segment too.
+	 *
+	 * This method works by computing the distance from the given point to the
+	 * line on which the line segment lies, using a simple projection. If it is
+	 * on that line and also within the axis-aligned bounding box around the
+	 * line segment, then it must intersect with the line segment.
+	 * \param point The point to test.
+	 * \return Whether that point lies on this line segment.
+	 */
+	bool intersects(const Point2& point) const {
+		return point.orientation_with_line(start, end) == 0
+				&& point.x >= std::min(start.x, end.x)
+				&& point.x <= std::max(start.x, end.x)
+				&& point.y >= std::min(start.y, end.y)
+				&& point.y <= std::max(start.y, end.y);
+	}
 };
 
 }
