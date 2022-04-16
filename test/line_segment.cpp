@@ -252,4 +252,13 @@ TEST(LineSegment, IntersectionPointEndpoints) {
 	EXPECT_TRUE(LineSegment(Point2(100, 200), Point2(150, 400)).intersects(Point2(150, 400))) << "The end point is considered part of the line segment, so it must intersect.";
 }
 
+/*!
+ * Test checking for intersection with a point that is on the line through the
+ * line segment, but not on the segment of that line.
+ */
+TEST(LineSegment, IntersectionPointSegmentRange) {
+	EXPECT_FALSE(LineSegment(Point2(100, 200), Point2(110, 300)).intersects(Point2(95, 150))) << "This point is on the line through the line segment, but before the starting endpoint, so not on the segment.";
+	EXPECT_FALSE(LineSegment(Point2(100, 200), Point2(110, 300)).intersects(Point2(130, 500))) << "This point is on the line through the line segment, but after the ending endpoint, so not on the segment.";
+}
+
 }
