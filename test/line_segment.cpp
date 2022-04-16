@@ -228,4 +228,12 @@ TEST(LineSegment, IntersectionLineSegmentShallowSlopeHit) {
 	EXPECT_EQ(*result, Point2(50, 1)) << "The line segments do intersect at [50, 1.02], which gets rounded to [50, 1].";
 }
 
+/*!
+ * Test checking for intersection with a point that is not on the line segment.
+ */
+TEST(LineSegment, IntersectionPointMiss) {
+	EXPECT_FALSE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(80, 55))) << "This point is not on the line segment, but next to it.";
+	EXPECT_FALSE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(90, 120))) << "This point is pretty far from the line segment, not on it.";
+}
+
 }
