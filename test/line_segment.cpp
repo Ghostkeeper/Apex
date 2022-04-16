@@ -236,4 +236,12 @@ TEST(LineSegment, IntersectionPointMiss) {
 	EXPECT_FALSE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(90, 120))) << "This point is pretty far from the line segment, not on it.";
 }
 
+/*!
+ * Test checking for intersection with a point that is on the line segment.
+ */
+TEST(LineSegment, IntersectionPointHit) {
+	EXPECT_TRUE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(75, 55))) << "This point is exactly halfway the line segment, and so is intersecting.";
+	EXPECT_TRUE(LineSegment(Point2(50, 50), Point2(100, 60)).intersects(Point2(60, 52))) << "This point is towards the start of the line segment, but still on it.";
+}
+
 }
