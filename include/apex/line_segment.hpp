@@ -21,8 +21,8 @@ namespace apex {
 class LineSegment {
 public:
 	/*!
-	 * Check if two line segments intersect, without constructing those line
-	 * segments.
+	 * Find the intersection between two line segments, without constructing
+	 * those line segments.
 	 *
 	 * If the line segments intersect, the intersecting position, rounded to the
 	 * nearest coordinate point, will be returned. If the line segments don't
@@ -226,6 +226,48 @@ public:
 	 * \param end The other endpoint of the line segment.
 	 */
 	LineSegment(const Point2& start, const Point2& end) : start(start), end(end) {}
+
+	/*!
+	 * Find the intersection between this line segment and another line segment.
+	 *
+	 * If the line segments intersect, the intersecting position, rounded to the
+	 * nearest coordinate point, will be returned. If the line segments don't
+	 * intersect, the optional result will not have a value. If the line
+	 * segments overlap (wholly or partially), a point inside of the overlapping
+	 * part will be returned, which is the point closest to \ref a_start . The
+	 * intersection coordinates will be rounded to the nearest unit coordinate.
+	 *
+	 * The endpoints of the line segment are considered to be part of the line
+	 * segment. If two line segments share a vertex for one of their endpoints,
+	 * they are considered to be intersecting. If an endpoint of one segment is
+	 * exactly somewhere halfway the other segment, they are still considered to
+	 * be intersecting.
+	 * \param other The line segment to find the intersection with.
+	 * \return If they intersect, the point of intersection. If they don't
+	 * intersect, an empty optional.
+	 */
+	std::optional<Point2> intersect(const LineSegment& other) const {
+		return LineSegment::intersect(start, end, other.start, other.end);
+	}
+
+	/*!
+	 * Check if this line segment intersects with another line segment.
+	 *
+	 * This method only checks whether they intersect, and doesn't bother
+	 * computing where the intersection is.
+	 *
+	 * The endpoints of the line segment are considered to be part of the line
+	 * segment. If two line segments share a vertex for one of their endpoints,
+	 * they are considered to be intersecting. If an endpoint of one segment is
+	 * exactly somewhere halfway the other segment, they are still considered to
+	 * be intersecting. Line segments that are parallel and overlap are
+	 * considered to be intersecting too.
+	 * \param other The line segment to check for intersections with.
+	 * \return Whether the two line segments intersect.
+	 */
+	bool intersects(const LineSegment& other) const {
+		return LineSegment::intersects(start, end, other.start, other.end);
+	}
 };
 
 }
