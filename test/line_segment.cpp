@@ -24,7 +24,7 @@ TEST(LineSegment, Construction) {
 /*!
  * Test finding the intersection of two line segments that are simply crossing.
  */
-TEST(LineSegment, IntersectionCross) {
+TEST(LineSegment, IntersectionLineSegmentCross) {
 	EXPECT_TRUE(                        LineSegment::intersects(Point2(10, 100), Point2(210, 20), Point2(130, 10), Point2(180, 60))) << "These line segments intersect fully.";
 	const std::optional<Point2> result = LineSegment::intersect(Point2(10, 100), Point2(210, 20), Point2(130, 10), Point2(180, 60));
 	ASSERT_NE(result, std::nullopt) << "These line segments intersect fully.";
@@ -34,7 +34,7 @@ TEST(LineSegment, IntersectionCross) {
 /*!
  * Test finding the intersection of two line segments when they don't cross.
  */
-TEST(LineSegment, IntersectionDontCross) {
+TEST(LineSegment, IntersectionLineSegmentDontCross) {
 	EXPECT_FALSE(                 LineSegment::intersects(Point2(10, 10), Point2(140, 130), Point2(200, 80), Point2(230, 180))) << "These two line segments don't intersect.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(140, 130), Point2(200, 80), Point2(230, 180));
 	EXPECT_EQ(result, std::nullopt) << "These two line segments don't intersect.";
@@ -48,7 +48,7 @@ TEST(LineSegment, IntersectionDontCross) {
  * Test finding the intersection of two line segments when an endpoint of the
  * line intersects with the body of the other line.
  */
-TEST(LineSegment, IntersectionEndpoint) {
+TEST(LineSegment, IntersectionLineSegmentEndpoint) {
 	//[60,35] is exactly halfway the first line.
 	EXPECT_TRUE(                  LineSegment::intersects(Point2(10, 10), Point2(110, 60), Point2(60, 35), Point2(70, 50))) << "One of the vertices of the second line is exactly on the first line segment.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(110, 60), Point2(60, 35), Point2(70, 50));
@@ -78,7 +78,7 @@ TEST(LineSegment, IntersectionEndpoint) {
  * Test finding the intersection of two line segments when they are joined at
  * one of their endpoints.
  */
-TEST(LineSegment, IntersectionEndpoints) {
+TEST(LineSegment, IntersectionLineSegmentEndpoints) {
 	//At their last endpoints.
 	EXPECT_TRUE(                  LineSegment::intersects(Point2(0, 0), Point2(50, 50), Point2(60, 0), Point2(50, 50))) << "The line segments share a vertex, so they intersect.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(50, 50), Point2(60, 0), Point2(50, 50));
@@ -108,7 +108,7 @@ TEST(LineSegment, IntersectionEndpoints) {
  * Test finding the intersection of two line segments when they don't intersect,
  * but are parallel anyway.
  */
-TEST(LineSegment, IntersectionParallelSeparate) {
+TEST(LineSegment, IntersectionLineSegmentParallelSeparate) {
 	//Both have a slope of 2 over 1, so they are parallel, but don't intersect.
 	EXPECT_FALSE(                 LineSegment::intersects(Point2(10, 10), Point2(110, 210), Point2(50, 50), Point2(90, 130))) << "Both line segments have the same slope, but they start from different places and don't intersect or overlap.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(10, 10), Point2(110, 210), Point2(50, 50), Point2(90, 130));
@@ -123,7 +123,7 @@ TEST(LineSegment, IntersectionParallelSeparate) {
  * Test finding the intersection of two line segments that are collinear and
  * intersect at their endpoints, but don't overlap.
  */
-TEST(LineSegment, IntersectionParallelVertex) {
+TEST(LineSegment, IntersectionLineSegmentParallelVertex) {
 	//Both have a slope of 1, so they are collinear.
 	EXPECT_TRUE(                        LineSegment::intersects(Point2(5, 5), Point2(50, 50), Point2(50, 50), Point2(100, 100))) << "The line segments share a vertex, so they intersect.";
 	const std::optional<Point2> result = LineSegment::intersect(Point2(5, 5), Point2(50, 50), Point2(50, 50), Point2(100, 100));
@@ -135,7 +135,7 @@ TEST(LineSegment, IntersectionParallelVertex) {
  * Test finding the intersection of two collinear line segments that partially
  * overlap.
  */
-TEST(LineSegment, IntersectionParallelOverlap) {
+TEST(LineSegment, IntersectionLineSegmentParallelOverlap) {
 	//Both have a slope of -1, so they are collinear. They overlap from X=40 to X=70.
 	EXPECT_TRUE(                  LineSegment::intersects(Point2(100, 0), Point2(40, 60), Point2(70, 30), Point2(0, 100))) << "The line segments partially overlap, so they intersect.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(100, 0), Point2(40, 60), Point2(70, 30), Point2(0, 100));
@@ -177,7 +177,7 @@ TEST(LineSegment, IntersectionParallelOverlap) {
  * intersection calculation must indicate the closest point that can be
  * represented with the coordinate system.
  */
-TEST(LineSegment, IntersectionRounding) {
+TEST(LineSegment, IntersectionLineSegmentRounding) {
 	//We'll use a diagonal line with a slope of 1:4, and then intersect that with vertical lines where the X coordinate is not divisible by 4 to get a rational intersection coordinate.
 	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(400, 100), Point2(41, 0), Point2(41, 100)); //X=41, so the intersection is at Y=10.25.
 	ASSERT_NE(result, std::nullopt) << "The line segments definitely intersect.";
@@ -198,7 +198,7 @@ TEST(LineSegment, IntersectionRounding) {
  * Test intersecting line segments when they narrowly miss, such that a rounding
  * error would cause a false intersection to be found.
  */
-TEST(LineSegment, IntersectionShallowSlopeMiss) {
+TEST(LineSegment, IntersectionLineSegmentShallowSlopeMiss) {
 	//Make a line with a very shallow slope of 1:1000. Then when that line is almost up to 1, have another line come down to Y=1. They almost intersect, just 0.01 units short.
 	EXPECT_FALSE(                 LineSegment::intersects(Point2(0, 0), Point2(1000, 1), Point2(990, 10), Point2(990, 1))) << "The line segments almost intersect, but not quite. There is 0.01 units of space between them.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(1000, 1), Point2(990, 10), Point2(990, 1));
@@ -214,7 +214,7 @@ TEST(LineSegment, IntersectionShallowSlopeMiss) {
  * Test intersecting line segment when they only slightly hit, such that a
  * rounding error would cause them to be found to not be intersecting.
  */
-TEST(LineSegment, IntersectionShallowSlopeHit) {
+TEST(LineSegment, IntersectionLineSegmentShallowSlopeHit) {
 	//Make a line with a very shallow slope of 1:1000. Then create a line that dips just below that shallow slope.
 	EXPECT_TRUE(                  LineSegment::intersects(Point2(0, 0), Point2(1000, 1), Point2(10, 10), Point2(10, 0))) << "The line segments intersect, but only slightly.";
 	std::optional<Point2> result = LineSegment::intersect(Point2(0, 0), Point2(1000, 1), Point2(10, 10), Point2(10, 0));
