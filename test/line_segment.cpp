@@ -261,4 +261,12 @@ TEST(LineSegment, IntersectionPointSegmentRange) {
 	EXPECT_FALSE(LineSegment(Point2(100, 200), Point2(110, 300)).intersects(Point2(130, 500))) << "This point is on the line through the line segment, but after the ending endpoint, so not on the segment.";
 }
 
+/*!
+ * Test intersection with points that are missing so narrowly that a rounding
+ * error might make it be considered to be intersecting.
+ */
+TEST(LineSegment, IntersectionPointRounding) {
+	EXPECT_FALSE(LineSegment(Point2(100, 200), Point2(110, 1200)).intersects(Point2(105, 601))) << "This point is slightly above the halfway point, only 0.01 units away from the line, but not on it!";
+}
+
 }
