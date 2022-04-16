@@ -13,6 +13,15 @@
 namespace apex {
 
 /*!
+ * Tests constructing a line segment.
+ */
+TEST(LineSegment, Construction) {
+	LineSegment line_segment(Point2(100, 200), Point2(300, 400));
+	EXPECT_EQ(line_segment.start, Point2(100, 200)) << "The first endpoint must be properly stored.";
+	EXPECT_EQ(line_segment.end, Point2(300, 400)) << "The second endpoint must be properly stored.";
+}
+
+/*!
  * Test finding the intersection of two line segments that are simply crossing.
  */
 TEST(LineSegment, IntersectionCross) {
