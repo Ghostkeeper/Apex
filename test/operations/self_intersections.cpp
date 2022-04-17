@@ -39,8 +39,7 @@ TEST(PolygonSelfIntersections, Line) {
 	const Polygon polygon = PolygonTestCases::line();
 	const Batch<PolygonSelfIntersection> result = self_intersections(polygon);
 	EXPECT_EQ(result.size(), 1) << "The polygon is closed, so it has two line segments. They exactly overlap, so that's an intersection.";
-	//For simplicity we'll just check equality with the vertices, since in practice we'll always return one of the endpoints, not somewhere halfway the line.
-	EXPECT_TRUE(result[0].location == polygon[0] || result[0].location == polygon[1]) << "The intersecting point must be somewhere on the line.";
+	EXPECT_TRUE(LineSegment(polygon[0], polygon[1]).intersects(result[0].location)) << "The intersecting point must be somewhere on the line segment.";
 }
 
 /*!
