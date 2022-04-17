@@ -48,6 +48,7 @@ public:
 	static Polygon hourglass();
 	static Polygon zero_length_segments();
 	static Polygon zero_width();
+	static Polygon zero_width_connection();
 
 	/*!
 	 * An approximation of a circle. This is actually a regular n-gon with 1

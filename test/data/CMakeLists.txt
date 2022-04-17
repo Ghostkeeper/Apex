@@ -34,6 +34,7 @@ prepare_string_literal("polygon/touching_vertex.svg")
 prepare_string_literal("polygon/triangle_1000.svg")
 prepare_string_literal("polygon/zero_length_segments.svg")
 prepare_string_literal("polygon/zero_width.svg")
+prepare_string_literal("polygon/zero_width_connection.svg")
 
 prepare_string_literal("polygon_batch/edge_cases.svg")
 prepare_string_literal("polygon_batch/empty.svg")

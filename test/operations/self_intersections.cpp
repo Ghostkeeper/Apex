@@ -119,4 +119,62 @@ TEST(PolygonSelfIntersections, TouchingVertex) {
 	}
 }
 
+/*!
+ * Test finding self-intersections when multiple subsequent edges are
+ * overlapping.
+ */
+TEST(PolygonSelfIntersections, OverlappingSegments) {
+	//The ground truth in this test features some intersecting points, as well as overlapping segments.
+	//These are the intersecting points. The segments are tested manually.
+	const Batch<PolygonSelfIntersection> ground_truth_points = {
+		PolygonSelfIntersection(Point2(100, 500), 0, 13), //Tip of left triangle.
+		PolygonSelfIntersection(Point2(100, 500), 0, 14),
+		PolygonSelfIntersection(Point2(100, 500), 1, 14),
+		PolygonSelfIntersection(Point2(900, 500), 5, 8), //Tip of right triangle.
+		PolygonSelfIntersection(Point2(900, 500), 6, 8),
+		PolygonSelfIntersection(Point2(900, 500), 6, 9),
+		PolygonSelfIntersection(Point2(300, 1000), 1, 12), //Vertices along the overlapping parts.
+		PolygonSelfIntersection(Point2(300, 1000), 2, 13),
+		PolygonSelfIntersection(Point2(400, 1000), 2, 11),
+		PolygonSelfIntersection(Point2(400, 1000), 3, 12),
+		PolygonSelfIntersection(Point2(700, 1000), 4, 9),
+		PolygonSelfIntersection(Point2(700, 1000), 5, 10)
+	};
+	/* The overlapping segments are:
+	 - 1 with 13
+	 - 2 with 12
+	 - 3 with part of 11
+	 - part of 4 with part of 11
+	 - part of 4 with 10
+	 - 5 with 9
+	*/
+	const Polygon polygon = PolygonTestCases::zero_width_connection();
+	const Batch<PolygonSelfIntersection> result = self_intersections(polygon);
+	EXPECT_EQ(ground_truth_points.size() + 6, result.size()) << "The result must include all of the intersecting points, plus 6 overlapping segments.";
+	for(const PolygonSelfIntersection& intersection : ground_truth_points) {
+		EXPECT_EQ(std::count(ground_truth_points.begin(), ground_truth_points.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
+	}
+	//Check for the overlapping segments being reported.
+	for(const PolygonSelfIntersection& intersection : result) {
+		if((intersection.segment_a == 1 && intersection.segment_b == 13) || (intersection.segment_a == 13 && intersection.segment_b == 1)) {
+			EXPECT_TRUE(LineSegment(polygon[1], polygon[2]).intersects(intersection.location)) << "Segment 1 overlaps with segment 13.";
+		}
+		if((intersection.segment_a == 2 && intersection.segment_b == 12) || (intersection.segment_a == 12 && intersection.segment_b == 2)) {
+			EXPECT_TRUE(LineSegment(polygon[2], polygon[3]).intersects(intersection.location)) << "Segment 2 overlaps with segment 12.";
+		}
+		if((intersection.segment_a == 3 && intersection.segment_b == 11) || (intersection.segment_a == 11 && intersection.segment_b == 3)) {
+			EXPECT_TRUE(LineSegment(polygon[3], polygon[4]).intersects(intersection.location)) << "Segment 3 overlaps with part of segment 11.";
+		}
+		if((intersection.segment_a == 4 && intersection.segment_b == 11) || (intersection.segment_a == 11 && intersection.segment_b == 4)) {
+			EXPECT_TRUE(LineSegment(polygon[4], polygon[11]).intersects(intersection.location)) << "Part of segment 4 overlaps with part of segment 11.";
+		}
+		if((intersection.segment_a == 4 && intersection.segment_b == 10) || (intersection.segment_a == 10 && intersection.segment_b == 4)) {
+			EXPECT_TRUE(LineSegment(polygon[11], polygon[10]).intersects(intersection.location)) << "Part of segment 4 intersects with segment 10.";
+		}
+		if((intersection.segment_a == 5 && intersection.segment_b == 9) || (intersection.segment_a == 9 && intersection.segment_b == 5)) {
+			EXPECT_TRUE(LineSegment(polygon[5], polygon[9]).intersects(intersection.location)) << "Segment 5 overlaps with segment 9.";
+		}
+	}
+}
+
 }

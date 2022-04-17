@@ -115,6 +115,12 @@ Polygon PolygonTestCases::zero_width() {
 	);
 }
 
+Polygon PolygonTestCases::zero_width_connection() {
+	return load_polygon(
+#include "test/data/polygon/zero_width_connection.svg"
+	);
+}
+
 Polygon PolygonTestCases::circle() {
 	Polygon result;
 	constexpr size_t num_vertices = 1000000;
