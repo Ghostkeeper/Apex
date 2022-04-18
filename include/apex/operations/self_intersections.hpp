@@ -126,9 +126,9 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 		for(size_t segment_index = 1; segment_index < polygon.size(); ++segment_index) {
 			if(polygon[segment_index] != last_position) {
 				unique_position++;
+				last_position = polygon[segment_index];
 			}
 			position_index.push_back(unique_position);
-			last_position = polygon[segment_index];
 		}
 		for(size_t segment_index = 0; segment_index < polygon.size() && polygon[segment_index] == last_position; ++segment_index) { //Also loop around to eliminate the seam.
 			position_index[segment_index] = position_index.back();
