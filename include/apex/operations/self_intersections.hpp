@@ -116,7 +116,7 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 		for overlap with the previous line (with clock arithmetic). But there is
 		only one. So we can special-case that. */
 		result.emplace_back(polygon[0], 0, 1); //The 0th segment always intersects with the 1st segment. Choose any point on the line as intersection point.
-	} else if(polygon.size() > 2) {
+	} else if(polygon.size() > 2) [[likely]] {
 		//Pre-compute the unique positions along the contour, to find and ignore zero-length edges.
 		std::vector<size_t> position_index;
 		position_index.reserve(polygon.size());
