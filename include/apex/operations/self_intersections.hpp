@@ -275,7 +275,15 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 		//We skipped each vertex' neighbour. Check now for self-intersection with the neighbour. This can only partially overlap, never properly intersect.
 		#pragma omp parallel for
 		for(size_t vertex = 0; vertex < polygon.size(); ++vertex) { //Check the two adjacent edges around this vertex.
-			//TODO.
+			const Point2 this_a = polygon[vertex];
+			const Point2 this_b = polygon[(vertex + 1) % polygon.size()];
+			const size_t previous_index = (vertex + polygon.size() - 1) % polygon.size();
+			const Point2 previous = polygon[previous_index];
+			if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if collinear.
+				if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
+					result.emplace_back(this_a, previous_index, vertex);
+				}
+			}
 		}
 	}
 	return result;
