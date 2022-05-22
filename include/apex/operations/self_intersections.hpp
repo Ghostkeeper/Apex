@@ -21,6 +21,8 @@ namespace detail {
 //Forward declare the functions we'd like to use.
 template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygon);
+template<polygonal Polygon>
+Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygon);
 
 }
 
@@ -193,7 +195,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			size_t unique_position = start_vertex; //Likely too high if there are any duplicates in previous segments, but for the algorithm this doesn't matter.
 			for(size_t vertex = start_vertex + 1; vertex < end_vertex; ++vertex) {
 				if(polygon[vertex] != last_position) {
-					unique_positon++;
+					unique_position++;
 					last_position = polygon[vertex];
 				}
 				position_index[vertex] = unique_position;
@@ -207,7 +209,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			if(polygon[previous_vertex] == polygon[start_vertex]) {
 				const size_t old_position_index = position_index[start_vertex];
 				for(size_t vertex = start_vertex; vertex < end_vertex && position_index[vertex] == old_position_index; ++vertex) {
-					postion_index[vertex] = position_index[previous_index];
+					position_index[vertex] = position_index[previous_vertex];
 				}
 			}
 		}
@@ -259,7 +261,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
 				continue; //Don't check the last vs. the first segment, as they are also neighbours.
 			}
-			if(position_index[segment_index] == position_index[other_index]) { //Same position, so this is a zero-length segment.
+			if(position_index[segment_a] == position_index[segment_b]) { //Same position, so this is a zero-length segment.
 				continue; //Skip. They may not intersect anything (and the segment intersection check doesn't deal with this well).
 			}
 			const Point2 a_start = polygon[segment_a];
