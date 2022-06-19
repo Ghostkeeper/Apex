@@ -253,8 +253,10 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			size_t segment_a = pair_index % (polygon.size() - 1);
 			size_t segment_b = pair_index / (polygon.size() - 1);
 			if(segment_a > segment_b) {
-				segment_a = polygon.size() - 1 - segment_a; //Mirror A dimension.
-				segment_b = polygon.size() - 1 - segment_b; //Mirror B dimension.
+				segment_a = polygon.size() - 2 - segment_a; //Mirror A dimension. -1 for iterating up to size-1, another -1 because we'll skip adjacent vertices here.
+				segment_b = polygon.size() - 1 - segment_b; //Mirror B dimension. -1 for iterating up to size-1
+			} else {
+				segment_b += 2; //Don't compare the same vertex or adjacent vertices.
 			}
 
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
