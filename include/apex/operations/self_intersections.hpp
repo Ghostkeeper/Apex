@@ -254,9 +254,8 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			size_t segment_b = pair_index / (polygon.size() - 1);
 			if(segment_a > segment_b) {
 				segment_a = polygon.size() - 1 - segment_a; //Mirror A dimension.
-				segment_b = polygon.size() - 2 - segment_b; //Mirror B dimension.
+				segment_b = polygon.size() - 1 - segment_b; //Mirror B dimension.
 			}
-			segment_b += 2;
 
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
 				continue; //Don't check the last vs. the first segment, as they are also neighbours.
