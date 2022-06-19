@@ -270,7 +270,11 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			const Point2 b_end = polygon[(segment_b + 1) % polygon.size()];
 			const std::optional<Point2> intersection = LineSegment::intersect(a_start, a_end, b_start, b_end);
 			if(intersection) { //They did intersect.
-				//TODO: Report intersection. We may have to make thread-local arrays that are later combined?
+				if((position_index[segment_a] == position_index[segment_b + 1] && *intersection == a_start) || (position_index[(segment_a + 1) % polygon.size()] == position_index[segment_b] && *intersection == a_end)) { //But it's intersecting at the endpoints with only 0-length segments in between.
+					continue; //Don't count those. They are essentially just along the same contour.
+				}
+				#pragma omp critical
+				result.emplace_back(*intersection, segment_a, segment_b);
 			}
 		}
 
