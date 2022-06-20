@@ -143,6 +143,9 @@ Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygo
 				if(other_index == 0 && segment_index == polygon.size() - 1) {
 					continue; //Don't check the last vs. the first segment, as they are also neighbours.
 				}
+				if(position_index[segment_index] == position_index[(segment_index + 1) % polygon.size()] && position_index[other_index] == position_index[(other_index + 1) % polygon.size()]) {
+					continue; //Segments of zero length don't intersect with anything.
+				}
 				if(position_index[segment_index] == position_index[other_index]) { //Same position, so this is a zero-length segment.
 					continue; //Skip. They may not intersect anything (and the segment intersection check doesn't deal with this well).
 				}
@@ -261,6 +264,9 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
 				continue; //Don't check the last vs. the first segment, as they are also neighbours.
+			}
+			if(position_index[segment_a] == position_index[segment_a + 1] || position_index[segment_b] == position_index[(segment_b + 1) % polygon.size()]) {
+				continue; //Segments of zero length don't intersect with anything.
 			}
 			if(position_index[segment_a] == position_index[segment_b]) { //Same position, so this is a zero-length segment.
 				continue; //Skip. They may not intersect anything (and the segment intersection check doesn't deal with this well).
