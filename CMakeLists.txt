@@ -83,6 +83,7 @@ if(BUILD_TESTS)
 	set(test_names
 		batch
 		coordinate
+		detail.pairing_function
 		detail.polygon_properties
 		line_segment
 		operations.area
