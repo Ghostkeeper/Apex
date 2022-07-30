@@ -29,6 +29,16 @@ TEST(PairingFunction, NumPairingsIncludingAdjacent) {
 	EXPECT_EQ(num_pairings(10), 45) << "With 10 items, there are 45 possible pairings.";
 }
 
+TEST(PairingFunction, NumPairingsExcludingAdjacent) {
+	EXPECT_EQ(num_pairings(0, false), 0) << "Without any items, there are no possible pairs of items either.";
+	EXPECT_EQ(num_pairings(1, false), 0) << "With just 1 item, you can't make any pairs.";
+	EXPECT_EQ(num_pairings(2, false), 0) << "There is a pair, but they are adjacent so it shouldn't be counted.";
+	EXPECT_EQ(num_pairings(3, false), 1) << "There is 1 non-adjacent pair: 0-2. Other pairs are all adjacent.";
+	EXPECT_EQ(num_pairings(4, false), 3) << "There are 3 non-adjacent pairs: 0-2, 0-3 and 1-3.";
+	EXPECT_EQ(num_pairings(5, false), 6) << "There are 6 non-adjacent pairs: 0-2, 0-3, 0-4, 1-3, 1-4 and 2-4.";
+	EXPECT_EQ(num_pairings(10, false), 36) << "With 10 items, there are 36 non-adjacent pairings.";
+}
+
 }
 
 }
