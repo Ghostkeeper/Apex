@@ -40,7 +40,10 @@ namespace detail {
  * \param include_adjacent Whether to count adjacent elements as well.
  */
 size_t num_pairings(const size_t num_elements, const bool include_adjacent = true) {
-	return (num_elements - 1) * (num_elements - (!include_adjacent * 2)) / 2;
+	if(num_elements == 0) {
+		return 0;
+	}
+	return (num_elements - 1) * (num_elements - !include_adjacent * 2) / 2;
 }
 
 }
