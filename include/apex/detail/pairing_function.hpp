@@ -110,13 +110,20 @@ size_t num_pairings(const size_t num_elements, const bool include_adjacent = tru
  * \return A pair of indices in the set of elements.
  */
 std::pair<size_t, size_t> enumerate_pairs(const size_t num_elements, const size_t index, const bool include_adjacent = true) {
-	size_t a = index % (num_elements - 1);
-	size_t b = index / (num_elements - 1);
-	if(a > b) {
-		a = num_elements - 1 - include_adjacent - a; //Mirror A dimension. -1 for iterating up to size-1, another -1 if we skip adjacent vertices here.
-		b = num_elements - 1 - b; //Mirror B dimension. -1 for iterating up to size-1
+	size_t a;
+	size_t b;
+	if(num_elements <= 1) [[unlikely]] { //There are no pairs. Any index will be out of range. Catch this to prevent arithmetic exceptions.
+		a = 0;
+		b = 0;
 	} else {
-		b += 1 + include_adjacent; //Don't compare the same vertex or adjacent vertices.
+		size_t a = index % (num_elements - 1);
+		size_t b = index / (num_elements - 1);
+		if(a > b) {
+			a = num_elements - 1 - include_adjacent - a; //Mirror A dimension. -1 for iterating up to size-1, another -1 if we skip adjacent vertices here.
+			b = num_elements - 1 - b; //Mirror B dimension. -1 for iterating up to size-1
+		} else {
+			b += 1 + include_adjacent; //Don't compare the same vertex or adjacent vertices.
+		}
 	}
 	return std::make_pair(a, b);
 }
