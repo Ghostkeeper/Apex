@@ -58,6 +58,20 @@ TEST(PairingFunction, EnumerateZero) {
 	enumerate_pairs(num_elements, 1, false);
 }
 
+/*!
+ * Enumerate pairs in a set of size one.
+ *
+ * There can be no pairs if there's just one element. But the function shouldn't
+ * crash on it either.
+ */
+TEST(PairingFunction, EnumerateOne) {
+	constexpr size_t num_elements = 1;
+	enumerate_pairs(num_elements, 0, true); //Don't crash when computing this.
+	enumerate_pairs(num_elements, 0, false);
+	enumerate_pairs(num_elements, 1, true);
+	enumerate_pairs(num_elements, 1, false);
+}
+
 }
 
 }
