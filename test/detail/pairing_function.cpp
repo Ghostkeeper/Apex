@@ -29,6 +29,11 @@ TEST(PairingFunction, NumPairingsIncludingAdjacent) {
 	EXPECT_EQ(num_pairings(10), 45) << "With 10 items, there are 45 possible pairings.";
 }
 
+/*!
+ * Test finding how many possible pairings there are in sets of certain sizes.
+ *
+ * In this test, adjacent numbers are not allowed.
+ */
 TEST(PairingFunction, NumPairingsExcludingAdjacent) {
 	EXPECT_EQ(num_pairings(0, false), 0) << "Without any items, there are no possible pairs of items either.";
 	EXPECT_EQ(num_pairings(1, false), 0) << "With just 1 item, you can't make any pairs.";
@@ -37,6 +42,20 @@ TEST(PairingFunction, NumPairingsExcludingAdjacent) {
 	EXPECT_EQ(num_pairings(4, false), 3) << "There are 3 non-adjacent pairs: 0-2, 0-3 and 1-3.";
 	EXPECT_EQ(num_pairings(5, false), 6) << "There are 6 non-adjacent pairs: 0-2, 0-3, 0-4, 1-3, 1-4 and 2-4.";
 	EXPECT_EQ(num_pairings(10, false), 36) << "With 10 items, there are 36 non-adjacent pairings.";
+}
+
+/*!
+ * Enumerate pairs in a set of size zero.
+ *
+ * There are no elements in the set, so any enumeration will produce out of
+ * bounds results. But it shouldn't crash on it.
+ */
+TEST(PairingFunction, EnumerateZero) {
+	constexpr size_t num_elements = 0;
+	enumerate_pairs(num_elements, 0, true); //Don't crash when computing this.
+	enumerate_pairs(num_elements, 0, false);
+	enumerate_pairs(num_elements, 1, true);
+	enumerate_pairs(num_elements, 1, false);
 }
 
 }
