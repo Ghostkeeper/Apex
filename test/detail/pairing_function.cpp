@@ -72,6 +72,18 @@ TEST(PairingFunction, EnumerateOne) {
 	enumerate_pairs(num_elements, 1, false);
 }
 
+/*!
+ * Enumerate pairs from a set of 2 elements.
+ *
+ * There is only 1 possible pair, but it is adjacent.
+ */
+TEST(PairingFunction, EnumerateTwo) {
+	constexpr size_t num_elements = 2;
+	constexpr std::pair<size_t, size_t> ground_truth = {0, 1};
+	EXPECT_EQ(enumerate_pairs(num_elements, 0, true), ground_truth);// << "There is one pair in a set of 2, and it contains both indices (0 and 1).";
+	enumerate_pairs(num_elements, 0, false); //Disallowing adjacent pairs causes there to be no remaining pairs. Just check if it doesn't crash.
+}
+
 }
 
 }
