@@ -1,5 +1,5 @@
 #Library for performing massively parallel computations on polygons.
-#Copyright (C) 2020 Ghostkeeper
+#Copyright (C) 2022 Ghostkeeper
 #This library is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 #This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for details.
 #You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
@@ -59,7 +59,7 @@ if(USE_SYSTEM_GOOGLETEST)
 	set(GOOGLETEST_VERSION_MAJOR 1) #Always 1.
 	set(GOOGLETEST_VERSION_MINOR 0) #Start off under the assumption that it's at LEAST version 1.0, the oldest published version.
 
-	find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters, so sadly it's also required to detect version of GoogleThread.
+	find_package(Threads REQUIRED) #Threading library is required for GoogleTest if it's compiled with default parameters, so sadly it's also required to detect version of GoogleTest.
 
 	#Test for v1.1.
 	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/googletest_probe/googletest_probe_v1.1.cpp" "#include<gtest/gtest.h>\nTEST(Probe, ExceptionAssertion) { ASSERT_NO_THROW(1 == 0); }") #Testing for throwing is new in 1.1.
@@ -210,9 +210,9 @@ if(BUILD_GOOGLETEST)
 		INSTALL_COMMAND "" #If we want to build it just for this project, no need to install it.
 	)
 	set(GOOGLETEST_FOUND TRUE)
-	set(GOOGLETEST_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googletest/include")
-	set(GOOGLETEST_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
-	set(GOOGLETEST_MAIN_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+	set(GOOGLETEST_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googletest/include;${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest/googlemock/include")
+	set(GOOGLETEST_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX};${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgmock${CMAKE_STATIC_LIBRARY_SUFFIX}")
+	set(GOOGLETEST_MAIN_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgtest_main${CMAKE_STATIC_LIBRARY_SUFFIX};${CMAKE_CURRENT_BINARY_DIR}/GoogleTest-prefix/src/GoogleTest-build/lib/libgmock_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
 	set(GOOGLETEST_BOTH_LIBRARIES "${GOOGLETEST_LIBRARIES};${GOOGLETEST_MAIN_LIBRARIES}")
 endif()
 
