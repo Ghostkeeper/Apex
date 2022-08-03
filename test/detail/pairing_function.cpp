@@ -7,6 +7,7 @@
  */
 
 #include <gtest/gtest.h> //To run the test.
+#include <gmock/gmock.h> //For advanced matchers.
 
 #include "apex/detail/pairing_function.hpp" //The unit under test.
 
@@ -79,9 +80,36 @@ TEST(PairingFunction, EnumerateOne) {
  */
 TEST(PairingFunction, EnumerateTwo) {
 	constexpr size_t num_elements = 2;
-	constexpr std::pair<size_t, size_t> ground_truth = {0, 1};
-	EXPECT_EQ(enumerate_pairs(num_elements, 0, true), ground_truth);// << "There is one pair in a set of 2, and it contains both indices (0 and 1).";
+	EXPECT_THAT(enumerate_pairs(num_elements, 0, true), ::testing::AnyOf(std::pair(0, 1), std::pair(1, 0))) << "The two elements must be returned as a pair.";
 	enumerate_pairs(num_elements, 0, false); //Disallowing adjacent pairs causes there to be no remaining pairs. Just check if it doesn't crash.
+}
+
+/*!
+ * Enumerate pairs from a set of 6 elements, allowing adjacent elements.
+ *
+ * This test is of an even number of elements. This is a slightly different edge
+ * case than an odd number of elements.
+ */
+TEST(PairingFunction, EnumerateSixWithAdjacent) {
+	constexpr size_t num_elements = 6;
+	std::vector<std::pair<size_t, size_t>> ground_truth = {
+		{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5},
+		{1, 2}, {1, 3}, {1, 4}, {1, 5},
+		{2, 3}, {2, 4}, {2, 5},
+		{3, 4}, {3, 5},
+		{4, 5}
+	};
+	const size_t num_pairs = ground_truth.size();
+	for(size_t i = 0; i < num_pairs; ++i) {
+		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, true);
+		std::cout << "---- " << pair.first << ", " << pair.second << std::endl;
+		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
+		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
+		if(to_erase != ground_truth.end()) {
+			ground_truth.erase(to_erase);
+		}
+	}
+	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
 }
 
 }
