@@ -41,7 +41,7 @@ namespace detail {
  * \param num_elements The number of elements from which to select pairs.
  * \param include_adjacent Whether to count adjacent elements as well.
  */
-size_t num_pairings(const size_t num_elements, const bool include_adjacent = true) {
+constexpr size_t num_pairings(const size_t num_elements, const bool include_adjacent = true) {
 	if(num_elements == 0) {
 		return 0;
 	}
@@ -109,7 +109,7 @@ size_t num_pairings(const size_t num_elements, const bool include_adjacent = tru
  * \param include_adjacent Whether to count adjacent elements as well.
  * \return A pair of indices in the set of elements.
  */
-std::pair<size_t, size_t> enumerate_pairs(const size_t num_elements, const size_t index, const bool include_adjacent = true) {
+constexpr std::pair<size_t, size_t> enumerate_pairs(const size_t num_elements, const size_t index, const bool include_adjacent = true) {
 	size_t a;
 	size_t b;
 	if(num_elements <= 1) [[unlikely]] { //There are no pairs. Any index will be out of range. Catch this to prevent arithmetic exceptions.
