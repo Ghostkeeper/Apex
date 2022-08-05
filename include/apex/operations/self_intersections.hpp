@@ -10,6 +10,7 @@
 #define APEX_SELF_INTERSECTIONS
 
 #include "../detail/geometry_concepts.hpp" //To disambiguate overloads.
+#include "../detail/pairing_function.hpp" //To enumerate pairs of edges that may intersect.
 #include "../batch.hpp" //To perform batch operations and to return batches of self-intersections.
 #include "../line_segment.hpp" //To intersect edges of the polygon.
 #include "../self_intersection.hpp" //The return type of this operation.
@@ -230,50 +231,10 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			}
 		}
 
-		/* To parallellise this 2D triangular loop, we create a single index
-		enumerating all pairs of edges, and parallelise over those indices. From
-		that index we can calculate the segment indices A and B back.
-		What we want is a triangular loop such as this (for 7 vertices):
-		-   -   -   -   -   -   -
-		-   -   -   -   -   -   -
-		0x2 -   -   -   -   -   -
-		0x3 1x3 -   -   -   -   -
-		0x4 1x4 2x4 -   -   -   -
-		0x5 1x5 2x5 3x5 -   -   -
-		0x6 1x6 2x6 3x6 4x6 -   -
-		To achieve such a loop, we can fold the bottom half of this loop onto
-		the right side of the top half. To do that, we'll mirror the bottom half
-		in both directions. First in the A dimension:
-		-   -   -   -   -   -   -
-		-   -   -   -   -   -   -
-		0x2 -   -   -   -   -   -
-		0x3 1x3 -   -   -   -   -
-		0x4 1x4 2x4 -   -   -   -
-		-   -   3x5 2x5 1x5 0x5 -
-		-   4x6 3x6 2x6 1x6 0x6 -
-		And then in the B dimension too:
-		-   -   -   -   -   -   -
-		-   -   -   -   -   -   -
-		0x2 4x6 3x6 2x6 1x6 0x6 -
-		0x3 1x3 3x5 2x5 1x5 0x5 -
-		0x4 1x4 2x4 -   -   -   -
-		-   -   -   -   -   -   -
-		-   -   -   -   -   -   -
-		By then iterating the correct amount of times ((N-1)*(N-2)/2, in this
-		case 15) and selecting the correct rectangle, we can simply pretend this
-		is a rectangular 2D loop and correct the coordinates for the part that
-		needs to be mirrored. */
-		const size_t num_pairs = (polygon.size() - 1) * (polygon.size() - 2) / 2;
 		#pragma omp parallel for
-		for(size_t pair_index = 0; pair_index < num_pairs; ++pair_index) {
-			size_t segment_a = pair_index % (polygon.size() - 1);
-			size_t segment_b = pair_index / (polygon.size() - 1);
-			if(segment_a > segment_b) {
-				segment_a = polygon.size() - 2 - segment_a; //Mirror A dimension. -1 for iterating up to size-1, another -1 because we'll skip adjacent vertices here.
-				segment_b = polygon.size() - 1 - segment_b; //Mirror B dimension. -1 for iterating up to size-1
-			} else {
-				segment_b += 2; //Don't compare the same vertex or adjacent vertices.
-			}
+		for(size_t pair_index = 0; pair_index < num_pairings(polygon.size()); ++pair_index) {
+			constexpr bool disallow_adjacent = false;
+			auto[segment_a, segment_b] = enumerate_pairs(polygon.size(), pair_index, disallow_adjacent);
 
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
 				continue; //Don't check the last vs. the first segment, as they are also neighbours.
