@@ -168,6 +168,34 @@ TEST(PairingFunction, EnumerateSevenWithAdjacent) {
 	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
 }
 
+/*!
+ * Enumerate pairs from a set of 7 elements, not allowing adjacent elements.
+ *
+ * This test is of an odd number of elements. This is a slightly different edge
+ * case than an even number of elements. In this case, the number of pairs is
+ * not divisible by the width of the generated grid of pairs.
+ */
+TEST(PairingFunction, EnumerateSevenWithoutAdjacent) {
+	constexpr size_t num_elements = 7;
+	std::vector<std::pair<size_t, size_t>> ground_truth = {
+		{0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6},
+		{1, 3}, {1, 4}, {1, 5}, {1, 6},
+		{2, 4}, {2, 5}, {2, 6},
+		{3, 5}, {3, 6},
+		{4, 6}
+	};
+	const size_t num_pairs = ground_truth.size();
+	for(size_t i = 0; i < num_pairs; ++i) {
+		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, false);
+		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
+		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
+		if(to_erase != ground_truth.end()) {
+			ground_truth.erase(to_erase);
+		}
+	}
+	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
+}
+
 }
 
 }
