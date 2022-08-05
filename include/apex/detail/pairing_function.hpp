@@ -116,8 +116,8 @@ std::pair<size_t, size_t> enumerate_pairs(const size_t num_elements, const size_
 		a = 0;
 		b = 0;
 	} else {
-		a = index % (num_elements - 1);
-		b = index / (num_elements - 1);
+		a = index % (num_elements - !include_adjacent);
+		b = index / (num_elements - !include_adjacent);
 		if(a > b) {
 			a = num_elements - 1 - !include_adjacent - a; //Mirror A dimension. -1 for iterating up to size-1, another -1 if we skip adjacent vertices here.
 			b = num_elements - 1 - b; //Mirror B dimension. -1 for iterating up to size-1
