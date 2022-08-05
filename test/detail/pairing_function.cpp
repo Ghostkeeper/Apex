@@ -88,7 +88,8 @@ TEST(PairingFunction, EnumerateTwo) {
  * Enumerate pairs from a set of 6 elements, allowing adjacent elements.
  *
  * This test is of an even number of elements. This is a slightly different edge
- * case than an odd number of elements.
+ * case than an odd number of elements. In this case, the number of pairs is not
+ * divisible by the width of the generated grid of pairs.
  */
 TEST(PairingFunction, EnumerateSixWithAdjacent) {
 	constexpr size_t num_elements = 6;
@@ -111,6 +112,13 @@ TEST(PairingFunction, EnumerateSixWithAdjacent) {
 	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
 }
 
+/*!
+ * Enumerate pairs from a set of 6 elements, not allowing adjacent elements.
+ *
+ * This test is of an even number of elements, this is a slightly different edge
+ * case than an odd number of elements. In this case, the number of pairs is
+ * divisible by the width of the generated grid pairs.
+ */
 TEST(PairingFunction, EnumerateSixWithoutAdjacent) {
 	constexpr size_t num_elements = 6;
 	std::vector<std::pair<size_t, size_t>> ground_truth = {
@@ -122,6 +130,35 @@ TEST(PairingFunction, EnumerateSixWithoutAdjacent) {
 	const size_t num_pairs = ground_truth.size();
 	for(size_t i = 0; i < num_pairs; ++i) {
 		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, false);
+		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
+		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
+		if(to_erase != ground_truth.end()) {
+			ground_truth.erase(to_erase);
+		}
+	}
+	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
+}
+
+/*!
+ * Enumerate pairs from a set of 7 elements, allowing adjacent elements.
+ *
+ * This test is of an odd number of elements. This is a slightly different edge
+ * case than an even number of elements. In this case, the number of pairs is
+ * divisible by the width of the generated grid of pairs.
+ */
+TEST(PairingFunction, EnumerateSevenWithAdjacent) {
+	constexpr size_t num_elements = 7;
+	std::vector<std::pair<size_t, size_t>> ground_truth = {
+		{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6},
+		{1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6},
+		{2, 3}, {2, 4}, {2, 5}, {2, 6},
+		{3, 4}, {3, 5}, {3, 6},
+		{4, 5}, {4, 6},
+		{5, 6}
+	};
+	const size_t num_pairs = ground_truth.size();
+	for(size_t i = 0; i < num_pairs; ++i) {
+		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, true);
 		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
 		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
 		if(to_erase != ground_truth.end()) {
