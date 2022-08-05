@@ -231,9 +231,10 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			}
 		}
 
+		constexpr bool disallow_adjacent = false;
+		const size_t num_pairs = num_pairings(polygon.size(), disallow_adjacent);
 		#pragma omp parallel for
-		for(size_t pair_index = 0; pair_index < num_pairings(polygon.size()); ++pair_index) {
-			constexpr bool disallow_adjacent = false;
+		for(size_t pair_index = 0; pair_index < num_pairs; ++pair_index) {
 			auto[segment_a, segment_b] = enumerate_pairs(polygon.size(), pair_index, disallow_adjacent);
 
 			if(segment_a == 0 && segment_b == polygon.size() - 1) {
