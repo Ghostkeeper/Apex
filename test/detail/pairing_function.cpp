@@ -102,7 +102,26 @@ TEST(PairingFunction, EnumerateSixWithAdjacent) {
 	const size_t num_pairs = ground_truth.size();
 	for(size_t i = 0; i < num_pairs; ++i) {
 		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, true);
-		std::cout << "---- " << pair.first << ", " << pair.second << std::endl;
+		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
+		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
+		if(to_erase != ground_truth.end()) {
+			ground_truth.erase(to_erase);
+		}
+	}
+	EXPECT_THAT(ground_truth, ::testing::IsEmpty()) << "All pairs in the ground truth must have been enumerated by now.";
+}
+
+TEST(PairingFunction, EnumerateSixWithoutAdjacent) {
+	constexpr size_t num_elements = 6;
+	std::vector<std::pair<size_t, size_t>> ground_truth = {
+		{0, 2}, {0, 3}, {0, 4}, {0, 5},
+		{1, 3}, {1, 4}, {1, 5},
+		{2, 4}, {2, 5},
+		{3, 5}
+	};
+	const size_t num_pairs = ground_truth.size();
+	for(size_t i = 0; i < num_pairs; ++i) {
+		const std::pair<size_t, size_t> pair = enumerate_pairs(num_elements, i, false);
 		EXPECT_THAT(ground_truth, ::testing::Contains(pair)) << "This pair is not in the original set or got enumerated multiple times.";
 		std::vector<std::pair<size_t, size_t>>::iterator to_erase = std::find(ground_truth.begin(), ground_truth.end(), pair);
 		if(to_erase != ground_truth.end()) {
