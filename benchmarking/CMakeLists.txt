@@ -12,6 +12,10 @@ set(source_files
 	"benchmarker.cpp"
 )
 
+#Always add GPU definition. We want to include the GPU in the benchmarks.
+#In theory we might want to also allow benchmarking without GPU support. But that also makes the code more complex. Not for now.
+add_definitions(-DGPU)
+
 add_executable(apex_benchmark ${source_files})
 target_link_libraries(apex_benchmark PRIVATE apex)
 target_include_directories(apex_benchmark INTERFACE "${CMAKE_SOURCE_DIR}/include")
