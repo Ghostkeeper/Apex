@@ -6,9 +6,8 @@
  * You should have received a copy of the GNU Affero General Public License along with this library. If not, see <https://gnu.org/licenses/>.
  */
 
-#define protected public //Allow calling protected functions in this class.
+#include <apex/operations/area.hpp>
 #include <apex/polygon.hpp>
-#undef protected
 #include <apex/point2.hpp>
 
 #include <chrono> //To measure execution time.
