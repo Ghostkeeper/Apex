@@ -10,6 +10,7 @@ project(ApexBenchmark)
 set(source_files
 	"main.cpp"
 	"benchmarker.cpp"
+	"generators.cpp"
 )
 
 #Always add GPU definition. We want to include the GPU in the benchmarks.
