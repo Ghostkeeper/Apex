@@ -14,10 +14,19 @@
 namespace benchmarker {
 
 /*!
- * Generate a regular polyhedron, approximating a circle, with a certain number
- * of vertices.
+ * Generate a regular polygon, approximating a circle, with a certain number of
+ * vertices.
+ * \param num_vertices The number of vertices to use for the regular polygon.
+ * \return A regular polygon with the given number of vertices.
  */
 apex::Polygon generate_polygon_circle(const size_t num_vertices);
+
+/*!
+ * Generate a batch of polygons, with each polygon having 10 vertices.
+ * \param num_polygons The number of polygons to add to the batch.
+ * \return A batch with the given number of polygons.
+ */
+apex::Batch<apex::Polygon> generate_polygon_batch_10gon(const size_t num_polygons);
 
 }
 

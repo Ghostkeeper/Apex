@@ -25,4 +25,22 @@ apex::Polygon generate_polygon_circle(const size_t num_vertices) {
 	return result;
 }
 
+apex::Batch<apex::Polygon> generate_polygon_batch_10gon(const size_t num_polygons) {
+	apex::Batch<apex::Polygon> result;
+	result.reserve(num_polygons);
+	result.reserve_subelements(10 * num_polygons); //10 vertices for each polygon.
+
+	apex::Polygon polygon; //A polygon to add to the batch repeatedly.
+	for(size_t vertex = 0; vertex < 10; ++vertex) { //Construct a regular n-gon with 10 vertices.
+		const apex::coord_t x = std::lround(std::cos(std::numbers::pi * 2 / 10 * vertex) * 40);
+		const apex::coord_t y = std::lround(std::sin(std::numbers::pi * 2 / 10 * vertex) * 40);
+		polygon.emplace_back(x, y);
+	}
+
+	for(size_t repeat = 0; repeat < num_polygons; ++repeat) {
+		result.push_back(polygon); //Makes a copy.
+	}
+	return result;
+}
+
 }
