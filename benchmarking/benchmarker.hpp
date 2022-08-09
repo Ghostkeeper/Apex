@@ -10,7 +10,8 @@
 #define BENCHMARKER
 
 #include <chrono> //To measure execution time.
-#include <functional>
+#include <functional> //To accept functions to benchmark with.
+#include <iostream> //To output progress during benchmarking.
 
 namespace benchmarker {
 
@@ -36,6 +37,8 @@ public:
 	 *
 	 * The outcome for each size is returned as a vector whose indices match the
 	 * indices of the various sizes given in the input size array.
+	 * \param name A name to display in the terminal while this benchmark is
+	 * running.
 	 * \param generator A generator that generates test data objects with a
 	 * certain size. The generator is a function that gets a size and needs to
 	 * return a test object with that size.
@@ -52,7 +55,8 @@ public:
 	 * nanoseconds.
 	 */
 	template<typename TestData>
-	static std::vector<double> run_const(const std::function<TestData(const size_t)> generator, const std::vector<size_t>& sizes, std::function<void(const TestData&)> benchmark) {
+	static std::vector<double> run_const(const std::string name, const std::function<TestData(const size_t)> generator, const std::vector<size_t>& sizes, std::function<void(const TestData&)> benchmark) {
+		std::cout << name << " | Preparing..." << std::flush;
 		//First pre-generate the test data for each size.
 		std::vector<TestData> test_datas;
 		test_datas.reserve(sizes.size());
@@ -64,10 +68,16 @@ public:
 		for(const TestData& test_data : test_datas) {
 			benchmark(test_data);
 		}
+		std::cout << "\b\b\b\b\b\b\b\b\b\b\b\b"; //Erase 'Preparing...'
+		std::cout << "[          ]";
+		std::cout << "\b\b\b\b\b\b\b\b\b\b\b"; //Return cursor to the start of the progress bar.
+		std::cout << std::flush;
 
 		//Now for real. And measure the time it takes.
 		std::vector<double> result_times;
-		for(const TestData& test_data : test_datas) {
+		size_t progress_printed = 0;
+		for(size_t test_case = 0; test_case < test_datas.size(); ++test_case) {
+			const TestData& test_data = test_datas[test_case];
 			//The counting of the for loop is some overhead within the measured period.
 			//However stopping and re-starting the time measurement has bigger overhead, so we'll have to do the loop within the measured period.
 			std::chrono::time_point start = std::chrono::steady_clock::now();
@@ -77,6 +87,17 @@ public:
 			std::chrono::time_point end = std::chrono::steady_clock::now();
 			std::chrono::duration nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
 			result_times.push_back(nanoseconds.count());
+
+			//Update progress bar.
+			const float progress = static_cast<float>(test_case) / test_datas.size();
+			while(progress * 10 > progress_printed) {
+				std::cout << "▓" << std::flush;
+				progress_printed += 1;
+			}
+		}
+		//Erase progress bar.
+		for(size_t i = 0; i < 14 + name.length(); ++i) {
+			std::cout << "\b \b" << std::flush;
 		}
 
 		return result_times;

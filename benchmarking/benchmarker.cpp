@@ -11,7 +11,6 @@
 #include <apex/point2.hpp>
 
 #include <iomanip> //For std::setw.
-#include <iostream> //To output the benchmark results to stdcout.
 #include <numeric> //Easy summing for the CRC.
 #include <vector>
 
@@ -23,13 +22,13 @@ namespace benchmarker {
 
 void Benchmarker::bench_area() {
 	std::cout << "________ AREA ________" << std::endl;
-	std::vector<double> durations_st = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+	std::vector<double> durations_st = run_const<apex::Polygon>("Area ST", generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
 		apex::detail::area_st(polygon);
 	});
-	std::vector<double> durations_mt = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+	std::vector<double> durations_mt = run_const<apex::Polygon>("Area MT", generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
 		apex::detail::area_mt(polygon);
 	});
-	std::vector<double> durations_gpu = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+	std::vector<double> durations_gpu = run_const<apex::Polygon>("Area GPU", generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
 		apex::detail::area_gpu(polygon);
 	});
 
@@ -41,13 +40,13 @@ void Benchmarker::bench_area() {
 
 	//Repeat for the area of batches of polygons.
 	std::cout << "_______ [AREA] _______" << std::endl;
-	durations_st = run_const<apex::Batch<apex::Polygon>>(generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
+	durations_st = run_const<apex::Batch<apex::Polygon>>("[Area] ST", generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
 		apex::detail::area_st(batch);
 	});
-	durations_mt = run_const<apex::Batch<apex::Polygon>>(generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
+	durations_mt = run_const<apex::Batch<apex::Polygon>>("[Area] MT", generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
 		apex::detail::area_mt(batch);
 	});
-	durations_gpu = run_const<apex::Batch<apex::Polygon>>(generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
+	durations_gpu = run_const<apex::Batch<apex::Polygon>>("[Area] GPU", generate_polygon_batch_10gon, sizes_polygon_batch_big, [](const apex::Batch<apex::Polygon>& batch) {
 		apex::detail::area_gpu(batch);
 	});
 
