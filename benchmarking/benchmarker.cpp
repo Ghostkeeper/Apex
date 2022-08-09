@@ -16,66 +16,31 @@
 #include <vector>
 
 #include "benchmarker.hpp"
+#include "generators.hpp" //To generate test data.
+#include "sizes.hpp" //For the sizes to test with.
 
 namespace benchmarker {
 
 void Benchmarker::bench_area() {
 	std::cout << "________ AREA ________" << std::endl;
-	//std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
-	std::cout << "SIZE;ST;MT;GPU;CRC" << std::endl;
 
-	//Sizes to test with.
-	std::vector<size_t> sizes;
-	for(size_t i = 0; i < 10000; i += 100) {
-		sizes.push_back(i);
-	}
-	//Pre-generate the polygons.
-	std::vector<apex::Polygon> polys;
-	for(size_t size : sizes) {
-		polys.emplace_back(size, apex::Point2(0, 0));
-		for(size_t i = 0; i < size; ++i) {
-			polys.back()[i] = apex::Point2(i, i);
-		}
-	}
+	const std::vector<double> durations_st = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+		apex::detail::area_st(polygon);
+	});
+	const std::vector<double> durations_mt = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+		apex::detail::area_mt(polygon);
+	});
+	const std::vector<double> durations_gpu = run_const<apex::Polygon>(generate_polygon_circle, sizes_polygon_big, [](const apex::Polygon& polygon) {
+		apex::detail::area_gpu(polygon);
+	});
 
-	//First do a dry run with the largest size, to get more accurate results without system calls to allocate more memory.
-	{
-		apex::detail::area_st(polys.back());
-		apex::detail::area_mt(polys.back());
-		apex::detail::area_gpu(polys.back());
+	//Output the results to terminal for now.
+	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::endl;
+	for(size_t i = 0; i < sizes_polygon_big.size(); ++i) {
+		std::cout << std::setw(10) << sizes_polygon_big[i] << std::setw(10) << durations_st[i] << std::setw(10) << durations_mt[i] << std::setw(10) << durations_gpu[i] << std::endl;
 	}
 
-	for(size_t i = 0; i < sizes.size(); ++i) {
-		apex::Polygon& poly = polys[i];
-		size_t size = sizes[i];
-
-		apex::area_t sum = 0; //Calculate this sum so that compilers can't optimise the repeats away.
-		std::chrono::time_point start = std::chrono::steady_clock::now();
-		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += apex::detail::area_st(poly);
-		}
-		std::chrono::time_point end = std::chrono::steady_clock::now();
-		std::chrono::duration st_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
-
-		start = std::chrono::steady_clock::now();
-		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += apex::detail::area_mt(poly);
-		}
-		end = std::chrono::steady_clock::now();
-		std::chrono::duration mt_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
-
-		start = std::chrono::steady_clock::now();
-		for(size_t repeat = 0; repeat < repeats; ++repeat) {
-			sum += apex::detail::area_gpu(poly);
-		}
-		end = std::chrono::steady_clock::now();
-		std::chrono::duration gpu_time = std::chrono::duration_cast<std::chrono::nanoseconds>((end - start) / repeats);
-
-		//std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
-		std::cout << size << ";" << st_time.count() << ";" << mt_time.count() << ";" << gpu_time.count() << ";" << sum << std::endl;
-	}
-
-	//Repeat for the area of batches of polygons.
+	/*//Repeat for the area of batches of polygons.
 	std::cout << "_______ [AREA] _______" << std::endl;
 	//std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::setw(10) << "CRC" << std::endl;
 	std::cout << "SIZE;ST;MT;GPU;CRC" << std::endl;
@@ -137,7 +102,7 @@ void Benchmarker::bench_area() {
 
 		//std::cout << std::setw(10) << size << std::setw(10) << st_time.count() << std::setw(10) << mt_time.count() << std::setw(10) << gpu_time.count() << std::setw(10) << sum << std::endl;
 		std::cout << size << ";" << st_time.count() << ";" << mt_time.count() << ";" << gpu_time.count() << ";" << sum << std::endl;
-	}
+	}*/
 }
 
 }
