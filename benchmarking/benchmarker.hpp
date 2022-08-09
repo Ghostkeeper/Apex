@@ -52,7 +52,7 @@ public:
 	 * nanoseconds.
 	 */
 	template<typename TestData>
-	std::vector<double> run_const(const std::function<TestData(const size_t)> generator, const std::vector<size_t>& sizes, const std::function<void(const TestData&)> benchmark) {
+	static std::vector<double> run_const(const std::function<TestData(const size_t)> generator, const std::vector<size_t>& sizes, const std::function<void(const TestData&)> benchmark) {
 		//First pre-generate the test data for each size.
 		std::vector<TestData> test_datas;
 		test_datas.reserve(sizes.size());
