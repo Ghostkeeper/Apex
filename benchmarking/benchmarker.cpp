@@ -10,7 +10,6 @@
 #include <apex/polygon.hpp>
 #include <apex/point2.hpp>
 
-#include <chrono> //To measure execution time.
 #include <iomanip> //For std::setw.
 #include <iostream> //To output the benchmark results to stdcout.
 #include <numeric> //Easy summing for the CRC.
