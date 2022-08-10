@@ -16,6 +16,13 @@
 
 namespace benchmarker {
 
+/*!
+ * Helper class to run benchmarks.
+ *
+ * This class provides a few useful functions to run benchmarks with. That way
+ * it becomes easy to define new benchmarks, see and compare the results, with
+ * minimal code duplication.
+ */
 class Benchmarker {
 public:
 	/*!
