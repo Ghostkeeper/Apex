@@ -11,6 +11,7 @@
 
 #include <chrono> //To measure execution time.
 #include <functional> //To accept functions to benchmark with.
+#include <iomanip> //For std::setw.
 #include <iostream> //To output progress during benchmarking.
 
 namespace benchmarker {
@@ -37,6 +38,8 @@ public:
 	 *
 	 * The outcome for each size is returned as a vector whose indices match the
 	 * indices of the various sizes given in the input size array.
+	 * \tparam TestData A testing object provided for the benchmarked function,
+	 * which is also the output of the generator.
 	 * \param name A name to display in the terminal while this benchmark is
 	 * running.
 	 * \param generator A generator that generates test data objects with a
@@ -101,6 +104,36 @@ public:
 		}
 
 		return result_times;
+	}
+
+	/*!
+	 * Print the benchmark results in COUT, to read them in the terminal.
+	 * \tparam The number of different benchmarks to compare in the output. For
+	 * instance, you could compare 3 different tests when comparing a single-
+	 * threaded, a multi-threaded and a GPU implementation of an algorithm.
+	 * \param names The names to give to each test. Names must be 9 or fewer
+	 * characters long, or it will not align well in the output.
+	 * \param sizes The test sizes that were provided to each test.
+	 * \param durations For each test, a list of the execution times of each
+	 * input size in the list of sizes.
+	 */
+	template<size_t NumTests>
+	static void output_cout(const std::array<std::string, NumTests>& names, const std::vector<size_t>& sizes, const std::array<std::vector<double>, NumTests>& durations) {
+		//Print the header bar.
+		std::cout << std::setw(10) << "SIZE";
+		for(const std::string name : names) {
+			std::cout << std::setw(10) << name;
+		}
+		std::cout << std::endl;
+
+		//Print the data for each size.
+		for(size_t size_index = 0; size_index < sizes.size(); ++size_index) {
+			std::cout << std::setw(10) << sizes[size_index];
+			for(size_t test = 0; test < durations.size(); ++test) {
+				std::cout << std::setw(10) << durations[test][size_index];
+			}
+			std::cout << std::endl;
+		}
 	}
 
 	/*!
