@@ -10,7 +10,6 @@
 #include <apex/polygon.hpp>
 #include <apex/point2.hpp>
 
-#include <iomanip> //For std::setw.
 #include <numeric> //Easy summing for the CRC.
 #include <vector>
 
@@ -33,10 +32,7 @@ void Benchmarker::bench_area() {
 	});
 
 	//Output the results to terminal for now.
-	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::endl;
-	for(size_t i = 0; i < sizes_polygon_big.size(); ++i) {
-		std::cout << std::setw(10) << sizes_polygon_big[i] << std::setw(10) << durations_st[i] << std::setw(10) << durations_mt[i] << std::setw(10) << durations_gpu[i] << std::endl;
-	}
+	output_cout<3>({"ST", "MT", "GPU"}, sizes_polygon_big, {durations_st, durations_mt, durations_gpu});
 
 	//Repeat for the area of batches of polygons.
 	std::cout << "_______ [AREA] _______" << std::endl;
@@ -51,10 +47,7 @@ void Benchmarker::bench_area() {
 	});
 
 	//Output the results to terminal for now.
-	std::cout << std::setw(10) << "SIZE" << std::setw(10) << "ST" << std::setw(10) << "MT" << std::setw(10) << "GPU" << std::endl;
-	for(size_t i = 0; i < sizes_polygon_big.size(); ++i) {
-		std::cout << std::setw(10) << sizes_polygon_big[i] << std::setw(10) << durations_st[i] << std::setw(10) << durations_mt[i] << std::setw(10) << durations_gpu[i] << std::endl;
-	}
+	output_cout<3>({"ST", "MT", "GPU"}, sizes_polygon_batch_big, {durations_st, durations_mt, durations_gpu});
 }
 
 }
