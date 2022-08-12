@@ -28,7 +28,7 @@ namespace apex {
  * same X coordinate, points with lower Y coordinates will be considered lower.
  * Thus the points are compared lexicographically with X before Y.
  */
-struct Point2 {
+struct alignas(8) Point2 {
 public:
 	/*!
 	 * The projection of this point on the X dimension.
