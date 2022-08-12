@@ -154,6 +154,13 @@ TEST(Point, Stream) {
 }
 
 /*!
+ * Test if the memory alignment of the point is what you'd expect.
+ */
+TEST(Point, Alignment) {
+	EXPECT_EQ(std::alignment_of<Point2>::value, 8);
+}
+
+/*!
  * Test whether the cross product adheres to the right-hand rule.
  *
  * The right-hand rule is a mnemonic to find the direction of the cross product.
