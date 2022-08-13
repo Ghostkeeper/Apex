@@ -93,7 +93,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
  */
 template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections(const Polygon& polygon) {
-	return detail::self_intersections_st_naive(polygon);
+	return detail::self_intersections_mt_naive(polygon);
 }
 
 namespace detail {
@@ -273,6 +273,63 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 				}
 			}
 		}
+	}
+	return result;
+}
+
+/*!
+ * Naive implementation to find self-intersections in a polygon.
+ *
+ * This implementation simply compares all pairs of line segments to see if they
+ * intersect. All found intersections are returned in a batch.
+ * This version parallelises the work on the GPU by dividing the pairs of edges
+ * over a number of different teams.
+ *
+ * The implementation is so simple that it may be very effective for low-
+ * resolution polygons, but it scales badly for high-resolution polygons.
+ * \param polygon The polygons to find self-intersections in.
+ * \return A batch of self-intersections.
+ */
+template<polygonal Polygon>
+Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polygon) {
+	Batch<PolygonSelfIntersection> result;
+	if(polygon.size() == 2) [[unlikely]] {
+		/* In the case of 2 vertices, we have a degenerate polygon with 2 line
+		segments that loop back on each other, completely overlapping. The
+		algorithm below would find two intersections because each line checks
+		for overlap with the previous line (with clock arithmetic). But there is
+		only one. So we can special-case that. */
+		result.emplace_back(polygon[0], 0, 1); //The 0th segment always intersects with the 1st segment. Choose any point on the line as intersection point.
+	} else if(polygon.size() > 2) [[likely]] {
+		//Pre-compute an array that indicates how many identical vertices in a row we've encountered.
+		//This allows to find and ignore zero-length edges, while still identifying loops in the polygon correctly if the crossing is on a vertex.
+		//We will first write a 1 for each vertex that is identical to the previous vertex.
+		const Point2* vertex_data = polygon.data();
+		const size_t size = polygon.size();
+		std::vector<size_t> position_index;
+		position_index.resize(size);
+		position_index[0] = (vertex_data[0] == vertex_data[size - 1]); //Special case for the closing edge.
+		size_t* position_data = position_index.data();
+		#pragma omp target teams distribute parallel for map to(vertex_data[1:size]) from(position_index[1:size])
+		for(size_t vertex = 1; vertex < size; ++vertex) {
+			position_data[vertex] = (polygon[vertex] == polygon[vertex - 1]);
+			#pragma omp barrier //Ensure we can then access this result from a different thread.
+			//Next, each vertex that is at the start of a sequence of 1's will count on to the end of its segment.
+			//After this, the position_index should contain a list of how many repeated vertices there are, allowing instantly finding the start of a sequence.
+			if(position_data[vertex] == 1 && position_data[vertex - 1] == 0) { //This is a start of a sequence.
+				for(size_t crawl = 1; position_data[vertex + crawl] == 1; ++crawl) {
+					position_data[vertex + crawl] = 1 + crawl;
+				}
+			}
+		}
+		//We skipped the 0th vertex, so do that one on the main thread.
+		if(position_data[0] == 1 && position_data[size - 1] == 0) {
+			for(size_t crawl = 1; position_data[crawl] == 1; ++crawl) {
+				position_data[crawl] = 1 + crawl;
+			}
+		}
+		
+		//TODO: Find the actual intersections.
 	}
 	return result;
 }
