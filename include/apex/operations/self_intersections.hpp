@@ -316,7 +316,7 @@ Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polyg
 			position_index[0] = 1;
 			has_any_sequence = true;
 		}
-		#pragma omp target teams distribute parallel for map(to:vertex_data[1:size]) map(from:position_index[1:size])
+		#pragma omp target teams distribute parallel for map(to:vertex_data[1:size]) map(from:position_data[1:size])
 		for(size_t vertex = 1; vertex < size; ++vertex) {
 			if(polygon[vertex] == polygon[vertex - 1]) {
 				position_data[vertex] = 1;
@@ -326,7 +326,7 @@ Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polyg
 		}
 		//Next, each vertex that is at the start of a sequence of 1's will count on to the end of its segment.
 		//After this, the position_index should contain a list of how many repeated vertices there are, allowing instantly finding the start of a sequence.
-		#pragma omp target teams distribute parallel for map(to:vertex_data[1:size]) map(tofrom:position_index[1:size])
+		#pragma omp target teams distribute parallel for map(to:vertex_data[1:size]) map(tofrom:position_data[1:size])
 		for(size_t vertex = 1; vertex < size; ++vertex) {
 			if(position_data[vertex] == 1 && position_data[vertex - 1] == 0) { //This is a start of a sequence.
 				#pragma omp atomic
