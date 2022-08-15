@@ -24,6 +24,8 @@ template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections_st_naive(const Polygon& polygon);
 template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygon);
+template<polygonal Polygon>
+Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polygon);
 
 }
 
@@ -93,7 +95,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
  */
 template<polygonal Polygon>
 Batch<PolygonSelfIntersection> self_intersections(const Polygon& polygon) {
-	return detail::self_intersections_mt_naive(polygon);
+	return detail::self_intersections_gpu_naive(polygon);
 }
 
 namespace detail {
@@ -318,7 +320,7 @@ Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polyg
 		}
 		#pragma omp target teams distribute parallel for map(to:vertex_data[1:size]) map(from:position_data[1:size])
 		for(size_t vertex = 1; vertex < size; ++vertex) {
-			if(polygon[vertex] == polygon[vertex - 1]) {
+			if(vertex_data[vertex] == vertex_data[vertex - 1]) {
 				position_data[vertex] = 1;
 				#pragma omp atomic
 				has_any_sequence |= true;
@@ -346,7 +348,48 @@ Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polyg
 		if(has_any_sequence && !found_any_sequence_start) [[unlikely]] { //There is a sequence, but no vertex is the start of it. So all vertices are identical.
 			//Return empty result.
 		} else {
-			//TODO: Find the actual intersections.
+			constexpr bool disallow_adjacent = false;
+			const size_t num_pairs = num_pairings(size, disallow_adjacent);
+			#pragma omp target teams distribute parallel for
+			for(size_t pair_index = 0; pair_index < num_pairs; ++pair_index) {
+				auto[segment_a, segment_b] = enumerate_pairs(size, pair_index, disallow_adjacent);
+
+				if(segment_a == 0 && segment_b == size - 1) {
+					continue; //Don't check the last vs. the first segment, as they are also neighbours.
+				}
+				if(position_data[segment_a + 1] > 0 || position_data[(segment_b + 1) % size] > 0) {
+					continue; //Segments of zero length don't intersect with anything.
+				}
+				if(position_data[segment_a] == position_data[segment_b]) { //Same position, so this is a zero-length segment.
+					continue; //Skip. They may not intersect anything (and the segment intersection check doesn't deal with this well).
+				}
+				const Point2 a_start = vertex_data[segment_a];
+				const Point2 a_end = vertex_data[segment_a + 1]; //Since B > A, we don't need to check if this exceeds the polygon size.
+				const Point2 b_start = vertex_data[segment_b];
+				const Point2 b_end = vertex_data[(segment_b + 1) % size];
+				const std::optional<Point2> intersection = LineSegment::intersect(a_start, a_end, b_start, b_end);
+				if(intersection) { //They did intersect.
+					if((position_data[segment_a] == position_data[segment_b + 1] && *intersection == a_start) || (position_data[(segment_a + 1) % size] == position_data[segment_b] && *intersection == a_end)) { //But it's intersecting at the endpoints with only 0-length segments in between.
+						continue; //Don't count those. They are essentially just along the same contour.
+					}
+					#pragma omp critical
+					result.emplace_back(*intersection, segment_a, segment_b);
+				}
+			}
+
+			//We skipped each vertex' neighbour. Check now for self-intersection with the neighbour. This can only partially overlap, never properly intersect.
+			#pragma omp target teams distribute parallel for
+			for(size_t vertex = 0; vertex < size; ++vertex) { //Check the two adjacent edges around this vertex.
+				const Point2 this_a = vertex_data[vertex];
+				const Point2 this_b = vertex_data[(vertex + 1) % size];
+				const size_t previous_index = (vertex + size - 1) % size;
+				const Point2 previous = vertex_data[previous_index];
+				if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if collinear.
+					if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
+						result.emplace_back(this_a, previous_index, vertex);
+					}
+				}
+			}
 		}
 	}
 	return result;
