@@ -271,6 +271,7 @@ Batch<PolygonSelfIntersection> self_intersections_mt_naive(const Polygon& polygo
 			const Point2 previous = polygon[previous_index];
 			if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if collinear.
 				if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
+					#pragma omp critical
 					result.emplace_back(this_a, previous_index, vertex);
 				}
 			}
@@ -386,6 +387,7 @@ Batch<PolygonSelfIntersection> self_intersections_gpu_naive(const Polygon& polyg
 				const Point2 previous = vertex_data[previous_index];
 				if(previous.orientation_with_line(this_a, this_b) == 0) { //Can only intersect if collinear.
 					if((this_b > this_a && previous > this_a) || (this_b < this_a && previous < this_a)) { //Both line segments go in the same direction, so they partially overlap.
+						#pragma omp critical
 						result.emplace_back(this_a, previous_index, vertex);
 					}
 				}
