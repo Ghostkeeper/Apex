@@ -38,7 +38,7 @@ TEST(PolygonSelfIntersections, Point) {
 TEST(PolygonSelfIntersections, Line) {
 	const Polygon polygon = PolygonTestCases::line();
 	const Batch<PolygonSelfIntersection> result = self_intersections(polygon);
-	EXPECT_EQ(result.size(), 1) << "The polygon is closed, so it has two line segments. They exactly overlap, so that's an intersection.";
+	ASSERT_EQ(result.size(), 1) << "The polygon is closed, so it has two line segments. They exactly overlap, so that's an intersection.";
 	EXPECT_TRUE(LineSegment(polygon[0], polygon[1]).intersects(result[0].location)) << "The intersecting point must be somewhere on the line segment.";
 }
 
@@ -92,7 +92,7 @@ TEST(PolygonSelfIntersections, GrazingVertex) {
 		PolygonSelfIntersection(Point2(500, 0), 0, 3)
 	};
 	const Batch<PolygonSelfIntersection> result = self_intersections(PolygonTestCases::touching_edge());
-	EXPECT_EQ(ground_truth.size(), result.size()) << "A vertex touches an edge, so both edges incident to that vertex will be reported as intersecting.";
+	ASSERT_EQ(ground_truth.size(), result.size()) << "A vertex touches an edge, so both edges incident to that vertex will be reported as intersecting.";
 	for(const PolygonSelfIntersection& intersection : result) {
 		EXPECT_EQ(std::count(ground_truth.begin(), ground_truth.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
 	}
@@ -113,7 +113,7 @@ TEST(PolygonSelfIntersections, TouchingVertex) {
 		PolygonSelfIntersection(Point2(1000, 500), 1, 4)
 	};
 	const Batch<PolygonSelfIntersection> result = self_intersections(PolygonTestCases::touching_vertex());
-	EXPECT_EQ(ground_truth.size(), result.size()) << "Two vertices touch each other, and it's not just zero-length segments. Every non-adjacent pair of edges must be reported as intersecting.";
+	ASSERT_EQ(ground_truth.size(), result.size()) << "Two vertices touch each other, and it's not just zero-length segments. Every non-adjacent pair of edges must be reported as intersecting.";
 	for(const PolygonSelfIntersection& intersection : result) {
 		EXPECT_EQ(std::count(ground_truth.begin(), ground_truth.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
 	}
@@ -150,7 +150,7 @@ TEST(PolygonSelfIntersections, OverlappingSegments) {
 	*/
 	const Polygon polygon = PolygonTestCases::zero_width_connection();
 	const Batch<PolygonSelfIntersection> result = self_intersections(polygon);
-	EXPECT_EQ(ground_truth_points.size() + 6, result.size()) << "The result must include all of the intersecting points, plus 6 overlapping segments.";
+	ASSERT_EQ(ground_truth_points.size() + 6, result.size()) << "The result must include all of the intersecting points, plus 6 overlapping segments.";
 	for(const PolygonSelfIntersection& intersection : ground_truth_points) {
 		EXPECT_EQ(std::count(ground_truth_points.begin(), ground_truth_points.end(), intersection), std::count(result.begin(), result.end(), intersection)) << "The intersection must be reported the correct number of times.";
 	}
